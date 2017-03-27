@@ -33,8 +33,8 @@ namespace DEA.Modules
                 var user = await userRepo.FetchUserAsync(Context.User.Id);
                 if (user.Cash < Config.GANG_CREATION_COST)
                     throw new Exception($"You do not have {Config.GANG_CREATION_COST.ToString("C2")}. Balance: {user.Cash.ToString("C2")}.");
-                await userRepo.EditCashAsync(Context, -Config.GANG_CREATION_COST);
                 var gang = await gangRepo.CreateGangAsync(Context.User.Id, Context.Guild.Id, name);
+                await userRepo.EditCashAsync(Context, -Config.GANG_CREATION_COST);
                 await ReplyAsync($"{Context.User.Mention}, You have successfully created the {gang.Name} gang!");
             }
         }
