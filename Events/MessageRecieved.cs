@@ -69,9 +69,7 @@ namespace DEA.Services
                                 await msg.Channel.SendMessageAsync($"{Context.User.Mention}, Invalid number.");
                                 break;
                             default:
-                                await msg.Channel.SendMessageAsync($"{Context.User.Mention}, Error:\n```{result.ErrorReason}```\n\n```diff\n"+
-                                    "- This is an error with dea itself and is not your fault\n```\n"+
-                                    "Please report this error to https://github.com/RealBlazeIt/DEA/issues along with what caused it and any other information you know.");
+                                await msg.Channel.SendMessageAsync($"{Context.User.Mention}, {result.ErrorReason}");
                                 break;
                         }
                     }
