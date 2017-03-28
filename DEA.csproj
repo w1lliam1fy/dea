@@ -280,10 +280,7 @@
     <Compile Include="Preconditions\RequireModerator.cs" />
     <Compile Include="Preconditions\RequireNoGang.cs" />
     <Compile Include="Preconditions\RequireNSFW.cs" />
-    <Compile Include="Preconditions\RequireRank1.cs" />
-    <Compile Include="Preconditions\RequireRank2.cs" />
-    <Compile Include="Preconditions\RequireRank3.cs" />
-    <Compile Include="Preconditions\RequireRank4.cs" />
+    <Compile Include="Preconditions\RequireRank.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\Config.cs" />

@@ -36,15 +36,13 @@ namespace DEA.Modules
 
         [Command("Give")]
         [RequireBotOwner]
-        [Summary("Inject cash into a users balance.")]
+        [Summary("Inject cash into a user's balance.")]
         [Remarks("Give <@User> <Amount of cash>")]
-        public async Task Give(IGuildUser userMentioned, float money)
-        {
-            using (var db = new DbContext())
-            {
+        public async Task Give(IGuildUser userMentioned, float money) {
+            using (var db = new DbContext()) {
                 var userRepo = new UserRepository(db);
                 await userRepo.EditOtherCashAsync(Context, userMentioned.Id, +money);
-                await ReplyAsync($"Successfully given {money.ToString("C2")} to {userMentioned}.");
+                await ReplyAsync($"Successfully given {money.ToString("C2")} to <@{userMentioned.Id}>.");
             }
         }
     }

@@ -42,7 +42,7 @@ namespace DEA.Modules
         }
 
         [Command("Jump")]
-        [RequireRank1]
+        [RequireRank(1)]
         [RequireCooldown]
         [Summary("Jump some random nigga in the hood.")]
         [Remarks("Jump")]
@@ -72,7 +72,7 @@ namespace DEA.Modules
         }
 
         [Command("Steal")]
-        [RequireRank2]
+        [RequireRank(2)]
         [RequireCooldown]
         [Summary("Snipe some goodies from your local stores.")]
         [Remarks("Steal")]
@@ -105,7 +105,7 @@ namespace DEA.Modules
         }
 
         [Command("Bully")]
-        [RequireRank3]
+        [RequireRank(3)]
         [Summary("Bully anyone's nickname to whatever you please.")]
         [Remarks("Bully <@User> <Nickname>")]
         [RequireBotPermission(GuildPermission.ManageNicknames)]
@@ -115,7 +115,7 @@ namespace DEA.Modules
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
-                var role3 = Context.Guild.GetRole((await guildRepo.FetchGuildAsync(Context.Guild.Id)).Rank3Id);
+                var role3 = Context.Guild.GetRole((await guildRepo.FetchGuildAsync(Context.Guild.Id)).RankIds[2]);
                 if (role3.Position <= userToBully.Roles.OrderByDescending(x => x.Position).First().Position)
                     throw new Exception($"You cannot bully someone with role higher or equal to: {role3.Mention}");
                 await userToBully.ModifyAsync(x => x.Nickname = nickname);
@@ -124,7 +124,7 @@ namespace DEA.Modules
         }
 
         [Command("Rob")]
-        [RequireRank4]
+        [RequireRank(4)]
         [RequireCooldown]
         [Summary("Lead a large scale operation on a local bank.")]
         [Remarks("Rob <Amount of cash to spend on resources>")]

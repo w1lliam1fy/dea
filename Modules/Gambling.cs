@@ -18,7 +18,7 @@ namespace DEA.Modules
         }
 
         [Command("50x2")]
-        [RequireRank4]
+        [RequireRank(4)]
         [Summary("Roll 50 or higher on a 100 sided die, win 2X your bet.")]
         [Remarks("50x2 <Bet>")]
         public async Task X2BetterOdds(float bet)
@@ -39,15 +39,14 @@ namespace DEA.Modules
         [Remarks("75+ <Bet>")]
         public async Task X3dot6(float bet)
         {
-            await Gamble(bet, 75, 2.6f);
+            await Gamble(bet, 75, 3.6f);
         }
 
         [Command("100x90")]
         [Remarks("100x90 <Bet>")]
         [Summary("Roll 100 on a 100 sided die, win 90X your bet.")]
-        public async Task X90(float bet)
-        {
-            await Gamble(bet, 100, 89);
+        public async Task X90(float bet) {
+            await Gamble(bet, 100, 90);
         }
 
         private async Task Gamble(float bet, int odds, float payoutMultiplier)
