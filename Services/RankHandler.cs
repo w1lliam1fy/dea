@@ -12,6 +12,7 @@ namespace DEA
 {
     public static class RankHandler
     {
+
         public static bool CheckRankCompletion(Guild guild) { // maybe these things should throw errors themselves rather than return values
             foreach (ulong rankid in guild.RankIds) 
                 if (rankid <= 0)
@@ -19,6 +20,7 @@ namespace DEA
 
             return true;
         }
+
         public static bool CheckRankExistance(Guild guild, SocketGuild socketGuild) {
             if (!CheckRankCompletion(guild))
                 return false;
@@ -29,6 +31,7 @@ namespace DEA
 
             return true;
         }
+
         public static bool CheckRankOverlap(Guild guild, ulong id) {
             foreach (ulong rankid in guild.RankIds) 
                 if (rankid == id)
@@ -36,6 +39,7 @@ namespace DEA
 
             return true;
         }
+
         public static async Task<IRole> GetRank(IGuild guild, ulong userId, ulong guildId) {
             using (var db = new DbContext()) {
                 var guildRepo = new GuildRepository(db);
@@ -56,9 +60,9 @@ namespace DEA
                     } else {
                         throw new Exception($"The {i + 1}th role does not yet exist. Set it with `$SetRankRoles {i + 1}`");
                     }
-                }else if(i == -1) {
+                } else if (i == -1) {
                     return null;
-                }else {
+                } else {
                     throw new Exception($"Rank {i+1} exists in the config but not in your guild.\n```diff\n" +
                                         $"- This is an error with DEA itself and is not your fault\n```\n" +
                                         $"Please report this error to https://github.com/RealBlazeIt/DEA/issues"); // Fixing this: add it to guild.cs
