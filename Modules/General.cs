@@ -237,10 +237,7 @@ namespace DEA.Modules
                 List<User> users = userRepo.GetAll().OrderByDescending(x => x.Cash).ToList();
                 IRole rank = null;
                 var guild = await guildRepo.FetchGuildAsync(Context.Guild.Id);
-                if (cash >= Config.RANK1 && cash < Config.RANK2) rank = Context.Guild.GetRole(guild.Rank1Id);
-                if (cash >= Config.RANK2 && cash < Config.RANK3) rank = Context.Guild.GetRole(guild.Rank2Id);
-                if (cash >= Config.RANK3 && cash < Config.RANK4) rank = Context.Guild.GetRole(guild.Rank3Id);
-                if (cash >= Config.RANK4) rank = Context.Guild.GetRole(guild.Rank4Id);
+                rank = await RankHandler.GetRank(Context.Guild, userToView.Id, Context.Guild.Id);
                 var builder = new EmbedBuilder()
                 {
                     Title = $"Ranking of {userToView}",
@@ -306,30 +303,34 @@ namespace DEA.Modules
             {
                 var guildRepo = new GuildRepository(db);
                 var guild = await guildRepo.FetchGuildAsync(Context.Guild.Id);
-                var role1 = Context.Guild.GetRole(guild.Rank1Id);
-                var role2 = Context.Guild.GetRole(guild.Rank2Id);
-                var role3 = Context.Guild.GetRole(guild.Rank3Id);
-                var role4 = Context.Guild.GetRole(guild.Rank4Id);
                 string prefix = guild.Prefix;
-                if (role1 == null || role2 == null || role3 == null || role4 == null)
+                if (!RankHandler.CheckRankExistance(guild, Context.Guild))
                 {
                     throw new Exception($"You do not have 4 different functional roles added in with the " +
                                         $"`{prefix}SetRankRoles` command, therefore the `{prefix}ranked` command will not work!");
                 }
-                var count1 = Context.Guild.Users.Count(x => x.Roles.Any(y => y.Id == role1.Id));
-                var count2 = Context.Guild.Users.Count(x => x.Roles.Any(y => y.Id == role2.Id));
-                var count3 = Context.Guild.Users.Count(x => x.Roles.Any(y => y.Id == role3.Id));
-                var count4 = Context.Guild.Users.Count(x => x.Roles.Any(y => y.Id == role4.Id));
-                var count = Context.Guild.Users.Count(x => x.Roles.Any(y => y.Id == role1.Id));
-                var builder = new EmbedBuilder()
-                {
+
+                var counts = new int[guild.RankIds.Length];
+                int i = 0;
+                foreach (ulong rankid in guild.RankIds) {
+                    counts[i] = Context.Guild.Users.Count(x => x.Roles.Any(y => y.Id == Context.Guild.GetRole(guild.RankIds[i]).Id));
+                    i++;
+                }
+                var builder = new EmbedBuilder() {
                     Title = "Ranked Users",
                     Color = new Color(0x00AE86),
-                    Description = $"{role4.Mention}: {count4} members\n" +
-                                  $"{role3.Mention}: {count3 - count4} members\n" + 
-                                  $"{role2.Mention}: {count2 - count3} members\n" +
-                                  $"{role1.Mention}: {count1 - count2} members"     
+                    Description = $""  
                 };
+                // $"{role4.Mention}: {count4} members\n" +
+                //$"{role3.Mention}: {count3 - count4} members\n" +
+                // $"{role2.Mention}: {count2 - count3} members\n" +
+                //$"{role1.Mention}: {count1 - count2} members"
+                i = 0;
+                foreach (int rankc in counts) {
+                    var role = Context.Guild.GetRole(guild.RankIds[i]);
+                    builder.Description += $"\n{role.Mention}: "+ ((i == counts.Length - 1) ? rankc : rankc - counts[i+1]).ToString() + " members";
+                    i++;
+                }
                 await ReplyAsync("", embed: builder);
             }
         }

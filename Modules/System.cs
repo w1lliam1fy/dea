@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using DEA.SQLite.Models;
 using DEA.SQLite.Repository;
 using System.Collections.Generic;
+using DEA;
 
 namespace System.Modules
 {
@@ -38,20 +39,21 @@ namespace System.Modules
             {
                 var guildRepo = new GuildRepository(db);
                 var guild = await guildRepo.FetchGuildAsync(Context.Guild.Id);
-                var role1 = Context.Guild.GetRole(guild.Rank1Id);
-                var role2 = Context.Guild.GetRole(guild.Rank2Id);
-                var role3 = Context.Guild.GetRole(guild.Rank3Id);
-                var role4 = Context.Guild.GetRole(guild.Rank4Id);
                 string prefix = guild.Prefix;
-                if (role1 == null || role2 == null || role3 == null || role4 == null)
+                if (!RankHandler.CheckRankExistance(guild, Context.Guild))
                 {
                     throw new Exception($"You do not have 4 different functional roles added in with the" +
                                         $"{prefix}SetRankRoles command, therefore the {prefix}information command will not work!");
                 }
+
+                var role1 = Context.Guild.GetRole(guild.RankIds[0]); // this is allowed only because it's for building a fixed message
+                var role2 = Context.Guild.GetRole(guild.RankIds[1]);
+                var role3 = Context.Guild.GetRole(guild.RankIds[2]);
+                var role4 = Context.Guild.GetRole(guild.RankIds[3]);
                 var builder = new EmbedBuilder()
                 {
                     Color = new Color(0x00AE86),
-                    Description = $@"In order to gain money, you must send a message that is at least {Config.MIN_CHAR_LENGTH} characters in length. There is a 30 second cooldown between each message that will give you cash. However, these rates are not fixed. For every message you send, your chatting multiplier(which increases the amount of money you get per message) is increased by {Config.TEMP_MULTIPLIER_RATE}, however, it will be automatically reset every hour.
+                    Description = $@"In order to gain money, you must send a message that is at least {Config.MIN_CHAR_LENGTH} characters in length. There is a 30 second cooldown between each message that will give you cash. However, these rates are not fixed. For every message you send, your chatting multiplier(which increases the amount of money you get per message) is increased by {Config.TEMP_MULTIPLIER_RATE}. This rate is reset every hour.
 
 To view your steadily increasing chatting multiplier, you may use the `{prefix}rate` command, and the `{prefix}money` command to see your cash grow. This command shows you every single variable taken into consideration for every message you send. If you wish to improve these variables, you may use investments. With the `{prefix}investments` command, you may pay to have *permanent* changes to your message rates. These will stack with the chatting multiplier."};
                 var secondBuilder = new EmbedBuilder()
@@ -59,10 +61,10 @@ To view your steadily increasing chatting multiplier, you may use the `{prefix}r
                     Color = new Color(0x00AE86),
                     Description = $@"Another common way of gaining money is by gambling, there are loads of different gambling commands, which can all be viewed with the `{prefix}help` command. You might be wondering what is the point of all these commands. This is where ranks come in. Depending on how much money you have, you will get a certain rank. These are the current benfits of each rank, and the money required to get them:
 
-**{Config.RANK1}$:** __{role1.Name}__ can use the `{prefix}jump` command. 
-**{Config.RANK2}$:** __{role2.Name}__ can use the `{prefix}steal` command. 
-**{Config.RANK3}$:** __{role3.Name}__ can change the nickname of ANYONE with `{prefix}bully` command. 
-**{Config.RANK4}$:** __{role4.Name}__ can use the `{prefix}50x2` AND can use the `{prefix}robbery` command."
+**{Config.RANKS[0]}$:** __{role1.Name}__ can use the `{prefix}jump` command. 
+**{Config.RANKS[1]}$:** __{role2.Name}__ can use the `{prefix}steal` command. 
+**{Config.RANKS[2]}$:** __{role3.Name}__ can change the nickname of ANYONE with `{prefix}bully` command. 
+**{Config.RANKS[3]}$:** __{role4.Name}__ can use the `{prefix}50x2` AND the `{prefix}robbery` command."
                 };
                 var channel = await Context.User.CreateDMChannelAsync();
                 await channel.SendMessageAsync("", embed: builder);
@@ -152,14 +154,6 @@ If you have any other questions, you may join the **Official DEA Discord Server:
                 await channel.SendMessageAsync("", embed: help);
                 await ReplyAsync($"{Context.User.Mention}, you have been DMed with all the command information!");
             }        
-        }
-
-        [Command("Invite")]
-        [Remarks("Invite")]
-        [Summary("Invite DEA to your Discord Server!")]
-        public async Task Invite()
-        {
-            await ReplyAsync($"Add DEA to your Discord Server: <https://discordapp.com/oauth2/authorize?client_id={Context.Guild.CurrentUser.Id}&scope=bot&permissions=477195286>!");
         }
 
         [Command("Stats")]

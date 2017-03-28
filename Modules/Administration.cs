@@ -62,7 +62,7 @@ namespace DEA.Modules
         public async Task SetMutedRole(IRole mutedRole)
         {
             if (mutedRole.Position >= Context.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
-                throw new Exception("You may not set a rank role that is higher in hierarchy than DEA's highest role.");
+                throw new Exception("DEA must be higher in the heigharhy than <@&" + mutedRole.Id + ">.");
             using (var db = new DbContext())
             {
                 var guildRepo = new GuildRepository(db);
@@ -82,33 +82,20 @@ namespace DEA.Modules
             {
                 var guildRepo = new GuildRepository(db);
                 var guild = await guildRepo.FetchGuildAsync(Context.Guild.Id);
-                if ((roleNumber != 1 && roleNumber != 2 && roleNumber != 3 && roleNumber != 4) || rankRole == null)
-                    throw new Exception($"You are incorrectly using the `{guild.Prefix}SetRankRoles` command.\n" +
+                if (!(roleNumber >= 1 && roleNumber <= Config.RANKS.Length) || rankRole == null) // 
+                    throw new Exception($"You must provide a role number between 1 and {Config.RANKS.Length}\n" +
                                          $"Follow up this command with the rank role number and the role to set it to.\n" +
                                          $"Example: `{guild.Prefix}SetRankRoles 1 @FirstRole.`");
                 if (rankRole.Position >= Context.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
-                    throw new Exception("You may not set a rank role that is higher in hierarchy than DEA's highest role.");
-                if (rankRole.Id == guild.Rank1Id || rankRole.Id == guild.Rank2Id || rankRole.Id == guild.Rank3Id || rankRole.Id == guild.Rank4Id)
+                    throw new Exception("DEA must be higher in the heigharhy than <@&"+rankRole.Id+">.");
+                if (!RankHandler.CheckRankOverlap(guild, rankRole.Id))
                     throw new Exception("You may not set multiple ranks to the same role!");
-                switch (roleNumber)
-                {
-                    case 1:
-                        await guildRepo.ModifyAsync(x => { x.Rank1Id = rankRole.Id; return Task.CompletedTask; }, Context.Guild.Id);
-                        await ReplyAsync($"You have successfully set the first rank role to {rankRole.Mention}!");
-                        break;
-                    case 2:
-                        await guildRepo.ModifyAsync(x => { x.Rank2Id = rankRole.Id; return Task.CompletedTask; }, Context.Guild.Id);
-                        await ReplyAsync($"You have successfully set the second rank role to {rankRole.Mention}!");
-                        break;
-                    case 3:
-                        await guildRepo.ModifyAsync(x => { x.Rank3Id = rankRole.Id; return Task.CompletedTask; }, Context.Guild.Id);
-                        await ReplyAsync($"You have successfully set the third rank role to {rankRole.Mention}!");
-                        break;
-                    case 4:
-                        await guildRepo.ModifyAsync(x => { x.Rank4Id = rankRole.Id; return Task.CompletedTask; }, Context.Guild.Id);
-                        await ReplyAsync($"You have successfully set the fourth rank role to {rankRole.Mention}!");
-                        break;
-                }
+                
+                var rankids = guild.RankIds;
+                rankids[roleNumber - 1] = rankRole.Id;
+
+                await guild.SetRankIds(guildRepo, Context.Guild.Id, rankids);
+                await ReplyAsync($"You have successfully set the first rank role to {rankRole.Mention}!");
             }
         }
 

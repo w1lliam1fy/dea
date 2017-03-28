@@ -5,6 +5,7 @@ using DEA.Events;
 using System.Threading.Tasks;
 using Discord.Commands;
 using DEA.SQLite.Models;
+using DEA.Resources;
 
 namespace DEA
 {

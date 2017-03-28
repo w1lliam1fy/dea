@@ -9,7 +9,7 @@ namespace Discord.Commands
     {
         public override async Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IDependencyMap map)
         {
-            if (!Config.OWNER_IDS.Any(x => x == context.User.Id))
+            if ((!Config.OWNER_IDS.Any(x => x == context.User.Id)))
                 return PreconditionResult.FromError($"Only one of the Bot Owners of DEA may use this command.");
             return PreconditionResult.FromSuccess();
         }
