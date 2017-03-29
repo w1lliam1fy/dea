@@ -1,6 +1,6 @@
 ﻿using DEA.SQLite.Models;
+using Discord.Commands;
 using LiteDB;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 
@@ -8,6 +8,13 @@ namespace DEA.SQLite.Repository
 {
     public static class GangRepository
     {
+
+        public static void Modify(Action<Gang> function, SocketCommandContext context)
+        {
+            var gang = FetchGang(context.User.Id, context.Guild.Id);
+            function(gang);
+            UpdateGang(gang);
+        }
 
         public static void Modify(Action<Gang> function, ulong userId, ulong guildId)
         {

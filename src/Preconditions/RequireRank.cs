@@ -9,9 +9,9 @@ namespace Discord.Commands
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
     public class RequireRankAttribute : PreconditionAttribute
     {
-        int rank;
-        public RequireRankAttribute(int rank) {
-            this.rank = rank;
+        Ranks ranks;
+        public RequireRankAttribute(Ranks ranks) {
+            this.ranks = ranks;
         }
 
         public override async Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IDependencyMap map)

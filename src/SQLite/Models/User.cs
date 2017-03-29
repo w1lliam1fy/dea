@@ -8,6 +8,10 @@ namespace DEA.SQLite.Models
         [BsonId]
         public ulong Id { get; set; }
 
+        public ulong UserId { get; set; }
+
+        public ulong GuildId { get; set; }
+
         public double Cash { get; set; } = 0.0;
 
         public Cooldowns Cooldowns { get; set; }
