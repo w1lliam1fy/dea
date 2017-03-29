@@ -16,8 +16,8 @@ namespace Discord.Commands
             DateTime lastUse;
             using (var db = new DbContext())
             {
-                var userRepo = new UserRepository(db);
-                var user = await userRepo.FetchUserAsync(context.User.Id);
+                
+                var user = await UserRepository.FetchUserAsync(context.User.Id);
                 switch (command.Name)
                 {
                     case "Rob":

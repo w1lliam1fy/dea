@@ -13,11 +13,11 @@ namespace Discord.Commands
         {
             using (var db = new DbContext())
             {
-                var guildRepo = new GuildRepository(db);
-                var userRepo = new UserRepository(db);
+                
+                
                 var user = await context.Guild.GetUserAsync(context.User.Id) as IGuildUser;
                 if (user.GuildPermissions.Administrator) return PreconditionResult.FromSuccess();
-                var guild = await guildRepo.FetchGuildAsync(context.Guild.Id);
+                var guild = await GuildRepository.FetchGuildAsync(context.Guild.Id);
                 if (context.Guild.GetRole(guild.ModRoleId) == null)
                     return PreconditionResult.FromError($"This command may not be used if the moderator role does not exist.\n" +
                                                         $"Use the `{guild.Prefix}SetModRole` command to change that.");

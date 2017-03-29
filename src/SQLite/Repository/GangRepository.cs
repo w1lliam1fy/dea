@@ -1,103 +1,122 @@
 ﻿using DEA.SQLite.Models;
+using LiteDB;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Threading.Tasks;
+using System.Linq;
 
 namespace DEA.SQLite.Repository
 {
-    public class GangRepository : BaseRepository<Gang>
+    public static class GangRepository
     {
 
-        private readonly Microsoft.EntityFrameworkCore.DbContext _dbContext;
-
-        public GangRepository(Microsoft.EntityFrameworkCore.DbContext dbContext) : base(dbContext)
+        public static void Modify(Action<Gang> function, ulong userId, ulong guildId)
         {
-            _dbContext = dbContext;
+            var gang = FetchGang(userId, guildId);
+            function(gang);
+            UpdateGang(gang);
         }
 
-        public async Task ModifyAsync(Func<Gang, Task> function, ulong userId, ulong guildId)
+        public static Gang FetchGang(ulong userId, ulong guildId)
         {
-            var gang = await FetchGangAsync(userId, guildId);
-            await function(gang);
-            await UpdateAsync(gang);
-        }
-
-        public async Task<Gang> FetchGangAsync(ulong userId, ulong guildId)
-        {
-            var gang = await SearchFor(c => (c.LeaderId == userId || c.Member2Id == userId || c.Member3Id == userId || 
-                                       c.Member4Id == userId || c.Member5Id == userId) && c.GuildId == guildId).FirstOrDefaultAsync();
-            if (gang == null) throw new Exception("This gang does not exist!");
-            return gang;
-        }
-
-        public async Task<Gang> FetchGangAsync(string gangName, ulong guildId)
-        {
-            var gang = await SearchFor(c => c.Name.ToLower() == gangName.ToLower() && c.GuildId == guildId).FirstOrDefaultAsync();
-            if (gang == null) throw new Exception("This gang does not exist!");
-            return gang;
-        }
-
-        public async Task<Gang> CreateGangAsync(ulong leaderId, ulong guildId, string name)
-        {
-            if (await GetAll().AnyAsync(x => x.Name.ToLower() == name.ToLower() && x.GuildId == guildId)) throw new Exception($"There is already a gang by the name {name}.");
-            if (name.Length > Config.GANG_NAME_CHAR_LIMIT) throw new Exception($"The length of a gang name may not be longer than {Config.GANG_NAME_CHAR_LIMIT} characters.");
-            var CreatedGang = new Gang()
+            using (var db = new LiteDatabase(Config.DB_CONNECTION_STRING))
             {
-                GuildId = guildId,
-                LeaderId = leaderId,
-                Name = name
-            };
-            await InsertAsync(CreatedGang);
-            return CreatedGang;
+                var gangs = db.GetCollection<Gang>("Gangs");
+                var gang = gangs.FindOne(x => x.GuildId == guildId && (x.LeaderId == userId || x.Members.Any(y => y == userId)));
+                if (gang == null) throw new Exception("This user is not in a gang..");
+                return gang;
+            }
         }
 
-        public async Task<Gang> DestroyGangAsync(ulong userId, ulong guildId)
+        public static Gang FetchGang(string name, ulong guildId)
         {
-            var gang = await FetchGangAsync(userId, guildId);
-            await DeleteAsync(gang);
-            return gang;
+            using (var db = new LiteDatabase(Config.DB_CONNECTION_STRING))
+            {
+                var gangs = db.GetCollection<Gang>("Gangs");
+                var gang = gangs.FindOne(x => x.GuildId == guildId && x.Name.ToLower() == name.ToLower());
+                if (gang == null) throw new Exception("This user is not in a gang.");
+                return gang;
+            }
         }
 
-        public async Task<bool> InGangAsync(ulong userId, ulong guildId)
+        public static Gang CreateGang(ulong leaderId, ulong guildId, string name)
         {
-            return await SearchFor(c => (c.LeaderId == userId || c.Member2Id == userId || c.Member3Id == userId
-                                   || c.Member4Id == userId || c.Member5Id == userId) && c.GuildId == guildId).AnyAsync();
+            using (var db = new LiteDatabase(Config.DB_CONNECTION_STRING))
+            {
+                var gangs = db.GetCollection<Gang>("Gangs");
+                if (gangs.FindOne(x => x.Name.ToLower() == name.ToLower() && x.GuildId == guildId) == null)
+                    throw new Exception($"A gang already exists by the name of {name}");
+                var gang = new Gang()
+                {
+                    LeaderId = leaderId,
+                    GuildId = guildId,
+                    Name = name
+                };
+                gangs.Insert(gang);
+                return gang;
+            }
         }
 
-        public async Task<bool> IsMemberOf(ulong memberId, ulong guildId, ulong userId)
+        public static Gang DestroyGang(ulong userId, ulong guildId)
         {
-            var gang = await FetchGangAsync(memberId, guildId);
-            if (gang.LeaderId == userId || gang.Member2Id == userId || gang.Member3Id == userId || gang.Member4Id == userId ||
-                gang.Member5Id == userId) return true;
+            using (var db = new LiteDatabase(Config.DB_CONNECTION_STRING))
+            {
+                var gangs = db.GetCollection<Gang>("Gangs");
+                var gang = FetchGang(userId, guildId);
+                gangs.Delete(x => x.GuildId == guildId && (x.LeaderId == userId || x.Members.Any(y => y == userId)));
+                return gang;
+            }
+        }
+
+        public static bool InGang(ulong userId, ulong guildId)
+        {
+            using (var db = new LiteDatabase(Config.DB_CONNECTION_STRING))
+            {
+                var gangs = db.GetCollection<Gang>("Gangs");
+                var gang = gangs.FindOne(x => x.GuildId == guildId && (x.LeaderId == userId || x.Members.Any(y => y == userId)));
+                if (gang == null)
+                    return false;
+                else
+                    return true;
+            }
+        }
+
+        public static bool IsMemberOf(ulong memberId, ulong guildId, ulong userId)
+        {
+            var gang = FetchGang(memberId, guildId);
+            if (gang.LeaderId == userId || gang.Members.Any(x => x == userId)) return true;
             return false;
         }
 
-        public async Task<bool> IsFull(ulong userId, ulong guildId)
+        public static bool IsFull(ulong userId, ulong guildId)
         {
-            var gang = await FetchGangAsync(userId, guildId);
-            if (gang.Member2Id != 0 && gang.Member3Id != 0 && gang.Member4Id != 0 && gang.Member5Id != 0) return true;
-            return false;
+            var gang = FetchGang(userId, guildId);
+            if (gang.Members.Count == 4)
+                return true;
+            else
+                return false;
         }
 
-        public async Task RemoveMemberAsync(ulong memberId, ulong guildId)
+        public static void RemoveMember(ulong memberId, ulong guildId)
         {
-            var gang = await FetchGangAsync(memberId, guildId);
-            if (gang.LeaderId == memberId) gang.LeaderId = 0;
-            else if (gang.Member2Id == memberId) gang.Member2Id = 0;
-            else if (gang.Member3Id == memberId) gang.Member3Id = 0;
-            else if (gang.Member4Id == memberId) gang.Member4Id = 0;
-            else if (gang.Member5Id == memberId) gang.Member5Id = 0;
-            await UpdateAsync(gang);
+            var gang = FetchGang(memberId, guildId);
+            gang.Members.Remove(memberId);
+            UpdateGang(gang);
         }
 
-        public async Task AddMemberAsync(ulong userId, ulong guildId, ulong newMemberId)
+        public static void AddMember(ulong userId, ulong guildId, ulong newMemberId)
         {
-            var gang = await FetchGangAsync(userId, guildId);
-            if (gang.Member2Id == 0) gang.Member2Id = newMemberId;
-            else if (gang.Member3Id == 0) gang.Member3Id = newMemberId;
-            else if (gang.Member4Id == 0) gang.Member4Id = newMemberId;
-            else if (gang.Member5Id == 0) gang.Member5Id = newMemberId;
-            await UpdateAsync(gang);
+            var gang = FetchGang(userId, guildId);
+            gang.Members.Add(newMemberId);
+            UpdateGang(gang);
+        }
+
+        private static void UpdateGang(Gang gang)
+        {
+            using (var db = new LiteDatabase(Config.DB_CONNECTION_STRING))
+            {
+                var gangs = db.GetCollection<Gang>("Gangs");
+                gangs.Update(gang);
+            }
         }
 
     }

@@ -12,8 +12,8 @@ namespace Discord.Commands
         {
             using (var db = new DbContext())
             {
-                var gangRepo = new GangRepository(db);
-                if (await gangRepo.InGangAsync(context.User.Id, context.Guild.Id)) return PreconditionResult.FromError("You may not use this command while being a member of a gang.");
+                
+                if (await GangRepository.InGangAsync(context.User.Id, context.Guild.Id)) return PreconditionResult.FromError("You may not use this command while being a member of a gang.");
             }
             return PreconditionResult.FromSuccess();
         }

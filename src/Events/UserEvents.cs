@@ -27,15 +27,15 @@ namespace DEA.Events
 
             using (var db = new DbContext())
             {
-                var guildRepo = new GuildRepository(db);
-                var muteRepo = new MuteRepository(db);
+                
+                
                 var user = u as IGuildUser;
-                var mutedRole = user.Guild.GetRole((await guildRepo.FetchGuildAsync(user.Guild.Id)).MutedRoleId);
+                var mutedRole = user.Guild.GetRole((await GuildRepository.FetchGuildAsync(user.Guild.Id)).MutedRoleId);
                 if (mutedRole != null && u.Guild.CurrentUser.GuildPermissions.ManageRoles &&
                     mutedRole.Position < u.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
                 {
                     await RankHandler.Handle(u.Guild, u.Id);
-                    if (await muteRepo.IsMutedAsync(user.Id, user.Guild.Id) && mutedRole != null && user != null) await user.AddRoleAsync(mutedRole);
+                    if (await MuteRepository.IsMutedAsync(user.Id, user.Guild.Id) && mutedRole != null && user != null) await user.AddRoleAsync(mutedRole);
                 }
 
                 if (Config.BLACKLISTED_IDS.Any(x => x == u.Id))

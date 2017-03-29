@@ -1,29 +1,21 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using LiteDB;
+using System.Collections.Generic;
 
 namespace DEA.SQLite.Models
 {
     public class Gang
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [BsonId]
         public int Id { get; set; }
 
-        public ulong LeaderId { get; set; } = 0;
+        public string Name { get; set; }
 
-        public ulong GuildId { get; set; } = 0;
+        public ulong LeaderId { get; set; }
 
-        public string Name { get; set; } = null;
+        public ulong GuildId { get; set; }
 
-        public ulong Member2Id { get; set; } = 0;
+        public List<ulong> Members { get; set; }
 
-        public ulong Member3Id { get; set; } = 0;
-
-        public ulong Member4Id { get; set; } = 0;
-
-        public ulong Member5Id { get; set; } = 0;
-
-        public float Wealth { get; set; } = 0.0f;
-
+        public double Wealth { get; set; } = 0.0;
     }
 }

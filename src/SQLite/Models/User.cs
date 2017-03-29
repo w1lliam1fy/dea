@@ -1,33 +1,21 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using DEA.SQLite.Models.Submodels;
+using LiteDB;
 
 namespace DEA.SQLite.Models
 {
     public class User
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [BsonId]
         public ulong Id { get; set; }
 
-        public float Cash { get; set; } = 0.0f;
+        public double Cash { get; set; } = 0.0;
 
-        public string LastMessage { get; set; } = "1 / 1 / 2017 0:00:00 AM";
+        public Cooldowns Cooldowns { get; set; }
 
-        public string LastWhore { get; set; } = "1 / 1 / 2017 0:00:00 AM";
+        public double TemporaryMultiplier { get; set; } = 1.0;
 
-        public string LastJump { get; set; } = "1 / 1 / 2017 0:00:00 AM";
+        public double InvestmentMultiplier { get; set; } = 1.0;
 
-        public string LastSteal { get; set; } = "1 / 1 / 2017 0:00:00 AM";
-
-        public string LastRob { get; set; } = "1 / 1 / 2017 0:00:00 AM";
-
-        public string LastWithdraw { get; set; } = "1 / 1 / 2017 0:00:00 AM";
-
-        public float TemporaryMultiplier { get; set; } = 1.0f;
-
-        public float InvestmentMultiplier { get; set; } = 1.0f;
-
-        public int MessageCooldown { get; set; } = 30000;
-
+        public double MessageCooldown { get; set; } = 30000.0;
     }
 }

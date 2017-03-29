@@ -35,8 +35,8 @@ namespace DEA.Services
         {
             using (var db = new DbContext())
             {
-                var userRepo = new UserRepository(db);
-                User[] users = userRepo.GetAll().ToArray();
+                
+                User[] users = UserRepository.GetAll().ToArray();
                 foreach (User user in users)
                 {
                     if (user.TemporaryMultiplier != 1)
@@ -61,8 +61,8 @@ namespace DEA.Services
         {
             using (var db = new DbContext())
             {
-                var gangRepo = new GangRepository(db);
-                Gang[] gangs = gangRepo.GetAll().ToArray();
+                
+                Gang[] gangs = GangRepository.GetAll().ToArray();
                 foreach (var gang in gangs)
                 {
                     var InterestRate = 0.025f + ((gang.Wealth / 100) * .000075f);
@@ -85,9 +85,9 @@ namespace DEA.Services
         {
             using (var db = new DbContext())
             {
-                var guildRepo = new GuildRepository(db);
-                var muteRepo = new MuteRepository(db);
-                Mute[] mutes = muteRepo.GetAll().ToArray();
+                
+                
+                Mute[] mutes = MuteRepository.GetAll().ToArray();
                 foreach (Mute muted in mutes)
                 {
                     if (DateTime.Now.Subtract(DateTime.Parse(muted.MutedAt)).TotalMilliseconds > muted.MuteLength)
@@ -95,7 +95,7 @@ namespace DEA.Services
                         var guild = _client.GetGuild(muted.GuildId);
                         if (guild != null && guild.GetUser(muted.UserId) != null)
                         {
-                            var guildData = await guildRepo.FetchGuildAsync(guild.Id);
+                            var guildData = await GuildRepository.FetchGuildAsync(guild.Id);
                             var mutedRole = guild.GetRole(guildData.MutedRoleId);
                             if (mutedRole != null && guild.GetUser(muted.UserId).Roles.Any(x => x.Id == mutedRole.Id))
                             {
@@ -116,12 +116,12 @@ namespace DEA.Services
                                         Description = $"**Action:** Automatic Unmute\n**User:** {guild.GetUser(muted.UserId)} ({guild.GetUser(muted.UserId).Id})",
                                         Footer = footer
                                     }.WithCurrentTimestamp();
-                                    await guildRepo.ModifyAsync(x => { x.CaseNumber++; return Task.CompletedTask; }, guild.Id);
+                                    await GuildRepository.ModifyAsync(x => { x.CaseNumber++; return Task.CompletedTask; }, guild.Id);
                                     await channel.SendMessageAsync("", embed: builder);
                                 }
                             }
                         }
-                        await muteRepo.RemoveMuteAsync(muted.UserId, muted.GuildId);
+                        await MuteRepository.RemoveMuteAsync(muted.UserId, muted.GuildId);
                     }
                 }
             }
@@ -156,8 +156,8 @@ namespace DEA.Services
 
             using (var db = new DbContext())
             {
-                var guildRepo = new GuildRepository(db);
-                foreach (var dbGuild in guildRepo.GetAll())
+                
+                foreach (var dbGuild in GuildRepository.GetAll())
                 {
                     if (_client.GetGuild(dbGuild.Id) != null && Config.BLACKLISTED_IDS.Any(x => x == _client.GetGuild(dbGuild.Id).OwnerId))
                     {

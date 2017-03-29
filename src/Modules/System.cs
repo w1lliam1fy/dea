@@ -37,8 +37,8 @@ namespace System.Modules
         {
             using (var db = new DbContext())
             {
-                var guildRepo = new GuildRepository(db);
-                var guild = await guildRepo.FetchGuildAsync(Context.Guild.Id);
+                
+                var guild = await GuildRepository.FetchGuildAsync(Context.Guild.Id);
                 string prefix = guild.Prefix;
                 if (!RankHandler.CheckRankExistance(guild, Context.Guild))
                 {
@@ -83,8 +83,8 @@ To view your steadily increasing chatting multiplier, you may use the `{prefix}r
             string prefix;
             using (var db = new DbContext())
             {
-                var guildRepo = new GuildRepository(db);
-                prefix = (await guildRepo.FetchGuildAsync(Context.Guild.Id)).Prefix;
+                
+                prefix = (await GuildRepository.FetchGuildAsync(Context.Guild.Id)).Prefix;
             }
             
             List<string> messages = new List<string>();

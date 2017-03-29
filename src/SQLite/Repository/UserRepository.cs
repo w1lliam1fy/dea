@@ -1,71 +1,69 @@
 ﻿using DEA.SQLite.Models;
 using Discord.Commands;
-using Discord;
-using Microsoft.EntityFrameworkCore;
+using LiteDB;
 using System;
-using System.Threading.Tasks;
 
 namespace DEA.SQLite.Repository
 {
-    public class UserRepository : BaseRepository<User>
+    public static class UserRepository
     {
-        private readonly Microsoft.EntityFrameworkCore.DbContext _dbContext;
 
-        public UserRepository(Microsoft.EntityFrameworkCore.DbContext dbContext) : base(dbContext)
+        public static User FetchUser(ulong userId)
         {
-            _dbContext = dbContext;
-        }
-
-        public async Task ModifyAsync(Func<User, Task> function, ulong userId)
-        {
-            var user = await FetchUser(userId);
-            await function(user);
-            await UpdateAsync(user);
-        }
-
-        public async Task<User> FetchUserAsync(ulong userId)
-        {
-            return await FetchUser(userId);
-        }
-
-        public async Task<float> GetCashAsync(ulong userId)
-        {
-            var user = await FetchUser(userId);
-            return user.Cash;
-        }
-
-        public async Task EditCashAsync(SocketCommandContext context, float change)
-        {
-            var user = await FetchUser(context.User.Id);
-            user.Cash = (float)Math.Round(user.Cash + change, 2);
-            await UpdateAsync(user);
-            if ((context.Guild.CurrentUser as IGuildUser).GuildPermissions.ManageRoles)
-                await RankHandler.Handle(context.Guild, context.User.Id);
-        }
-
-        public async Task EditOtherCashAsync(SocketCommandContext context, ulong userId, float change)
-        {
-            var user = await FetchUser(userId);
-            user.Cash = (float)Math.Round(user.Cash + change, 2);
-            await UpdateAsync(user);
-            if ((context.Guild.CurrentUser as IGuildUser).GuildPermissions.ManageRoles)
-                await RankHandler.Handle(context.Guild, userId);
-        }
-
-        private async Task<User> FetchUser(ulong userId)
-        {
-            User ExistingUser = await SearchFor(c => c.Id == userId).FirstOrDefaultAsync();
-            if (ExistingUser == null)
+            using (var db = new LiteDatabase(Config.DB_CONNECTION_STRING))
             {
-                var CreatedUser = new User()
+                var users = db.GetCollection<User>("Users");
+                var ExistingUser = users.FindById(userId);
+                if (ExistingUser == null)
                 {
-                    Id = userId
-                };
-                await InsertAsync(CreatedUser);
-                return CreatedUser;
+                    var CreatedUser = new User()
+                    {
+                        Id = userId
+                    };
+                    users.Insert(CreatedUser);
+                    return CreatedUser;
+                }
+                else
+                    return ExistingUser;
             }
-            return ExistingUser;
         }
+
+        public static void Modify(Action<User> function, ulong userId)
+        {
+            var user = FetchUser(userId);
+            function(user);
+            UpdateUser(user);
+        }
+
+        public static async void EditCashAsync(SocketCommandContext context, double change)
+        {
+            using (var db = new LiteDatabase(Config.DB_CONNECTION_STRING))
+            {
+                var user = FetchUser(context.User.Id);
+                Modify(x => x.Cash += change, context.User.Id);
+            }
+            await RankHandler.Handle(context.Guild, context.User.Id);
+        }
+
+        public static async void EditCashAsync(SocketCommandContext context, ulong userId, double change)
+        {
+            using (var db = new LiteDatabase(Config.DB_CONNECTION_STRING))
+            {
+                var user = FetchUser(userId);
+                Modify(x => x.Cash += change, userId);
+            }
+            await RankHandler.Handle(context.Guild, userId);
+        }
+
+        private static void UpdateUser(User user)
+        {
+            using (var db = new LiteDatabase(Config.DB_CONNECTION_STRING))
+            {
+                var users = db.GetCollection<User>("Users");
+                users.Update(user);
+            }
+        }
+
     }
 }
 

@@ -19,9 +19,9 @@ namespace DEA.Modules
             user = user ?? Context.User as IGuildUser;
             using (var db = new DbContext())
             {
-                var userRepo = new UserRepository(db);
+                
                 var time = DateTime.Today.AddDays(-5).ToString();
-                await userRepo.ModifyAsync(x => {
+                await UserRepository.ModifyAsync(x => {
                     x.LastWhore = time;
                     x.LastJump = time;
                     x.LastSteal = time;
@@ -38,10 +38,10 @@ namespace DEA.Modules
         [RequireBotOwner]
         [Summary("Inject cash into a user's balance.")]
         [Remarks("Give <@User> <Amount of cash>")]
-        public async Task Give(IGuildUser userMentioned, float money) {
+        public async Task Give(IGuildUser userMentioned, double money) {
             using (var db = new DbContext()) {
-                var userRepo = new UserRepository(db);
-                await userRepo.EditOtherCashAsync(Context, userMentioned.Id, +money);
+                
+                await UserRepository.EditOtherCashAsync(Context, userMentioned.Id, +money);
                 await ReplyAsync($"Successfully given {money.ToString("C2")} to <@{userMentioned.Id}>.");
             }
         }

@@ -13,8 +13,8 @@ namespace Discord.Commands
         {
             using (var db = new DbContext())
             {
-                var guildRepo = new GuildRepository(db);
-                var guild = await guildRepo.FetchGuildAsync(context.Guild.Id);
+                
+                var guild = await GuildRepository.FetchGuildAsync(context.Guild.Id);
                 if (!guild.NSFW) return PreconditionResult.FromError("This command may not be used while NSFW is disabled. " + 
                                                                      $"An administrator may enable with the `{guild.Prefix}ChangeNSFWSettings` command.");
                 var nsfwChannel = await context.Guild.GetChannelAsync(guild.NSFWChannelId);

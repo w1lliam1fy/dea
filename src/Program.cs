@@ -4,7 +4,9 @@ using DEA.Services;
 using DEA.Events;
 using System.Threading.Tasks;
 using Discord.Commands;
-using DEA.SQLite.Models;
+using System.IO;
+using Newtonsoft.Json;
+using DEA.Resources;
 
 namespace DEA
 {
@@ -20,9 +22,10 @@ namespace DEA
             PrettyConsole.NewLine("===   DEA   ===");
             PrettyConsole.NewLine();
 
-            using (var db = new DbContext())
+            using (StreamReader file = File.OpenText(@"..\..\Credentials.json"))
             {
-                db.Database.EnsureCreated();
+                JsonSerializer serializer = new JsonSerializer();
+                Config.CREDS = (Credentials)serializer.Deserialize(file, typeof(Credentials));
             }
 
             _client = new DiscordSocketClient(new DiscordSocketConfig()
@@ -36,7 +39,7 @@ namespace DEA
                 => Task.Run(()
                 => PrettyConsole.Log(l.Severity, l.Source, l.Exception?.ToString() ?? l.Message));
 
-            await _client.LoginAsync(TokenType.Bot, Token.TOKEN);
+            await _client.LoginAsync(TokenType.Bot, Config.CREDS.Token);
             
             await _client.StartAsync();
 

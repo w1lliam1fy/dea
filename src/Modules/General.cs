@@ -21,12 +21,12 @@ namespace DEA.Modules
         {
             using (var db = new DbContext())
             {
-                var userRepo = new UserRepository(db);
-                var guildRepo = new GuildRepository(db);
-                var gangRepo = new GangRepository(db);
-                var guild = await guildRepo.FetchGuildAsync(Context.Guild.Id);
-                var user = await userRepo.FetchUserAsync(Context.User.Id);
-                float cash = await userRepo.GetCashAsync(Context.User.Id);
+                
+                
+                
+                var guild = await GuildRepository.FetchGuildAsync(Context.Guild.Id);
+                var user = await UserRepository.FetchUserAsync(Context.User.Id);
+                double cash = await UserRepository.GetCashAsync(Context.User.Id);
                 switch (investString)
                 {
                     case "line":
@@ -40,8 +40,8 @@ namespace DEA.Modules
                             await ReplyAsync($"{Context.User.Mention}, you have already purchased this investment.");
                             break;
                         }
-                        await userRepo.EditCashAsync(Context, -Config.LINE_COST);
-                        await userRepo.ModifyAsync(x => { x.MessageCooldown = Config.LINE_COOLDOWN; return Task.CompletedTask; }, Context.User.Id);
+                        await UserRepository.EditCashAsync(Context, -Config.LINE_COST);
+                        await UserRepository.ModifyAsync(x => { x.MessageCooldown = Config.LINE_COOLDOWN; return Task.CompletedTask; }, Context.User.Id);
                         await ReplyAsync($"{Context.User.Mention}, don't forget to wipe your nose when you are done with that line.");
                         break;
                     case "pound":
@@ -56,8 +56,8 @@ namespace DEA.Modules
                             await ReplyAsync($"{Context.User.Mention}, you already purchased this investment.");
                             break;
                         }
-                        await userRepo.EditCashAsync(Context, -Config.POUND_COST);
-                        await userRepo.ModifyAsync(x => { x.InvestmentMultiplier = Config.POUND_MULTIPLIER; return Task.CompletedTask; }, Context.User.Id);
+                        await UserRepository.EditCashAsync(Context, -Config.POUND_COST);
+                        await UserRepository.ModifyAsync(x => { x.InvestmentMultiplier = Config.POUND_MULTIPLIER; return Task.CompletedTask; }, Context.User.Id);
                         await ReplyAsync($"{Context.User.Mention}, ***DOUBLE CASH SMACK DAB CENTER NIGGA!***");
                         break;
                     case "kg":
@@ -78,8 +78,8 @@ namespace DEA.Modules
                             await ReplyAsync($"{Context.User.Mention}, you already purchased this investment.");
                             break;
                         }
-                        await userRepo.EditCashAsync(Context, -Config.KILO_COST);
-                        await userRepo.ModifyAsync(x => { x.InvestmentMultiplier = Config.KILO_MULTIPLIER; return Task.CompletedTask; }, Context.User.Id);
+                        await UserRepository.EditCashAsync(Context, -Config.KILO_COST);
+                        await UserRepository.ModifyAsync(x => { x.InvestmentMultiplier = Config.KILO_MULTIPLIER; return Task.CompletedTask; }, Context.User.Id);
                         await ReplyAsync($"{Context.User.Mention}, only the black jews would actually enjoy 4$/msg.");
                         break;
                     default:
@@ -115,9 +115,9 @@ namespace DEA.Modules
         {
             using (var db = new DbContext())
             {
-                var guildRepo = new GuildRepository(db);
-                var userRepo = new UserRepository(db);
-                var users = userRepo.GetAll().OrderByDescending(x => x.Cash);
+                
+                
+                var users = UserRepository.GetAll().OrderByDescending(x => x.Cash);
                 string message = "```asciidoc\n= The Richest Traffickers =\n";
                 int position = 1;
                 int longest = 0;
@@ -137,12 +137,12 @@ namespace DEA.Modules
                 {
                     if (Context.Guild.GetUser(user.Id) == null) continue;
                     message += $"{position}. {Context.Guild.GetUser(user.Id)}".PadRight(longest + 2) +
-                               $" :: {(await userRepo.GetCashAsync(user.Id)).ToString("C2")}\n";
+                               $" :: {(await UserRepository.GetCashAsync(user.Id)).ToString("C2")}\n";
                     if (position >= Config.LEADERBOARD_CAP) break;
                     position++;
                 }
 
-                if ((await guildRepo.FetchGuildAsync(Context.Guild.Id)).DM)
+                if ((await GuildRepository.FetchGuildAsync(Context.Guild.Id)).DM)
                 {
                     var channel = await Context.User.CreateDMChannelAsync();
                     await channel.SendMessageAsync($"{message}```");
@@ -161,9 +161,9 @@ namespace DEA.Modules
         {
             using (var db = new DbContext())
             {
-                var guildRepo = new GuildRepository(db);
-                var userRepo = new UserRepository(db);
-                var users = userRepo.GetAll().OrderByDescending(x => x.TemporaryMultiplier);
+                
+                
+                var users = UserRepository.GetAll().OrderByDescending(x => x.TemporaryMultiplier);
                 string message = "```asciidoc\n= The Best Chatters =\n";
                 int position = 1;
                 int longest = 0;
@@ -189,7 +189,7 @@ namespace DEA.Modules
                     position++;
                 }
 
-                if ((await guildRepo.FetchGuildAsync(Context.Guild.Id)).DM)
+                if ((await GuildRepository.FetchGuildAsync(Context.Guild.Id)).DM)
                 {
                     var channel = await Context.User.CreateDMChannelAsync();
                     await channel.SendMessageAsync($"{message}```");
@@ -203,20 +203,20 @@ namespace DEA.Modules
         [Alias("Sauce")]
         [Summary("Sauce some cash to one of your mates.")]
         [Remarks("Donate <@User> <Amount of cash>")]
-        public async Task Donate(IGuildUser userMentioned, float money)
+        public async Task Donate(IGuildUser userMentioned, double money)
         {
             using (var db = new DbContext())
             {
                 if (userMentioned.Id == Context.User.Id) throw new Exception("Hey kids! Look at that retard, he is trying to give money to himself!");
-                var userRepo = new UserRepository(db);
+                
                 if (money < Config.DONATE_MIN) throw new Exception($"Lowest donation is {Config.DONATE_MIN}$.");
-                if (await userRepo.GetCashAsync(Context.User.Id) < money) throw new Exception($"You do not have enough money. Balance: {(await userRepo.GetCashAsync(Context.User.Id)).ToString("C2")}.");
-                if (money < Math.Round(await userRepo.GetCashAsync(Context.User.Id) * Config.MIN_PERCENTAGE, 2)) throw new Exception($"The lowest donation is {Config.MIN_PERCENTAGE * 100}% of your total cash, that is ${Math.Round(await userRepo.GetCashAsync(Context.User.Id) * Config.MIN_PERCENTAGE, 2)}.");
-                await userRepo.EditCashAsync(Context, -money);
-                float deaMoney = money * Config.MIN_PERCENTAGE;
+                if (await UserRepository.GetCashAsync(Context.User.Id) < money) throw new Exception($"You do not have enough money. Balance: {(await UserRepository.GetCashAsync(Context.User.Id)).ToString("C2")}.");
+                if (money < Math.Round(await UserRepository.GetCashAsync(Context.User.Id) * Config.MIN_PERCENTAGE, 2)) throw new Exception($"The lowest donation is {Config.MIN_PERCENTAGE * 100}% of your total cash, that is ${Math.Round(await UserRepository.GetCashAsync(Context.User.Id) * Config.MIN_PERCENTAGE, 2)}.");
+                await UserRepository.EditCashAsync(Context, -money);
+                double deaMoney = money * Config.MIN_PERCENTAGE;
                 money -= deaMoney;
-                await userRepo.EditOtherCashAsync(Context, userMentioned.Id, +money);
-                await userRepo.EditOtherCashAsync(Context, Context.Guild.CurrentUser.Id, +deaMoney);
+                await UserRepository.EditOtherCashAsync(Context, userMentioned.Id, +money);
+                await UserRepository.EditOtherCashAsync(Context, Context.Guild.CurrentUser.Id, +deaMoney);
                 await ReplyAsync($"Successfully donated {money.ToString("C2")} to {userMentioned.Mention}. DEA has taken a {deaMoney.ToString("C2")} cut out of this donation.");
             }
         }
@@ -231,12 +231,12 @@ namespace DEA.Modules
             userToView = userToView ?? Context.User;
             using (var db = new DbContext())
             {
-                var guildRepo = new GuildRepository(db);
-                var userRepo = new UserRepository(db);
-                var cash = await userRepo.GetCashAsync(userToView.Id);
-                List<User> users = userRepo.GetAll().OrderByDescending(x => x.Cash).ToList();
+                
+                
+                var cash = await UserRepository.GetCashAsync(userToView.Id);
+                List<User> users = UserRepository.GetAll().OrderByDescending(x => x.Cash).ToList();
                 IRole rank = null;
-                var guild = await guildRepo.FetchGuildAsync(Context.Guild.Id);
+                var guild = await GuildRepository.FetchGuildAsync(Context.Guild.Id);
                 rank = await RankHandler.GetRank(Context.Guild, userToView.Id, Context.Guild.Id);
                 var builder = new EmbedBuilder()
                 {
@@ -270,9 +270,9 @@ namespace DEA.Modules
             userToView = userToView ?? Context.User as IGuildUser;
             using (var db = new DbContext())
             {
-                var guildRepo = new GuildRepository(db);
-                var userRepo = new UserRepository(db);
-                var user = await userRepo.FetchUserAsync(userToView.Id);
+                
+                
+                var user = await UserRepository.FetchUserAsync(userToView.Id);
                 var builder = new EmbedBuilder()
                 {
                     Color = new Color(0x00AE86),
@@ -283,7 +283,7 @@ namespace DEA.Modules
                     $"{user.InvestmentMultiplier.ToString("N2")}\nMessage cooldown: " +
                     $"{user.MessageCooldown / 1000} seconds"
                 };
-                if ((await guildRepo.FetchGuildAsync(Context.Guild.Id)).DM)
+                if ((await GuildRepository.FetchGuildAsync(Context.Guild.Id)).DM)
                 {
                     var channel = await Context.User.CreateDMChannelAsync();
                     await channel.SendMessageAsync("", embed: builder);
@@ -301,8 +301,8 @@ namespace DEA.Modules
         {
             using (var db = new DbContext())
             {
-                var guildRepo = new GuildRepository(db);
-                var guild = await guildRepo.FetchGuildAsync(Context.Guild.Id);
+                
+                var guild = await GuildRepository.FetchGuildAsync(Context.Guild.Id);
                 string prefix = guild.Prefix;
                 if (!RankHandler.CheckRankExistance(guild, Context.Guild))
                 {

@@ -1,43 +1,46 @@
 ﻿using DEA.SQLite.Models;
-using Microsoft.EntityFrameworkCore;
+using DEA.SQLite.Models.Submodels;
+using LiteDB;
 using System;
-using System.Threading.Tasks;
+using System.Linq;
 
 namespace DEA.SQLite.Repository
 {
-    public class MuteRepository : BaseRepository<Mute>
+    public static class MuteRepository
     {
-        private readonly Microsoft.EntityFrameworkCore.DbContext _dbContext;
 
-        public MuteRepository(Microsoft.EntityFrameworkCore.DbContext dbContext) : base(dbContext)
+        public static void AddMute(ulong userId, ulong guildId, TimeSpan muteLength)
         {
-            _dbContext = dbContext;
-        }
-
-        public async Task AddMuteAsync(ulong UserID, ulong GuildID, TimeSpan muteLength, DateTime time)
-        {
-            await InsertAsync(new Mute()
+            using (var db = new LiteDatabase(Config.DB_CONNECTION_STRING))
             {
-                UserId = UserID,
-                GuildId = GuildID,
-                MuteLength = (uint) muteLength.TotalMilliseconds,
-                MutedAt = time.ToString()
-            });
+                var guild = GuildRepository.FetchGuild(guildId);
+                var guilds = db.GetCollection<Guild>("Guilds");
+                guild.Mutes.Add(new Mute()
+                {
+                    UserId = userId,
+                    MuteLength = muteLength
+                });
+            }
         }
 
-        public async Task<bool> IsMutedAsync(ulong UserID, ulong GuildID)
+        public static bool IsMuted(ulong userId, ulong guildId)
         {
-
-            return await SearchFor(c => c.UserId == UserID && c.GuildId == GuildID).AnyAsync();
-
+            using (var db = new LiteDatabase(Config.DB_CONNECTION_STRING))
+            {
+                var guild = GuildRepository.FetchGuild(guildId);
+                return guild.Mutes.Any(x => x.UserId == userId);
+            }
         }
 
-        public async Task RemoveMuteAsync(ulong UserID, ulong GuildID)
+        public static void RemoveMute(ulong userId, ulong guildId)
         {
-            var muted = await SearchFor(c => c.UserId == UserID && c.GuildId == GuildID).FirstOrDefaultAsync();
-
-            if (muted != null) await DeleteAsync(muted);
-
+            using (var db = new LiteDatabase(Config.DB_CONNECTION_STRING))
+            {
+                var guild = GuildRepository.FetchGuild(guildId);
+                var mute = guild.Mutes.Find(x => x.UserId == userId);
+                if (mute != null) guild.Mutes.Remove(mute);
+            }
         }
+
     }
 }

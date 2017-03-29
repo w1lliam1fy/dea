@@ -1,45 +1,46 @@
 ﻿using DEA.SQLite.Models;
-using Microsoft.EntityFrameworkCore;
+using LiteDB;
 using System;
-using System.Threading.Tasks;
 
 namespace DEA.SQLite.Repository
 {
-    public class GuildRepository : BaseRepository<Guild>
+    public static class GuildRepository
     {
 
-        private readonly Microsoft.EntityFrameworkCore.DbContext _dbContext;
-
-        public GuildRepository(Microsoft.EntityFrameworkCore.DbContext dbContext) : base(dbContext)
+        public static Guild FetchGuild(ulong guildId)
         {
-            _dbContext = dbContext;
-        }
-
-        public async Task ModifyAsync(Func<Guild, Task> function, ulong guildId)
-        {
-            var guild = await FetchGuild(guildId);
-            await function(guild);
-            await UpdateAsync(guild);
-        }
-
-        public async Task<Guild> FetchGuildAsync(ulong guildId)
-        {
-            return await FetchGuild(guildId);
-        }
-
-        private async Task<Guild> FetchGuild(ulong guildId)
-        {
-            Guild ExistingGuild = await SearchFor(c => c.Id == guildId).FirstOrDefaultAsync();
-            if (ExistingGuild == null)
+            using (var db = new LiteDatabase(Config.DB_CONNECTION_STRING))
             {
-                var CreatedGuild = new Guild()
+                var users = db.GetCollection<Guild>("Guilds");
+                var ExistingGuild = users.FindById(guildId);
+                if (ExistingGuild == null)
                 {
-                    Id = guildId
-                };
-                await InsertAsync(CreatedGuild);
-                return CreatedGuild;
+                    var CreatedGuild = new Guild()
+                    {
+                        Id = guildId
+                    };
+                    users.Insert(CreatedGuild);
+                    return CreatedGuild;
+                }
+                else
+                    return ExistingGuild;
             }
-            return ExistingGuild;
+        }
+
+        public static void Modify(Action<Guild> function, ulong guildId)
+        {
+            var guild = FetchGuild(guildId);
+            function(guild);
+            UpdateGuild(guild);
+        }
+
+        private static void UpdateGuild(Guild guild)
+        {
+            using (var db = new LiteDatabase(Config.DB_CONNECTION_STRING))
+            {
+                var guilds = db.GetCollection<Guild>("Guilds");
+                guilds.Update(guild);
+            }
         }
 
     }

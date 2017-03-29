@@ -285,4 +285,5 @@ __pycache__/
 *.btm.cs
 *.odx.cs
 *.xsd.cs
-Resources/Token.cs
+src/Credentials.cs
+src/Credentials.json
