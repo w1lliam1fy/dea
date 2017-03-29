@@ -7,7 +7,6 @@ using DEA.SQLite.Repository;
 using System.Linq;
 using Discord.WebSocket;
 using System.Collections.Generic;
-using LiteDB;
 
 namespace DEA.Modules
 {
