@@ -2,6 +2,7 @@
 using Discord.Commands;
 using LiteDB;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace DEA.SQLite.Repository
@@ -11,7 +12,7 @@ namespace DEA.SQLite.Repository
 
         public static void Modify(Action<Gang> function, SocketCommandContext context)
         {
-            var gang = FetchGang(context.User.Id, context.Guild.Id);
+            var gang = FetchGang(context);
             function(gang);
             UpdateGang(gang);
         }
@@ -21,6 +22,17 @@ namespace DEA.SQLite.Repository
             var gang = FetchGang(userId, guildId);
             function(gang);
             UpdateGang(gang);
+        }
+
+        public static Gang FetchGang(SocketCommandContext context)
+        {
+            using (var db = new LiteDatabase(Config.DB_CONNECTION_STRING))
+            {
+                var gangs = db.GetCollection<Gang>("Gangs");
+                var gang = gangs.FindOne(x => x.GuildId == context.Guild.Id && (x.LeaderId == context.User.Id || x.Members.Any(y => y == context.User.Id)));
+                if (gang == null) throw new Exception("This user is not in a gang..");
+                return gang;
+            }
         }
 
         public static Gang FetchGang(ulong userId, ulong guildId)
@@ -115,6 +127,15 @@ namespace DEA.SQLite.Repository
             var gang = FetchGang(userId, guildId);
             gang.Members.Add(newMemberId);
             UpdateGang(gang);
+        }
+
+        public static IEnumerable<Gang> FetchAll(ulong guildId)
+        {
+            using (var db = new LiteDatabase(Config.DB_CONNECTION_STRING))
+            {
+                var users = db.GetCollection<Gang>("Gangs");
+                return users.Find(x => x.GuildId == guildId);
+            }
         }
 
         private static void UpdateGang(Gang gang)

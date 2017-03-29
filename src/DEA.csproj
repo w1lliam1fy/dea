@@ -282,7 +282,6 @@
     <Compile Include="Resources\Config.cs" />
     <Compile Include="Events\MessageRecieved.cs" />
     <Compile Include="Resources\Credentials.cs" />
-    <Compile Include="Resources\Ranks.cs" />
     <Compile Include="Services\Logger.cs" />
     <Compile Include="Services\PrettyConsole.cs" />
     <Compile Include="Services\RankHandler.cs" />

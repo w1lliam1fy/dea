@@ -4,7 +4,7 @@ namespace DEA.SQLite.Models.Submodels
 {
     public class Roles
     {
-        public ulong[] ModRoles { get; set; }
+        public List<ulong> ModRoles { get; set; }
 
         public List<RankRole> RankRoles { get; set; }
 

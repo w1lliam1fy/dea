@@ -102,7 +102,7 @@ namespace DEA.Modules
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Leaderboards()
         {
-            var users = UserRepository.FetchAll(Context).OrderByDescending(x => x.Cash);
+            var users = UserRepository.FetchAll(Context.Guild.Id).OrderByDescending(x => x.Cash);
             string message = "```asciidoc\n= The Richest Traffickers =\n";
             int position = 1;
             int longest = 0;
@@ -138,7 +138,7 @@ namespace DEA.Modules
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Chatters()
         {
-            var users = UserRepository.FetchAll(Context).OrderByDescending(x => x.TemporaryMultiplier);
+            var users = UserRepository.FetchAll(Context.Guild.Id).OrderByDescending(x => x.TemporaryMultiplier);
             string message = "```asciidoc\n= The Best Chatters =\n";
             int position = 1;
             int longest = 0;
@@ -177,12 +177,10 @@ namespace DEA.Modules
                 if (userMentioned.Id == Context.User.Id) throw new Exception("Hey kids! Look at that retard, he is trying to give money to himself!");
                 if (money < Config.DONATE_MIN) throw new Exception($"Lowest donation is {Config.DONATE_MIN}$.");
                 if (user.Cash < money) throw new Exception($"You do not have enough money. Balance: {user.Cash.ToString("C2")}.");
-                if (money < Math.Round(user.Cash, 2) * Config.MIN_PERCENTAGE) throw new Exception($"The lowest donation is {Config.MIN_PERCENTAGE * 100}% of your total cash, that is ${Math.Round(user.Cash * Config.MIN_PERCENTAGE, 2)}.");
                 await UserRepository.EditCashAsync(Context, -money);
-                double deaMoney = money * Config.MIN_PERCENTAGE;
-                money -= deaMoney;
-                await UserRepository.EditCashAsync(Context, userMentioned.Id, +money);
-                await UserRepository.EditCashAsync(Context, Context.Guild.CurrentUser.Id, +deaMoney);
+                double deaMoney = money * Config.DEA_CUT / 100;
+                await UserRepository.EditCashAsync(Context, userMentioned.Id, money - deaMoney);
+                await UserRepository.EditCashAsync(Context, Context.Guild.CurrentUser.Id, deaMoney);
                 await ReplyAsync($"Successfully donated {money.ToString("C2")} to {userMentioned.Mention}. DEA has taken a {deaMoney.ToString("C2")} cut out of this donation.");
         }
 
@@ -194,7 +192,7 @@ namespace DEA.Modules
         public async Task Money(SocketUser userToView = null)
         {
             userToView = userToView ?? Context.User;
-            List<User> users = UserRepository.FetchAll(Context).OrderByDescending(x => x.Cash).ToList();
+            List<User> users = UserRepository.FetchAll(Context.Guild.Id).OrderByDescending(x => x.Cash).ToList();
             IRole rank = null;
             //TODO: rank = await RankHandler.GetRank(Context.Guild, userToView.Id, Context.Guild.Id);
             var builder = new EmbedBuilder()
@@ -228,43 +226,6 @@ namespace DEA.Modules
                 $"{user.InvestmentMultiplier.ToString("N2")}\nMessage cooldown: " +
                 $"{user.MessageCooldown / 1000} seconds"
             };
-            await ReplyAsync("", embed: builder);
-        }
-
-        [Command("Ranked")]
-        [Summary("View the quantity of members for each ranked role.")]
-        [Remarks("Ranked")]
-        [RequireBotPermission(GuildPermission.ManageRoles)]
-        public async Task Ranked()
-        {
-            var guild = GuildRepository.FetchGuild(Context.Guild.Id);
-            string prefix = guild.Prefix;
-            if (!RankHandler.CheckRankExistance(guild, Context.Guild))
-            {
-                throw new Exception($"You do not have 4 different functional roles added in with the " +
-                                    $"`{prefix}SetRankRoles` command, therefore the `{prefix}ranked` command will not work!");
-            }
-
-            var counts = new int[guild.Roles.RankRoles.Count];
-            int i = 0;
-            foreach (var rankRole in guild.Roles.RankRoles)
-            {
-                counts[i] = Context.Guild.Users.Count(x => x.Roles.Any(y => y.Id == rankRole.Id));
-                i++;
-            }
-            var builder = new EmbedBuilder()
-            {
-                Title = "Ranked Users",
-                Color = new Color(0x00AE86),
-                Description = $""
-            };
-            i = 0;
-            foreach (int rankc in counts)
-            {
-                var role = Context.Guild.GetRole(guild.RankIds[i]);
-                builder.Description += $"\n{role.Mention}: " + ((i == counts.Length - 1) ? rankc : rankc - counts[i + 1]).ToString() + " members";
-                i++;
-            }
             await ReplyAsync("", embed: builder);
         }
     }

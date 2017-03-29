@@ -13,7 +13,6 @@ namespace DEA.Modules
     public class Moderation : ModuleBase<SocketCommandContext>
     {
         [Command("Ban")]
-        [Alias("hammer", "fuckoff")]
         [RequireModerator]
         [RequireBotPermission(GuildPermission.BanMembers)]
         [Summary("Bans a user from the server.")]
@@ -28,7 +27,6 @@ namespace DEA.Modules
         }
 
         [Command("Kick")]
-        [Alias("boot", "pissoff")]
         [RequireModerator]
         [RequireBotPermission(GuildPermission.KickMembers)]
         [Summary("Kicks a user from the server.")]

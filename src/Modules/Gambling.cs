@@ -1,7 +1,6 @@
 ﻿using Discord.Commands;
 using System;
 using System.Threading.Tasks;
-using DEA.SQLite.Models;
 using DEA.SQLite.Repository;
 
 namespace DEA.Modules
@@ -18,7 +17,6 @@ namespace DEA.Modules
         }
 
         [Command("50x2")]
-        [RequireRank(4)]
         [Summary("Roll 50 or higher on a 100 sided die, win 2X your bet.")]
         [Remarks("50x2 <Bet>")]
         public async Task X2BetterOdds(double bet)
@@ -51,33 +49,24 @@ namespace DEA.Modules
 
         private async Task Gamble(double bet, int odds, double payoutMultiplier)
         {
-            using (var db = new DbContext())
+            var user = UserRepository.FetchUser(Context);
+            var guild = GuildRepository.FetchGuild(Context.Guild.Id);
+            if (Context.Guild.GetTextChannel(guild.Channels.GambleId) != null && Context.Channel.Id != guild.Channels.GambleId)
+                throw new Exception($"You may only gamble in {Context.Guild.GetTextChannel(guild.Channels.GambleId).Mention}!");
+            if (bet < Config.BET_MIN) throw new Exception($"Lowest bet is {Config.BET_MIN}$.");
+            if (bet > user.Cash) throw new Exception($"You do not have enough money. Balance: {user.Cash.ToString("C2")}.");
+            int roll = new Random().Next(1, 101);
+            if (roll >= odds)
             {
-                
-                
-                var user = await UserRepository.FetchUserAsync(Context.User.Id);
-                var guild = await GuildRepository.FetchGuildAsync(Context.Guild.Id);
-                if (Context.Guild.GetTextChannel(guild.GambleChannelId) != null
-                    && Context.Channel.Id != guild.GambleChannelId)
-                    throw new Exception($"You may only gamble in {Context.Guild.GetTextChannel(guild.GambleChannelId).Mention}!");
-                var Cash = await UserRepository.GetCashAsync(Context.User.Id);
-                if (bet < Config.BET_MIN) throw new Exception($"Lowest bet is {Config.BET_MIN}$.");
-                if (bet > Cash) throw new Exception($"You do not have enough money. Balance: {user.Cash.ToString("C2")}.");
-                if (bet < Math.Round(Cash * Config.MIN_PERCENTAGE, 2)) throw new Exception($"The lowest bet is {Config.MIN_PERCENTAGE * 100}% of your total cash, that is " +
-                                                                            $"${Math.Round(Cash * Config.MIN_PERCENTAGE, 2)}.");
-                int roll = new Random().Next(1, 101);
-                if (roll >= odds)
-                {
-                    await UserRepository.EditCashAsync(Context, (bet * payoutMultiplier));
-                    await ReplyAsync($"{Context.User.Mention}, you rolled: {roll}. Congratulations, you just won {(bet * payoutMultiplier).ToString("C2")}! " +
-                                     $"Balance: {user.Cash.ToString("C2")}.");
-                }
-                else
-                {
-                    await UserRepository.EditCashAsync(Context, -bet);
-                    await ReplyAsync($"{Context.User.Mention}, you rolled {roll}. Unfortunately, you lost {bet.ToString("C2")}. " +
-                                     $"Balance: {user.Cash.ToString("C2")}.");
-                }
+                await UserRepository.EditCashAsync(Context, (bet * payoutMultiplier));
+                await ReplyAsync($"{Context.User.Mention}, you rolled: {roll}. Congratulations, you just won {(bet * payoutMultiplier).ToString("C2")}! " +
+                                 $"Balance: {user.Cash.ToString("C2")}.");
+            }
+            else
+            {
+                await UserRepository.EditCashAsync(Context, -bet);
+                await ReplyAsync($"{Context.User.Mention}, you rolled {roll}. Unfortunately, you lost {bet.ToString("C2")}. " +
+                                 $"Balance: {user.Cash.ToString("C2")}.");
             }
         }
     }

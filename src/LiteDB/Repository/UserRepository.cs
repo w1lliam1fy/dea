@@ -86,12 +86,12 @@ namespace DEA.SQLite.Repository
             await RankHandler.Handle(context.Guild, userId);
         }
 
-        public static IEnumerable<User> FetchAll(SocketCommandContext context)
+        public static IEnumerable<User> FetchAll(ulong guildId)
         {
             using(var db = new LiteDatabase(Config.DB_CONNECTION_STRING))
             {
                 var users = db.GetCollection<User>("Users");
-                return users.Find(x => x.GuildId == context.Guild.Id);
+                return users.Find(x => x.GuildId == guildId);
             }
         }
 
