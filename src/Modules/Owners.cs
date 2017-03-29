@@ -2,7 +2,6 @@
 using Discord.Commands;
 using System;
 using System.Threading.Tasks;
-using DEA.SQLite.Models;
 using DEA.SQLite.Repository;
 
 namespace DEA.Modules
@@ -16,22 +15,16 @@ namespace DEA.Modules
         [Remarks("Reset [@User]")]
         public async Task ResetCooldowns(IGuildUser user = null)
         {
-            user = user ?? Context.User as IGuildUser;
-            using (var db = new DbContext())
-            {
-                
-                var time = DateTime.Today.AddDays(-5).ToString();
-                await UserRepository.ModifyAsync(x => {
-                    x.LastWhore = time;
-                    x.LastJump = time;
-                    x.LastSteal = time;
-                    x.LastRob = time;
-                    x.LastMessage = time;
-                    x.LastWithdraw = time;
-                    return Task.CompletedTask;
-                    }, Context.User.Id);
-                await ReplyAsync($"Successfully reset all of {user.Mention} cooldowns.");
-            }
+            var time = DateTimeOffset.Now.AddYears(-1);
+            UserRepository.Modify(x => {
+                x.Cooldowns.Whore = time;
+                x.Cooldowns.Jump = time;
+                x.Cooldowns.Steal = time;
+                x.Cooldowns.Rob = time;
+                x.Cooldowns.Message = time;
+                x.Cooldowns.Withdraw = time;
+            }, Context);
+            await ReplyAsync($"Successfully reset all of {user.Mention} cooldowns.");
         }
 
         [Command("Give")]
@@ -39,11 +32,8 @@ namespace DEA.Modules
         [Summary("Inject cash into a user's balance.")]
         [Remarks("Give <@User> <Amount of cash>")]
         public async Task Give(IGuildUser userMentioned, double money) {
-            using (var db = new DbContext()) {
-                
-                await UserRepository.EditOtherCashAsync(Context, userMentioned.Id, +money);
-                await ReplyAsync($"Successfully given {money.ToString("C2")} to <@{userMentioned.Id}>.");
-            }
+            await UserRepository.EditCashAsync(Context, userMentioned.Id, +money);
+            await ReplyAsync($"Successfully given {money.ToString("C2")} to <@{userMentioned.Id}>.");
         }
     }
 }

@@ -1,1 +1,0 @@
-﻿public enum Ranks { Low, Intermediate, High, Extreme, Moderator, Owner}

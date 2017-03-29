@@ -5,10 +5,7 @@ using System.Linq;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using DEA.SQLite.Models;
 using DEA.SQLite.Repository;
-using System.Collections.Generic;
-using DEA;
 
 namespace System.Modules
 {
@@ -35,42 +32,31 @@ namespace System.Modules
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Info(string investString = null)
         {
-            using (var db = new DbContext())
+            var guild = GuildRepository.FetchGuild(Context.Guild.Id);
+            string p = guild.Prefix;
+
+            var builder = new EmbedBuilder()
             {
-                
-                var guild = await GuildRepository.FetchGuildAsync(Context.Guild.Id);
-                string prefix = guild.Prefix;
-                if (!RankHandler.CheckRankExistance(guild, Context.Guild))
-                {
-                    throw new Exception($"You do not have 4 different functional roles added in with the" +
-                                        $"{prefix}SetRankRoles command, therefore the {prefix}information command will not work!");
-                }
+                Color = new Color(0x00AE86),
+                Description = $@"In order to gain money, you must send a message that is at least {Config.MIN_CHAR_LENGTH} characters in length. There is a 30 second cooldown between each message that will give you cash. However, these rates are not fixed. For every message you send, your chatting multiplier(which increases the amount of money you get per message) is increased by {Config.TEMP_MULTIPLIER_RATE}. This rate is reset every hour.
 
-                var role1 = Context.Guild.GetRole(guild.RankIds[0]); // this is allowed only because it's for building a fixed message
-                var role2 = Context.Guild.GetRole(guild.RankIds[1]);
-                var role3 = Context.Guild.GetRole(guild.RankIds[2]);
-                var role4 = Context.Guild.GetRole(guild.RankIds[3]);
-                var builder = new EmbedBuilder()
-                {
-                    Color = new Color(0x00AE86),
-                    Description = $@"In order to gain money, you must send a message that is at least {Config.MIN_CHAR_LENGTH} characters in length. There is a 30 second cooldown between each message that will give you cash. However, these rates are not fixed. For every message you send, your chatting multiplier(which increases the amount of money you get per message) is increased by {Config.TEMP_MULTIPLIER_RATE}. This rate is reset every hour.
+To view your steadily increasing chatting multiplier, you may use the `{p}rate` command, and the `{p}money` command to see your cash grow. This command shows you every single variable taken into consideration for every message you send. If you wish to improve these variables, you may use investments. With the `{p}investments` command, you may pay to have *permanent* changes to your message rates. These will stack with the chatting multiplier."
+            };
+            var secondBuilder = new EmbedBuilder()
+            {
+                Color = new Color(0x00AE86),
+                Description = $@"Another common way of gaining money is by gambling, there are loads of different gambling commands, which can all be viewed with the `{p}help` command. You might be wondering what is the point of all these commands. This is where ranks come in. The full list of ranks may be viewed with the `{p}rank` command. Depending on how much money you have, you will get a certain rank, and mainly, gain access to more commands. As your cash stack grows, so do the quantity commands you can use:
 
-To view your steadily increasing chatting multiplier, you may use the `{prefix}rate` command, and the `{prefix}money` command to see your cash grow. This command shows you every single variable taken into consideration for every message you send. If you wish to improve these variables, you may use investments. With the `{prefix}investments` command, you may pay to have *permanent* changes to your message rates. These will stack with the chatting multiplier."};
-                var secondBuilder = new EmbedBuilder()
-                {
-                    Color = new Color(0x00AE86),
-                    Description = $@"Another common way of gaining money is by gambling, there are loads of different gambling commands, which can all be viewed with the `{prefix}help` command. You might be wondering what is the point of all these commands. This is where ranks come in. Depending on how much money you have, you will get a certain rank. These are the current benfits of each rank, and the money required to get them:
-
-**{Config.RANKS[0]}$:** __{role1.Name}__ can use the `{prefix}jump` command. 
-**{Config.RANKS[1]}$:** __{role2.Name}__ can use the `{prefix}steal` command. 
-**{Config.RANKS[2]}$:** __{role3.Name}__ can change the nickname of ANYONE with `{prefix}bully` command. 
-**{Config.RANKS[3]}$:** __{role4.Name}__ can use the `{prefix}50x2` AND the `{prefix}robbery` command."
-                };
-                var channel = await Context.User.CreateDMChannelAsync();
-                await channel.SendMessageAsync("", embed: builder);
-                await channel.SendMessageAsync("", embed: secondBuilder);
-                await ReplyAsync($"{Context.User.Mention}, Information about the DEA Cash System has been DMed to you!");
-            }
+**{guild.Options.JumpRequirement}$:** `{p}jump`
+**{guild.Options.StealRequirement}$:** `{p}steal`
+**{guild.Options.RobRequirement}$:** `{p}rob <Resources>`
+**{guild.Options.BullyRequirement}$:** `{p}bully`
+**{guild.Options.FiftyX2Requirement}$:** `{p}55x2 <Bet>"
+            };
+            var channel = await Context.User.CreateDMChannelAsync();
+            await channel.SendMessageAsync("", embed: builder);
+            await channel.SendMessageAsync("", embed: secondBuilder);
+            await ReplyAsync($"{Context.User.Mention}, Information about the DEA Cash System has been DMed to you!");
         }
 
         [Command("Help")]
@@ -79,15 +65,8 @@ To view your steadily increasing chatting multiplier, you may use the `{prefix}r
         [Remarks("Help [Command or Module]")]
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task HelpAsync(string commandOrModule = null)
-        { 
-            string prefix;
-            using (var db = new DbContext())
-            {
-                
-                prefix = (await GuildRepository.FetchGuildAsync(Context.Guild.Id)).Prefix;
-            }
-            
-            List<string> messages = new List<string>();
+        {
+            string prefix = GuildRepository.FetchGuild(Context.Guild.Id).Prefix;
 
             if (commandOrModule != null)
             {

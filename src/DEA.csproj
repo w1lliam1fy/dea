@@ -68,8 +68,8 @@
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Data.Sqlite, Version=1.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Data.Sqlite.1.1.0\lib\net451\Microsoft.Data.Sqlite.dll</HintPath>
+    <Reference Include="LiteDB, Version=3.1.0.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27, processorArchitecture=MSIL">
+      <HintPath>..\packages\LiteDB.3.1.0\lib\net35\LiteDB.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.EntityFrameworkCore, Version=1.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
@@ -78,10 +78,6 @@
     </Reference>
     <Reference Include="Microsoft.EntityFrameworkCore.Relational, Version=1.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.EntityFrameworkCore.Relational.1.1.1\lib\net451\Microsoft.EntityFrameworkCore.Relational.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.EntityFrameworkCore.Sqlite, Version=1.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.EntityFrameworkCore.Sqlite.1.1.1\lib\net451\Microsoft.EntityFrameworkCore.Sqlite.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Extensions.Caching.Abstractions, Version=1.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
@@ -286,21 +282,23 @@
     <Compile Include="Resources\Config.cs" />
     <Compile Include="Events\MessageRecieved.cs" />
     <Compile Include="Resources\Credentials.cs" />
-    <Compile Include="Resources\Token.cs" />
+    <Compile Include="Resources\Ranks.cs" />
     <Compile Include="Services\Logger.cs" />
     <Compile Include="Services\PrettyConsole.cs" />
     <Compile Include="Services\RankHandler.cs" />
     <Compile Include="Services\RecurringFunctions.cs" />
     <Compile Include="Services\ServiceManager.cs" />
+    <Compile Include="SQLite\Models\Submodels\Channels.cs" />
     <Compile Include="SQLite\Models\Gang.cs" />
     <Compile Include="SQLite\Models\Guild.cs" />
-    <Compile Include="SQLite\Models\Mute.cs" />
+    <Compile Include="SQLite\Models\Submodels\Cooldowns.cs" />
+    <Compile Include="SQLite\Models\Submodels\Mute.cs" />
+    <Compile Include="SQLite\Models\Submodels\RankRole.cs" />
+    <Compile Include="SQLite\Models\Submodels\Roles.cs" />
+    <Compile Include="SQLite\Models\Submodels\Options.cs" />
     <Compile Include="SQLite\Models\User.cs" />
-    <Compile Include="SQLite\Repository\BaseRepository.cs" />
-    <Compile Include="SQLite\Repository\DatabaseContext.cs" />
     <Compile Include="SQLite\Repository\GangRepository.cs" />
     <Compile Include="SQLite\Repository\GuildRepository.cs" />
-    <Compile Include="SQLite\Repository\IRepository.cs" />
     <Compile Include="SQLite\Repository\MuteRepository.cs" />
     <Compile Include="SQLite\Repository\UserRepository.cs" />
   </ItemGroup>
