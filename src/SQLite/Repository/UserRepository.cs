@@ -8,7 +8,7 @@ namespace DEA.SQLite.Repository
     public static class UserRepository
     {
 
-        public static User FetchUser(ulong userId)
+        public static User FetchUser(ulong userId, ulong guildId)
         {
             using (var db = new LiteDatabase(Config.DB_CONNECTION_STRING))
             {
@@ -28,9 +28,16 @@ namespace DEA.SQLite.Repository
             }
         }
 
-        public static void Modify(Action<User> function, ulong userId)
+        public static void Modify(Action<User> function, SocketCommandContext context)
         {
-            var user = FetchUser(userId);
+            var user = FetchUser(context.User.Id, context.Guild.Id);
+            function(user);
+            UpdateUser(user);
+        }
+
+        public static void Modify(Action<User> function, ulong userId, ulong guildId)
+        {
+            var user = FetchUser(userId, guildId);
             function(user);
             UpdateUser(user);
         }
@@ -39,8 +46,8 @@ namespace DEA.SQLite.Repository
         {
             using (var db = new LiteDatabase(Config.DB_CONNECTION_STRING))
             {
-                var user = FetchUser(context.User.Id);
-                Modify(x => x.Cash += change, context.User.Id);
+                var user = FetchUser(context.User.Id, context.Guild.Id);
+                Modify(x => x.Cash += change, context);
             }
             await RankHandler.Handle(context.Guild, context.User.Id);
         }
@@ -49,8 +56,8 @@ namespace DEA.SQLite.Repository
         {
             using (var db = new LiteDatabase(Config.DB_CONNECTION_STRING))
             {
-                var user = FetchUser(userId);
-                Modify(x => x.Cash += change, userId);
+                var user = FetchUser(userId, context.Guild.Id);
+                Modify(x => x.Cash += change, context);
             }
             await RankHandler.Handle(context.Guild, userId);
         }
