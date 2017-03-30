@@ -81,7 +81,7 @@ namespace DEA.Services
             {
                 foreach (Mute mute in dbGuild.Mutes)
                 {
-                    if (DateTimeOffset.Now.Subtract(mute.MutedAt).TotalMilliseconds > mute.MuteLength.TotalMilliseconds)
+                    if (.UtcNow.Subtract(mute.MutedAt).TotalMilliseconds > mute.MuteLength.TotalMilliseconds)
                     {
                         var guild = _client.GetGuild(dbGuild.Id);
                         if (guild != null && guild.GetUser(mute.UserId) != null)

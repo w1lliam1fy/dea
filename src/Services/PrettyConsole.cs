@@ -41,7 +41,7 @@ namespace DEA
 
         public static void Log(LogSeverity severity, string source, string message)
         {
-            PrettyConsole.NewLine($"{DateTime.Now.ToString("hh:mm:ss")} ", ConsoleColor.DarkGray);
+            PrettyConsole.NewLine($"{.UtcNow.ToString("hh:mm:ss")} ", ConsoleColor.DarkGray);
             PrettyConsole.Append($"[{severity}] ", ConsoleColor.Red);
             PrettyConsole.Append($"{source}: ", ConsoleColor.DarkGreen);
             PrettyConsole.Append(message, ConsoleColor.White);
@@ -50,7 +50,7 @@ namespace DEA
         public static void Log(IUserMessage msg)
         {
             var channel = (msg.Channel as IGuildChannel);
-            PrettyConsole.NewLine($"{DateTime.Now.ToString("hh:mm:ss")} ", ConsoleColor.Gray);
+            PrettyConsole.NewLine($"{.UtcNow.ToString("hh:mm:ss")} ", ConsoleColor.Gray);
 
             if (channel?.Guild == null)
                 PrettyConsole.Append($"[PM] ", ConsoleColor.Magenta);
@@ -64,7 +64,7 @@ namespace DEA
         public static void Log(CommandContext c)
         {
             var channel = (c.Channel as SocketGuildChannel);
-            PrettyConsole.NewLine($"{DateTime.Now.ToString("hh:mm:ss")} ", ConsoleColor.Gray);
+            PrettyConsole.NewLine($"{.UtcNow.ToString("hh:mm:ss")} ", ConsoleColor.Gray);
 
             if (channel == null)
                 PrettyConsole.Append($"[PM] ", ConsoleColor.Magenta);

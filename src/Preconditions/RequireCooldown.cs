@@ -11,7 +11,7 @@ namespace Discord.Commands
         public override async Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IDependencyMap map)
         {
             TimeSpan cooldown = Config.DEFAULT_COOLDOWN;
-            DateTimeOffset lastUse = DateTimeOffset.Now;
+            DateTime lastUse = .UtcNow;
             var user = UserRepository.FetchUser(context as SocketCommandContext);
             switch (command.Name.ToLower())
             {
@@ -36,11 +36,11 @@ namespace Discord.Commands
                     lastUse = user.Cooldowns.Withdraw;
                     break;
             }
-            if (DateTimeOffset.Now.Subtract(lastUse).TotalMilliseconds > cooldown.TotalMilliseconds)
+            if (.UtcNow.Subtract(lastUse).TotalMilliseconds > cooldown.TotalMilliseconds)
                 return PreconditionResult.FromSuccess();
             else
             {
-                await Logger.Cooldown(context as SocketCommandContext, command.Name, cooldown.Subtract(DateTimeOffset.Now.Subtract(lastUse)));
+                await Logger.Cooldown(context as SocketCommandContext, command.Name, cooldown.Subtract(.UtcNow.Subtract(lastUse)));
                 return PreconditionResult.FromError("");
             }
         }

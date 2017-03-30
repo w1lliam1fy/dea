@@ -15,7 +15,7 @@ namespace DEA.Modules
         [Remarks("Reset [@User]")]
         public async Task ResetCooldowns(IGuildUser user = null)
         {
-            var time = DateTimeOffset.Now.AddYears(-1);
+            var time = .UtcNow.AddYears(-1);
             UserRepository.Modify(x => {
                 x.Cooldowns.Whore = time;
                 x.Cooldowns.Jump = time;

@@ -280,14 +280,9 @@
     <Compile Include="Services\PrettyConsole.cs" />
     <Compile Include="Services\RankHandler.cs" />
     <Compile Include="Services\RecurringFunctions.cs" />
-    <Compile Include="LiteDB\Models\Submodels\Channels.cs" />
     <Compile Include="LiteDB\Models\Gang.cs" />
     <Compile Include="LiteDB\Models\Guild.cs" />
-    <Compile Include="LiteDB\Models\Submodels\Cooldowns.cs" />
-    <Compile Include="LiteDB\Models\Submodels\Mute.cs" />
-    <Compile Include="LiteDB\Models\Submodels\RankRole.cs" />
-    <Compile Include="LiteDB\Models\Submodels\Roles.cs" />
-    <Compile Include="LiteDB\Models\Submodels\Options.cs" />
+    <Compile Include="LiteDB\Models\Mute.cs" />
     <Compile Include="LiteDB\Models\User.cs" />
     <Compile Include="LiteDB\Repository\GangRepository.cs" />
     <Compile Include="LiteDB\Repository\GuildRepository.cs" />

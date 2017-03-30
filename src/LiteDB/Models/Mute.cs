@@ -12,7 +12,7 @@ namespace DEA.SQLite.Models
 
         public ulong UserId { get; set; }
 
-        public double MuteLength { get; set; } = TimeSpan.FromDays(1).TotalMilliseconds;
+        public double MuteLength { get; set; } = Config.DEFAULT_MUTE_TIME.TotalMilliseconds;
 
         public DateTime MutedAt { get; set; } = DateTime.UtcNow;
     }

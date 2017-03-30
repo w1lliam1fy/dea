@@ -217,7 +217,7 @@ namespace DEA.Modules
             if (cash > gang.Wealth * Config.WITHDRAW_CAP)
                 throw new Exception($"You may only withdraw {Config.WITHDRAW_CAP.ToString("P")} of your gang's wealth, " +
                                     $"that is {(gang.Wealth * Config.WITHDRAW_CAP).ToString("C", Config.CI)}.");
-            UserRepository.Modify(x => x.Cooldowns.Withdraw = DateTimeOffset.Now, Context);
+            UserRepository.Modify(x => x.Cooldowns.Withdraw = .UtcNow, Context);
             GangRepository.Modify(x => x.Wealth -= cash, Context.User.Id, Context.Guild.Id);
             await UserRepository.EditCashAsync(Context, +cash);
             await ReplyAsync($"{Context.User.Mention}, You have successfully withdrawn {cash.ToString("C", Config.CI)}. " +
