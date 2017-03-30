@@ -136,23 +136,23 @@ namespace DEA.Modules
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Cooldowns()
         {
-                var user = await UserRepository.FetchUser(Context.User.Id);
-                var timeSpan = TimeSpan.FromMilliseconds(Config.WHORE_COOLDOWN - DateTime.Now.Subtract(user.Cooldowns.Whore).TotalMilliseconds);
-                var timeSpan1 = TimeSpan.FromMilliseconds(Config.JUMP_COOLDOWN - DateTime.Now.Subtract(user.Cooldowns.Jump).TotalMilliseconds);
-                var timeSpan2 = TimeSpan.FromMilliseconds(Config.STEAL_COOLDOWN - DateTime.Now.Subtract(user.Cooldowns.Steal).TotalMilliseconds);
-                var timeSpan3 = TimeSpan.FromMilliseconds(Config.ROB_COOLDOWN - DateTime.Now.Subtract(user.Cooldowns.Rob).TotalMilliseconds);
-                var timeSpan4 = TimeSpan.FromMilliseconds(Config.WITHDRAW_COOLDOWN - DateTime.Now.Subtract(user.Cooldowns.Withdraw).TotalMilliseconds);
-                var builder = new EmbedBuilder()
-                {
-                    Title = $"All cooldowns for {Context.User}",
-                    Description = $@"Whore: {timeSpan.Hours} Hours\n{timeSpan.Minutes} Minutes\n{timeSpan.Seconds} Seconds.
-                    Jump: {timeSpan1.Hours} Hours\n{timeSpan1.Minutes} Minutes\n{timeSpan1.Seconds} Seconds.
-                    Steal: {timeSpan2.Hours} Hours\n{timeSpan2.Minutes} Minutes\n{timeSpan2.Seconds} Seconds.
-                    Rob: {timeSpan3.Hours} Hours\n{timeSpan3.Minutes} Minutes\n{timeSpan3.Seconds} Seconds
-                    Withdraw: {timeSpan4.Hours} Hours\n{timeSpan4.Minutes} Minutes\n{timeSpan4.Seconds} Seconds.",
-                    Color = new Color(49, 62, 255)
-                };
-                await Context.Channel.SendMessageAsync("", embed: builder);
+            var user = UserRepository.FetchUser(Context);
+            var whore = Config.WHORE_COOLDOWN.Subtract(DateTime.Now.Subtract(user.Whore));
+            var jump = Config.JUMP_COOLDOWN.Subtract(DateTime.Now.Subtract(user.Jump));
+            var steal = Config.STEAL_COOLDOWN.Subtract(DateTime.Now.Subtract(user.Steal));
+            var rob = Config.ROB_COOLDOWN.Subtract(DateTime.Now.Subtract(user.Rob));
+            var withdraw = Config.WITHDRAW_COOLDOWN.Subtract(DateTime.Now.Subtract(user.Withdraw));
+            var builder = new EmbedBuilder()
+            {
+                Title = $"All cooldowns for {Context.User}",
+                Description = $@"Whore: {whore.Hours} Hours, {whore.Minutes} Minutes, {whore.Seconds} Seconds.
+                    Jump: {jump.Hours} Hours{jump.Minutes} Minutes, {jump.Seconds} Seconds.
+                    Steal: {steal.Hours} Hours, {steal.Minutes} Minutes, {steal.Seconds} Seconds.
+                    Rob: {rob.Hours} Hours, {rob.Minutes} Minutes, {rob.Seconds} Seconds
+                    Withdraw: {withdraw.Hours} Hours, {withdraw.Minutes} Minutes, {withdraw.Seconds} Seconds.",
+                Color = new Color(49, 62, 255)
+            };
+            await Context.Channel.SendMessageAsync("", embed: builder);
         }
     }
 }
