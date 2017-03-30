@@ -10,10 +10,10 @@ using DEA.Services;
 
 namespace DEA.Modules
 {
+    [Require(Attributes.Moderator)]
     public class Moderation : ModuleBase<SocketCommandContext>
     {
         [Command("Ban")]
-        [Require(Attributes.Moderator)]
         [RequireBotPermission(GuildPermission.BanMembers)]
         [Summary("Bans a user from the server.")]
         [Remarks("Ban <@User> [Reason]")]
@@ -27,7 +27,6 @@ namespace DEA.Modules
         }
 
         [Command("Kick")]
-        [Require(Attributes.Moderator)]
         [RequireBotPermission(GuildPermission.KickMembers)]
         [Summary("Kicks a user from the server.")]
         [Remarks("Kick <@User> [Reason]")]
@@ -41,14 +40,13 @@ namespace DEA.Modules
         }
 
         [Command("Mute")]
-        [Require(Attributes.Moderator)]
         [RequireBotPermission(GuildPermission.ManageRoles)]
         [Summary("Temporarily mutes a user.")]
         [Remarks("Mute <@User> [Reason]")]
         public async Task Mute(IGuildUser userToMute, [Remainder] string reason = "No reason.")
         {
             var guild = GuildRepository.FetchGuild(Context.Guild.Id);
-            var mutedRole = Context.Guild.GetRole(guild.Roles.MutedRoleId);
+            var mutedRole = Context.Guild.GetRole(guild.MutedRoleId);
             if (mutedRole == null) throw new Exception($"You may not mute users if the muted role is not valid.\nPlease use the " +
                                                        $"`{guild.Prefix}SetMutedRole` command to change that.");
             if (IsMod(userToMute)) throw new Exception("You cannot mute another mod!");
@@ -61,7 +59,6 @@ namespace DEA.Modules
 
         [Command("CustomMute")]
         [Alias("CMute")]
-        [Require(Attributes.Moderator)]
         [RequireBotPermission(GuildPermission.ManageRoles)]
         [Summary("Temporarily mutes a user for x amount of hours.")]
         [Remarks("CustomMute <Hours> <@User> [Reason]")]
@@ -72,7 +69,7 @@ namespace DEA.Modules
             string time = "hours";
             if (hours == 1) time = "hour";
             var guild = GuildRepository.FetchGuild(Context.Guild.Id);
-            var mutedRole = Context.Guild.GetRole(guild.Roles.MutedRoleId);
+            var mutedRole = Context.Guild.GetRole(guild.MutedRoleId);
             if (mutedRole == null) throw new Exception($"You may not mute users if the muted role is not valid.\nPlease use the " +
                                                        $"{guild.Prefix}SetMutedRole command to change that.");
             if (IsMod(userToMute)) throw new Exception("You cannot mute another mod!");
@@ -84,13 +81,12 @@ namespace DEA.Modules
         }
 
         [Command("Unmute")]
-        [Require(Attributes.Moderator)]
         [RequireBotPermission(GuildPermission.ManageRoles)]
         [Summary("Unmutes a muted user.")]
         [Remarks("Unmute <@User> [Reason]")]
         public async Task Unmute(IGuildUser userToUnmute, [Remainder] string reason = "No reason.")
         {
-            var mutedRoleId = GuildRepository.FetchGuild(Context.Guild.Id).Roles.MutedRoleId;
+            var mutedRoleId = GuildRepository.FetchGuild(Context.Guild.Id).MutedRoleId;
             if (userToUnmute.RoleIds.All(x => x != mutedRoleId)) throw new Exception("You cannot unmute a user who isn't muted.");
             await InformSubject(Context.User, "Unmute", userToUnmute, reason);
             await userToUnmute.RemoveRoleAsync(Context.Guild.GetRole(mutedRoleId));
@@ -100,7 +96,6 @@ namespace DEA.Modules
         }
 
         [Command("Clear")]
-        [Require(Attributes.Moderator)]
         [RequireBotPermission(GuildPermission.ManageMessages)]
         [Summary("Deletes x amount of messages.")]
         [Remarks("Clear [Quantity of messages]")]
@@ -109,7 +104,7 @@ namespace DEA.Modules
             if (count < Config.MIN_CLEAR) throw new Exception($"You may not clear less than {Config.MIN_CLEAR} messages.");
             if (count > Config.MAX_CLEAR) throw new Exception($"You may not clear more than {Config.MAX_CLEAR} messages.");
             var guild = GuildRepository.FetchGuild(Context.Guild.Id);
-            if (Context.Channel.Id == guild.Channels.ModLogId || Context.Channel.Id == guild.Channels.DetailedLogsId)
+            if (Context.Channel.Id == guild.ModLogId || Context.Channel.Id == guild.DetailedLogsId)
                 throw new Exception("For security reasons, you may not use this command in a log channel.");
             var messages = await Context.Channel.GetMessagesAsync(count).Flatten();
             await Context.Channel.DeleteMessagesAsync(messages);
@@ -117,7 +112,6 @@ namespace DEA.Modules
         }
 
         [Command("Chill")]
-        [Require(Attributes.Moderator)]
         [RequireBotPermission(GuildPermission.Administrator)]
         [Summary("Prevents users from talking in a specific channel for x amount of seconds.")]
         [Remarks("Chill [Number of seconds]")]
@@ -145,7 +139,7 @@ namespace DEA.Modules
         private bool IsMod(IGuildUser user)
         {
             if (user.GuildPermissions.Administrator) return true;
-            foreach (var roleId in GuildRepository.FetchGuild(Context.Guild.Id).Roles.ModRoles)
+            foreach (var roleId in GuildRepository.FetchGuild(Context.Guild.Id).ModRoles)
             {
                 if (user.Guild.GetRole(roleId) != null)
                 {

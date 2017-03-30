@@ -76,7 +76,7 @@ namespace DEA.Modules
             var leader = "";
             if (Context.Client.GetUser(gang.LeaderId) != null) leader = $"<@{gang.LeaderId}>";
             foreach (var member in gang.Members)
-                if (Context.Client.GetUser(member) != null) members += $"<@{member}>, ";
+                if (Context.Client.GetUser(Convert.ToUInt64(member)) != null) members += $"<@{member}>, ";
             var InterestRate = 0.025f + ((gang.Wealth / 100) * .000075f);
             if (InterestRate > 0.1) InterestRate = 0.1f;
             var builder = new EmbedBuilder()
@@ -91,8 +91,8 @@ namespace DEA.Modules
             await ReplyAsync("", embed: builder);
         }
 
-        [Command("Gangs")]
-        [Alias("ganglb")]
+        [Command("GangLb")]
+        [Alias("gangs")]
         [Summary("Shows the wealthiest gangs.")]
         [Remarks("Gangs")]
         public async Task Ganglb()
@@ -217,7 +217,7 @@ namespace DEA.Modules
             if (cash > gang.Wealth * Config.WITHDRAW_CAP)
                 throw new Exception($"You may only withdraw {Config.WITHDRAW_CAP.ToString("P")} of your gang's wealth, " +
                                     $"that is {(gang.Wealth * Config.WITHDRAW_CAP).ToString("C", Config.CI)}.");
-            UserRepository.Modify(x => x.Cooldowns.Withdraw = .UtcNow, Context);
+            UserRepository.Modify(x => x.Withdraw = DateTime.UtcNow, Context);
             GangRepository.Modify(x => x.Wealth -= cash, Context.User.Id, Context.Guild.Id);
             await UserRepository.EditCashAsync(Context, +cash);
             await ReplyAsync($"{Context.User.Mention}, You have successfully withdrawn {cash.ToString("C", Config.CI)}. " +

@@ -21,7 +21,7 @@ namespace DEA.SQLite.Models
 
         public double MessageCooldown { get; set; } = 30000.0;
 
-        //Command cooldowns
+        //Cooldowns
         public DateTime Message { get; set; } = DateTime.UtcNow.AddYears(-1);
 
         public DateTime Whore { get; set; } = DateTime.UtcNow.AddYears(-1);

@@ -108,8 +108,8 @@ namespace DEA.Modules
 
             foreach (User user in users)
             {
-                if (Context.Guild.GetUser(user.Id) == null) continue;
-                if ($"{Context.Guild.GetUser(user.Id)}".Length > longest) longest = $"{position}. {Context.Guild.GetUser(user.Id)}".Length;
+                if (Context.Guild.GetUser(user.UserId) == null) continue;
+                if ($"{Context.Guild.GetUser(user.UserId)}".Length > longest) longest = $"{position}. {Context.Guild.GetUser(user.UserId)}".Length;
                 if (position >= Config.LEADERBOARD_CAP || users.Last().Id == user.Id)
                 {
                     position = 1;
@@ -120,8 +120,8 @@ namespace DEA.Modules
 
             foreach (User user in users)
             {
-                if (Context.Guild.GetUser(user.Id) == null) continue;
-                message += $"{position}. {Context.Guild.GetUser(user.Id)}".PadRight(longest + 2) +
+                if (Context.Guild.GetUser(user.UserId) == null) continue;
+                message += $"{position}. {Context.Guild.GetUser(user.UserId)}".PadRight(longest + 2) +
                            $" :: {UserRepository.FetchUser(Context).Cash.ToString("C", Config.CI)}\n";
                 if (position >= Config.LEADERBOARD_CAP) break;
                 position++;
@@ -142,11 +142,13 @@ namespace DEA.Modules
             int position = 1;
             int longest = 0;
 
-            foreach (User user in users)
+            SocketGuildUser user;
+            foreach (User dbUser in users)
             {
-                if (Context.Guild.GetUser(user.Id) == null) continue;
-                if ($"{Context.Guild.GetUser(user.Id)}".Length > longest) longest = $"{position}. {Context.Guild.GetUser(user.Id)}".Length;
-                if (position >= Config.RATELB_CAP || users.Last().Id == user.Id)
+                user = Context.Guild.GetUser(dbUser.UserId);
+                if (user == null) continue;
+                if ($"{user}".Length > longest) longest = $"{position}. {user}".Length;
+                if (position >= Config.RATELB_CAP || users.Last().Id == dbUser.Id)
                 {
                     position = 1;
                     break;
@@ -154,11 +156,12 @@ namespace DEA.Modules
                 position++;
             }
 
-            foreach (User user in users)
+            foreach (User dbUser in users)
             {
-                if (Context.Guild.GetUser(user.Id) == null) continue;
+                user = Context.Guild.GetUser(dbUser.UserId);
+                if (user == null) continue;
                 message += $"{position}. {Context.Guild.GetUser(user.Id)}".PadRight(longest + 2) +
-                           $" :: {user.TemporaryMultiplier.ToString("N2")}\n";
+                           $" :: {dbUser.TemporaryMultiplier.ToString("N2")}\n";
                 if (position >= Config.RATELB_CAP) break;
                 position++;
             }
@@ -199,7 +202,7 @@ namespace DEA.Modules
                 Title = $"Ranking of {userToView}",
                 Color = new Color(0x00AE86),
                 Description = $"Balance: {UserRepository.FetchUser(Context).Cash.ToString("C", Config.CI)}\n" +
-                              $"Position: #{users.FindIndex(x => x.Id == userToView.Id) + 1}\n"
+                              $"Position: #{users.FindIndex(x => x.UserId == userToView.Id) + 1}\n"
             };
             if (rank != null)
                 builder.Description += $"Rank: {rank.Mention}";

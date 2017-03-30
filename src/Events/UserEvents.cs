@@ -24,7 +24,7 @@ namespace DEA.Events
         {
             await Logger.DetailedLog(u.Guild, "Event", "User Joined", "User", $"{u}", u.Id, new Color(12, 255, 129), false);
             var user = u as IGuildUser;
-            var mutedRole = user.Guild.GetRole((GuildRepository.FetchGuild(user.Guild.Id).Roles.MutedRoleId));
+            var mutedRole = user.Guild.GetRole((GuildRepository.FetchGuild(user.Guild.Id).MutedRoleId));
             if (mutedRole != null && u.Guild.CurrentUser.GuildPermissions.ManageRoles &&
                 mutedRole.Position < u.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
             {

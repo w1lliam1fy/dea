@@ -43,13 +43,5 @@ namespace DEA.SQLite.Repository
             }
         }
 
-        public static IEnumerable<Guild> FetchAll()
-        {
-            using (var db = new LiteDatabase(Config.DB_CONNECTION_STRING))
-            {
-                return db.GetCollection<Guild>("Guilds").FindAll();
-            }
-        }
-
     }
 }

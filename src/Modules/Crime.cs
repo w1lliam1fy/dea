@@ -31,7 +31,7 @@ namespace DEA.Modules
                 await UserRepository.EditCashAsync(Context, moneyWhored);
                 await ReplyAsync($"{Context.User.Mention}, you whip it out and manage to rake in {moneyWhored.ToString("C", Config.CI)}. Balance: {(user.Cash + moneyWhored).ToString("C", Config.CI)}");
             }
-            UserRepository.Modify(x => x.Cooldowns.Whore = .UtcNow, Context);
+            UserRepository.Modify(x => x.Whore = DateTime.UtcNow, Context);
         }
 
         [Command("Jump")]
@@ -56,7 +56,7 @@ namespace DEA.Modules
                 await UserRepository.EditCashAsync(Context, moneyJumped);
                 await ReplyAsync($"{Context.User.Mention}, you jump some random nigga on the streets and manage to get {moneyJumped.ToString("C", Config.CI)}. Balance: {(user.Cash + moneyJumped).ToString("C", Config.CI)}");
             }
-            UserRepository.Modify(x => x.Cooldowns.Jump = .UtcNow, Context);
+            UserRepository.Modify(x => x.Jump = DateTime.UtcNow, Context);
         }
 
         [Command("Steal")]
@@ -85,7 +85,7 @@ namespace DEA.Modules
                 await ReplyAsync($"{Context.User.Mention}, you walk in to your local {randomStore}, point a fake gun at the clerk, and manage to walk away " +
                                  $"with {moneyStolen.ToString("C", Config.CI)}. Balance: {(user.Cash + moneyStolen).ToString("C", Config.CI)}");
             }
-            UserRepository.Modify(x => x.Cooldowns.Steal = .UtcNow, Context);
+            UserRepository.Modify(x => x.Steal = DateTime.UtcNow, Context);
         }
 
         [Command("Bully")]
@@ -115,7 +115,7 @@ namespace DEA.Modules
             Random rand = new Random();
             double succesRate = rand.Next(Config.MIN_ROB_ODDS * 100, Config.MAX_ROB_ODDS * 100) / 10000f;
             double moneyStolen = resources / (succesRate / 1.50f);
-            UserRepository.Modify(x => x.Cooldowns.Rob = .UtcNow, Context);
+            UserRepository.Modify(x => x.Rob = DateTime.UtcNow, Context);
             string randomBank = Config.BANKS[rand.Next(1, Config.BANKS.Length) - 1];
             if (rand.Next(10000) / 10000f >= succesRate)
             {

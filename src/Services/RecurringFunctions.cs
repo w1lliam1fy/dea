@@ -5,8 +5,6 @@ using DEA.SQLite.Repository;
 using DEA.SQLite.Models;
 using System.Linq;
 using Discord;
-using System.Threading.Tasks;
-using DEA.SQLite.Models.Submodels;
 using System.Collections.Generic;
 
 namespace DEA.Services
@@ -76,44 +74,40 @@ namespace DEA.Services
 
         private async void OnTimedAutoUnmute(object source, ElapsedEventArgs e)
         {
-            IEnumerable<Guild> guilds = GuildRepository.FetchAll();
-            foreach (Guild dbGuild in guilds)
+            foreach (Mute mute in MuteRepository.FetchAll())
             {
-                foreach (Mute mute in dbGuild.Mutes)
+                if (DateTime.UtcNow.Subtract(mute.MutedAt).TotalMilliseconds > mute.MuteLength)
                 {
-                    if (.UtcNow.Subtract(mute.MutedAt).TotalMilliseconds > mute.MuteLength.TotalMilliseconds)
+                    var guild = _client.GetGuild(mute.GuildId);
+                    if (guild != null && guild.GetUser(mute.UserId) != null)
                     {
-                        var guild = _client.GetGuild(dbGuild.Id);
-                        if (guild != null && guild.GetUser(mute.UserId) != null)
+                        var guildData = GuildRepository.FetchGuild(guild.Id);
+                        var mutedRole = guild.GetRole(guildData.MutedRoleId);
+                        if (mutedRole != null && guild.GetUser(mute.UserId).Roles.Any(x => x.Id == mutedRole.Id))
                         {
-                            var guildData = GuildRepository.FetchGuild(guild.Id);
-                            var mutedRole = guild.GetRole(guildData.Roles.MutedRoleId);
-                            if (mutedRole != null && guild.GetUser(mute.UserId).Roles.Any(x => x.Id == mutedRole.Id))
+                            var channel = guild.GetTextChannel(guildData.ModLogId);
+                            if (channel != null && guild.CurrentUser.GuildPermissions.EmbedLinks &&
+                                (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).SendMessages
+                                && (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).EmbedLinks)
                             {
-                                var channel = guild.GetTextChannel(guildData.Channels.ModLogId);
-                                if (channel != null && guild.CurrentUser.GuildPermissions.EmbedLinks &&
-                                    (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).SendMessages
-                                    && (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).EmbedLinks)
+                                await guild.GetUser(mute.UserId).RemoveRoleAsync(mutedRole);
+                                var footer = new EmbedFooterBuilder()
                                 {
-                                    await guild.GetUser(mute.UserId).RemoveRoleAsync(mutedRole);
-                                    var footer = new EmbedFooterBuilder()
-                                    {
-                                        IconUrl = "http://i.imgur.com/BQZJAqT.png",
-                                        Text = $"Case #{guildData.CaseNumber}"
-                                    };
-                                    var builder = new EmbedBuilder()
-                                    {
-                                        Color = new Color(12, 255, 129),
-                                        Description = $"**Action:** Automatic Unmute\n**User:** {guild.GetUser(mute.UserId)} ({guild.GetUser(mute.UserId).Id})",
-                                        Footer = footer
-                                    }.WithCurrentTimestamp();
-                                    GuildRepository.Modify(x => x.CaseNumber++, guild.Id);
-                                    await channel.SendMessageAsync("", embed: builder);
-                                }
+                                    IconUrl = "http://i.imgur.com/BQZJAqT.png",
+                                    Text = $"Case #{guildData.CaseNumber}"
+                                };
+                                var builder = new EmbedBuilder()
+                                {
+                                    Color = new Color(12, 255, 129),
+                                    Description = $"**Action:** Automatic Unmute\n**User:** {guild.GetUser(mute.UserId)} ({guild.GetUser(mute.UserId).Id})",
+                                    Footer = footer
+                                }.WithCurrentTimestamp();
+                                GuildRepository.Modify(x => x.CaseNumber++, guild.Id);
+                                await channel.SendMessageAsync("", embed: builder);
                             }
                         }
-                        MuteRepository.RemoveMute(mute.UserId, dbGuild.Id);
                     }
+                    MuteRepository.RemoveMute(mute.UserId, mute.GuildId);
                 }
             }
         }

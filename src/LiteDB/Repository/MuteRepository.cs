@@ -1,6 +1,7 @@
 ﻿using DEA.SQLite.Models;
 using LiteDB;
 using System;
+using System.Collections.Generic;
 
 namespace DEA.SQLite.Repository
 {
@@ -37,6 +38,14 @@ namespace DEA.SQLite.Repository
                 var mutes = db.GetCollection<Mute>("Mutes");
                 var mute = mutes.FindOne(x => x.UserId == userId && x.GuildId == guildId);
                 if (mute != null) mutes.Delete(mute.Id);
+            }
+        }
+
+        public static IEnumerable<Mute> FetchAll()
+        {
+            using (var db = new LiteDatabase(Config.DB_CONNECTION_STRING))
+            {
+                return db.GetCollection<Mute>("Mutes").FindAll();
             }
         }
 

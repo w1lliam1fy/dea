@@ -1,4 +1,5 @@
 ﻿using LiteDB;
+using System;
 using System.Collections.Generic;
 
 namespace DEA.SQLite.Models
@@ -17,5 +18,7 @@ namespace DEA.SQLite.Models
         public List<ulong> Members { get; set; }
 
         public double Wealth { get; set; } = 0.0;
+
+        public DateTime Raid { get; set; } = DateTime.UtcNow.AddYears(-1);
     }
 }

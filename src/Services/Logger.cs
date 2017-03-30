@@ -1,5 +1,4 @@
-﻿using DEA.SQLite.Models;
-using DEA.SQLite.Repository;
+﻿using DEA.SQLite.Repository;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
@@ -34,9 +33,9 @@ namespace DEA.Services
                 Footer = footer
             }.WithCurrentTimestamp();
 
-            if (context.Guild.GetTextChannel(guild.Channels.ModLogId) != null)
+            if (context.Guild.GetTextChannel(guild.ModLogId) != null)
             {
-                await context.Guild.GetTextChannel(guild.Channels.ModLogId).SendMessageAsync("", embed: builder);
+                await context.Guild.GetTextChannel(guild.ModLogId).SendMessageAsync("", embed: builder);
                 GuildRepository.Modify(x => x.CaseNumber++, context.Guild.Id);
             }
         }
@@ -44,9 +43,9 @@ namespace DEA.Services
         public static async Task DetailedLog(SocketGuild guild, string actionType, string action, string objectType, string objectName, ulong id, Color color, bool incrementCaseNumber = true)
         {
             var guildData = GuildRepository.FetchGuild(guild.Id);
-            if (guild.GetTextChannel(guildData.Channels.DetailedLogsId) != null)
+            if (guild.GetTextChannel(guildData.DetailedLogsId) != null)
             {
-                var channel = guild.GetTextChannel(guildData.Channels.DetailedLogsId);
+                var channel = guild.GetTextChannel(guildData.DetailedLogsId);
                 if (guild.CurrentUser.GuildPermissions.EmbedLinks && (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).SendMessages
                     && (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).EmbedLinks)
                 {
@@ -67,7 +66,7 @@ namespace DEA.Services
                         Footer = footer
                     }.WithCurrentTimestamp();
 
-                    await guild.GetTextChannel(guildData.Channels.DetailedLogsId).SendMessageAsync("", embed: builder);
+                    await guild.GetTextChannel(guildData.DetailedLogsId).SendMessageAsync("", embed: builder);
                     if (incrementCaseNumber) GuildRepository.Modify(x => x.CaseNumber++, guild.Id);
                 }
             }

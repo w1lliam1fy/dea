@@ -77,12 +77,12 @@ namespace DEA.Services
                 {
                     var user = UserRepository.FetchUser(Context);
                     var rate = Config.TEMP_MULTIPLIER_RATE;
-                    if (.UtcNow.Subtract(user.Cooldowns.Message).TotalMilliseconds > user.MessageCooldown)
+                    if (DateTime.UtcNow.Subtract(user.Message).TotalMilliseconds > user.MessageCooldown)
                     {
                         UserRepository.Modify(x => {
                             x.Cash += user.TemporaryMultiplier * user.InvestmentMultiplier;
                             x.TemporaryMultiplier = user.TemporaryMultiplier + rate;
-                            x.Cooldowns.Message = .UtcNow;
+                            x.Message = DateTime.UtcNow;
                         }, Context);
                         await RankHandler.Handle(Context.Guild, Context.User.Id);
                     }
