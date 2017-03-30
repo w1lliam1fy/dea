@@ -35,5 +35,18 @@ namespace DEA.Modules
             await UserRepository.EditCashAsync(Context, userMentioned.Id, +money);
             await ReplyAsync($"Successfully given {money.ToString("C", Config.CI)} to {userMentioned.Mention}.");
         }
+        [Command("Setrate")]
+        [Require(Attributes.ServerOwner)]
+        [Remarks("$Setrate <@User> <amount>")]
+        [Summary("Sets the rate of any user.")]
+        public async Task SetRate(IGuildUser user, double rate)
+        {
+                if (rate < 0) throw new Exception("Rate must be higher than 0");
+                await UserRepository.Modify(x =>
+                {
+                    x.TemporaryMultiplier = rate;
+                }, Context);
+                await ReplyAsync($"Successfully set {user}'s rate to {rate.ToString("C", Config.CI)}");
+        }
     }
 }
