@@ -13,7 +13,7 @@ namespace DEA.Modules
     public class Moderation : ModuleBase<SocketCommandContext>
     {
         [Command("Ban")]
-        [RequireModerator]
+        [Require(Attributes.Moderator)]
         [RequireBotPermission(GuildPermission.BanMembers)]
         [Summary("Bans a user from the server.")]
         [Remarks("Ban <@User> [Reason]")]
@@ -27,7 +27,7 @@ namespace DEA.Modules
         }
 
         [Command("Kick")]
-        [RequireModerator]
+        [Require(Attributes.Moderator)]
         [RequireBotPermission(GuildPermission.KickMembers)]
         [Summary("Kicks a user from the server.")]
         [Remarks("Kick <@User> [Reason]")]
@@ -41,7 +41,7 @@ namespace DEA.Modules
         }
 
         [Command("Mute")]
-        [RequireModerator]
+        [Require(Attributes.Moderator)]
         [RequireBotPermission(GuildPermission.ManageRoles)]
         [Summary("Temporarily mutes a user.")]
         [Remarks("Mute <@User> [Reason]")]
@@ -61,7 +61,7 @@ namespace DEA.Modules
 
         [Command("CustomMute")]
         [Alias("CMute")]
-        [RequireModerator]
+        [Require(Attributes.Moderator)]
         [RequireBotPermission(GuildPermission.ManageRoles)]
         [Summary("Temporarily mutes a user for x amount of hours.")]
         [Remarks("CustomMute <Hours> <@User> [Reason]")]
@@ -84,7 +84,7 @@ namespace DEA.Modules
         }
 
         [Command("Unmute")]
-        [RequireModerator]
+        [Require(Attributes.Moderator)]
         [RequireBotPermission(GuildPermission.ManageRoles)]
         [Summary("Unmutes a muted user.")]
         [Remarks("Unmute <@User> [Reason]")]
@@ -100,7 +100,7 @@ namespace DEA.Modules
         }
 
         [Command("Clear")]
-        [RequireModerator]
+        [Require(Attributes.Moderator)]
         [RequireBotPermission(GuildPermission.ManageMessages)]
         [Summary("Deletes x amount of messages.")]
         [Remarks("Clear [Quantity of messages]")]
@@ -117,7 +117,7 @@ namespace DEA.Modules
         }
 
         [Command("Chill")]
-        [RequireModerator]
+        [Require(Attributes.Moderator)]
         [RequireBotPermission(GuildPermission.Administrator)]
         [Summary("Prevents users from talking in a specific channel for x amount of seconds.")]
         [Remarks("Chill [Number of seconds]")]

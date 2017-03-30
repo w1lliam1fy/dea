@@ -17,6 +17,7 @@ namespace DEA.Modules
         }
 
         [Command("50x2")]
+        [Require(Attributes.FiftyX2)]
         [Summary("Roll 50 or higher on a 100 sided die, win 2X your bet.")]
         [Remarks("50x2 <Bet>")]
         public async Task X2BetterOdds(double bet)
@@ -54,19 +55,19 @@ namespace DEA.Modules
             if (Context.Guild.GetTextChannel(guild.Channels.GambleId) != null && Context.Channel.Id != guild.Channels.GambleId)
                 throw new Exception($"You may only gamble in {Context.Guild.GetTextChannel(guild.Channels.GambleId).Mention}!");
             if (bet < Config.BET_MIN) throw new Exception($"Lowest bet is {Config.BET_MIN}$.");
-            if (bet > user.Cash) throw new Exception($"You do not have enough money. Balance: {user.Cash.ToString("C2")}.");
+            if (bet > user.Cash) throw new Exception($"You do not have enough money. Balance: {user.Cash.ToString("C", Config.CI)}.");
             int roll = new Random().Next(1, 101);
             if (roll >= odds)
             {
                 await UserRepository.EditCashAsync(Context, (bet * payoutMultiplier));
-                await ReplyAsync($"{Context.User.Mention}, you rolled: {roll}. Congratulations, you just won {(bet * payoutMultiplier).ToString("C2")}! " +
-                                 $"Balance: {user.Cash.ToString("C2")}.");
+                await ReplyAsync($"{Context.User.Mention}, you rolled: {roll}. Congratulations, you just won {(bet * payoutMultiplier).ToString("C", Config.CI)}! " +
+                                 $"Balance: {user.Cash.ToString("C", Config.CI)}.");
             }
             else
             {
                 await UserRepository.EditCashAsync(Context, -bet);
-                await ReplyAsync($"{Context.User.Mention}, you rolled {roll}. Unfortunately, you lost {bet.ToString("C2")}. " +
-                                 $"Balance: {user.Cash.ToString("C2")}.");
+                await ReplyAsync($"{Context.User.Mention}, you rolled {roll}. Unfortunately, you lost {bet.ToString("C", Config.CI)}. " +
+                                 $"Balance: {user.Cash.ToString("C", Config.CI)}.");
             }
         }
     }

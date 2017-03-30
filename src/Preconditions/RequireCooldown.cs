@@ -1,6 +1,4 @@
-﻿using DEA;
-using DEA.Services;
-using DEA.SQLite.Models;
+﻿using DEA.Services;
 using DEA.SQLite.Repository;
 using System;
 using System.Threading.Tasks;
@@ -12,46 +10,38 @@ namespace Discord.Commands
     {
         public override async Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IDependencyMap map)
         {
-            double cooldown;
-            DateTime lastUse;
-            using (var db = new DbContext())
+            TimeSpan cooldown = Config.DEFAULT_COOLDOWN;
+            DateTimeOffset lastUse = DateTimeOffset.Now;
+            var user = UserRepository.FetchUser(context as SocketCommandContext);
+            switch (command.Name.ToLower())
             {
-                
-                var user = await UserRepository.FetchUserAsync(context.User.Id);
-                switch (command.Name)
-                {
-                    case "Rob":
-                        cooldown = Config.ROB_COOLDOWN;
-                        lastUse = DateTime.Parse(user.LastRob);
-                        break;
-                    case "Steal":
-                        cooldown = Config.STEAL_COOLDOWN;
-                        lastUse = DateTime.Parse(user.LastSteal);
-                        break;
-                    case "Jump":
-                        cooldown = Config.JUMP_COOLDOWN;
-                        lastUse = DateTime.Parse(user.LastJump);
-                        break;
-                    case "Whore":
-                        cooldown = Config.WHORE_COOLDOWN;
-                        lastUse = DateTime.Parse(user.LastWhore);
-                        break;
-                    case "Withdraw":
-                        cooldown = Config.WITHDRAW_COOLDOWN;
-                        lastUse = DateTime.Parse(user.LastWithdraw);
-                        break;
-                    default:
-                        cooldown = Config.DEFAULT_COOLDOWN;
-                        lastUse = DateTime.Now;
-                        break;
-                }
-                if (DateTime.Now.Subtract(lastUse).TotalMilliseconds > cooldown)
-                    return PreconditionResult.FromSuccess();
-                else
-                {
-                    await Logger.Cooldown(context as SocketCommandContext, command.Name, TimeSpan.FromMilliseconds(cooldown - DateTime.Now.Subtract(lastUse).TotalMilliseconds));
-                    return PreconditionResult.FromError("");
-                }
+                case "whore":
+                    cooldown = Config.WHORE_COOLDOWN;
+                    lastUse = user.Cooldowns.Whore;
+                    break;
+                case "jump":
+                    cooldown = Config.JUMP_COOLDOWN;
+                    lastUse = user.Cooldowns.Jump;
+                    break;
+                case "steal":
+                    cooldown = Config.STEAL_COOLDOWN;
+                    lastUse = user.Cooldowns.Steal;
+                    break;
+                case "rob":
+                    cooldown = Config.ROB_COOLDOWN;
+                    lastUse = user.Cooldowns.Rob;
+                    break;
+                case "withdraw":
+                    cooldown = Config.WITHDRAW_COOLDOWN;
+                    lastUse = user.Cooldowns.Withdraw;
+                    break;
+            }
+            if (DateTimeOffset.Now.Subtract(lastUse).TotalMilliseconds > cooldown.TotalMilliseconds)
+                return PreconditionResult.FromSuccess();
+            else
+            {
+                await Logger.Cooldown(context as SocketCommandContext, command.Name, cooldown.Subtract(DateTimeOffset.Now.Subtract(lastUse)));
+                return PreconditionResult.FromError("");
             }
         }
     }

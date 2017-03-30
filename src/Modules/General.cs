@@ -27,7 +27,7 @@ namespace DEA.Modules
                 case "line":
                     if (Config.LINE_COST > cash)
                     {
-                        await ReplyAsync($"{Context.User.Mention}, you do not have enough money. Balance: {cash.ToString("C2")}");
+                        await ReplyAsync($"{Context.User.Mention}, you do not have enough money. Balance: {cash.ToString("C", Config.CI)}");
                         break;
                     }
                     if (user.MessageCooldown == Config.LINE_COOLDOWN)
@@ -43,7 +43,7 @@ namespace DEA.Modules
                 case "lb":
                     if (Config.POUND_COST > cash)
                     {
-                        await ReplyAsync($"{Context.User.Mention}, you do not have enough money. Balance: {cash.ToString("C2")}");
+                        await ReplyAsync($"{Context.User.Mention}, you do not have enough money. Balance: {cash.ToString("C", Config.CI)}");
                         break;
                     }
                     if (user.InvestmentMultiplier >= Config.POUND_MULTIPLIER)
@@ -60,7 +60,7 @@ namespace DEA.Modules
                 case "kilogram":
                     if (Config.KILO_COST > cash)
                     {
-                        await ReplyAsync($"{Context.User.Mention}, you do not have enough money. Balance: {cash.ToString("C2")}");
+                        await ReplyAsync($"{Context.User.Mention}, you do not have enough money. Balance: {cash.ToString("C", Config.CI)}");
                         break;
                     }
                     if (user.InvestmentMultiplier != Config.POUND_MULTIPLIER)
@@ -122,7 +122,7 @@ namespace DEA.Modules
             {
                 if (Context.Guild.GetUser(user.Id) == null) continue;
                 message += $"{position}. {Context.Guild.GetUser(user.Id)}".PadRight(longest + 2) +
-                           $" :: {UserRepository.FetchUser(Context).Cash.ToString("C2")}\n";
+                           $" :: {UserRepository.FetchUser(Context).Cash.ToString("C", Config.CI)}\n";
                 if (position >= Config.LEADERBOARD_CAP) break;
                 position++;
             }
@@ -175,12 +175,12 @@ namespace DEA.Modules
             var user = UserRepository.FetchUser(Context);
                 if (userMentioned.Id == Context.User.Id) throw new Exception("Hey kids! Look at that retard, he is trying to give money to himself!");
                 if (money < Config.DONATE_MIN) throw new Exception($"Lowest donation is {Config.DONATE_MIN}$.");
-                if (user.Cash < money) throw new Exception($"You do not have enough money. Balance: {user.Cash.ToString("C2")}.");
+                if (user.Cash < money) throw new Exception($"You do not have enough money. Balance: {user.Cash.ToString("C", Config.CI)}.");
                 await UserRepository.EditCashAsync(Context, -money);
                 double deaMoney = money * Config.DEA_CUT / 100;
                 await UserRepository.EditCashAsync(Context, userMentioned.Id, money - deaMoney);
                 await UserRepository.EditCashAsync(Context, Context.Guild.CurrentUser.Id, deaMoney);
-                await ReplyAsync($"Successfully donated {money.ToString("C2")} to {userMentioned.Mention}. DEA has taken a {deaMoney.ToString("C2")} cut out of this donation.");
+                await ReplyAsync($"Successfully donated {money.ToString("C", Config.CI)} to {userMentioned.Mention}. DEA has taken a {deaMoney.ToString("C", Config.CI)} cut out of this donation.");
         }
 
         [Command("Money")]
@@ -188,9 +188,9 @@ namespace DEA.Modules
         [Summary("View the wealth of anyone.")]
         [Remarks("Money [@User]")]
         [RequireBotPermission(GuildPermission.EmbedLinks)]
-        public async Task Money(SocketUser userToView = null)
+        public async Task Money(IGuildUser userToView = null)
         {
-            userToView = userToView ?? Context.User;
+            userToView = userToView ?? Context.User as IGuildUser;
             List<User> users = UserRepository.FetchAll(Context.Guild.Id).OrderByDescending(x => x.Cash).ToList();
             IRole rank = null;
             //TODO: rank = await RankHandler.GetRank(Context.Guild, userToView.Id, Context.Guild.Id);
@@ -198,7 +198,7 @@ namespace DEA.Modules
             {
                 Title = $"Ranking of {userToView}",
                 Color = new Color(0x00AE86),
-                Description = $"Balance: {UserRepository.FetchUser(Context).Cash.ToString("C2")}\n" +
+                Description = $"Balance: {UserRepository.FetchUser(Context).Cash.ToString("C", Config.CI)}\n" +
                               $"Position: #{users.FindIndex(x => x.Id == userToView.Id) + 1}\n"
             };
             if (rank != null)
@@ -219,7 +219,7 @@ namespace DEA.Modules
                 Title = $"Rate of { userToView }",
                 Color = new Color(0x00AE86),
                 Description = $"Currently receiving " +
-                $"{(user.InvestmentMultiplier * user.TemporaryMultiplier).ToString("C2")} " +
+                $"{(user.InvestmentMultiplier * user.TemporaryMultiplier).ToString("C", Config.CI)} " +
                 $"per message sent every {user.MessageCooldown / 1000} seconds that is at least 7 characters long.\n" +
                 $"Chatting multiplier: {user.TemporaryMultiplier.ToString("N2")}\nInvestment multiplier: " +
                 $"{user.InvestmentMultiplier.ToString("N2")}\nMessage cooldown: " +

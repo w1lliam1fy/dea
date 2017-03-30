@@ -1,5 +1,4 @@
 ﻿using DEA.Services;
-using DEA.SQLite.Models;
 using DEA.SQLite.Repository;
 using Discord;
 using Discord.WebSocket;
@@ -24,29 +23,13 @@ namespace DEA.Events
         private async Task HandleUserJoin(SocketGuildUser u)
         {
             await Logger.DetailedLog(u.Guild, "Event", "User Joined", "User", $"{u}", u.Id, new Color(12, 255, 129), false);
-
-            using (var db = new DbContext())
+            var user = u as IGuildUser;
+            var mutedRole = user.Guild.GetRole((GuildRepository.FetchGuild(user.Guild.Id).Roles.MutedRoleId));
+            if (mutedRole != null && u.Guild.CurrentUser.GuildPermissions.ManageRoles &&
+                mutedRole.Position < u.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
             {
-                
-                
-                var user = u as IGuildUser;
-                var mutedRole = user.Guild.GetRole((await GuildRepository.FetchGuildAsync(user.Guild.Id)).MutedRoleId);
-                if (mutedRole != null && u.Guild.CurrentUser.GuildPermissions.ManageRoles &&
-                    mutedRole.Position < u.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
-                {
-                    await RankHandler.Handle(u.Guild, u.Id);
-                    if (await MuteRepository.IsMutedAsync(user.Id, user.Guild.Id) && mutedRole != null && user != null) await user.AddRoleAsync(mutedRole);
-                }
-
-                if (Config.BLACKLISTED_IDS.Any(x => x == u.Id))
-                {
-                    if (u.Guild.CurrentUser.GuildPermissions.BanMembers &&
-                            u.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position >
-                            u.Roles.OrderByDescending(x => x.Position).First().Position && u.Guild.OwnerId != u.Id)
-                    {
-                        await u.Guild.AddBanAsync(u);
-                    }
-                }
+                await RankHandler.Handle(u.Guild, u.Id);
+                if (MuteRepository.IsMuted(user.Id, user.Guild.Id) && mutedRole != null && user != null) await user.AddRoleAsync(mutedRole);
             }
         }
 

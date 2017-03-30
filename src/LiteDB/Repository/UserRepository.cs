@@ -15,8 +15,7 @@ namespace DEA.SQLite.Repository
             using (var db = new LiteDatabase(Config.DB_CONNECTION_STRING))
             {
                 var users = db.GetCollection<User>("Users");
-                var ExistingUser = users.FindOne(x => x.UserId == context.User.Id && x.GuildId == context.Guild.Id);
-                if (ExistingUser == null)
+                if (!users.Exists(x => x.UserId == context.User.Id && x.GuildId == context.Guild.Id))
                 {
                     var CreatedUser = new User()
                     {
@@ -27,7 +26,7 @@ namespace DEA.SQLite.Repository
                     return CreatedUser;
                 }
                 else
-                    return ExistingUser;
+                    return users.FindOne(x => x.UserId == context.User.Id && x.GuildId == context.Guild.Id);
             }
         }
 
@@ -36,8 +35,7 @@ namespace DEA.SQLite.Repository
             using (var db = new LiteDatabase(Config.DB_CONNECTION_STRING))
             {
                 var users = db.GetCollection<User>("Users");
-                var ExistingUser = users.FindOne(x => x.UserId == userId && x.GuildId == guildId);
-                if (ExistingUser == null)
+                if (!users.Exists(x => x.UserId == userId && x.GuildId == guildId))
                 {
                     var CreatedUser = new User()
                     {
@@ -48,7 +46,7 @@ namespace DEA.SQLite.Repository
                     return CreatedUser;
                 }
                 else
-                    return ExistingUser;
+                    return users.FindOne(x => x.UserId == userId && x.GuildId == guildId);
             }
         }
 
@@ -95,7 +93,15 @@ namespace DEA.SQLite.Repository
             }
         }
 
-        private static void UpdateUser(User user)
+        public static IEnumerable<User> FetchAll()
+        {
+            using (var db = new LiteDatabase(Config.DB_CONNECTION_STRING))
+            {
+                return db.GetCollection<User>("Users").FindAll();
+            }
+        }
+
+        public static void UpdateUser(User user)
         {
             using (var db = new LiteDatabase(Config.DB_CONNECTION_STRING))
             {

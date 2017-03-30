@@ -12,7 +12,7 @@ namespace DEA.Modules
     {
 
         [Command("RoleIDs")]
-        [RequireAdmin]
+        [Require(Attributes.Admin)]
         [Summary("Gets the ID of all roles in the guild.")]
         [Remarks("RoleIDs")]
         public async Task RoleIDs()
@@ -26,7 +26,7 @@ namespace DEA.Modules
         }
 
         [Command("SetPrefix")]
-        [RequireAdmin]
+        [Require(Attributes.Admin)]
         [Summary("Sets the guild specific prefix.")]
         [Remarks("SetPrefix <Prefix>")]
         public async Task SetPrefix(string prefix)
@@ -37,7 +37,7 @@ namespace DEA.Modules
         }
 
         [Command("AddModRole")]
-        [RequireAdmin]
+        [Require(Attributes.Admin)]
         [Summary("Adds a moderator role.")]
         [Remarks("AddModRole <@ModRole>")]
         public async Task AddModRole(IRole modRole)
@@ -47,7 +47,7 @@ namespace DEA.Modules
         }
 
         [Command("RemoveModRole")]
-        [RequireAdmin]
+        [Require(Attributes.Admin)]
         [Summary("Removes a moderator role.")]
         [Remarks("RemoveModRole <@ModRole>")]
         public async Task RemoveModRole(IRole modRole)
@@ -59,7 +59,7 @@ namespace DEA.Modules
         }
 
         [Command("SetMutedRole")]
-        [RequireAdmin]
+        [Require(Attributes.Admin)]
         [Alias("SetMuteRole")]
         [Summary("Sets the muted role.")]
         [Remarks("SetMutedRole <@MutedRole>")]
@@ -72,7 +72,7 @@ namespace DEA.Modules
         }
 
         [Command("AddRank")]
-        [RequireAdmin]
+        [Require(Attributes.Admin)]
         [Summary("Adds a rank role for the DEA cash system.")]
         [Remarks("AddRank <@RankRole> <Cash required>")]
         public async Task AddRank(IRole rankRole, double cashRequired)
@@ -93,7 +93,7 @@ namespace DEA.Modules
         }
 
         [Command("RemoveRank")]
-        [RequireAdmin]
+        [Require(Attributes.Admin)]
         [Summary("Adds a rank role for the DEA cash system.")]
         [Remarks("AddRank <@RankRole> <Cash required>")]
         public async Task RemoveRank(IRole rankRole)
@@ -107,7 +107,7 @@ namespace DEA.Modules
         }
 
         [Command("SetModLog")]
-        [RequireAdmin]
+        [Require(Attributes.Admin)]
         [Summary("Sets the moderation log.")]
         [Remarks("SetModLog <#ModLog>")]
         public async Task SetModLogChannel(ITextChannel modLogChannel)
@@ -117,7 +117,7 @@ namespace DEA.Modules
         }
 
         [Command("SetDetailedLogs")]
-        [RequireAdmin]
+        [Require(Attributes.Admin)]
         [Summary("Sets the detailed logs.")]
         [Remarks("SetDetailedLogs <#DetailsLogs>")]
         public async Task SetDetailedLogsChannel(ITextChannel detailedLogsChannel)
@@ -127,7 +127,7 @@ namespace DEA.Modules
         }
 
         [Command("SetGambleChannel")]
-        [RequireAdmin]
+        [Require(Attributes.Admin)]
         [Alias("SetGamble")]
         [Summary("Sets the gambling channel.")]
         [Remarks("SetGambleChannel <#GambleChannel>")]

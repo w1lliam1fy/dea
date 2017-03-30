@@ -2,7 +2,6 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using System;
-using DEA.SQLite.Models;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -76,17 +75,15 @@ namespace DEA.Services
                 var lastMsgs = await Context.Channel.GetMessagesAsync(10).Flatten();
                 if (lastMsgs.Where(x => x.Author == Context.User).Count() < 4)
                 {
-                    var user = UserRepository.FetchUser(Context.User.Id);
+                    var user = UserRepository.FetchUser(Context);
                     var rate = Config.TEMP_MULTIPLIER_RATE;
-                    if (Context.Guild.Id == Config.RUSH_SERVER_ID) rate = Config.RUSH_TEMP_MULTIPLIER_RATE;
-                    if (Config.SPONSOR_IDS.Any(x => x == Context.User.Id)) rate = Config.SPONSOR_TEMP_MULTIPLIER_RATE;
                     if (DateTimeOffset.Now.Subtract(user.Cooldowns.Message).TotalMilliseconds > user.MessageCooldown)
                     {
                         UserRepository.Modify(x => {
                             x.Cash += user.TemporaryMultiplier * user.InvestmentMultiplier;
                             x.TemporaryMultiplier = user.TemporaryMultiplier + rate;
                             x.Cooldowns.Message = DateTime.Now;
-                        }, Context.User.Id);
+                        }, Context);
                         await RankHandler.Handle(Context.Guild, Context.User.Id);
                     }
                 }

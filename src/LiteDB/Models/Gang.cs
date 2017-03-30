@@ -6,7 +6,7 @@ namespace DEA.SQLite.Models
     public class Gang
     {
         [BsonId]
-        public int Id { get; set; }
+        public ObjectId Id { get; set; }
 
         public string Name { get; set; }
 

@@ -23,18 +23,19 @@ namespace DEA.Modules
             {
                 await UserRepository.EditCashAsync(Context, -Config.WHORE_FINE);
                 await ReplyAsync($"{Context.User.Mention}, what are the fucking odds that one of your main clients was a cop... " +
-                                 $"You are lucky you only got a {Config.WHORE_FINE.ToString("C2")} fine. Balance: {(user.Cash - Config.WHORE_FINE).ToString("C2")}");
+                                 $"You are lucky you only got a {Config.WHORE_FINE.ToString("C", Config.CI)} fine. Balance: {(user.Cash - Config.WHORE_FINE).ToString("C", Config.CI)}");
             }
             else
             {
                 double moneyWhored = (double)(new Random().Next((int)(Config.MIN_WHORE) * 100, (int)(Config.MAX_WHORE) * 100)) / 100;
                 await UserRepository.EditCashAsync(Context, moneyWhored);
-                await ReplyAsync($"{Context.User.Mention}, you whip it out and manage to rake in {moneyWhored.ToString("C2")}. Balance: {(user.Cash + moneyWhored).ToString("C2")}");
+                await ReplyAsync($"{Context.User.Mention}, you whip it out and manage to rake in {moneyWhored.ToString("C", Config.CI)}. Balance: {(user.Cash + moneyWhored).ToString("C", Config.CI)}");
             }
             UserRepository.Modify(x => x.Cooldowns.Whore = DateTimeOffset.Now, Context);
         }
 
         [Command("Jump")]
+        [Require(Attributes.Jump)]
         [RequireCooldown]
         [Summary("Jump some random nigga in the hood.")]
         [Remarks("Jump")]
@@ -47,18 +48,19 @@ namespace DEA.Modules
             {
                 await UserRepository.EditCashAsync(Context, -Config.JUMP_FINE);
                 await ReplyAsync($"{Context.User.Mention}, turns out the nigga was a black belt, whooped your ass, and brought you in. " +
-                                 $"Court's final ruling was a {Config.JUMP_FINE.ToString("C2")} fine. Balance: {(user.Cash - Config.JUMP_FINE).ToString("C2")}");
+                                 $"Court's final ruling was a {Config.JUMP_FINE.ToString("C", Config.CI)} fine. Balance: {(user.Cash - Config.JUMP_FINE).ToString("C", Config.CI)}");
             }
             else
             {
                 double moneyJumped = (double)(new Random().Next((int)(Config.MIN_JUMP) * 100, (int)(Config.MAX_JUMP) * 100)) / 100;
                 await UserRepository.EditCashAsync(Context, moneyJumped);
-                await ReplyAsync($"{Context.User.Mention}, you jump some random nigga on the streets and manage to get {moneyJumped.ToString("C2")}. Balance: {(user.Cash + moneyJumped).ToString("C2")}");
+                await ReplyAsync($"{Context.User.Mention}, you jump some random nigga on the streets and manage to get {moneyJumped.ToString("C", Config.CI)}. Balance: {(user.Cash + moneyJumped).ToString("C", Config.CI)}");
             }
             UserRepository.Modify(x => x.Cooldowns.Jump = DateTimeOffset.Now, Context);
         }
 
         [Command("Steal")]
+        [Require(Attributes.Steal)]
         [RequireCooldown]
         [Summary("Snipe some goodies from your local stores.")]
         [Remarks("Steal")]
@@ -73,7 +75,7 @@ namespace DEA.Modules
                 await ReplyAsync($"{Context.User.Mention}, you were on your way out with the cash, but then some hot chick asked you if you " +
                                  $"wanted to bust a nut. Turns out she was cop, and raped you before turning you in. Since she passed on some " +
                                  $"nice words to the judge about you not resisting arrest, you managed to walk away with only a " +
-                                 $"{Config.STEAL_FINE.ToString("C2")} fine. Balance: {(user.Cash - Config.STEAL_FINE).ToString("C2")}");
+                                 $"{Config.STEAL_FINE.ToString("C", Config.CI)} fine. Balance: {(user.Cash - Config.STEAL_FINE).ToString("C", Config.CI)}");
             }
             else
             {
@@ -81,12 +83,13 @@ namespace DEA.Modules
                 await UserRepository.EditCashAsync(Context, moneyStolen);
                 string randomStore = Config.STORES[new Random().Next(1, Config.STORES.Length) - 1];
                 await ReplyAsync($"{Context.User.Mention}, you walk in to your local {randomStore}, point a fake gun at the clerk, and manage to walk away " +
-                                 $"with {moneyStolen.ToString("C2")}. Balance: {(user.Cash + moneyStolen).ToString("C2")}");
+                                 $"with {moneyStolen.ToString("C", Config.CI)}. Balance: {(user.Cash + moneyStolen).ToString("C", Config.CI)}");
             }
             UserRepository.Modify(x => x.Cooldowns.Steal = DateTimeOffset.Now, Context);
         }
 
         [Command("Bully")]
+        [Require(Attributes.Bully)]
         [Summary("Bully anyone's nickname to whatever you please.")]
         [Remarks("Bully <@User> <Nickname>")]
         [RequireBotPermission(GuildPermission.ManageNicknames)]
@@ -98,6 +101,7 @@ namespace DEA.Modules
         }
 
         [Command("Rob")]
+        [Require(Attributes.Rob)]
         [RequireCooldown]
         [Summary("Lead a large scale operation on a local bank.")]
         [Remarks("Rob <Amount of cash to spend on resources>")]
@@ -105,9 +109,9 @@ namespace DEA.Modules
         public async Task Rob(double resources)
         {
             var user = UserRepository.FetchUser(Context);
-            if (user.Cash < resources) throw new Exception($"You do not have enough money. Balance: {user.Cash.ToString("C2")}");
-            if (resources < Config.MIN_RESOURCES) throw new Exception($"The minimum amount of money to spend on resources for rob is {Config.MIN_RESOURCES.ToString("C2")}.");
-            if (resources > Config.MAX_RESOURCES) throw new Exception($"The maximum amount of money to spend on resources for rob is {Config.MAX_RESOURCES.ToString("C2")}.");
+            if (user.Cash < resources) throw new Exception($"You do not have enough money. Balance: {user.Cash.ToString("C", Config.CI)}");
+            if (resources < Config.MIN_RESOURCES) throw new Exception($"The minimum amount of money to spend on resources for rob is {Config.MIN_RESOURCES.ToString("C", Config.CI)}.");
+            if (resources > Config.MAX_RESOURCES) throw new Exception($"The maximum amount of money to spend on resources for rob is {Config.MAX_RESOURCES.ToString("C", Config.CI)}.");
             Random rand = new Random();
             double succesRate = rand.Next(Config.MIN_ROB_ODDS * 100, Config.MAX_ROB_ODDS * 100) / 10000f;
             double moneyStolen = resources / (succesRate / 1.50f);
@@ -117,13 +121,13 @@ namespace DEA.Modules
             {
                 await UserRepository.EditCashAsync(Context, moneyStolen);
                 await ReplyAsync($"{Context.User.Mention}, with a {succesRate.ToString("P")} chance of success, you successfully stole " +
-                $"{moneyStolen.ToString("C2")} from the {randomBank}. Balance: {(user.Cash + moneyStolen).ToString("C2")}$.");
+                $"{moneyStolen.ToString("C", Config.CI)} from the {randomBank}. Balance: {(user.Cash + moneyStolen).ToString("C", Config.CI)}$.");
             }
             else
             {
                 await UserRepository.EditCashAsync(Context, -resources);
                 await ReplyAsync($"{Context.User.Mention}, with a {succesRate.ToString("P")} chance of success, you failed to steal " +
-                $"{moneyStolen.ToString("C2")} from the {randomBank}, losing all resources in the process. Balance: {(user.Cash - resources).ToString("C2")}.");
+                $"{moneyStolen.ToString("C", Config.CI)} from the {randomBank}, losing all resources in the process. Balance: {(user.Cash - resources).ToString("C", Config.CI)}.");
             }
         }
     }

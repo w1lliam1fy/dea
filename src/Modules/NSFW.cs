@@ -13,7 +13,7 @@ namespace DEA.Modules
     public class NSFW : ModuleBase<SocketCommandContext>
     {
         [Command("ChangeNSFWSettings")]
-        [RequireAdmin]
+        [Require(Attributes.Admin)]
         [Summary("Enables/disables NSFW commands in your server.")]
         [Remarks("ChangeNSFWSettings")]
         public async Task ChangeNSFWSettings()
@@ -32,7 +32,7 @@ namespace DEA.Modules
         }
 
         [Command("SetNSFWChannel")]
-        [RequireAdmin]
+        [Require(Attributes.Admin)]
         [Summary("Sets a specific channel for all NSFW commands.")]
         [Remarks("SetNSFWChannel <#NSFWChannel>")]
         public async Task SetNSFWChannel(ITextChannel nsfwChannel)
@@ -48,7 +48,7 @@ namespace DEA.Modules
         }
 
         [Command("SetNSFWRole")]
-        [RequireAdmin]
+        [Require(Attributes.Admin)]
         [Summary("Only allow users with a specific role to use NSFW commands.")]
         [Remarks("SetNSFWRole <@NSFWRole>")]
         public async Task SetNSFWRole(IRole nsfwRole)
@@ -90,7 +90,7 @@ namespace DEA.Modules
 
         [Command("Tits", RunMode = RunMode.Async)]
         [Alias("titties", "tities", "boobs", "boob")]
-        [RequireNSFW]
+        [Require(Attributes.Nsfw)]
         [Summary("Motorboat that shit.")]
         [Remarks("Tits")]
         public async Task Tits()
@@ -104,7 +104,7 @@ namespace DEA.Modules
 
         [Command("Ass", RunMode = RunMode.Async)]
         [Alias("butt", "butts", "booty")]
-        [RequireNSFW]
+        [Require(Attributes.Nsfw)]
         [Summary("Sauce me some booty how about that.")]
         [Remarks("Ass")]
         public async Task Ass()
@@ -117,7 +117,7 @@ namespace DEA.Modules
         }
 
         [Command("Hentai", RunMode = RunMode.Async)]
-        [RequireNSFW]
+        [Require(Attributes.Nsfw)]
         [Summary("The real shit goes down with custom hentai tags.")]
         [Remarks("Hentai [tag]")]
         public async Task Gelbooru([Remainder] string tag = "")

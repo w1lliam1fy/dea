@@ -25,7 +25,7 @@ namespace DEA
             using (StreamReader file = File.OpenText(@"..\..\Credentials.json"))
             {
                 JsonSerializer serializer = new JsonSerializer();
-                Config.CREDS = (Credentials)serializer.Deserialize(file, typeof(Credentials));
+                Config.CREDENTIALS = (Credentials)serializer.Deserialize(file, typeof(Credentials));
             }
 
             _client = new DiscordSocketClient(new DiscordSocketConfig()
@@ -39,7 +39,7 @@ namespace DEA
                 => Task.Run(()
                 => PrettyConsole.Log(l.Severity, l.Source, l.Exception?.ToString() ?? l.Message));
 
-            await _client.LoginAsync(TokenType.Bot, Config.CREDS.Token);
+            await _client.LoginAsync(TokenType.Bot, Config.CREDENTIALS.Token);
             
             await _client.StartAsync();
 

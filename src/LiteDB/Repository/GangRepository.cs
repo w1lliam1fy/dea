@@ -91,19 +91,17 @@ namespace DEA.SQLite.Repository
             using (var db = new LiteDatabase(Config.DB_CONNECTION_STRING))
             {
                 var gangs = db.GetCollection<Gang>("Gangs");
-                var gang = gangs.FindOne(x => x.GuildId == guildId && (x.LeaderId == userId || x.Members.Any(y => y == userId)));
-                if (gang == null)
-                    return false;
-                else
-                    return true;
+                return gangs.Exists(x => x.GuildId == guildId && (x.LeaderId == userId || x.Members.Any(y => y == userId)));
             }
         }
 
         public static bool IsMemberOf(ulong memberId, ulong guildId, ulong userId)
         {
             var gang = FetchGang(memberId, guildId);
-            if (gang.LeaderId == userId || gang.Members.Any(x => x == userId)) return true;
-            return false;
+            if (gang.LeaderId == userId || gang.Members.Any(x => x == userId))
+                return true;
+            else
+                return false;
         }
 
         public static bool IsFull(ulong userId, ulong guildId)
@@ -138,7 +136,15 @@ namespace DEA.SQLite.Repository
             }
         }
 
-        private static void UpdateGang(Gang gang)
+        public static IEnumerable<Gang> FetchAll()
+        {
+            using (var db = new LiteDatabase(Config.DB_CONNECTION_STRING))
+            {
+                return db.GetCollection<Gang>("Gangs").FindAll();
+            }
+        }
+
+        public static void UpdateGang(Gang gang)
         {
             using (var db = new LiteDatabase(Config.DB_CONNECTION_STRING))
             {

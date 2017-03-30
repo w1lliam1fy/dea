@@ -1,10 +1,13 @@
 ﻿using DEA.Resources;
 using System;
+using System.Globalization;
 
 public static class Config
 {
 
-    public static Credentials CREDS;
+    public static Credentials CREDENTIALS;
+
+    public static readonly CultureInfo CI = CultureInfo.CreateSpecificCulture("en-CA");
 
     public static readonly string DB_CONNECTION_STRING = @"Database.db";
 

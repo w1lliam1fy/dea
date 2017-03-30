@@ -1,6 +1,7 @@
 ﻿using DEA.SQLite.Models;
 using LiteDB;
 using System;
+using System.Collections.Generic;
 
 namespace DEA.SQLite.Repository
 {
@@ -11,19 +12,18 @@ namespace DEA.SQLite.Repository
         {
             using (var db = new LiteDatabase(Config.DB_CONNECTION_STRING))
             {
-                var users = db.GetCollection<Guild>("Guilds");
-                var ExistingGuild = users.FindById(guildId);
-                if (ExistingGuild == null)
+                var guilds = db.GetCollection<Guild>("Guilds");
+                if (!guilds.Exists(x => x.Id == guildId))
                 {
                     var CreatedGuild = new Guild()
                     {
                         Id = guildId
                     };
-                    users.Insert(CreatedGuild);
+                    guilds.Insert(CreatedGuild);
                     return CreatedGuild;
                 }
                 else
-                    return ExistingGuild;
+                    return guilds.FindOne(x => x.Id == guildId);
             }
         }
 
@@ -40,6 +40,14 @@ namespace DEA.SQLite.Repository
             {
                 var guilds = db.GetCollection<Guild>("Guilds");
                 guilds.Update(guild);
+            }
+        }
+
+        public static IEnumerable<Guild> FetchAll()
+        {
+            using (var db = new LiteDatabase(Config.DB_CONNECTION_STRING))
+            {
+                return db.GetCollection<Guild>("Guilds").FindAll();
             }
         }
 

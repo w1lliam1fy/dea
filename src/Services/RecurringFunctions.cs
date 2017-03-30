@@ -6,6 +6,8 @@ using DEA.SQLite.Models;
 using System.Linq;
 using Discord;
 using System.Threading.Tasks;
+using DEA.SQLite.Models.Submodels;
+using System.Collections.Generic;
 
 namespace DEA.Services
 {
@@ -19,33 +21,28 @@ namespace DEA.Services
             _client = client;
             ResetTemporaryMultiplier();
             AutoUnmute();
-            BanBlacklisted();
             ApplyInterestRate();
         }
 
         private void ResetTemporaryMultiplier()
         {
-            Timer t = new Timer(TimeSpan.FromHours(1).TotalMilliseconds);
+            Timer t = new Timer(TimeSpan.FromSeconds(30).TotalMilliseconds);
             t.AutoReset = true;
             t.Elapsed += new ElapsedEventHandler(OnTimedTempMultiplierReset);
             t.Start();
         }
 
-        private async void OnTimedTempMultiplierReset(object source, ElapsedEventArgs e)
+        private void OnTimedTempMultiplierReset(object source, ElapsedEventArgs e)
         {
-            using (var db = new DbContext())
+            IEnumerable<User> users = UserRepository.FetchAll();
+            foreach (User user in users)
             {
-                
-                User[] users = UserRepository.GetAll().ToArray();
-                foreach (User user in users)
-                {
-                    if (user.TemporaryMultiplier != 1)
-                    {
-                        user.TemporaryMultiplier = 1;
-                        db.Set<User>().Update(user);
-                    }
-                }
-                await db.SaveChangesAsync();
+                //if (user.TemporaryMultiplier != 1)
+                //{
+                    user.TemporaryMultiplier = 1;
+                    UserRepository.UpdateUser(user);
+                    PrettyConsole.NewLine("One got updated!");
+                //}
             }
         }
 
@@ -57,19 +54,15 @@ namespace DEA.Services
             t.Start();
         }
 
-        private async void OnTimedApplyInterest(object source, ElapsedEventArgs e)
+        private void OnTimedApplyInterest(object source, ElapsedEventArgs e)
         {
-            using (var db = new DbContext())
+            IEnumerable<Gang> gangs = GangRepository.FetchAll();
+            foreach (var gang in gangs)
             {
-                
-                Gang[] gangs = GangRepository.GetAll().ToArray();
-                foreach (var gang in gangs)
-                {
-                    var InterestRate = 0.025f + ((gang.Wealth / 100) * .000075f);
-                    if (InterestRate > 0.1) InterestRate = 0.1f;
-                    gang.Wealth *= 1 + InterestRate;
-                }
-                await db.SaveChangesAsync();
+                var InterestRate = 0.025f + ((gang.Wealth / 100) * .000075f);
+                if (InterestRate > 0.1) InterestRate = 0.1f;
+                gang.Wealth *= 1 + InterestRate;
+                GangRepository.UpdateGang(gang);
             }
         }
 
@@ -83,28 +76,26 @@ namespace DEA.Services
 
         private async void OnTimedAutoUnmute(object source, ElapsedEventArgs e)
         {
-            using (var db = new DbContext())
+            IEnumerable<Guild> guilds = GuildRepository.FetchAll();
+            foreach (Guild dbGuild in guilds)
             {
-                
-                
-                Mute[] mutes = MuteRepository.GetAll().ToArray();
-                foreach (Mute muted in mutes)
+                foreach (Mute mute in dbGuild.Mutes)
                 {
-                    if (DateTime.Now.Subtract(DateTime.Parse(muted.MutedAt)).TotalMilliseconds > muted.MuteLength)
+                    if (DateTimeOffset.Now.Subtract(mute.MutedAt).TotalMilliseconds > mute.MuteLength.TotalMilliseconds)
                     {
-                        var guild = _client.GetGuild(muted.GuildId);
-                        if (guild != null && guild.GetUser(muted.UserId) != null)
+                        var guild = _client.GetGuild(dbGuild.Id);
+                        if (guild != null && guild.GetUser(mute.UserId) != null)
                         {
-                            var guildData = await GuildRepository.FetchGuildAsync(guild.Id);
-                            var mutedRole = guild.GetRole(guildData.MutedRoleId);
-                            if (mutedRole != null && guild.GetUser(muted.UserId).Roles.Any(x => x.Id == mutedRole.Id))
+                            var guildData = GuildRepository.FetchGuild(guild.Id);
+                            var mutedRole = guild.GetRole(guildData.Roles.MutedRoleId);
+                            if (mutedRole != null && guild.GetUser(mute.UserId).Roles.Any(x => x.Id == mutedRole.Id))
                             {
-                                var channel = guild.GetTextChannel(guildData.ModLogChannelId);
-                                if (channel != null && guild.CurrentUser.GuildPermissions.EmbedLinks && 
+                                var channel = guild.GetTextChannel(guildData.Channels.ModLogId);
+                                if (channel != null && guild.CurrentUser.GuildPermissions.EmbedLinks &&
                                     (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).SendMessages
                                     && (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).EmbedLinks)
-                                { 
-                                    await guild.GetUser(muted.UserId).RemoveRoleAsync(mutedRole);
+                                {
+                                    await guild.GetUser(mute.UserId).RemoveRoleAsync(mutedRole);
                                     var footer = new EmbedFooterBuilder()
                                     {
                                         IconUrl = "http://i.imgur.com/BQZJAqT.png",
@@ -113,58 +104,19 @@ namespace DEA.Services
                                     var builder = new EmbedBuilder()
                                     {
                                         Color = new Color(12, 255, 129),
-                                        Description = $"**Action:** Automatic Unmute\n**User:** {guild.GetUser(muted.UserId)} ({guild.GetUser(muted.UserId).Id})",
+                                        Description = $"**Action:** Automatic Unmute\n**User:** {guild.GetUser(mute.UserId)} ({guild.GetUser(mute.UserId).Id})",
                                         Footer = footer
                                     }.WithCurrentTimestamp();
-                                    await GuildRepository.ModifyAsync(x => { x.CaseNumber++; return Task.CompletedTask; }, guild.Id);
+                                    GuildRepository.Modify(x => x.CaseNumber++, guild.Id);
                                     await channel.SendMessageAsync("", embed: builder);
                                 }
                             }
                         }
-                        await MuteRepository.RemoveMuteAsync(muted.UserId, muted.GuildId);
+                        MuteRepository.RemoveMute(mute.UserId, dbGuild.Id);
                     }
                 }
             }
         }
 
-        private void BanBlacklisted()
-        {
-            Timer t = new Timer(TimeSpan.FromHours(4).TotalMilliseconds);
-            t.AutoReset = true;
-            t.Elapsed += new ElapsedEventHandler(OnTimedBanBlacklisted);
-            t.Start();
-        }
-
-        private async void OnTimedBanBlacklisted(object source, ElapsedEventArgs e)
-        {
-            foreach (var guild in _client.Guilds)
-            {
-                foreach (var blacklistedId in Config.BLACKLISTED_IDS)
-                {
-                    if (guild.GetUser(blacklistedId) != null)
-                    {
-                        if (guild.CurrentUser.GuildPermissions.BanMembers && 
-                            guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position > 
-                            guild.GetUser(blacklistedId).Roles.OrderByDescending(x => x.Position).First().Position &&
-                            guild.OwnerId != guild.GetUser(blacklistedId).Id)
-                        {
-                            await guild.AddBanAsync(guild.GetUser(blacklistedId));
-                        }
-                    }
-                }
-            }
-
-            using (var db = new DbContext())
-            {
-                
-                foreach (var dbGuild in GuildRepository.GetAll())
-                {
-                    if (_client.GetGuild(dbGuild.Id) != null && Config.BLACKLISTED_IDS.Any(x => x == _client.GetGuild(dbGuild.Id).OwnerId))
-                    {
-                        await _client.GetGuild(dbGuild.Id).LeaveAsync();
-                    }
-                }
-            }
-        }
     }
 }

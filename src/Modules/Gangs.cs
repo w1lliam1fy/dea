@@ -13,21 +13,21 @@ namespace DEA.Modules
     {
 
         [Command("CreateGang")]
-        [RequireNoGang]
+        [Require(Attributes.NoGang)]
         [Summary("Allows you to create a gang at a hefty price.")]
         [Remarks("Create <Name>")]
         public async Task ResetCooldowns([Remainder] string name)
         {
             var user = UserRepository.FetchUser(Context);
             if (user.Cash < Config.GANG_CREATION_COST)
-                throw new Exception($"You do not have {Config.GANG_CREATION_COST.ToString("C2")}. Balance: {user.Cash.ToString("C2")}.");
+                throw new Exception($"You do not have {Config.GANG_CREATION_COST.ToString("C", Config.CI)}. Balance: {user.Cash.ToString("C", Config.CI)}.");
             var gang = GangRepository.CreateGang(Context.User.Id, Context.Guild.Id, name);
             await UserRepository.EditCashAsync(Context, -Config.GANG_CREATION_COST);
             await ReplyAsync($"{Context.User.Mention}, You have successfully created the {gang.Name} gang!");
         }
 
         [Command("AddGangMember")]
-        [RequireGangLeader]
+        [Require(Attributes.GangLeader)]
         [Summary("Allows you to add a member to your gang.")]
         [Remarks("AddGangMember <@GangMember>")]
         public async Task AddToGang(IGuildUser user)
@@ -41,7 +41,7 @@ namespace DEA.Modules
         }
 
         /*[Command("JoinGang", RunMode = RunMode.Async)]
-        [RequireNoGang]
+        [Require("nogang")]
         [Summary("Allows you to request to join a gang.")]
         [Remarks("JoinGang <@GangMember>")]
         private async Task JoinGang(IGuildUser user)
@@ -74,7 +74,7 @@ namespace DEA.Modules
             else gang = GangRepository.FetchGang(gangName, Context.Guild.Id);
             var members = "";
             var leader = "";
-            if (Context.Client.GetUser(gang.LeaderId) != null) leader = $"<@{gang.LeaderId}";
+            if (Context.Client.GetUser(gang.LeaderId) != null) leader = $"<@{gang.LeaderId}>";
             foreach (var member in gang.Members)
                 if (Context.Client.GetUser(member) != null) members += $"<@{member}>, ";
             var InterestRate = 0.025f + ((gang.Wealth / 100) * .000075f);
@@ -85,7 +85,7 @@ namespace DEA.Modules
                 Color = new Color(0x00AE86),
                 Description = $"__**Leader:**__ {leader}\n" +
                               $"__**Members:**__ {members.Substring(0, members.Length - 2)}\n" +
-                              $"__**Wealth:**__ {gang.Wealth.ToString("C2")}\n" +
+                              $"__**Wealth:**__ {gang.Wealth.ToString("C", Config.CI)}\n" +
                               $"__**Interest rate:**__ {InterestRate.ToString("P")}"
             };
             await ReplyAsync("", embed: builder);
@@ -110,14 +110,14 @@ namespace DEA.Modules
             for (int i = 0; i < gangs.Count(); i++)
             {
                 if (i + 1 >= Config.GANGSLB_CAP) break;
-                message += $"{i + 1}. {gangs[i].Name}".PadRight(longest + 2) + $" :: {gangs[i].Wealth.ToString("C2")}\n";
+                message += $"{i + 1}. {gangs[i].Name}".PadRight(longest + 2) + $" :: {gangs[i].Wealth.ToString("C", Config.CI)}\n";
             }
 
             await ReplyAsync($"{message}```");
         }
 
         [Command("LeaveGang")]
-        [RequireInGang]
+        [Require(Attributes.InGang)]
         [Summary("Allows you to break all ties with a gang.")]
         [Remarks("LeaveGang")]
         public async Task LeaveGang()
@@ -134,7 +134,7 @@ namespace DEA.Modules
         }
 
         [Command("KickGangMember")]
-        [RequireGangLeader]
+        [Require(Attributes.GangLeader)]
         [Summary("Kicks a user from your gang.")]
         [Remarks("KickGangMember")]
         public async Task KickFromGang(IGuildUser user)
@@ -148,7 +148,7 @@ namespace DEA.Modules
         }
 
         [Command("DestroyGang")]
-        [RequireGangLeader]
+        [Require(Attributes.GangLeader)]
         [Summary("Destroys a gang entirely taking down all funds with it.")]
         [Remarks("DestroyGang")]
         public async Task DestroyGang()
@@ -159,22 +159,22 @@ namespace DEA.Modules
 
         [Command("ChangeGangName")]
         [Alias("ChangeName")]
-        [RequireGangLeader]
+        [Require(Attributes.GangLeader)]
         [Summary("Changes the name of your gang.")]
         [Remarks("ChangeGangName <New name>")]
         public async Task ChangeGangName([Remainder] string name)
         {
             var user = UserRepository.FetchUser(Context);
             if (user.Cash < Config.GANG_NAME_CHANGE_COST)
-                throw new Exception($"You do not have {Config.GANG_NAME_CHANGE_COST.ToString("C2")}. Balance: {user.Cash.ToString("C2")}.");
+                throw new Exception($"You do not have {Config.GANG_NAME_CHANGE_COST.ToString("C", Config.CI)}. Balance: {user.Cash.ToString("C", Config.CI)}.");
             if (GangRepository.FetchAll(Context.Guild.Id).Any(x => x.Name == name)) throw new Exception($"There is already a gang by the name {name}.");
             await UserRepository.EditCashAsync(Context, -Config.GANG_NAME_CHANGE_COST);
             GangRepository.Modify(x => x.Name = name, Context.User.Id, Context.Guild.Id);
-            await ReplyAsync($"You have successfully changed your gang name to {name} at the cost of {Config.GANG_NAME_CHANGE_COST.ToString("C2")}.");
+            await ReplyAsync($"You have successfully changed your gang name to {name} at the cost of {Config.GANG_NAME_CHANGE_COST.ToString("C", Config.CI)}.");
         }
 
         [Command("TransferLeadership")]
-        [RequireGangLeader]
+        [Require(Attributes.GangLeader)]
         [Summary("Transfers the leadership of your gang to another member.")]
         [Remarks("TransferLeadership <@GangMember>")]
         public async Task TransferLeadership(IGuildUser user)
@@ -189,23 +189,23 @@ namespace DEA.Modules
         }
 
         [Command("Deposit")]
-        [RequireInGang]
+        [Require(Attributes.InGang)]
         [Summary("Deposit cash into your gang's funds.")]
         [Remarks("Deposit <Cash>")]
         public async Task Deposit(double cash)
         {
             var user = UserRepository.FetchUser(Context);
-            if (cash < Config.MIN_DEPOSIT) throw new Exception($"The lowest deposit is {Config.MIN_DEPOSIT.ToString("C2")}.");
-            if (user.Cash < cash) throw new Exception($"You do not have enough money. Balance: {user.Cash.ToString("C2")}.");
+            if (cash < Config.MIN_DEPOSIT) throw new Exception($"The lowest deposit is {Config.MIN_DEPOSIT.ToString("C", Config.CI)}.");
+            if (user.Cash < cash) throw new Exception($"You do not have enough money. Balance: {user.Cash.ToString("C", Config.CI)}.");
             await UserRepository.EditCashAsync(Context, -cash);
             GangRepository.Modify(x => x.Wealth += cash, Context.User.Id, Context.Guild.Id);
             var gang = GangRepository.FetchGang(Context);
-            await ReplyAsync($"{Context.User.Mention}, You have successfully deposited {cash.ToString("C2")}. " +
-                             $"{gang.Name}'s Wealth: {gang.Wealth.ToString("C2")}");
+            await ReplyAsync($"{Context.User.Mention}, You have successfully deposited {cash.ToString("C", Config.CI)}. " +
+                             $"{gang.Name}'s Wealth: {gang.Wealth.ToString("C", Config.CI)}");
         }
 
         [Command("Withdraw")]
-        [RequireInGang]
+        [Require(Attributes.InGang)]
         [RequireCooldown]
         [Summary("Withdraw cash from your gang's funds.")]
         [Remarks("Withdraw <Cash>")]
@@ -213,15 +213,15 @@ namespace DEA.Modules
         {
             var gang = GangRepository.FetchGang(Context);
             var user = UserRepository.FetchUser(Context);
-            if (cash < Config.MIN_WITHDRAW) throw new Exception($"The minimum withdrawal is {Config.MIN_WITHDRAW.ToString("C2")}.");
+            if (cash < Config.MIN_WITHDRAW) throw new Exception($"The minimum withdrawal is {Config.MIN_WITHDRAW.ToString("C", Config.CI)}.");
             if (cash > gang.Wealth * Config.WITHDRAW_CAP)
                 throw new Exception($"You may only withdraw {Config.WITHDRAW_CAP.ToString("P")} of your gang's wealth, " +
-                                    $"that is {(gang.Wealth * Config.WITHDRAW_CAP).ToString("C2")}.");
+                                    $"that is {(gang.Wealth * Config.WITHDRAW_CAP).ToString("C", Config.CI)}.");
             UserRepository.Modify(x => x.Cooldowns.Withdraw = DateTimeOffset.Now, Context);
             GangRepository.Modify(x => x.Wealth -= cash, Context.User.Id, Context.Guild.Id);
             await UserRepository.EditCashAsync(Context, +cash);
-            await ReplyAsync($"{Context.User.Mention}, You have successfully withdrawn {cash.ToString("C2")}. " +
-                             $"{gang.Name}'s Wealth: {gang.Wealth.ToString("C2")}");
+            await ReplyAsync($"{Context.User.Mention}, You have successfully withdrawn {cash.ToString("C", Config.CI)}. " +
+                             $"{gang.Name}'s Wealth: {gang.Wealth.ToString("C", Config.CI)}");
         }
 
     }

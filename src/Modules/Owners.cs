@@ -9,7 +9,7 @@ namespace DEA.Modules
     public class Owners : ModuleBase<SocketCommandContext>
     {
         [Command("Reset")]
-        [RequireBotOwner]
+        [Require(Attributes.ServerOwner)]
         [Alias("Reset")]
         [Summary("Resets all cooldowns for a specific user.")]
         [Remarks("Reset [@User]")]
@@ -28,12 +28,12 @@ namespace DEA.Modules
         }
 
         [Command("Give")]
-        [RequireBotOwner]
+        [Require(Attributes.ServerOwner)]
         [Summary("Inject cash into a user's balance.")]
         [Remarks("Give <@User> <Amount of cash>")]
         public async Task Give(IGuildUser userMentioned, double money) {
             await UserRepository.EditCashAsync(Context, userMentioned.Id, +money);
-            await ReplyAsync($"Successfully given {money.ToString("C2")} to <@{userMentioned.Id}>.");
+            await ReplyAsync($"Successfully given {money.ToString("C", Config.CI)} to {userMentioned.Mention}.");
         }
     }
 }

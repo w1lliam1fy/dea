@@ -1,8 +1,6 @@
 ﻿using DEA.SQLite.Models;
-using DEA.SQLite.Models.Submodels;
 using LiteDB;
 using System;
-using System.Linq;
 
 namespace DEA.SQLite.Repository
 {
@@ -13,12 +11,12 @@ namespace DEA.SQLite.Repository
         {
             using (var db = new LiteDatabase(Config.DB_CONNECTION_STRING))
             {
-                var guild = GuildRepository.FetchGuild(guildId);
-                var guilds = db.GetCollection<Guild>("Guilds");
-                guild.Mutes.Add(new Mute()
+                var mutes = db.GetCollection<Mute>("Mutes");
+                mutes.Insert(new Mute()
                 {
                     UserId = userId,
-                    MuteLength = muteLength
+                    GuildId = guildId,
+                    MuteLength = muteLength.TotalMilliseconds
                 });
             }
         }
@@ -27,8 +25,8 @@ namespace DEA.SQLite.Repository
         {
             using (var db = new LiteDatabase(Config.DB_CONNECTION_STRING))
             {
-                var guild = GuildRepository.FetchGuild(guildId);
-                return guild.Mutes.Any(x => x.UserId == userId);
+                var mutes = db.GetCollection<Mute>("Mutes");
+                return mutes.Exists(x => x.UserId == userId && x.GuildId == guildId);
             }
         }
 
@@ -36,9 +34,9 @@ namespace DEA.SQLite.Repository
         {
             using (var db = new LiteDatabase(Config.DB_CONNECTION_STRING))
             {
-                var guild = GuildRepository.FetchGuild(guildId);
-                var mute = guild.Mutes.Find(x => x.UserId == userId);
-                if (mute != null) guild.Mutes.Remove(mute);
+                var mutes = db.GetCollection<Mute>("Mutes");
+                var mute = mutes.FindOne(x => x.UserId == userId && x.GuildId == guildId);
+                if (mute != null) mutes.Delete(mute.Id);
             }
         }
 
