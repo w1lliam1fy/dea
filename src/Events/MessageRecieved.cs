@@ -46,7 +46,7 @@ namespace DEA.Services
             if (!(Context.Guild.CurrentUser as IGuildUser).GetPermissions(Context.Channel as SocketTextChannel).SendMessages) return;
 
             int argPos = 0;
-            string prefix = GuildRepository.FetchGuild(Context.Guild.Id).Prefix;
+            string prefix = (await GuildRepository.FetchGuildAsync(Context.Guild.Id)).Prefix;
             if (msg.HasStringPrefix(prefix, ref argPos) ||
                 msg.HasMentionPrefix(_client.CurrentUser, ref argPos))
             {
@@ -72,20 +72,17 @@ namespace DEA.Services
             }
             else if (msg.ToString().Length >= Config.MIN_CHAR_LENGTH && !msg.ToString().StartsWith(":"))
             {
-                var lastMsgs = await Context.Channel.GetMessagesAsync(10).Flatten();
-                if (lastMsgs.Where(x => x.Author == Context.User).Count() < 4)
+                var user = await UserRepository.FetchUserAsync(Context);
+                var rate = Config.TEMP_MULTIPLIER_RATE;
+                if (DateTimeOffset.Now.Subtract(user.Message).TotalMilliseconds > user.MessageCooldown.TotalMilliseconds)
                 {
-                    var user = UserRepository.FetchUser(Context);
-                    var rate = Config.TEMP_MULTIPLIER_RATE;
-                    if (DateTime.UtcNow.Subtract(user.Message).TotalMilliseconds > user.MessageCooldown)
-                    {
-                        UserRepository.Modify(x => {
-                            x.Cash += user.TemporaryMultiplier * user.InvestmentMultiplier;
-                            x.TemporaryMultiplier = user.TemporaryMultiplier + rate;
-                            x.Message = DateTime.UtcNow;
-                        }, Context);
-                        await RankHandler.Handle(Context.Guild, Context.User.Id);
-                    }
+                    await UserRepository.ModifyAsync(x => {
+                        x.Cash += user.TemporaryMultiplier * user.InvestmentMultiplier;
+                        x.TemporaryMultiplier = user.TemporaryMultiplier + rate;
+                        x.Message = DateTimeOffset.Now;
+                        return Task.CompletedTask;
+                    }, Context);
+                    await RankHandler.Handle(Context.Guild, Context.User.Id);
                 }
             }
         }

@@ -18,8 +18,8 @@ namespace Discord.Commands
         public override async Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IDependencyMap map)
         {
             var user = context.User as IGuildUser;
-            var dbUser = UserRepository.FetchUser(context as SocketCommandContext);
-            var guild = GuildRepository.FetchGuild(context.Guild.Id);
+            var dbUser = await UserRepository.FetchUserAsync(context as SocketCommandContext);
+            var guild = await GuildRepository.FetchGuildAsync(context.Guild.Id);
             switch (attribute) {
                 case Attributes.BotOwner:
                     if (!Config.CREDENTIALS.OwnerIds.Any(x => x == context.User.Id))
@@ -49,15 +49,15 @@ namespace Discord.Commands
                         return PreconditionResult.FromError($"You do not have permission to use this command.\nRequired role: {nsfwRole.Mention}");
                     break;
                 case Attributes.InGang:
-                    if (!GangRepository.InGang(context.User.Id, context.Guild.Id))
+                    if (!(await GangRepository.InGangAsync(context.User.Id, context.Guild.Id)))
                         return PreconditionResult.FromError("You must be in a gang to use this command.");
                     break;
                 case Attributes.NoGang:
-                    if (GangRepository.InGang(context.User.Id, context.Guild.Id))
+                    if (await GangRepository.InGangAsync(context.User.Id, context.Guild.Id))
                         return PreconditionResult.FromError("You may not use this command while in a gang.");
                     break;
                 case Attributes.GangLeader:
-                    if (!GangRepository.InGang(context.User.Id, context.Guild.Id))
+                    if (!(await GangRepository.InGangAsync(context.User.Id, context.Guild.Id)))
                         return PreconditionResult.FromError("You must be in a gang to use this command.");
                     break;
                 case Attributes.Jump:

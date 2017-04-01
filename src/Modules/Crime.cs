@@ -17,7 +17,8 @@ namespace DEA.Modules
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Whore()
         {
-            var user = UserRepository.FetchUser(Context);
+            await UserRepository.ModifyAsync(x => { x.Whore = DateTimeOffset.Now; return Task.CompletedTask; }, Context);
+            var user = await UserRepository.FetchUserAsync(Context);
             int roll = new Random().Next(1, 101);
             if (roll > Config.WHORE_ODDS)
             {
@@ -31,7 +32,6 @@ namespace DEA.Modules
                 await UserRepository.EditCashAsync(Context, moneyWhored);
                 await ReplyAsync($"{Context.User.Mention}, you whip it out and manage to rake in {moneyWhored.ToString("C", Config.CI)}. Balance: {(user.Cash + moneyWhored).ToString("C", Config.CI)}");
             }
-            UserRepository.Modify(x => x.Whore = DateTime.UtcNow, Context);
         }
 
         [Command("Jump")]
@@ -42,7 +42,8 @@ namespace DEA.Modules
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Jump()
         {
-            var user = UserRepository.FetchUser(Context);
+            await UserRepository.ModifyAsync(x => { x.Jump = DateTimeOffset.Now; return Task.CompletedTask; }, Context);
+            var user = await UserRepository.FetchUserAsync(Context);
             int roll = new Random().Next(1, 101);
             if (roll > Config.JUMP_ODDS)
             {
@@ -56,7 +57,6 @@ namespace DEA.Modules
                 await UserRepository.EditCashAsync(Context, moneyJumped);
                 await ReplyAsync($"{Context.User.Mention}, you jump some random nigga on the streets and manage to get {moneyJumped.ToString("C", Config.CI)}. Balance: {(user.Cash + moneyJumped).ToString("C", Config.CI)}");
             }
-            UserRepository.Modify(x => x.Jump = DateTime.UtcNow, Context);
         }
 
         [Command("Steal")]
@@ -67,7 +67,8 @@ namespace DEA.Modules
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Steal()
         {
-            var user = UserRepository.FetchUser(Context);
+            await UserRepository.ModifyAsync(x => { x.Steal = DateTimeOffset.Now; return Task.CompletedTask; }, Context);
+            var user = await UserRepository.FetchUserAsync(Context);
             int roll = new Random().Next(1, 101);
             if (roll > Config.STEAL_ODDS)
             {
@@ -85,7 +86,6 @@ namespace DEA.Modules
                 await ReplyAsync($"{Context.User.Mention}, you walk in to your local {randomStore}, point a fake gun at the clerk, and manage to walk away " +
                                  $"with {moneyStolen.ToString("C", Config.CI)}. Balance: {(user.Cash + moneyStolen).ToString("C", Config.CI)}");
             }
-            UserRepository.Modify(x => x.Steal = DateTime.UtcNow, Context);
         }
 
         [Command("Bully")]
@@ -108,14 +108,14 @@ namespace DEA.Modules
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Rob(double resources)
         {
-            var user = UserRepository.FetchUser(Context);
+            var user = await UserRepository.FetchUserAsync(Context);
             if (user.Cash < resources) throw new Exception($"You do not have enough money. Balance: {user.Cash.ToString("C", Config.CI)}");
             if (resources < Config.MIN_RESOURCES) throw new Exception($"The minimum amount of money to spend on resources for rob is {Config.MIN_RESOURCES.ToString("C", Config.CI)}.");
             if (resources > Config.MAX_RESOURCES) throw new Exception($"The maximum amount of money to spend on resources for rob is {Config.MAX_RESOURCES.ToString("C", Config.CI)}.");
+            await UserRepository.ModifyAsync(x => { x.Rob = DateTimeOffset.Now; return Task.CompletedTask; }, Context);
             Random rand = new Random();
             double succesRate = rand.Next(Config.MIN_ROB_ODDS * 100, Config.MAX_ROB_ODDS * 100) / 10000f;
-            double moneyStolen = resources / (succesRate / 1.50f);
-            UserRepository.Modify(x => x.Rob = DateTime.UtcNow, Context);
+            double moneyStolen = resources / (succesRate / 1.50f); 
             string randomBank = Config.BANKS[rand.Next(1, Config.BANKS.Length) - 1];
             if (rand.Next(10000) / 10000f >= succesRate)
             {
@@ -130,26 +130,27 @@ namespace DEA.Modules
                 $"{moneyStolen.ToString("C", Config.CI)} from the {randomBank}, losing all resources in the process. Balance: {(user.Cash - resources).ToString("C", Config.CI)}.");
             }
         }
+
         [Command("Cooldowns")]
         [Remarks("Cooldowns")]
         [Summary("Check when you can sauce out more cash.")]
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Cooldowns()
         {
-            var user = UserRepository.FetchUser(Context);
-            var whore = Config.WHORE_COOLDOWN.Subtract(DateTime.Now.Subtract(user.Whore));
-            var jump = Config.JUMP_COOLDOWN.Subtract(DateTime.Now.Subtract(user.Jump));
-            var steal = Config.STEAL_COOLDOWN.Subtract(DateTime.Now.Subtract(user.Steal));
-            var rob = Config.ROB_COOLDOWN.Subtract(DateTime.Now.Subtract(user.Rob));
-            var withdraw = Config.WITHDRAW_COOLDOWN.Subtract(DateTime.Now.Subtract(user.Withdraw));
+            var user = await UserRepository.FetchUserAsync(Context);
+            var whore = Config.WHORE_COOLDOWN.Subtract(DateTimeOffset.Now.Subtract(user.Whore));
+            var jump = Config.JUMP_COOLDOWN.Subtract(DateTimeOffset.Now.Subtract(user.Jump));
+            var steal = Config.STEAL_COOLDOWN.Subtract(DateTimeOffset.Now.Subtract(user.Steal));
+            var rob = Config.ROB_COOLDOWN.Subtract(DateTimeOffset.Now.Subtract(user.Rob));
+            var withdraw = Config.WITHDRAW_COOLDOWN.Subtract(DateTimeOffset.Now.Subtract(user.Withdraw));
             var builder = new EmbedBuilder()
             {
                 Title = $"All cooldowns for {Context.User}",
                 Description = $@"Whore: {whore.Hours} Hours, {whore.Minutes} Minutes, {whore.Seconds} Seconds.
-                    Jump: {jump.Hours} Hours{jump.Minutes} Minutes, {jump.Seconds} Seconds.
-                    Steal: {steal.Hours} Hours, {steal.Minutes} Minutes, {steal.Seconds} Seconds.
-                    Rob: {rob.Hours} Hours, {rob.Minutes} Minutes, {rob.Seconds} Seconds
-                    Withdraw: {withdraw.Hours} Hours, {withdraw.Minutes} Minutes, {withdraw.Seconds} Seconds.",
+Jump: {jump.Hours} Hours{jump.Minutes} Minutes, {jump.Seconds} Seconds.
+Steal: {steal.Hours} Hours, {steal.Minutes} Minutes, {steal.Seconds} Seconds.
+Rob: {rob.Hours} Hours, {rob.Minutes} Minutes, {rob.Seconds} Seconds
+Withdraw: {withdraw.Hours} Hours, {withdraw.Minutes} Minutes, {withdraw.Seconds} Seconds.",
                 Color = new Color(49, 62, 255)
             };
             await Context.Channel.SendMessageAsync("", embed: builder);

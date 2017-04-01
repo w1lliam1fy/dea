@@ -50,8 +50,8 @@ namespace DEA.Modules
 
         private async Task Gamble(double bet, int odds, double payoutMultiplier)
         {
-            var user = UserRepository.FetchUser(Context);
-            var guild = GuildRepository.FetchGuild(Context.Guild.Id);
+            var user = await UserRepository.FetchUserAsync(Context);
+            var guild = await GuildRepository.FetchGuildAsync(Context.Guild.Id);
             if (Context.Guild.GetTextChannel(guild.GambleId) != null && Context.Channel.Id != guild.GambleId)
                 throw new Exception($"You may only gamble in {Context.Guild.GetTextChannel(guild.GambleId).Mention}!");
             if (bet < Config.BET_MIN) throw new Exception($"Lowest bet is {Config.BET_MIN}$.");

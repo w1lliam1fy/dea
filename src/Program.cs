@@ -32,7 +32,8 @@ namespace DEA
             {
                 LogLevel = LogSeverity.Error,
                 AlwaysDownloadUsers = true,
-                MessageCacheSize = 10000
+                MessageCacheSize = 10,
+                TotalShards = Config.CREDENTIALS.ShardCount
             });
 
             _client.Log += (l)

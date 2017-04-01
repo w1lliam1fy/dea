@@ -30,7 +30,7 @@ namespace DEA.Modules
         public async Task SetPrefix(string prefix)
         {
             if (prefix.Length > 3) throw new Exception("The maximum character length of a prefix is 3.");
-            GuildRepository.Modify(x => x.Prefix = prefix, Context.Guild.Id);
+            await GuildRepository.ModifyAsync(x => { x.Prefix = prefix; return Task.CompletedTask; }, Context.Guild.Id);
             await ReplyAsync($"{Context.User.Mention}, You have successfully set the prefix to {prefix}!");
         }
 
@@ -39,7 +39,7 @@ namespace DEA.Modules
         [Remarks("AddModRole <@ModRole>")]
         public async Task AddModRole(IRole modRole)
         {
-            GuildRepository.Modify(x => x.ModRoles.Add(modRole.Id), Context.Guild.Id);
+            await GuildRepository.ModifyAsync(x => { x.ModRoles.Add(modRole.Id); return Task.CompletedTask; }, Context.Guild.Id);
             await ReplyAsync($"{Context.User.Mention}, You have successfully set the moderator role to {modRole.Mention}!");
         }
 
@@ -48,9 +48,9 @@ namespace DEA.Modules
         [Remarks("RemoveModRole <@ModRole>")]
         public async Task RemoveModRole(IRole modRole)
         {
-            if (!GuildRepository.FetchGuild(Context.Guild.Id).ModRoles.Any(x => x == modRole.Id))
+            if (!(await GuildRepository.FetchGuildAsync(Context.Guild.Id)).ModRoles.Any(x => x == modRole.Id))
                 throw new Exception("This role is not a moderator role!");
-            GuildRepository.Modify(x => x.ModRoles.Remove(modRole.Id), Context.Guild.Id);
+            await GuildRepository.ModifyAsync(x => { x.ModRoles.Remove(modRole.Id); return Task.CompletedTask; }, Context.Guild.Id);
             await ReplyAsync($"{Context.User.Mention}, You have successfully set the moderator role to {modRole.Mention}!");
         }
 
@@ -62,7 +62,7 @@ namespace DEA.Modules
         {
             if (mutedRole.Position >= Context.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
                 throw new Exception($"DEA must be higher in the heigharhy than {mutedRole.Mention}.");
-            GuildRepository.Modify(x => x.MutedRoleId = mutedRole.Id, Context.Guild.Id);
+            await GuildRepository.ModifyAsync(x => { x.MutedRoleId = mutedRole.Id; return Task.CompletedTask; }, Context.Guild.Id);
             await ReplyAsync($"{Context.User.Mention}, You have successfully set the muted role to {mutedRole.Mention}!");
         }
 
@@ -71,14 +71,14 @@ namespace DEA.Modules
         [Remarks("AddRank <@RankRole> <Cash required>")]
         public async Task AddRank(IRole rankRole, double cashRequired)
         {
-            var guild = GuildRepository.FetchGuild(Context.Guild.Id);
+            var guild = await GuildRepository.FetchGuildAsync(Context.Guild.Id);
             if (rankRole.Position >= Context.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
                 throw new Exception($"DEA must be higher in the heigharhy than {rankRole.Mention}.");
-            if (guild.RankRoles.Any(x => Convert.ToUInt64(x.Key) == rankRole.Id))
+            if (guild.RankRoles.Any(x => x.Key == rankRole.Id))
                 throw new Exception("This role is already a rank role.");
             if (guild.RankRoles.Any(x => x.Value == cashRequired))
                 throw new Exception("There is already a role set to that amount of cash required.");
-            GuildRepository.Modify(x => x.RankRoles.Add(rankRole.ToString(), cashRequired), Context.Guild.Id);
+            await GuildRepository.ModifyAsync(x => { x.RankRoles.Add(rankRole.Id, cashRequired); return Task.CompletedTask; }, Context.Guild.Id);
             await ReplyAsync($"You have successfully added the {rankRole.Mention} rank!");
         }
 
@@ -87,10 +87,10 @@ namespace DEA.Modules
         [Remarks("AddRank <@RankRole> <Cash required>")]
         public async Task RemoveRank(IRole rankRole)
         {
-            var guild = GuildRepository.FetchGuild(Context.Guild.Id);
-            if (!guild.RankRoles.Any(x => Convert.ToUInt64(x.Key) == rankRole.Id))
+            var guild = await GuildRepository.FetchGuildAsync(Context.Guild.Id);
+            if (!guild.RankRoles.Any(x => x.Key == rankRole.Id))
                 throw new Exception("This role is not a rank role.");
-            GuildRepository.Modify(x => x.RankRoles.Remove(rankRole.Id.ToString()), Context.Guild.Id);
+            await GuildRepository.ModifyAsync(x => { x.RankRoles.Remove(rankRole.Id); return Task.CompletedTask; }, Context.Guild.Id);
             await ReplyAsync($"You have successfully added the {rankRole.Mention} rank!");
         }
 
@@ -99,7 +99,7 @@ namespace DEA.Modules
         [Remarks("SetModLog <#ModLog>")]
         public async Task SetModLogChannel(ITextChannel modLogChannel)
         {
-            GuildRepository.Modify(x => x.ModLogId = modLogChannel.Id, Context.Guild.Id);
+            await GuildRepository.ModifyAsync(x => { x.ModLogId = modLogChannel.Id; return Task.CompletedTask; }, Context.Guild.Id);
             await ReplyAsync($"{Context.User.Mention}, You have successfully set the moderator log channel to {modLogChannel.Mention}!");
         }
 
@@ -108,7 +108,7 @@ namespace DEA.Modules
         [Remarks("SetDetailedLogs <#DetailsLogs>")]
         public async Task SetDetailedLogsChannel(ITextChannel detailedLogsChannel)
         {
-            GuildRepository.Modify(x => x.DetailedLogsId = detailedLogsChannel.Id, Context.Guild.Id);
+            await GuildRepository.ModifyAsync(x => { x.DetailedLogsId = detailedLogsChannel.Id; return Task.CompletedTask; }, Context.Guild.Id);
             await ReplyAsync($"{Context.User.Mention}, You have successfully set the detailed logs channel to {detailedLogsChannel.Mention}!");
         }
 
@@ -118,7 +118,7 @@ namespace DEA.Modules
         [Remarks("SetGambleChannel <#GambleChannel>")]
         public async Task SetGambleChannel(ITextChannel gambleChannel)
         {
-            GuildRepository.Modify(x => x.GambleId = gambleChannel.Id, Context.Guild.Id);
+            await GuildRepository.ModifyAsync(x => { x.GambleId = gambleChannel.Id; return Task.CompletedTask; }, Context.Guild.Id);
             await ReplyAsync($"{Context.User.Mention}, You have successfully set the gamble channel to {gambleChannel.Mention}!");
         }
 

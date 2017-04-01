@@ -11,7 +11,7 @@ namespace DEA.Services
     {
         public static async Task ModLog(SocketCommandContext context, string action, Color color, string reason, IUser subject = null, string extra = "")
         {
-            var guild = GuildRepository.FetchGuild(context.Guild.Id);
+            var guild = await GuildRepository.FetchGuildAsync(context.Guild.Id);
             EmbedFooterBuilder footer = new EmbedFooterBuilder()
             {
                 IconUrl = "http://i.imgur.com/BQZJAqT.png",
@@ -36,13 +36,13 @@ namespace DEA.Services
             if (context.Guild.GetTextChannel(guild.ModLogId) != null)
             {
                 await context.Guild.GetTextChannel(guild.ModLogId).SendMessageAsync("", embed: builder);
-                GuildRepository.Modify(x => x.CaseNumber++, context.Guild.Id);
+                await GuildRepository.ModifyAsync(x => { x.CaseNumber++; return Task.CompletedTask; }, context.Guild.Id);
             }
         }
 
         public static async Task DetailedLog(SocketGuild guild, string actionType, string action, string objectType, string objectName, ulong id, Color color, bool incrementCaseNumber = true)
         {
-            var guildData = GuildRepository.FetchGuild(guild.Id);
+            var guildData = await GuildRepository.FetchGuildAsync(guild.Id);
             if (guild.GetTextChannel(guildData.DetailedLogsId) != null)
             {
                 var channel = guild.GetTextChannel(guildData.DetailedLogsId);
@@ -67,7 +67,7 @@ namespace DEA.Services
                     }.WithCurrentTimestamp();
 
                     await guild.GetTextChannel(guildData.DetailedLogsId).SendMessageAsync("", embed: builder);
-                    if (incrementCaseNumber) GuildRepository.Modify(x => x.CaseNumber++, guild.Id);
+                    if (incrementCaseNumber) await GuildRepository.ModifyAsync(x => { x.CaseNumber++; return Task.CompletedTask; }, guild.Id);
                 }
             }
         }

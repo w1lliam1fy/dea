@@ -19,8 +19,8 @@ namespace DEA.Modules
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Invest(string investString = null)
         {
-            var guild = GuildRepository.FetchGuild(Context.Guild.Id);
-            var user = UserRepository.FetchUser(Context);
+            var guild = await GuildRepository.FetchGuildAsync(Context.Guild.Id);
+            var user = await UserRepository.FetchUserAsync(Context);
             double cash = user.Cash;
             switch (investString)
             {
@@ -36,7 +36,7 @@ namespace DEA.Modules
                         break;
                     }
                     await UserRepository.EditCashAsync(Context, -Config.LINE_COST);
-                    UserRepository.Modify(x => x.MessageCooldown = Config.LINE_COOLDOWN, Context);
+                    await UserRepository.ModifyAsync(x => { x.MessageCooldown = Config.LINE_COOLDOWN; return Task.CompletedTask; }, Context);
                     await ReplyAsync($"{Context.User.Mention}, don't forget to wipe your nose when you are done with that line.");
                     break;
                 case "pound":
@@ -52,7 +52,7 @@ namespace DEA.Modules
                         break;
                     }
                     await UserRepository.EditCashAsync(Context, -Config.POUND_COST);
-                    UserRepository.Modify(x => x.InvestmentMultiplier = Config.POUND_MULTIPLIER, Context);
+                    await UserRepository.ModifyAsync(x => { x.InvestmentMultiplier = Config.POUND_MULTIPLIER; return Task.CompletedTask; }, Context);
                     await ReplyAsync($"{Context.User.Mention}, ***DOUBLE CASH SMACK DAB CENTER NIGGA!***");
                     break;
                 case "kg":
@@ -74,7 +74,7 @@ namespace DEA.Modules
                         break;
                     }
                     await UserRepository.EditCashAsync(Context, -Config.KILO_COST);
-                    UserRepository.Modify(x => x.InvestmentMultiplier = Config.KILO_MULTIPLIER, Context);
+                    await UserRepository.ModifyAsync(x => { x.InvestmentMultiplier = Config.KILO_MULTIPLIER; return Task.CompletedTask; }, Context);
                     await ReplyAsync($"{Context.User.Mention}, only the black jews would actually enjoy 4$/msg.");
                     break;
                 default:
@@ -101,7 +101,7 @@ namespace DEA.Modules
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Leaderboards()
         {
-            var users = UserRepository.FetchAll(Context.Guild.Id).OrderByDescending(x => x.Cash);
+            var users = (await UserRepository.AllAsync(Context.Guild.Id)).OrderByDescending(x => x.Cash);
             string message = "```asciidoc\n= The Richest Traffickers =\n";
             int position = 1;
             int longest = 0;
@@ -122,7 +122,7 @@ namespace DEA.Modules
             {
                 if (Context.Guild.GetUser(user.UserId) == null) continue;
                 message += $"{position}. {Context.Guild.GetUser(user.UserId)}".PadRight(longest + 2) +
-                           $" :: {UserRepository.FetchUser(Context).Cash.ToString("C", Config.CI)}\n";
+                           $" :: {user.Cash.ToString("C", Config.CI)}\n";
                 if (position >= Config.LEADERBOARD_CAP) break;
                 position++;
             }
@@ -137,7 +137,7 @@ namespace DEA.Modules
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Chatters()
         {
-            var users = UserRepository.FetchAll(Context.Guild.Id).OrderByDescending(x => x.TemporaryMultiplier);
+            var users = (await UserRepository.AllAsync(Context.Guild.Id)).OrderByDescending(x => x.TemporaryMultiplier);
             string message = "```asciidoc\n= The Best Chatters =\n";
             int position = 1;
             int longest = 0;
@@ -175,15 +175,15 @@ namespace DEA.Modules
         [Remarks("Donate <@User> <Amount of cash>")]
         public async Task Donate(IGuildUser userMentioned, double money)
         {
-            var user = UserRepository.FetchUser(Context);
-                if (userMentioned.Id == Context.User.Id) throw new Exception("Hey kids! Look at that retard, he is trying to give money to himself!");
-                if (money < Config.DONATE_MIN) throw new Exception($"Lowest donation is {Config.DONATE_MIN}$.");
-                if (user.Cash < money) throw new Exception($"You do not have enough money. Balance: {user.Cash.ToString("C", Config.CI)}.");
-                await UserRepository.EditCashAsync(Context, -money);
-                double deaMoney = money * Config.DEA_CUT / 100;
-                await UserRepository.EditCashAsync(Context, userMentioned.Id, money - deaMoney);
-                await UserRepository.EditCashAsync(Context, Context.Guild.CurrentUser.Id, deaMoney);
-                await ReplyAsync($"Successfully donated {money.ToString("C", Config.CI)} to {userMentioned.Mention}. DEA has taken a {deaMoney.ToString("C", Config.CI)} cut out of this donation.");
+            var user = await UserRepository.FetchUserAsync(Context);
+            if (userMentioned.Id == Context.User.Id) throw new Exception("Hey kids! Look at that retard, he is trying to give money to himself!");
+            if (money < Config.DONATE_MIN) throw new Exception($"Lowest donation is {Config.DONATE_MIN}$.");
+            if (user.Cash < money) throw new Exception($"You do not have enough money. Balance: {user.Cash.ToString("C", Config.CI)}.");
+            await UserRepository.EditCashAsync(Context, -money);
+            double deaMoney = money * Config.DEA_CUT / 100;
+            await UserRepository.EditCashAsync(Context, userMentioned.Id, money - deaMoney);
+            await UserRepository.EditCashAsync(Context, Context.Guild.CurrentUser.Id, deaMoney);
+            await ReplyAsync($"Successfully donated {money.ToString("C", Config.CI)} to {userMentioned.Mention}. DEA has taken a {deaMoney.ToString("C", Config.CI)} cut out of this donation.");
         }
 
         [Command("Money")]
@@ -194,14 +194,14 @@ namespace DEA.Modules
         public async Task Money(IGuildUser userToView = null)
         {
             userToView = userToView ?? Context.User as IGuildUser;
-            List<User> users = UserRepository.FetchAll(Context.Guild.Id).OrderByDescending(x => x.Cash).ToList();
+            List<User> users = (await UserRepository.AllAsync(Context.Guild.Id)).OrderByDescending(x => x.Cash).ToList();
             IRole rank = null;
             //TODO: rank = await RankHandler.GetRank(Context.Guild, userToView.Id, Context.Guild.Id);
             var builder = new EmbedBuilder()
             {
                 Title = $"Ranking of {userToView}",
                 Color = new Color(0x00AE86),
-                Description = $"Balance: {UserRepository.FetchUser(Context).Cash.ToString("C", Config.CI)}\n" +
+                Description = $"Balance: {(await UserRepository.FetchUserAsync(Context)).Cash.ToString("C", Config.CI)}\n" +
                               $"Position: #{users.FindIndex(x => x.UserId == userToView.Id) + 1}\n"
             };
             if (rank != null)
@@ -216,17 +216,17 @@ namespace DEA.Modules
         public async Task Rate(IGuildUser userToView = null)
         {
             userToView = userToView ?? Context.User as IGuildUser;
-            var user = UserRepository.FetchUser(Context);
+            var user = await UserRepository.FetchUserAsync(Context);
             var builder = new EmbedBuilder()
             {
                 Title = $"Rate of { userToView }",
                 Color = new Color(0x00AE86),
                 Description = $"Currently receiving " +
                 $"{(user.InvestmentMultiplier * user.TemporaryMultiplier).ToString("C", Config.CI)} " +
-                $"per message sent every {user.MessageCooldown / 1000} seconds that is at least 7 characters long.\n" +
+                $"per message sent every {user.MessageCooldown.TotalSeconds} seconds that is at least 7 characters long.\n" +
                 $"Chatting multiplier: {user.TemporaryMultiplier.ToString("N2")}\nInvestment multiplier: " +
                 $"{user.InvestmentMultiplier.ToString("N2")}\nMessage cooldown: " +
-                $"{user.MessageCooldown / 1000} seconds"
+                $"{user.MessageCooldown.TotalSeconds} seconds"
             };
             await ReplyAsync("", embed: builder);
         }

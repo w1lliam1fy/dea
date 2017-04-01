@@ -15,14 +15,15 @@ namespace DEA.Modules
         [Remarks("Reset [@User]")]
         public async Task ResetCooldowns(IGuildUser user = null)
         {
-            var time = DateTime.UtcNow.AddYears(-1);
-            UserRepository.Modify(x => {
+            var time = DateTimeOffset.Now.AddYears(-1);
+            await UserRepository.ModifyAsync(x => {
                 x.Whore = time;
                 x.Jump = time;
                 x.Steal = time;
                 x.Rob = time;
                 x.Message = time;
                 x.Withdraw = time;
+                return Task.CompletedTask;
             }, Context);
             await ReplyAsync($"Successfully reset all of {user.Mention} cooldowns.");
         }
@@ -42,8 +43,7 @@ namespace DEA.Modules
         [Summary("Sets the rate of any user.")]
         public async Task SetRate(IGuildUser user, double rate)
         {
-            if (rate < 0) throw new Exception("Rate must be higher than 0");
-            UserRepository.Modify(x => x.TemporaryMultiplier = rate, Context);
+            await UserRepository.ModifyAsync(x => { x.TemporaryMultiplier = rate; return Task.CompletedTask; }, Context);
             await ReplyAsync($"Successfully set {user}'s rate to {rate.ToString("C", Config.CI)}");
         }
     }

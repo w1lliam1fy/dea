@@ -5,7 +5,7 @@ using DEA.SQLite.Repository;
 using DEA.SQLite.Models;
 using System.Linq;
 using Discord;
-using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace DEA.Services
 {
@@ -24,23 +24,20 @@ namespace DEA.Services
 
         private void ResetTemporaryMultiplier()
         {
-            Timer t = new Timer(TimeSpan.FromSeconds(30).TotalMilliseconds);
+            Timer t = new Timer(TimeSpan.FromHours(1).TotalMilliseconds);
             t.AutoReset = true;
             t.Elapsed += new ElapsedEventHandler(OnTimedTempMultiplierReset);
             t.Start();
         }
 
-        private void OnTimedTempMultiplierReset(object source, ElapsedEventArgs e)
+        private async void OnTimedTempMultiplierReset(object source, ElapsedEventArgs e)
         {
-            IEnumerable<User> users = UserRepository.FetchAll();
-            foreach (User user in users)
+            foreach (User user in BaseRepository<User>.GetAll())
+                if (user.TemporaryMultiplier != 1) user.TemporaryMultiplier = 1;
+
+            using (var db = new DbContext())
             {
-                //if (user.TemporaryMultiplier != 1)
-                //{
-                    user.TemporaryMultiplier = 1;
-                    UserRepository.UpdateUser(user);
-                    PrettyConsole.NewLine("One got updated!");
-                //}
+                await db.SaveChangesAsync();
             }
         }
 
@@ -52,15 +49,17 @@ namespace DEA.Services
             t.Start();
         }
 
-        private void OnTimedApplyInterest(object source, ElapsedEventArgs e)
+        private async void OnTimedApplyInterest(object source, ElapsedEventArgs e)
         {
-            IEnumerable<Gang> gangs = GangRepository.FetchAll();
-            foreach (var gang in gangs)
+            foreach (var gang in BaseRepository<Gang>.GetAll())
             {
                 var InterestRate = 0.025f + ((gang.Wealth / 100) * .000075f);
                 if (InterestRate > 0.1) InterestRate = 0.1f;
                 gang.Wealth *= 1 + InterestRate;
-                GangRepository.UpdateGang(gang);
+            }
+            using (var db = new DbContext())
+            {
+                await db.SaveChangesAsync();
             }
         }
 
@@ -74,14 +73,14 @@ namespace DEA.Services
 
         private async void OnTimedAutoUnmute(object source, ElapsedEventArgs e)
         {
-            foreach (Mute mute in MuteRepository.FetchAll())
+            foreach (Mute mute in BaseRepository<Mute>.GetAll())
             {
-                if (DateTime.UtcNow.Subtract(mute.MutedAt).TotalMilliseconds > mute.MuteLength)
+                if (DateTimeOffset.Now.Subtract(mute.MutedAt).TotalMilliseconds > mute.MuteLength.TotalMilliseconds)
                 {
                     var guild = _client.GetGuild(mute.GuildId);
                     if (guild != null && guild.GetUser(mute.UserId) != null)
                     {
-                        var guildData = GuildRepository.FetchGuild(guild.Id);
+                        var guildData = await GuildRepository.FetchGuildAsync(guild.Id);
                         var mutedRole = guild.GetRole(guildData.MutedRoleId);
                         if (mutedRole != null && guild.GetUser(mute.UserId).Roles.Any(x => x.Id == mutedRole.Id))
                         {
@@ -102,12 +101,12 @@ namespace DEA.Services
                                     Description = $"**Action:** Automatic Unmute\n**User:** {guild.GetUser(mute.UserId)} ({guild.GetUser(mute.UserId).Id})",
                                     Footer = footer
                                 }.WithCurrentTimestamp();
-                                GuildRepository.Modify(x => x.CaseNumber++, guild.Id);
+                                await GuildRepository.ModifyAsync(x => { x.CaseNumber++; return Task.CompletedTask; }, guild.Id);
                                 await channel.SendMessageAsync("", embed: builder);
                             }
                         }
                     }
-                    MuteRepository.RemoveMute(mute.UserId, mute.GuildId);
+                    await MuteRepository.RemoveMuteAsync(mute.UserId, mute.GuildId);
                 }
             }
         }

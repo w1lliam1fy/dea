@@ -18,14 +18,14 @@ namespace DEA.Modules
         [Remarks("ChangeNSFWSettings")]
         public async Task ChangeNSFWSettings()
         {
-            switch (GuildRepository.FetchGuild(Context.Guild.Id).Nsfw)
+            switch ((await GuildRepository.FetchGuildAsync(Context.Guild.Id)).Nsfw)
             {
                 case true:
-                    GuildRepository.Modify(x => x.Nsfw = false, Context.Guild.Id);
+                    await GuildRepository.ModifyAsync(x => { x.Nsfw = false; return Task.CompletedTask; }, Context.Guild.Id);
                     await ReplyAsync($"{Context.User.Mention}, You have successfully disabled NSFW commands!");
                     break;
                 case false:
-                    GuildRepository.Modify(x => x.Nsfw = true, Context.Guild.Id);
+                    await GuildRepository.ModifyAsync(x => { x.Nsfw = true; return Task.CompletedTask; }, Context.Guild.Id);
                     await ReplyAsync($"{Context.User.Mention}, You have successfully enabled NSFW commands!");
                     break;
             }
@@ -37,8 +37,8 @@ namespace DEA.Modules
         [Remarks("SetNSFWChannel <#NSFWChannel>")]
         public async Task SetNSFWChannel(ITextChannel nsfwChannel)
         {
-            GuildRepository.Modify(x => x.NsfwId = nsfwChannel.Id, Context.Guild.Id);
-            var nsfwRole = Context.Guild.GetRole(GuildRepository.FetchGuild(Context.Guild.Id).NsfwRoleId);
+            await GuildRepository.ModifyAsync(x => { x.NsfwId = nsfwChannel.Id; return Task.CompletedTask; }, Context.Guild.Id);
+            var nsfwRole = Context.Guild.GetRole((await GuildRepository.FetchGuildAsync(Context.Guild.Id)).NsfwRoleId);
             if (nsfwRole != null && Context.Guild.CurrentUser.GuildPermissions.Administrator)
             {
                 await nsfwChannel.AddPermissionOverwriteAsync(Context.Guild.EveryoneRole, new OverwritePermissions().Modify(null, null, null, PermValue.Deny));
@@ -55,8 +55,8 @@ namespace DEA.Modules
         {
             if (nsfwRole.Position > Context.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
                 throw new Exception("You may not set the NSFW role to a role that is higher in hierarchy than DEA's highest role.");
-            GuildRepository.Modify(x => x.NsfwRoleId = nsfwRole.Id, Context.Guild.Id);
-            var nsfwChannel = Context.Guild.GetChannel(GuildRepository.FetchGuild(Context.Guild.Id).NsfwId);
+            await GuildRepository.ModifyAsync(x => { x.NsfwRoleId = nsfwRole.Id; return Task.CompletedTask; }, Context.Guild.Id);
+            var nsfwChannel = Context.Guild.GetChannel((await GuildRepository.FetchGuildAsync(Context.Guild.Id)).NsfwId);
             if (nsfwChannel != null && Context.Guild.CurrentUser.GuildPermissions.Administrator)
             {
                 await nsfwChannel.AddPermissionOverwriteAsync(Context.Guild.EveryoneRole, new OverwritePermissions().Modify(null, null, null, PermValue.Deny));
@@ -72,7 +72,7 @@ namespace DEA.Modules
         [Remarks("NSFW")]
         public async Task JoinNSFW()
         {
-            var guild = GuildRepository.FetchGuild(Context.Guild.Id);
+            var guild = await GuildRepository.FetchGuildAsync(Context.Guild.Id);
             var NsfwRole = Context.Guild.GetRole(guild.NsfwRoleId);
             if (NsfwRole == null) throw new Exception("Everyone will always be able to use NSFW commands since there has been no NSFW role that has been set.\n" +
                                                      $"In order to change this, an administrator may use the `{guild.Prefix}SetNSFWRole` command.");

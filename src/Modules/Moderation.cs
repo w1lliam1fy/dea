@@ -19,8 +19,8 @@ namespace DEA.Modules
         [Remarks("Ban <@User> [Reason]")]
         public async Task Ban(IGuildUser userToBan, [Remainder] string reason = "No reason.")
         {
-            if (IsMod(userToBan)) throw new Exception("You cannot ban another mod!");
-            await InformSubject(Context.User, "Ban", userToBan, reason);
+            if (await IsModAsync(userToBan)) throw new Exception("You cannot ban another mod!");
+            await InformSubjectAsync(Context.User, "Ban", userToBan, reason);
             await Context.Guild.AddBanAsync(userToBan);
             await Logger.ModLog(Context, "Ban", new Color(255, 0, 0), reason, userToBan);
             await ReplyAsync($"{Context.User.Mention} has successfully banned {userToBan.Mention}!");
@@ -32,8 +32,8 @@ namespace DEA.Modules
         [Remarks("Kick <@User> [Reason]")]
         public async Task Kick(IGuildUser userToKick, [Remainder] string reason = "No reason.")
         {
-            if (IsMod(userToKick)) throw new Exception("You cannot kick another mod!");
-            await InformSubject(Context.User, "Kick", userToKick, reason);
+            if (await IsModAsync(userToKick)) throw new Exception("You cannot kick another mod!");
+            await InformSubjectAsync(Context.User, "Kick", userToKick, reason);
             await userToKick.KickAsync();
             await Logger.ModLog(Context, "Kick", new Color(255, 114, 14), reason, userToKick);
             await ReplyAsync($"{Context.User.Mention} has successfully kicked {userToKick.Mention}!");
@@ -45,14 +45,14 @@ namespace DEA.Modules
         [Remarks("Mute <@User> [Reason]")]
         public async Task Mute(IGuildUser userToMute, [Remainder] string reason = "No reason.")
         {
-            var guild = GuildRepository.FetchGuild(Context.Guild.Id);
+            var guild = await GuildRepository.FetchGuildAsync(Context.Guild.Id);
             var mutedRole = Context.Guild.GetRole(guild.MutedRoleId);
             if (mutedRole == null) throw new Exception($"You may not mute users if the muted role is not valid.\nPlease use the " +
                                                        $"`{guild.Prefix}SetMutedRole` command to change that.");
-            if (IsMod(userToMute)) throw new Exception("You cannot mute another mod!");
-            await InformSubject(Context.User, "Mute", userToMute, reason);
+            if (await IsModAsync(userToMute)) throw new Exception("You cannot mute another mod!");
+            await InformSubjectAsync(Context.User, "Mute", userToMute, reason);
             await userToMute.AddRoleAsync(mutedRole);
-            MuteRepository.AddMute(userToMute.Id, Context.Guild.Id, Config.DEFAULT_MUTE_TIME);
+            await MuteRepository.AddMuteAsync(userToMute.Id, Context.Guild.Id, Config.DEFAULT_MUTE_TIME);
             await Logger.ModLog(Context, "Mute", new Color(255, 114, 14), reason, userToMute, $"\n**Length:** {Config.DEFAULT_MUTE_TIME.TotalHours} hours");
             await ReplyAsync($"{Context.User.Mention} has successfully muted {userToMute.Mention}!");
         }
@@ -68,14 +68,14 @@ namespace DEA.Modules
             if (hours < 1) throw new Exception("You may not mute a user for less than 1 hour.");
             string time = "hours";
             if (hours == 1) time = "hour";
-            var guild = GuildRepository.FetchGuild(Context.Guild.Id);
+            var guild = await GuildRepository.FetchGuildAsync(Context.Guild.Id);
             var mutedRole = Context.Guild.GetRole(guild.MutedRoleId);
             if (mutedRole == null) throw new Exception($"You may not mute users if the muted role is not valid.\nPlease use the " +
                                                        $"{guild.Prefix}SetMutedRole command to change that.");
-            if (IsMod(userToMute)) throw new Exception("You cannot mute another mod!");
-            await InformSubject(Context.User, "Mute", userToMute, reason);
+            if (await IsModAsync(userToMute)) throw new Exception("You cannot mute another mod!");
+            await InformSubjectAsync(Context.User, "Mute", userToMute, reason);
             await userToMute.AddRoleAsync(mutedRole);
-            MuteRepository.AddMute(userToMute.Id, Context.Guild.Id, TimeSpan.FromHours(hours));
+            await MuteRepository.AddMuteAsync(userToMute.Id, Context.Guild.Id, TimeSpan.FromHours(hours));
             await Logger.ModLog(Context, "Mute", new Color(255, 114, 14), reason, userToMute, $"\n**Length:** {hours} {time}");
             await ReplyAsync($"{Context.User.Mention} has successfully muted {userToMute.Mention} for {hours} {time}!");
         }
@@ -86,11 +86,11 @@ namespace DEA.Modules
         [Remarks("Unmute <@User> [Reason]")]
         public async Task Unmute(IGuildUser userToUnmute, [Remainder] string reason = "No reason.")
         {
-            var mutedRoleId = GuildRepository.FetchGuild(Context.Guild.Id).MutedRoleId;
+            var mutedRoleId = (await GuildRepository.FetchGuildAsync(Context.Guild.Id)).MutedRoleId;
             if (userToUnmute.RoleIds.All(x => x != mutedRoleId)) throw new Exception("You cannot unmute a user who isn't muted.");
-            await InformSubject(Context.User, "Unmute", userToUnmute, reason);
+            await InformSubjectAsync(Context.User, "Unmute", userToUnmute, reason);
             await userToUnmute.RemoveRoleAsync(Context.Guild.GetRole(mutedRoleId));
-            MuteRepository.RemoveMute(userToUnmute.Id, Context.Guild.Id);
+            await MuteRepository.RemoveMuteAsync(userToUnmute.Id, Context.Guild.Id);
             await Logger.ModLog(Context, "Unmute", new Color(12, 255, 129), reason, userToUnmute);
             await ReplyAsync($"{Context.User.Mention} has successfully unmuted {userToUnmute.Mention}!");
         }
@@ -103,7 +103,7 @@ namespace DEA.Modules
         {
             if (count < Config.MIN_CLEAR) throw new Exception($"You may not clear less than {Config.MIN_CLEAR} messages.");
             if (count > Config.MAX_CLEAR) throw new Exception($"You may not clear more than {Config.MAX_CLEAR} messages.");
-            var guild = GuildRepository.FetchGuild(Context.Guild.Id);
+            var guild = await GuildRepository.FetchGuildAsync(Context.Guild.Id);
             if (Context.Channel.Id == guild.ModLogId || Context.Channel.Id == guild.DetailedLogsId)
                 throw new Exception("For security reasons, you may not use this command in a log channel.");
             var messages = await Context.Channel.GetMessagesAsync(count).Flatten();
@@ -125,21 +125,21 @@ namespace DEA.Modules
             await channel.AddPermissionOverwriteAsync(Context.Guild.EveryoneRole, new OverwritePermissions().Modify(perms.CreateInstantInvite, perms.ManageChannel, perms.AddReactions, perms.ReadMessages, PermValue.Deny));
             await ReplyAsync($"{Context.User.Mention}, chat just got cooled down. Won't heat up until at least {seconds} seconds have passed.");
             Timer t = new Timer(TimeSpan.FromSeconds(seconds).TotalMilliseconds);
-            t.Elapsed += async delegate { await Unchill(channel, perms, t, seconds, reason); };
+            t.Elapsed += async delegate { await UnchillAsync(channel, perms, t, seconds, reason); };
             t.Start();
         }
 
-        private async Task Unchill(ITextChannel channel, OverwritePermissions permissions, Timer timer, int seconds, string reason)
+        private async Task UnchillAsync(ITextChannel channel, OverwritePermissions permissions, Timer timer, int seconds, string reason)
         {
             await channel.AddPermissionOverwriteAsync(Context.Guild.EveryoneRole, new OverwritePermissions().Modify(permissions.CreateInstantInvite, permissions.ManageChannel, permissions.AddReactions, permissions.ReadMessages, PermValue.Allow));
             await Logger.ModLog(Context, "Chill", new Color(34, 59, 255), reason, null, $"\n**Length:** {seconds} seconds");
             timer.Stop();
         }
 
-        private bool IsMod(IGuildUser user)
+        private async Task<bool> IsModAsync(IGuildUser user)
         {
             if (user.GuildPermissions.Administrator) return true;
-            foreach (var roleId in GuildRepository.FetchGuild(Context.Guild.Id).ModRoles)
+            foreach (var roleId in (await GuildRepository.FetchGuildAsync(Context.Guild.Id)).ModRoles)
             {
                 if (user.Guild.GetRole(roleId) != null)
                 {
@@ -149,7 +149,7 @@ namespace DEA.Modules
             return false;
         }
 
-        private async Task InformSubject(IUser moderator, string action, IUser subject, string reason)
+        private async Task InformSubjectAsync(IUser moderator, string action, IUser subject, string reason)
         {
             try
             {

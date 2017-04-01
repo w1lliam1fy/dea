@@ -32,7 +32,7 @@ namespace System.Modules
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Info(string investString = null)
         {
-            var guild = GuildRepository.FetchGuild(Context.Guild.Id);
+            var guild = await GuildRepository.FetchGuildAsync(Context.Guild.Id);
             string p = guild.Prefix;
 
             var builder = new EmbedBuilder()
@@ -66,7 +66,7 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task HelpAsync(string commandOrModule = null)
         {
-            string prefix = GuildRepository.FetchGuild(Context.Guild.Id).Prefix;
+            string prefix = (await GuildRepository.FetchGuildAsync(Context.Guild.Id)).Prefix;
 
             if (commandOrModule != null)
             {
@@ -124,7 +124,7 @@ For all information about command usage and setup on your Discord Sever, view th
 
 This command may be used for view the commands for each of the following modules: System, Administration, Moderation, General, Gambling and Crime. It may also be used the view the usage of a specific command.
 
-In order to **add DEA to your Discord Server**, click the following link: <https://discordapp.com/oauth2/authorize?client_id={Context.Guild.CurrentUser.Id}&scope=bot&permissions=477195286> 
+In order to **add DEA to your Discord Server**, click the following link: <https://discordapp.com/oauth2/authorize?client_id={Context.Client.CurrentUser.Id}&scope=bot&permissions=477195286> 
 
 If you have any other questions, you may join the **Official DEA Discord Server:** <https://discord.me/Rush>, a server home to infamous meme events such as a raids and insanity. Join for the dankest community a man could desire."
                 };
@@ -141,7 +141,7 @@ If you have any other questions, you may join the **Official DEA Discord Server:
         [Summary("All the statistics about DEA.")]
         public async Task Info()
         {
-            var uptime = (DateTime.UtcNow - _process.StartTime);
+            var uptime = (DateTimeOffset.Now - _process.StartTime);
             var application = await Context.Client.GetApplicationInfoAsync();
             var message =
                 $"```asciidoc\n= STATISTICS =\n" +
