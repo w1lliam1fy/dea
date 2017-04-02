@@ -1,4 +1,4 @@
-﻿using DEA.SQLite.Models;
+﻿using DEA.PostgreSQL.Models;
 using Discord.Commands;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DEA.SQLite.Repository
+namespace DEA.PostgreSQL.Repository
 {
     public static class GangRepository
     {
@@ -83,22 +83,29 @@ namespace DEA.SQLite.Repository
         public static async Task<bool> IsFullAsync(ulong userId, ulong guildId)
         {
             var gang = await FetchGangAsync(userId, guildId);
-            if (gang.Members.Count == 4) return true;
+            if (gang.Members.Length == 4) return true;
             return false;
         }
 
-        public static async Task<bool> RemoveMemberAsync(ulong memberId, ulong guildId)
+        public static async Task RemoveMemberAsync(ulong memberId, ulong guildId)
         {
             var gang = await FetchGangAsync(memberId, guildId);
-            var result = gang.Members.Remove(memberId);
+            for (int i = 0; i < gang.Members.Length; i++)
+                if (gang.Members[i] == memberId) gang.Members[i] = 0;
             await BaseRepository<Gang>.UpdateAsync(gang);
-            return result;
         }
 
         public static async Task AddMemberAsync(ulong userId, ulong guildId, ulong newMemberId)
         {
             var gang = await FetchGangAsync(userId, guildId);
-            gang.Members.Add(newMemberId);
+            for (int i = 0; i < gang.Members.Length; i++)
+            {
+                if (gang.Members[i] == 0)
+                {
+                    gang.Members[i] = newMemberId;
+                    break;
+                } 
+            }
             await BaseRepository<Gang>.UpdateAsync(gang);
         }
 

@@ -2,21 +2,30 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DEA.SQLite.Models
+namespace DEA.PostgreSQL.Models
 {
     [Table("gangs")]
     public class Guild
     { 
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Column("id")]
-        [DataType("BIGINT")]
         public ulong Id { get; set; }
+
+        //Global
+        [Column("mutes")]
+        public List<Mute> Mutes { get; set; }
+        [Column("gangs")]
+        public List<Gang> Gangs { get; set; }
+        [Column("users")]
+        public List<User> Users { get; set; }
+		
 
         //Roles
         [Column("modroles")]
-        public List<ulong> ModRoles { get; set; }
+        public List<ModRole> ModRoles { get; set; }
         [Column("rankroles")]
-        public Dictionary<ulong, double> RankRoles { get; set; }
+        public List<RankRole> RankRoles { get; set; }
         [Column("nsfwroleid")]
         public ulong NsfwRoleId { get; set; }
         [Column("muteroleid")]
@@ -40,7 +49,7 @@ namespace DEA.SQLite.Models
         [Column("globalchattingmultiplier")]
         public double GlobalChattingMultiplier = 1.0;
         [Column("tempmultiplierincreaserate")]
-        public double TempMultiplierIncreaseRate = 0.1;
+        public double TempMultiplierIncreaseRate = 0.10;
         [Column("jumprequirement")]
         public double JumpRequirement { get; set; } = 500.0;
         [Column("stealrequirement")]
@@ -54,6 +63,6 @@ namespace DEA.SQLite.Models
 
         //Misc
         [Column("casenumber")]
-        public uint CaseNumber { get; set; } = 1;
+        public int CaseNumber { get; set; } = 1;
     }
 }

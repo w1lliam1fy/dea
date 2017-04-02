@@ -9,8 +9,6 @@ public static class Config
 
     public static readonly CultureInfo CI = CultureInfo.CreateSpecificCulture("en-CA");
 
-    public static readonly string DB_CONNECTION_STRING = @"Database.db";
-
     public static readonly TimeSpan DEFAULT_MUTE_TIME, WHORE_COOLDOWN = TimeSpan.FromHours(2), JUMP_COOLDOWN = TimeSpan.FromHours(4),
         STEAL_COOLDOWN = TimeSpan.FromHours(6), ROB_COOLDOWN = TimeSpan.FromHours(8), WITHDRAW_COOLDOWN = TimeSpan.FromHours(4),
         DEFAULT_COOLDOWN = TimeSpan.FromHours(4), LINE_COOLDOWN = TimeSpan.FromSeconds(30);

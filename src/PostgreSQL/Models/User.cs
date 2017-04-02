@@ -1,9 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System;
-using NpgsqlTypes;
 
-namespace DEA.SQLite.Models
+namespace DEA.PostgreSQL.Models
 {
     [Table("users")]
     public class User
@@ -12,10 +11,9 @@ namespace DEA.SQLite.Models
         [Column("id")]
         public int Id { get; set; }
         [Column("userid")]
-        [DataType("BIGINT")]
         public ulong UserId { get; set; }
         [Column("guildid")]
-        [DataType("BIGINT")]
+        //Foreign key back to the guild
         public ulong GuildId { get; set; }
 
         //Cash system data
@@ -26,7 +24,7 @@ namespace DEA.SQLite.Models
         [Column("investmentmultiplier")]
         public double InvestmentMultiplier { get; set; } = 1.0;
         [Column("messagecooldown")]
-        public NpgsqlTimeSpan MessageCooldown { get; set; } = TimeSpan.FromSeconds(30);
+        public TimeSpan MessageCooldown { get; set; } = TimeSpan.FromSeconds(30);
 
         //Cooldowns
         [Column("message")]

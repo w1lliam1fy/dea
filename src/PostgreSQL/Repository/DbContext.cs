@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace DEA.SQLite.Models
+namespace DEA.PostgreSQL.Models
 {
     public class DbContext : Microsoft.EntityFrameworkCore.DbContext
     {
@@ -14,8 +14,7 @@ namespace DEA.SQLite.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql($"Host={Config.CREDENTIALS.PostgreServer};User Id={Config.CREDENTIALS.PostgreUserId};" +
-                                     $"Password={Config.CREDENTIALS.PostgrePassword};Database={Config.CREDENTIALS.PostgreDatabase};");
+            //stuff
         }
 
     }

@@ -1,10 +1,9 @@
-﻿using DEA.SQLite.Models;
+﻿using DEA.PostgreSQL.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace DEA.SQLite.Repository
+namespace DEA.PostgreSQL.Repository
 {
     public static class MuteRepository 
     {

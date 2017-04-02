@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DEA.SQLite.Models
+namespace DEA.PostgreSQL.Models
 {
     [Table("gangs")]
     public class Gang
@@ -14,13 +14,12 @@ namespace DEA.SQLite.Models
         [Column("name")]
         public string Name { get; set; }
         [Column("leaderid")]
-        [DataType("BIGINT")]
         public ulong LeaderId { get; set; }
         [Column("guildid")]
-        [DataType("BIGINT")]
         public ulong GuildId { get; set; }
+        //foreign key back to guild
         [Column("members")]
-        public List<ulong> Members { get; set; }
+        public List<User> Members { get; set; }
         [Column("wealth")]
         public double Wealth { get; set; } = 0.0;
         [Column("raid")]

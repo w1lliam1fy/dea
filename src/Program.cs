@@ -7,6 +7,7 @@ using Discord.Commands;
 using System.IO;
 using Newtonsoft.Json;
 using DEA.Resources;
+using DEA.SQLite.Models;
 
 namespace DEA
 {
@@ -21,6 +22,11 @@ namespace DEA
         {
             PrettyConsole.NewLine("===   DEA   ===");
             PrettyConsole.NewLine();
+
+            using (var db = new DbContext())
+            {
+                db.Database.EnsureCreated();
+            }
 
             using (StreamReader file = File.OpenText(@"..\..\Credentials.json"))
             {

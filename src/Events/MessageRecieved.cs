@@ -37,7 +37,13 @@ namespace DEA.Services
             var msg = s as SocketUserMessage;
             if (msg == null) return;
 
+            PrettyConsole.NewLine(msg.Content);
+
+            
+
             var Context = new SocketCommandContext(_client, msg);
+
+            PrettyConsole.NewLine((await GuildRepository.FetchGuildAsync(Context.Guild.Id)).Prefix);
 
             if (Context.User.IsBot) return;
 
