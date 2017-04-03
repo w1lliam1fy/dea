@@ -29,10 +29,10 @@ namespace DEA.Database.Models
         public List<RankRole> RankRoles { get; set; }
         [Column("nsfwroleid")]
         [DataType("decimal(20,0)")]
-        public ulong NsfwRoleId { get; set; }
+        public decimal NsfwRoleId { get; set; }
         [Column("muteroleid")]
         [DataType("decimal(20,0)")]
-        public ulong MutedRoleId { get; set; }
+        public decimal MutedRoleId { get; set; }
 
         //Channels
         [Column("modlogid")]

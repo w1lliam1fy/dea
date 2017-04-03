@@ -81,7 +81,7 @@ namespace DEA.Services
                     if (guild != null && guild.GetUser((ulong)mute.UserId) != null)
                     {
                         var guildData = await GuildRepository.FetchGuildAsync(guild.Id);
-                        var mutedRole = guild.GetRole(guildData.MutedRoleId);
+                        var mutedRole = guild.GetRole((ulong)guildData.MutedRoleId);
                         if (mutedRole != null && guild.GetUser((ulong)mute.UserId).Roles.Any(x => x.Id == mutedRole.Id))
                         {
                             var channel = guild.GetTextChannel((ulong)guildData.ModLogId);

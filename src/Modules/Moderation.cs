@@ -46,7 +46,7 @@ namespace DEA.Modules
         public async Task Mute(IGuildUser userToMute, [Remainder] string reason = "No reason.")
         {
             var guild = await GuildRepository.FetchGuildAsync(Context.Guild.Id);
-            var mutedRole = Context.Guild.GetRole(guild.MutedRoleId);
+            var mutedRole = Context.Guild.GetRole((ulong)guild.MutedRoleId);
             if (mutedRole == null) throw new Exception($"You may not mute users if the muted role is not valid.\nPlease use the " +
                                                        $"`{guild.Prefix}SetMutedRole` command to change that.");
             if (await IsModAsync(userToMute)) throw new Exception("You cannot mute another mod!");
@@ -69,7 +69,7 @@ namespace DEA.Modules
             string time = "hours";
             if (hours == 1) time = "hour";
             var guild = await GuildRepository.FetchGuildAsync(Context.Guild.Id);
-            var mutedRole = Context.Guild.GetRole(guild.MutedRoleId);
+            var mutedRole = Context.Guild.GetRole((ulong)guild.MutedRoleId);
             if (mutedRole == null) throw new Exception($"You may not mute users if the muted role is not valid.\nPlease use the " +
                                                        $"{guild.Prefix}SetMutedRole command to change that.");
             if (await IsModAsync(userToMute)) throw new Exception("You cannot mute another mod!");
@@ -89,7 +89,7 @@ namespace DEA.Modules
             var mutedRoleId = (await GuildRepository.FetchGuildAsync(Context.Guild.Id)).MutedRoleId;
             if (userToUnmute.RoleIds.All(x => x != mutedRoleId)) throw new Exception("You cannot unmute a user who isn't muted.");
             await InformSubjectAsync(Context.User, "Unmute", userToUnmute, reason);
-            await userToUnmute.RemoveRoleAsync(Context.Guild.GetRole(mutedRoleId));
+            await userToUnmute.RemoveRoleAsync(Context.Guild.GetRole((ulong)mutedRoleId));
             await MuteRepository.RemoveMuteAsync(userToUnmute.Id, Context.Guild.Id);
             await Logger.ModLog(Context, "Unmute", new Color(12, 255, 129), reason, userToUnmute);
             await ReplyAsync($"{Context.User.Mention} has successfully unmuted {userToUnmute.Mention}!");

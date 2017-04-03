@@ -45,7 +45,7 @@ namespace Discord.Commands
                     var nsfwChannel = await context.Guild.GetChannelAsync((ulong)guild.NsfwId);
                     if (nsfwChannel != null && context.Channel.Id != guild.NsfwId)
                         return PreconditionResult.FromError($"You may only use this command in {(nsfwChannel as ITextChannel).Mention}.");
-                    var nsfwRole = context.Guild.GetRole(guild.NsfwRoleId);
+                    var nsfwRole = context.Guild.GetRole((ulong)guild.NsfwRoleId);
                     if (nsfwRole != null && (context.User as IGuildUser).RoleIds.All(x => x != guild.NsfwRoleId))
                         return PreconditionResult.FromError($"You do not have permission to use this command.\nRequired role: {nsfwRole.Mention}");
                     break;

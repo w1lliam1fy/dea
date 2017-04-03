@@ -38,7 +38,7 @@ namespace DEA.Modules
         public async Task SetNSFWChannel(ITextChannel nsfwChannel)
         {
             await GuildRepository.ModifyAsync(x => { x.NsfwId = nsfwChannel.Id; return Task.CompletedTask; }, Context.Guild.Id);
-            var nsfwRole = Context.Guild.GetRole((await GuildRepository.FetchGuildAsync(Context.Guild.Id)).NsfwRoleId);
+            var nsfwRole = Context.Guild.GetRole((ulong)(await GuildRepository.FetchGuildAsync(Context.Guild.Id)).NsfwRoleId);
             if (nsfwRole != null && Context.Guild.CurrentUser.GuildPermissions.Administrator)
             {
                 await nsfwChannel.AddPermissionOverwriteAsync(Context.Guild.EveryoneRole, new OverwritePermissions().Modify(null, null, null, PermValue.Deny));
@@ -73,7 +73,7 @@ namespace DEA.Modules
         public async Task JoinNSFW()
         {
             var guild = await GuildRepository.FetchGuildAsync(Context.Guild.Id);
-            var NsfwRole = Context.Guild.GetRole(guild.NsfwRoleId);
+            var NsfwRole = Context.Guild.GetRole((ulong)guild.NsfwRoleId);
             if (NsfwRole == null) throw new Exception("Everyone will always be able to use NSFW commands since there has been no NSFW role that has been set.\n" +
                                                      $"In order to change this, an administrator may use the `{guild.Prefix}SetNSFWRole` command.");
             if ((Context.User as IGuildUser).RoleIds.Any(x => x == guild.NsfwRoleId))
