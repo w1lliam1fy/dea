@@ -5,7 +5,7 @@ using System.Linq;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using DEA.SQLite.Repository;
+using DEA.Database.Repository;
 
 namespace System.Modules
 {

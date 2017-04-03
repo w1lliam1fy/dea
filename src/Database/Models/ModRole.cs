@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DEA.PostgreSQL.Models
+namespace DEA.Database.Models
 {
     [Table("modroles")]
     public class ModRole
@@ -10,10 +10,11 @@ namespace DEA.PostgreSQL.Models
         [Column("id")]
         public int Id { get; set; }
         [Column("guildid")]
-        //Foreign key back to the guild
-        public ulong GuildId { get; set; }
+        [DataType("decimal(20,0)")]
+        public decimal GuildId { get; set; }
         [Column("roleid")]
-        public ulong RoleId { get; set; }
+        [DataType("decimal(20,0)")]
+        public decimal RoleId { get; set; }
         [Column("permissionlevel")]
         public int PermissionLevel { get; set; }
     }

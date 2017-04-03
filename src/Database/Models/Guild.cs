@@ -2,15 +2,16 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DEA.PostgreSQL.Models
+namespace DEA.Database.Models
 {
-    [Table("gangs")]
+    [Table("guilds")]
     public class Guild
     { 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Column("id")]
-        public ulong Id { get; set; }
+        [DataType("decimal(20,0)")]
+        public decimal Id { get; set; }
 
         //Global
         [Column("mutes")]
@@ -27,19 +28,25 @@ namespace DEA.PostgreSQL.Models
         [Column("rankroles")]
         public List<RankRole> RankRoles { get; set; }
         [Column("nsfwroleid")]
+        [DataType("decimal(20,0)")]
         public ulong NsfwRoleId { get; set; }
         [Column("muteroleid")]
+        [DataType("decimal(20,0)")]
         public ulong MutedRoleId { get; set; }
 
         //Channels
         [Column("modlogid")]
-        public ulong ModLogId { get; set; } = 0;
+        [DataType("decimal(20,0)")]
+        public decimal ModLogId { get; set; } = 0;
         [Column("detailedlogsid")]
-        public ulong DetailedLogsId { get; set; } = 0;
+        [DataType("decimal(20,0)")]
+        public decimal DetailedLogsId { get; set; } = 0;
         [Column("gambleid")]
-        public ulong GambleId { get; set; } = 0;
+        [DataType("decimal(20,0)")]
+        public decimal GambleId { get; set; } = 0;
         [Column("nsfwid")]
-        public ulong NsfwId { get; set; } = 0;
+        [DataType("decimal(20,0)")]
+        public decimal NsfwId { get; set; } = 0;
 
         //Options
         [Column("prefix")]

@@ -1,9 +1,9 @@
-﻿using DEA.PostgreSQL.Models;
+﻿using DEA.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
 
-namespace DEA.PostgreSQL.Repository
+namespace DEA.Database.Repository
 {
     public static class GuildRepository
     {

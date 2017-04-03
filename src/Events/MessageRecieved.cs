@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using DEA.SQLite.Repository;
+using DEA.Database.Repository;
 using Discord.Addons.InteractiveCommands;
 
 namespace DEA.Services

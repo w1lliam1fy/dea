@@ -1,4 +1,4 @@
-﻿using DEA.SQLite.Repository;
+﻿using DEA.Database.Repository;
 using Discord;
 using System;
 using Discord.Commands;
@@ -139,11 +139,11 @@ namespace DEA.Modules
         private async Task<bool> IsModAsync(IGuildUser user)
         {
             if (user.GuildPermissions.Administrator) return true;
-            foreach (var roleId in (await GuildRepository.FetchGuildAsync(Context.Guild.Id)).ModRoles)
+            foreach (var role in (await GuildRepository.FetchGuildAsync(Context.Guild.Id)).ModRoles)
             {
-                if (user.Guild.GetRole(roleId) != null)
+                if (user.Guild.GetRole((ulong)role.RoleId) != null)
                 {
-                    if (user.RoleIds.Any(x => x == roleId)) return true;
+                    if (user.RoleIds.Any(x => x == role.RoleId)) return true;
                 }
             }
             return false;

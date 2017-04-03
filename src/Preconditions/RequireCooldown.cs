@@ -1,5 +1,5 @@
 ﻿using DEA.Services;
-using DEA.SQLite.Repository;
+using DEA.Database.Repository;
 using System;
 using System.Threading.Tasks;
 
@@ -10,8 +10,8 @@ namespace Discord.Commands
     {
         public override async Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IDependencyMap map)
         {
-            TimeSpan cooldown = Config.DEFAULT_COOLDOWN;
-            DateTimeOffset lastUse = DateTimeOffset.Now;
+            TimeSpan cooldown;
+            DateTimeOffset lastUse;
             var user = await UserRepository.FetchUserAsync(context as SocketCommandContext);
             switch (command.Name.ToLower())
             {
@@ -35,6 +35,8 @@ namespace Discord.Commands
                     cooldown = Config.WITHDRAW_COOLDOWN;
                     lastUse = user.Withdraw;
                     break;
+                default:
+                    return PreconditionResult.FromSuccess();
             }
             if (DateTimeOffset.Now.Subtract(lastUse).TotalMilliseconds > cooldown.TotalMilliseconds)
                 return PreconditionResult.FromSuccess();

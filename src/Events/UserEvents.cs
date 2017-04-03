@@ -1,5 +1,5 @@
 ﻿using DEA.Services;
-using DEA.SQLite.Repository;
+using DEA.Database.Repository;
 using Discord;
 using Discord.WebSocket;
 using System.Linq;

@@ -2,16 +2,16 @@
 using Discord.Commands;
 using System;
 using System.Threading.Tasks;
-using DEA.SQLite.Repository;
+using DEA.Database.Repository;
 using Discord.WebSocket;
 
 namespace DEA.Modules
 {
+    [RequireCooldown]
     public class Crime : ModuleBase<SocketCommandContext>
     {
 
         [Command("Whore")]
-        [RequireCooldown]
         [Summary("Sell your body for some quick cash.")]
         [Remarks("Whore")]
         [RequireBotPermission(GuildPermission.EmbedLinks)]
@@ -36,7 +36,6 @@ namespace DEA.Modules
 
         [Command("Jump")]
         [Require(Attributes.Jump)]
-        [RequireCooldown]
         [Summary("Jump some random nigga in the hood.")]
         [Remarks("Jump")]
         [RequireBotPermission(GuildPermission.EmbedLinks)]
@@ -61,7 +60,6 @@ namespace DEA.Modules
 
         [Command("Steal")]
         [Require(Attributes.Steal)]
-        [RequireCooldown]
         [Summary("Snipe some goodies from your local stores.")]
         [Remarks("Steal")]
         [RequireBotPermission(GuildPermission.EmbedLinks)]
@@ -102,7 +100,6 @@ namespace DEA.Modules
 
         [Command("Rob")]
         [Require(Attributes.Rob)]
-        [RequireCooldown]
         [Summary("Lead a large scale operation on a local bank.")]
         [Remarks("Rob <Amount of cash to spend on resources>")]
         [RequireBotPermission(GuildPermission.EmbedLinks)]

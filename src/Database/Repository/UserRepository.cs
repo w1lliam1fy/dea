@@ -1,11 +1,12 @@
-﻿using DEA.PostgreSQL.Models;
+﻿using DEA.Database.Models;
 using Discord.Commands;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
-namespace DEA.PostgreSQL.Repository
+namespace DEA.Database.Repository
 {
     public static class UserRepository
     {
@@ -26,39 +27,49 @@ namespace DEA.PostgreSQL.Repository
 
         public static async Task<User> FetchUserAsync(SocketCommandContext context)
         {
-            User ExistingUser = await BaseRepository<User>.SearchFor(c => c.UserId == context.User.Id && c.GuildId == context.Guild.Id).FirstOrDefaultAsync();
-            if (ExistingUser == null)
+            var guild = await GuildRepository.FetchGuildAsync(context.Guild.Id);
+            var existingUser = guild.Users.FirstOrDefault(x => x.UserId == context.User.Id);
+            if (existingUser == null)
             {
-                var CreatedUser = new User()
+                var createdUser = new User()
                 {
                     UserId = context.User.Id,
-                    GuildId = context.Guild.Id
+                    GuildId = guild.Id
                 };
-                await BaseRepository<User>.InsertAsync(CreatedUser);
-                return CreatedUser;
+                guild.Users.Add(createdUser);
+                await BaseRepository<Guild>.UpdateAsync(guild);
+                return createdUser;
             }
-            return ExistingUser;
+            return existingUser;
         }
 
         public static async Task<User> FetchUserAsync(ulong userId, ulong guildId)
         {
-            User ExistingUser = await BaseRepository<User>.SearchFor(c => c.UserId == userId && c.GuildId == guildId).FirstOrDefaultAsync();
-            if (ExistingUser == null)
+            var guild = await GuildRepository.FetchGuildAsync(guildId);
+            var existingUser = guild.Users.FirstOrDefault(x => x.UserId == userId);
+            if (existingUser == null)
             {
-                var CreatedUser = new User()
+                var createdUser = new User()
                 {
                     UserId = userId,
-                    GuildId = guildId
+                    GuildId = guild.Id
                 };
-                await BaseRepository<User>.InsertAsync(CreatedUser);
-                return CreatedUser;
+                guild.Users.Add(createdUser);
+                await BaseRepository<Guild>.UpdateAsync(guild);
+                return createdUser;
             }
-            return ExistingUser;
+            return existingUser;
         }
 
         public static async Task<double> GetCashAsync(SocketCommandContext context)
         {
             var user = await FetchUserAsync(context.User.Id, context.Guild.Id);
+            return user.Cash;
+        }
+
+        public static async Task<double> GetCashAsync(ulong userId, ulong guildId)
+        {
+            var user = await FetchUserAsync(userId, guildId);
             return user.Cash;
         }
 
@@ -85,7 +96,7 @@ namespace DEA.PostgreSQL.Repository
 
         public static async Task<List<User>> AllAsync(ulong guildId)
         {
-            return (await BaseRepository<User>.GetAll().ToListAsync()).FindAll(x => x.GuildId == guildId);
+            return (await GuildRepository.FetchGuildAsync(guildId)).Users;
         }
 
     }

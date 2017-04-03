@@ -1,8 +1,8 @@
 ﻿using Discord.WebSocket;
 using System;
 using System.Timers;
-using DEA.SQLite.Repository;
-using DEA.SQLite.Models;
+using DEA.Database.Repository;
+using DEA.Database.Models;
 using System.Linq;
 using Discord;
 using System.Threading.Tasks;
@@ -35,7 +35,7 @@ namespace DEA.Services
             foreach (User user in BaseRepository<User>.GetAll())
                 if (user.TemporaryMultiplier != 1) user.TemporaryMultiplier = 1;
 
-            using (var db = new DbContext())
+            using (var db = new DEAContext())
             {
                 await db.SaveChangesAsync();
             }
@@ -57,7 +57,7 @@ namespace DEA.Services
                 if (InterestRate > 0.1) InterestRate = 0.1f;
                 gang.Wealth *= 1 + InterestRate;
             }
-            using (var db = new DbContext())
+            using (var db = new DEAContext())
             {
                 await db.SaveChangesAsync();
             }
@@ -77,19 +77,19 @@ namespace DEA.Services
             {
                 if (DateTimeOffset.Now.Subtract(mute.MutedAt).TotalMilliseconds > mute.MuteLength.TotalMilliseconds)
                 {
-                    var guild = _client.GetGuild(mute.GuildId);
-                    if (guild != null && guild.GetUser(mute.UserId) != null)
+                    var guild = _client.GetGuild((ulong)mute.GuildId);
+                    if (guild != null && guild.GetUser((ulong)mute.UserId) != null)
                     {
                         var guildData = await GuildRepository.FetchGuildAsync(guild.Id);
                         var mutedRole = guild.GetRole(guildData.MutedRoleId);
-                        if (mutedRole != null && guild.GetUser(mute.UserId).Roles.Any(x => x.Id == mutedRole.Id))
+                        if (mutedRole != null && guild.GetUser((ulong)mute.UserId).Roles.Any(x => x.Id == mutedRole.Id))
                         {
-                            var channel = guild.GetTextChannel(guildData.ModLogId);
+                            var channel = guild.GetTextChannel((ulong)guildData.ModLogId);
                             if (channel != null && guild.CurrentUser.GuildPermissions.EmbedLinks &&
                                 (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).SendMessages
                                 && (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).EmbedLinks)
                             {
-                                await guild.GetUser(mute.UserId).RemoveRoleAsync(mutedRole);
+                                await guild.GetUser((ulong)mute.UserId).RemoveRoleAsync(mutedRole);
                                 var footer = new EmbedFooterBuilder()
                                 {
                                     IconUrl = "http://i.imgur.com/BQZJAqT.png",
@@ -98,7 +98,7 @@ namespace DEA.Services
                                 var builder = new EmbedBuilder()
                                 {
                                     Color = new Color(12, 255, 129),
-                                    Description = $"**Action:** Automatic Unmute\n**User:** {guild.GetUser(mute.UserId)} ({guild.GetUser(mute.UserId).Id})",
+                                    Description = $"**Action:** Automatic Unmute\n**User:** {guild.GetUser((ulong)mute.UserId)} ({guild.GetUser((ulong)mute.UserId).Id})",
                                     Footer = footer
                                 }.WithCurrentTimestamp();
                                 await GuildRepository.ModifyAsync(x => { x.CaseNumber++; return Task.CompletedTask; }, guild.Id);
@@ -106,7 +106,7 @@ namespace DEA.Services
                             }
                         }
                     }
-                    await MuteRepository.RemoveMuteAsync(mute.UserId, mute.GuildId);
+                    await MuteRepository.RemoveMuteAsync((ulong)mute.UserId, (ulong)mute.GuildId);
                 }
             }
         }

@@ -1,4 +1,5 @@
-﻿using DEA.SQLite.Repository;
+﻿using DEA;
+using DEA.Database.Repository;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,26 +23,26 @@ namespace Discord.Commands
             var guild = await GuildRepository.FetchGuildAsync(context.Guild.Id);
             switch (attribute) {
                 case Attributes.BotOwner:
-                    if (!Config.CREDENTIALS.OwnerIds.Any(x => x == context.User.Id))
+                    if (!DEABot.Credentials.OwnerIds.Any(x => x == context.User.Id))
                         return PreconditionResult.FromError("Only an owner of this bot may use this command.");
                     break;
                 case Attributes.ServerOwner:
-                    if (user.Guild.OwnerId != user.Id)
+                    if (user.Guild.OwnerId != user.Id && !user.RoleIds.Any(x => guild.ModRoles.Any(y => y.RoleId == x && y.PermissionLevel >= 3)))
                         return PreconditionResult.FromError("Only the owner of this server may use this command.");
                     break;
                 case Attributes.Admin:
-                    if (!(context.User as IGuildUser).GuildPermissions.Administrator)
+                    if (!(context.User as IGuildUser).GuildPermissions.Administrator && !user.RoleIds.Any(x => guild.ModRoles.Any(y => y.RoleId == x && y.PermissionLevel >= 2)))
                         return PreconditionResult.FromError("The administrator permission is required to use this command.");
                     break;
                 case Attributes.Moderator:
-                    if (!user.RoleIds.Any(x => guild.ModRoles.Any(y => y == x)))
+                    if (!user.RoleIds.Any(x => guild.ModRoles.Any(y => y.RoleId == x)))
                         return PreconditionResult.FromError("Only a moderator may use this command.");
                     break;
                 case Attributes.Nsfw:
                     if (!guild.Nsfw)
                         return PreconditionResult.FromError($"This command may not be used while NSFW is disabled. An administrator may enable with the " +
                                                             $"`{guild.Prefix}ChangeNSFWSettings` command.");
-                    var nsfwChannel = await context.Guild.GetChannelAsync(guild.NsfwId);
+                    var nsfwChannel = await context.Guild.GetChannelAsync((ulong)guild.NsfwId);
                     if (nsfwChannel != null && context.Channel.Id != guild.NsfwId)
                         return PreconditionResult.FromError($"You may only use this command in {(nsfwChannel as ITextChannel).Mention}.");
                     var nsfwRole = context.Guild.GetRole(guild.NsfwRoleId);

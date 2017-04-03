@@ -1,7 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using System.Threading.Tasks;
-using DEA.SQLite.Repository;
+using DEA.Database.Repository;
 using System;
 using System.Linq;
 using Newtonsoft.Json.Linq;
@@ -56,7 +56,7 @@ namespace DEA.Modules
             if (nsfwRole.Position > Context.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
                 throw new Exception("You may not set the NSFW role to a role that is higher in hierarchy than DEA's highest role.");
             await GuildRepository.ModifyAsync(x => { x.NsfwRoleId = nsfwRole.Id; return Task.CompletedTask; }, Context.Guild.Id);
-            var nsfwChannel = Context.Guild.GetChannel((await GuildRepository.FetchGuildAsync(Context.Guild.Id)).NsfwId);
+            var nsfwChannel = Context.Guild.GetChannel((ulong)(await GuildRepository.FetchGuildAsync(Context.Guild.Id)).NsfwId);
             if (nsfwChannel != null && Context.Guild.CurrentUser.GuildPermissions.Administrator)
             {
                 await nsfwChannel.AddPermissionOverwriteAsync(Context.Guild.EveryoneRole, new OverwritePermissions().Modify(null, null, null, PermValue.Deny));

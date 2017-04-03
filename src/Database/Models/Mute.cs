@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DEA.PostgreSQL.Models
+namespace DEA.Database.Models
 {
     [Table("mutes")]
     public class Mute
@@ -11,10 +11,11 @@ namespace DEA.PostgreSQL.Models
         [Column("id")]
         public int Id { get; set; }
         [Column("userid")]
-        public ulong UserId { get; set; }
+        [DataType("decimal(20,0)")]
+        public decimal UserId { get; set; }
         [Column("guildid")]
-        //Foreign key back to the guild
-        public ulong GuildId { get; set; }
+        [DataType("decimal(20,0)")]
+        public decimal GuildId { get; set; }
         [Column("mutelength")]
         public TimeSpan MuteLength { get; set; } = Config.DEFAULT_MUTE_TIME;
         [Column("mutedat")]

@@ -3,9 +3,9 @@ using Discord.Commands;
 using Discord.Addons.InteractiveCommands;
 using System;
 using System.Threading.Tasks;
-using DEA.SQLite.Repository;
+using DEA.Database.Repository;
 using System.Linq;
-using DEA.SQLite.Models;
+using DEA.Database.Models;
 
 namespace DEA.Modules
 {
@@ -74,9 +74,9 @@ namespace DEA.Modules
             else gang = await GangRepository.FetchGangAsync(gangName, Context.Guild.Id);
             var members = "";
             var leader = "";
-            if (Context.Client.GetUser(gang.LeaderId) != null) leader = $"<@{gang.LeaderId}>";
+            if (Context.Client.GetUser((ulong)gang.LeaderId) != null) leader = $"<@{gang.LeaderId}>";
             foreach (var member in gang.Members)
-                if (Context.Client.GetUser(member) != null) members += $"<@{member}>, ";
+                if (Context.Client.GetUser((ulong)member.UserId) != null) members += $"<@{member}>, ";
             var InterestRate = 0.025f + ((gang.Wealth / 100) * .000075f);
             if (InterestRate > 0.1) InterestRate = 0.1f;
             var builder = new EmbedBuilder()
@@ -129,7 +129,7 @@ namespace DEA.Modules
                                     $"transfer the ownership of the gang to another member with the `{prefix}TransferLeadership` command.");
             await GangRepository.RemoveMemberAsync(Context.User.Id, Context.Guild.Id);
             await ReplyAsync($"{Context.User.Mention}, You have successfully left {gang.Name}");
-            var channel = await Context.Client.GetUser(gang.LeaderId).CreateDMChannelAsync();
+            var channel = await Context.Client.GetUser((ulong)gang.LeaderId).CreateDMChannelAsync();
             await channel.SendMessageAsync($"{Context.User} has left {gang.Name}.");
         }
 

@@ -2,8 +2,9 @@
 using Discord.Commands;
 using System;
 using System.Threading.Tasks;
-using DEA.SQLite.Repository;
+using DEA.Database.Repository;
 using System.Linq;
+using DEA.Database.Models;
 
 namespace DEA.Modules
 {
@@ -37,10 +38,16 @@ namespace DEA.Modules
         [Command("AddModRole")]
         [Summary("Adds a moderator role.")]
         [Remarks("AddModRole <@ModRole>")]
-        public async Task AddModRole(IRole modRole)
+        public async Task AddModRole(IRole modRole, int permissionLevel = 1)
         {
-            await GuildRepository.ModifyAsync(x => { x.ModRoles.Add(modRole.Id); return Task.CompletedTask; }, Context.Guild.Id);
-            await ReplyAsync($"{Context.User.Mention}, You have successfully set the moderator role to {modRole.Mention}!");
+            if (permissionLevel < 1 || permissionLevel > 3) throw new Exception("Permission levels:\nModeration: 1\nAdministration: 2\nServer Owner: 3");
+            await GuildRepository.ModifyAsync(x => { x.ModRoles.Add(new ModRole()
+            {
+                RoleId = modRole.Id,
+                GuildId = Context.Guild.Id,
+                PermissionLevel = permissionLevel
+            }); return Task.CompletedTask; }, Context.Guild.Id);
+            await ReplyAsync($"{Context.User.Mention}, You have successfully add {modRole.Mention} as a Moderation role with a permission level of {permissionLevel}.");
         }
 
         [Command("RemoveModRole")]
@@ -48,9 +55,10 @@ namespace DEA.Modules
         [Remarks("RemoveModRole <@ModRole>")]
         public async Task RemoveModRole(IRole modRole)
         {
-            if (!(await GuildRepository.FetchGuildAsync(Context.Guild.Id)).ModRoles.Any(x => x == modRole.Id))
+            var guild = await GuildRepository.FetchGuildAsync(Context.Guild.Id);
+            if (!guild.ModRoles.Any(x => x.RoleId == modRole.Id))
                 throw new Exception("This role is not a moderator role!");
-            await GuildRepository.ModifyAsync(x => { x.ModRoles.Remove(modRole.Id); return Task.CompletedTask; }, Context.Guild.Id);
+            await GuildRepository.ModifyAsync(x => { x.ModRoles.Remove(guild.ModRoles.Find(y => y.RoleId == modRole.Id)); return Task.CompletedTask; }, Context.Guild.Id);
             await ReplyAsync($"{Context.User.Mention}, You have successfully set the moderator role to {modRole.Mention}!");
         }
 
@@ -74,11 +82,16 @@ namespace DEA.Modules
             var guild = await GuildRepository.FetchGuildAsync(Context.Guild.Id);
             if (rankRole.Position >= Context.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
                 throw new Exception($"DEA must be higher in the heigharhy than {rankRole.Mention}.");
-            if (guild.RankRoles.Any(x => x.Key == rankRole.Id))
+            if (guild.RankRoles.Any(x => x.RoleId == rankRole.Id))
                 throw new Exception("This role is already a rank role.");
-            if (guild.RankRoles.Any(x => x.Value == cashRequired))
+            if (guild.RankRoles.Any(x => x.CashRequired == cashRequired))
                 throw new Exception("There is already a role set to that amount of cash required.");
-            await GuildRepository.ModifyAsync(x => { x.RankRoles.Add(rankRole.Id, cashRequired); return Task.CompletedTask; }, Context.Guild.Id);
+            await GuildRepository.ModifyAsync(x => { x.RankRoles.Add(new RankRole()
+            {
+                RoleId = rankRole.Id,
+                CashRequired = cashRequired,
+                GuildId = guild.Id
+            }); return Task.CompletedTask; }, Context.Guild.Id);
             await ReplyAsync($"You have successfully added the {rankRole.Mention} rank!");
         }
 
@@ -88,9 +101,13 @@ namespace DEA.Modules
         public async Task RemoveRank(IRole rankRole)
         {
             var guild = await GuildRepository.FetchGuildAsync(Context.Guild.Id);
-            if (!guild.RankRoles.Any(x => x.Key == rankRole.Id))
+            if (!guild.RankRoles.Any(x => x.RoleId == rankRole.Id))
                 throw new Exception("This role is not a rank role.");
-            await GuildRepository.ModifyAsync(x => { x.RankRoles.Remove(rankRole.Id); return Task.CompletedTask; }, Context.Guild.Id);
+            await GuildRepository.ModifyAsync(x => 
+            {
+                x.RankRoles.Remove(guild.RankRoles.Find(y => y.RoleId == rankRole.Id));
+                return Task.CompletedTask;
+            }, Context.Guild.Id);
             await ReplyAsync($"You have successfully added the {rankRole.Mention} rank!");
         }
 
