@@ -1,4 +1,5 @@
-﻿using DEA.Database.Repository;
+﻿using DEA.Database.Models;
+using DEA.Database.Repository;
 using DEA.Events;
 using DEA.Resources;
 using DEA.Services;
@@ -6,6 +7,7 @@ using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using Newtonsoft.Json;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -70,12 +72,6 @@ namespace DEA
             await new MessageRecieved().InitializeAsync(Client, Map);
             new Ready(Client);
             PrettyConsole.Log(LogSeverity.Info, "Events and mapping successfully initialized", $"Client ready.");
-
-            using (var db = new DEAContext())
-            {
-                await db.Database.EnsureCreatedAsync();
-            }
-            PrettyConsole.Log(LogSeverity.Info, "Database creation ensured", $"Ready for use.");
         }
 
         public async Task RunAndBlockAsync(params string[] args)

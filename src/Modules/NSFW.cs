@@ -88,7 +88,7 @@ namespace DEA.Modules
             }
         }
 
-        [Command("Tits", RunMode = RunMode.Async)]
+        [Command("Tits")]
         [Alias("titties", "tities", "boobs", "boob")]
         [Require(Attributes.Nsfw)]
         [Summary("Motorboat that shit.")]
@@ -102,7 +102,7 @@ namespace DEA.Modules
             }
         }
 
-        [Command("Ass", RunMode = RunMode.Async)]
+        [Command("Ass")]
         [Alias("butt", "butts", "booty")]
         [Require(Attributes.Nsfw)]
         [Summary("Sauce me some booty how about that.")]
@@ -116,7 +116,7 @@ namespace DEA.Modules
             }
         }
 
-        [Command("Hentai", RunMode = RunMode.Async)]
+        [Command("Hentai")]
         [Require(Attributes.Nsfw)]
         [Summary("The real shit goes down with custom hentai tags.")]
         [Remarks("Hentai [tag]")]

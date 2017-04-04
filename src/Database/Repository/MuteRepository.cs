@@ -14,7 +14,7 @@ namespace DEA.Database.Repository
             guild.Mutes.Add(new Mute()
             {
                 UserId = userId,
-                GuildId = guild.Id,
+                Guild = guild,
                 MuteLength = muteLength
             });
             await BaseRepository<Guild>.UpdateAsync(guild);
@@ -22,13 +22,20 @@ namespace DEA.Database.Repository
 
         public static async Task<bool> IsMutedAsync(ulong userId, ulong guildId)
         {
-            return await BaseRepository<Mute>.SearchFor(c => c.UserId == userId && c.GuildId == guildId).AnyAsync();
+            using (var db = new DEAContext())
+            {
+                return await db.Mutes.AnyAsync(c => c.UserId == userId && c.Guild.Id == guildId);
+            }
+            
         }
 
         public static async Task RemoveMuteAsync(ulong userId, ulong guildId)
         {
-            var muted = await BaseRepository<Mute>.SearchFor(c => c.UserId == userId && c.GuildId == guildId).FirstOrDefaultAsync();
-            if (muted != null) await BaseRepository<Mute>.DeleteAsync(muted);
+            using (var db = new DEAContext())
+            {
+                var muted = await db.Mutes.FirstAsync(c => c.UserId == userId && c.Guild.Id == guildId);
+                if (muted != null) await BaseRepository<Mute>.DeleteAsync(muted);
+            }
         }
 
     }

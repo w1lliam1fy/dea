@@ -77,7 +77,7 @@ namespace DEA.Services
             {
                 if (DateTimeOffset.Now.Subtract(mute.MutedAt).TotalMilliseconds > mute.MuteLength.TotalMilliseconds)
                 {
-                    var guild = _client.GetGuild((ulong)mute.GuildId);
+                    var guild = _client.GetGuild((ulong)mute.Guild.Id);
                     if (guild != null && guild.GetUser((ulong)mute.UserId) != null)
                     {
                         var guildData = await GuildRepository.FetchGuildAsync(guild.Id);
@@ -106,7 +106,7 @@ namespace DEA.Services
                             }
                         }
                     }
-                    await MuteRepository.RemoveMuteAsync((ulong)mute.UserId, (ulong)mute.GuildId);
+                    await MuteRepository.RemoveMuteAsync((ulong)mute.UserId, (ulong)mute.Guild.Id);
                 }
             }
         }

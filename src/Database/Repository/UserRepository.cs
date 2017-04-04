@@ -28,13 +28,13 @@ namespace DEA.Database.Repository
         public static async Task<User> FetchUserAsync(SocketCommandContext context)
         {
             var guild = await GuildRepository.FetchGuildAsync(context.Guild.Id);
-            var existingUser = guild.Users.FirstOrDefault(x => x.UserId == context.User.Id);
+            var existingUser = guild.Users.First(x => x.UserId == context.User.Id);
             if (existingUser == null)
             {
                 var createdUser = new User()
                 {
                     UserId = context.User.Id,
-                    GuildId = guild.Id
+                    Guild = guild
                 };
                 guild.Users.Add(createdUser);
                 await BaseRepository<Guild>.UpdateAsync(guild);
@@ -46,13 +46,13 @@ namespace DEA.Database.Repository
         public static async Task<User> FetchUserAsync(ulong userId, ulong guildId)
         {
             var guild = await GuildRepository.FetchGuildAsync(guildId);
-            var existingUser = guild.Users.FirstOrDefault(x => x.UserId == userId);
+            var existingUser = guild.Users.First(x => x.UserId == userId);
             if (existingUser == null)
             {
                 var createdUser = new User()
                 {
                     UserId = userId,
-                    GuildId = guild.Id
+                    Guild = guild
                 };
                 guild.Users.Add(createdUser);
                 await BaseRepository<Guild>.UpdateAsync(guild);
@@ -94,7 +94,7 @@ namespace DEA.Database.Repository
             return await BaseRepository<User>.GetAll().ToListAsync();
         }
 
-        public static async Task<List<User>> AllAsync(ulong guildId)
+        public static async Task<ICollection<User>> AllAsync(ulong guildId)
         {
             return (await GuildRepository.FetchGuildAsync(guildId)).Users;
         }

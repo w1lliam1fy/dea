@@ -1,50 +1,73 @@
-﻿using Microsoft.EntityFrameworkCore;
-using DEA.Database.Models;
+﻿using DEA.Database.Models;
+using System.Data.Entity;
 
 namespace DEA.Database.Repository
 {
-    public class DEAContext : DbContext
+    
+
+    public partial class DEAContext : DbContext
     {
-        public DbSet<Gang> Gangs { get; set; }
-        public DbSet<Guild> Guilds { get; set; }
-        public DbSet<ModRole> ModRoles { get; set; }
-        public DbSet<Mute> Mutes { get; set; }
-        public DbSet<RankRole> RankRoles { get; set; }
-        public DbSet<User> Users { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public DEAContext()
+            : base("name=DEA")
         {
-            optionsBuilder.UseSqlServer(@"data source = (LocalDb)\MSSQLLocalDB; Initial Catalog = DEA; Integrated Security = True; Pooling = False");
         }
 
+        public virtual DbSet<Gang> Gangs { get; set; }
+        public virtual DbSet<Guild> Guilds { get; set; }
+        public virtual DbSet<ModRole> ModRoles { get; set; }
+        public virtual DbSet<Mute> Mutes { get; set; }
+        public virtual DbSet<RankRole> RankRoles { get; set; }
+        public virtual DbSet<User> Users { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Gang>().Property(x => x.LeaderId).HasColumnType("decimal(20,0)").IsRequired(true);
-            modelBuilder.Entity<Gang>().Property(x => x.GuildId).HasColumnType("decimal(20,0)").IsRequired(true);
+            modelBuilder.Entity<Gang>()
+                .Property(e => e.LeaderId)
+                .HasPrecision(20, 0);
 
-            modelBuilder.Entity<Guild>().Property(x => x.Id).HasColumnType("decimal(20,0)").IsRequired(true);
-            modelBuilder.Entity<Guild>().Property(x => x.NsfwRoleId).HasColumnType("decimal(20,0)").IsRequired(true);
-            modelBuilder.Entity<Guild>().Property(x => x.MutedRoleId).HasColumnType("decimal(20,0)").IsRequired(true);
-            modelBuilder.Entity<Guild>().Property(x => x.ModLogId).HasColumnType("decimal(20,0)").IsRequired(true);
-            modelBuilder.Entity<Guild>().Property(x => x.DetailedLogsId).HasColumnType("decimal(20,0)").IsRequired(true);
-            modelBuilder.Entity<Guild>().Property(x => x.GambleId).HasColumnType("decimal(20,0)").IsRequired(true);
-            modelBuilder.Entity<Guild>().Property(x => x.NsfwId).HasColumnType("decimal(20,0)").IsRequired(true);
+            modelBuilder.Entity<Guild>()
+                .Property(e => e.Id)
+                .HasPrecision(20, 0);
 
-            modelBuilder.Entity<ModRole>().Property(x => x.GuildId).HasColumnType("decimal(20,0)").IsRequired(true);
-            modelBuilder.Entity<ModRole>().Property(x => x.RoleId).HasColumnType("decimal(20,0)").IsRequired(true);
+            modelBuilder.Entity<Guild>()
+                .Property(e => e.DetailedLogsId)
+                .HasPrecision(20, 0);
 
-            modelBuilder.Entity<Mute>().Property(x => x.UserId).HasColumnType("decimal(20,0)").IsRequired(true);
-            modelBuilder.Entity<Mute>().Property(x => x.GuildId).HasColumnType("decimal(20,0)").IsRequired(true);
+            modelBuilder.Entity<Guild>()
+                .Property(e => e.GambleId)
+                .HasPrecision(20, 0);
 
-            modelBuilder.Entity<RankRole>().Property(x => x.GuildId).HasColumnType("decimal(20,0)").IsRequired(true);
-            modelBuilder.Entity<RankRole>().Property(x => x.RoleId).HasColumnType("decimal(20,0)").IsRequired(true);
+            modelBuilder.Entity<Guild>()
+                .Property(e => e.ModLogId)
+                .HasPrecision(20, 0);
 
-            modelBuilder.Entity<User>().Property(x => x.UserId).HasColumnType("decimal(20,0)").IsRequired(true);
-            modelBuilder.Entity<User>().Property(x => x.GuildId).HasColumnType("decimal(20,0)").IsRequired(true);
+            modelBuilder.Entity<Guild>()
+                .Property(e => e.MutedRoleId)
+                .HasPrecision(20, 0);
 
+            modelBuilder.Entity<Guild>()
+                .Property(e => e.NsfwId)
+                .HasPrecision(20, 0);
+
+            modelBuilder.Entity<Guild>()
+                .Property(e => e.NsfwRoleId)
+                .HasPrecision(20, 0);
+
+            modelBuilder.Entity<ModRole>()
+                .Property(e => e.RoleId)
+                .HasPrecision(20, 0);
+
+            modelBuilder.Entity<Mute>()
+                .Property(e => e.UserId)
+                .HasPrecision(20, 0);
+
+            modelBuilder.Entity<RankRole>()
+                .Property(e => e.RoleId)
+                .HasPrecision(20, 0);
+
+            modelBuilder.Entity<User>()
+                .Property(e => e.UserId)
+                .HasPrecision(20, 0);
         }
-
-
     }
 }

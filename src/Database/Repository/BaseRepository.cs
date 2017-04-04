@@ -1,7 +1,5 @@
-﻿using DEA.Database.Models;
-using System;
+﻿using System.Data.Entity;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace DEA.Database.Repository
@@ -13,7 +11,8 @@ namespace DEA.Database.Repository
         {
             using (var db = new DEAContext())
             {
-                await db.Set<TEntity>().AddAsync(entity);
+                db.Set<TEntity>().Add(entity);
+                db.Entry(entity).State = EntityState.Added;
                 await db.SaveChangesAsync();
             }
         }
@@ -22,7 +21,8 @@ namespace DEA.Database.Repository
         {
             using (var db = new DEAContext())
             {
-                db.Set<TEntity>().Update(entity);
+                db.Set<TEntity>().Add(entity);
+                db.Entry(entity).State = EntityState.Modified;
                 await db.SaveChangesAsync();
             }
         }
@@ -32,16 +32,9 @@ namespace DEA.Database.Repository
             using (var db = new DEAContext())
             {
                 db.Set<TEntity>().Remove(entity);
+                db.Entry(entity).State = EntityState.Deleted;
                 await db.SaveChangesAsync();
             } 
-        }
-
-        public static IQueryable<TEntity> SearchFor(Expression<Func<TEntity, bool>> predicate)
-        {
-            using (var db = new DEAContext())
-            {
-                return db.Set<TEntity>().Where(predicate);
-            }   
         }
 
         public static IQueryable<TEntity> GetAll()

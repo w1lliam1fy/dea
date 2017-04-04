@@ -1,5 +1,4 @@
 ﻿using DEA.Database.Models;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
 
@@ -10,17 +9,21 @@ namespace DEA.Database.Repository
 
         public static async Task<Guild> FetchGuildAsync(ulong guildId)
         {
-            Guild ExistingGuild = await BaseRepository<Guild>.SearchFor(c => c.Id == guildId).FirstOrDefaultAsync();
-            if (ExistingGuild == null)
+            using (var db = new DEAContext())
             {
-                var CreatedGuild = new Guild()
+                Guild ExistingGuild = await db.Guilds.FindAsync((decimal)guildId);
+                if (ExistingGuild == null)
                 {
-                    Id = guildId
-                };
-                await BaseRepository<Guild>.InsertAsync(CreatedGuild);
-                return CreatedGuild;
+                    var CreatedGuild = new Guild()
+                    {
+                        Id = guildId
+                    };
+                    await BaseRepository<Guild>.InsertAsync(CreatedGuild);
+                    return CreatedGuild;
+                }
+                return ExistingGuild;
             }
-            return ExistingGuild;
+            
         }
 
         public static async Task ModifyAsync(Func<Guild, Task> function, ulong guildId)
