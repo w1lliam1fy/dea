@@ -1,35 +1,38 @@
-﻿using System;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using System;
 
 namespace DEA.Database.Models
 {
     public partial class User
     {
-        public int Id { get; set; }
+        [BsonId]
+        public ObjectId Id { get; set; }
 
-        public decimal UserId { get; set; }
+        public ulong UserId { get; set; }
 
-        public double Cash { get; set; } = 0.0;
+        public ulong GuildId { get; set; }
 
-        public double InvestmentMultiplier { get; set; } = 1.0;
+        public double Cash { get; set; } = 0;
 
-        public double TemporaryMultiplier { get; set; }
+        public double InvestmentMultiplier { get; set; } = 1;
+
+        public double TemporaryMultiplier { get; set; } = 1;
 
         //Cooldowns
 
-        public DateTimeOffset Whore { get; set; } = DateTimeOffset.Now.AddYears(-1);
+        public double MessageCooldown { get; set; } = Config.DEFAULT_MESSAGE_COOLDOWN;
 
-        public DateTimeOffset Withdraw { get; set; } = DateTimeOffset.Now.AddYears(-1);
+        public DateTime Whore { get; set; } = DateTime.UtcNow.AddYears(-1);
 
-        public DateTimeOffset Jump { get; set; } = DateTimeOffset.Now.AddYears(-1);
+        public DateTime Withdraw { get; set; } = DateTime.UtcNow.AddYears(-1);
 
-        public DateTimeOffset Message { get; set; } = DateTimeOffset.Now.AddYears(-1);
+        public DateTime Jump { get; set; } = DateTime.UtcNow.AddYears(-1);
 
-        public TimeSpan MessageCooldown { get; set; } = TimeSpan.FromSeconds(30);
+        public DateTime Message { get; set; } = DateTime.UtcNow.AddYears(-1);
 
-        public DateTimeOffset Rob { get; set; } = DateTimeOffset.Now.AddYears(-1);
+        public DateTime Rob { get; set; } = DateTime.UtcNow.AddYears(-1);
 
-        public DateTimeOffset Steal { get; set; } = DateTimeOffset.Now.AddYears(-1);
-
-        public virtual Guild Guild { get; set; }
+        public DateTime Steal { get; set; } = DateTime.UtcNow.AddYears(-1);
     }
 }

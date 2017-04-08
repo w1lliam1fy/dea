@@ -11,7 +11,7 @@ namespace DEA.Services
     {
         public static async Task ModLog(SocketCommandContext context, string action, Color color, string reason, IUser subject = null, string extra = "")
         {
-            var guild = await GuildRepository.FetchGuildAsync(context.Guild.Id);
+            var guild = GuildRepository.FetchGuild(context.Guild.Id);
             EmbedFooterBuilder footer = new EmbedFooterBuilder()
             {
                 IconUrl = "http://i.imgur.com/BQZJAqT.png",
@@ -33,19 +33,19 @@ namespace DEA.Services
                 Footer = footer
             }.WithCurrentTimestamp();
 
-            if (context.Guild.GetTextChannel((ulong)guild.ModLogId) != null)
+            if (context.Guild.GetTextChannel(guild.ModLogId) != null)
             {
-                await context.Guild.GetTextChannel((ulong)guild.ModLogId).SendMessageAsync("", embed: builder);
-                await GuildRepository.ModifyAsync(x => { x.CaseNumber++; return Task.CompletedTask; }, context.Guild.Id);
+                await context.Guild.GetTextChannel(guild.ModLogId).SendMessageAsync("", embed: builder);
+                GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.CaseNumber, ++guild.CaseNumber), context.Guild.Id);
             }
         }
 
         public static async Task DetailedLog(SocketGuild guild, string actionType, string action, string objectType, string objectName, ulong id, Color color, bool incrementCaseNumber = true)
         {
-            var guildData = await GuildRepository.FetchGuildAsync(guild.Id);
-            if (guild.GetTextChannel((ulong)guildData.DetailedLogsId) != null)
+            var guildData = GuildRepository.FetchGuild(guild.Id);
+            if (guild.GetTextChannel(guildData.DetailedLogsId) != null)
             {
-                var channel = guild.GetTextChannel((ulong)guildData.DetailedLogsId);
+                var channel = guild.GetTextChannel(guildData.DetailedLogsId);
                 if (guild.CurrentUser.GuildPermissions.EmbedLinks && (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).SendMessages
                     && (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).EmbedLinks)
                 {
@@ -66,8 +66,8 @@ namespace DEA.Services
                         Footer = footer
                     }.WithCurrentTimestamp();
 
-                    await guild.GetTextChannel((ulong)guildData.DetailedLogsId).SendMessageAsync("", embed: builder);
-                    if (incrementCaseNumber) await GuildRepository.ModifyAsync(x => { x.CaseNumber++; return Task.CompletedTask; }, guild.Id);
+                    await guild.GetTextChannel(guildData.DetailedLogsId).SendMessageAsync("", embed: builder);
+                    if (incrementCaseNumber) GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.CaseNumber, ++guildData.CaseNumber), guild.Id);
                 }
             }
         }

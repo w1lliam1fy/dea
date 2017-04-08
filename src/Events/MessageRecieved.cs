@@ -6,7 +6,9 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using DEA.Database.Repository;
-using Discord.Addons.InteractiveCommands;
+using DEA.Database.Models;
+using MongoDB.Driver;
+//using Discord.Addons.InteractiveCommands;
 
 namespace DEA.Services
 {
@@ -27,7 +29,7 @@ namespace DEA.Services
 
             await _service.AddModulesAsync(Assembly.GetEntryAssembly());
             _map = map;
-            _map.Add(new InteractiveService(_client));
+            //_map.Add(new InteractiveService(_client));
 
             _client.MessageReceived += HandleCommandAsync;
         }
@@ -37,13 +39,7 @@ namespace DEA.Services
             var msg = s as SocketUserMessage;
             if (msg == null) return;
 
-            PrettyConsole.NewLine(msg.Content);
-
-            
-
             var Context = new SocketCommandContext(_client, msg);
-
-            PrettyConsole.NewLine((await GuildRepository.FetchGuildAsync(Context.Guild.Id)).Prefix);
 
             if (Context.User.IsBot) return;
 
@@ -52,7 +48,11 @@ namespace DEA.Services
             if (!(Context.Guild.CurrentUser as IGuildUser).GetPermissions(Context.Channel as SocketTextChannel).SendMessages) return;
 
             int argPos = 0;
-            string prefix = (await GuildRepository.FetchGuildAsync(Context.Guild.Id)).Prefix;
+
+            var guild = GuildRepository.FetchGuild(Context.Guild.Id);
+
+            string prefix = guild.Prefix;
+
             if (msg.HasStringPrefix(prefix, ref argPos) ||
                 msg.HasMentionPrefix(_client.CurrentUser, ref argPos))
             {
@@ -78,16 +78,14 @@ namespace DEA.Services
             }
             else if (msg.ToString().Length >= Config.MIN_CHAR_LENGTH && !msg.ToString().StartsWith(":"))
             {
-                var user = await UserRepository.FetchUserAsync(Context);
-                var rate = Config.TEMP_MULTIPLIER_RATE;
-                if (DateTimeOffset.Now.Subtract(user.Message).TotalMilliseconds > user.MessageCooldown.TotalMilliseconds)
+                var user = UserRepository.FetchUser(Context);
+
+                if (DateTime.UtcNow.Subtract(user.Message).TotalMilliseconds > user.MessageCooldown)
                 {
-                    await UserRepository.ModifyAsync(x => {
-                        x.Cash += user.TemporaryMultiplier * user.InvestmentMultiplier;
-                        x.TemporaryMultiplier = user.TemporaryMultiplier + rate;
-                        x.Message = DateTimeOffset.Now;
-                        return Task.CompletedTask;
-                    }, Context);
+                    UserRepository.Modify(DEABot.UserUpdateBuilder.Combine(
+                        DEABot.UserUpdateBuilder.Set(x => x.Cash, guild.GlobalChattingMultiplier * user.TemporaryMultiplier * user.InvestmentMultiplier + user.Cash),
+                        DEABot.UserUpdateBuilder.Set(x => x.TemporaryMultiplier, user.TemporaryMultiplier + guild.TempMultiplierIncreaseRate),
+                        DEABot.UserUpdateBuilder.Set(x => x.Message, DateTime.UtcNow)), Context);
                     await RankHandler.Handle(Context.Guild, Context.User.Id);
                 }
             }

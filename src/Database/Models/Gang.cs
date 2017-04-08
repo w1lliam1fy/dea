@@ -1,30 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using System;
 
 namespace DEA.Database.Models
 {
 
-    public partial class Gang
+    public class Gang
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Gang()
-        {
-            Members = new HashSet<User>();
-        }
-
-        public int Id { get; set; }
+        [BsonId]
+        public ObjectId Id { get; set; }
 
         public string Name { get; set; }
 
-        public decimal LeaderId { get; set; }
+        public ulong LeaderId { get; set; }
+
+        public ulong GuildId { get; set; }
 
         public double Wealth { get; set; } = 0.0;
 
-        public DateTimeOffset Raid { get; set; } = DateTimeOffset.Now.AddYears(-1);
+        public ulong[] Members { get; set; } = new ulong[4] { 0, 0, 0, 0};
 
-        public virtual Guild Guild { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<User> Members { get; set; }
+        public DateTime Raid { get; set; } = DateTime.UtcNow.AddYears(-1);
+        
     }
 }

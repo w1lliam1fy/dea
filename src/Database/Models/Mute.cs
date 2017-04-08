@@ -1,17 +1,20 @@
-﻿using System;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using System;
 
 namespace DEA.Database.Models
 {
-    public partial class Mute
+    public class Mute
     {
-        public int Id { get; set; }
+        [BsonId]
+        public ObjectId Id { get; set; }
 
-        public TimeSpan MuteLength { get; set; }
+        public ulong UserId { get; set; }
 
-        public DateTimeOffset MutedAt { get; set; }
+        public ulong GuildId { get; set; }
 
-        public decimal UserId { get; set; }
+        public double MuteLength { get; set; }
 
-        public virtual Guild Guild { get; set; }
+        public DateTime MutedAt { get; set; } = DateTime.UtcNow;
     }
 }

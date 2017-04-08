@@ -4,6 +4,7 @@ using System;
 using System.Threading.Tasks;
 using DEA.Database.Repository;
 using Discord.WebSocket;
+using System.Collections.Generic;
 
 namespace DEA.Modules
 {
@@ -17,8 +18,8 @@ namespace DEA.Modules
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Whore()
         {
-            await UserRepository.ModifyAsync(x => { x.Whore = DateTimeOffset.Now; return Task.CompletedTask; }, Context);
-            var user = await UserRepository.FetchUserAsync(Context);
+            UserRepository.Modify(DEABot.UserUpdateBuilder.Set(x => x.Whore, DateTime.UtcNow), Context);
+            var user = UserRepository.FetchUser(Context);
             int roll = new Random().Next(1, 101);
             if (roll > Config.WHORE_ODDS)
             {
@@ -41,8 +42,8 @@ namespace DEA.Modules
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Jump()
         {
-            await UserRepository.ModifyAsync(x => { x.Jump = DateTimeOffset.Now; return Task.CompletedTask; }, Context);
-            var user = await UserRepository.FetchUserAsync(Context);
+            UserRepository.Modify(DEABot.UserUpdateBuilder.Set(x => x.Jump, DateTime.UtcNow), Context);
+            var user = UserRepository.FetchUser(Context);
             int roll = new Random().Next(1, 101);
             if (roll > Config.JUMP_ODDS)
             {
@@ -65,8 +66,8 @@ namespace DEA.Modules
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Steal()
         {
-            await UserRepository.ModifyAsync(x => { x.Steal = DateTimeOffset.Now; return Task.CompletedTask; }, Context);
-            var user = await UserRepository.FetchUserAsync(Context);
+            UserRepository.Modify(DEABot.UserUpdateBuilder.Set(x => x.Steal, DateTime.UtcNow), Context);
+            var user = UserRepository.FetchUser(Context);
             int roll = new Random().Next(1, 101);
             if (roll > Config.STEAL_ODDS)
             {
@@ -105,11 +106,11 @@ namespace DEA.Modules
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Rob(double resources)
         {
-            var user = await UserRepository.FetchUserAsync(Context);
+            var user = UserRepository.FetchUser(Context);
             if (user.Cash < resources) throw new Exception($"You do not have enough money. Balance: {user.Cash.ToString("C", Config.CI)}");
             if (resources < Config.MIN_RESOURCES) throw new Exception($"The minimum amount of money to spend on resources for rob is {Config.MIN_RESOURCES.ToString("C", Config.CI)}.");
             if (resources > Config.MAX_RESOURCES) throw new Exception($"The maximum amount of money to spend on resources for rob is {Config.MAX_RESOURCES.ToString("C", Config.CI)}.");
-            await UserRepository.ModifyAsync(x => { x.Rob = DateTimeOffset.Now; return Task.CompletedTask; }, Context);
+            UserRepository.Modify(DEABot.UserUpdateBuilder.Set(x => x.Rob, DateTime.UtcNow), Context);
             Random rand = new Random();
             double succesRate = rand.Next(Config.MIN_ROB_ODDS * 100, Config.MAX_ROB_ODDS * 100) / 10000f;
             double moneyStolen = resources / (succesRate / 1.50f); 
@@ -134,20 +135,24 @@ namespace DEA.Modules
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Cooldowns()
         {
-            var user = await UserRepository.FetchUserAsync(Context);
-            var whore = Config.WHORE_COOLDOWN.Subtract(DateTimeOffset.Now.Subtract(user.Whore));
-            var jump = Config.JUMP_COOLDOWN.Subtract(DateTimeOffset.Now.Subtract(user.Jump));
-            var steal = Config.STEAL_COOLDOWN.Subtract(DateTimeOffset.Now.Subtract(user.Steal));
-            var rob = Config.ROB_COOLDOWN.Subtract(DateTimeOffset.Now.Subtract(user.Rob));
-            var withdraw = Config.WITHDRAW_COOLDOWN.Subtract(DateTimeOffset.Now.Subtract(user.Withdraw));
+            var user = UserRepository.FetchUser(Context);
+            var cooldowns = new Dictionary<String, TimeSpan>();
+            cooldowns.Add("Whore", Config.WHORE_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(user.Whore)));
+            cooldowns.Add("Jump", Config.JUMP_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(user.Jump)));
+            cooldowns.Add("Steal", Config.STEAL_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(user.Steal)));
+            cooldowns.Add("Rob", Config.ROB_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(user.Rob)));
+            cooldowns.Add("Withdraw", Config.WITHDRAW_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(user.Withdraw)));
+            var description = "";
+            foreach (var cooldown in cooldowns)
+            {
+                if (cooldown.Value.TotalMilliseconds > 0)
+                    description += $"{cooldown.Key}: {cooldown.Value.Hours}:{cooldown.Value.Minutes.ToString("D2")}:{cooldown.Value.Seconds.ToString("D2")}\n";
+            }
+            if (description.Length == 0) throw new Exception("All your commands are available for use!");
             var builder = new EmbedBuilder()
             {
                 Title = $"All cooldowns for {Context.User}",
-                Description = $@"Whore: {whore.Hours} Hours, {whore.Minutes} Minutes, {whore.Seconds} Seconds.
-Jump: {jump.Hours} Hours{jump.Minutes} Minutes, {jump.Seconds} Seconds.
-Steal: {steal.Hours} Hours, {steal.Minutes} Minutes, {steal.Seconds} Seconds.
-Rob: {rob.Hours} Hours, {rob.Minutes} Minutes, {rob.Seconds} Seconds
-Withdraw: {withdraw.Hours} Hours, {withdraw.Minutes} Minutes, {withdraw.Seconds} Seconds.",
+                Description = description,
                 Color = new Color(49, 62, 255)
             };
             await Context.Channel.SendMessageAsync("", embed: builder);

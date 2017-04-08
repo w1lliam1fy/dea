@@ -7,5 +7,7 @@
         public ulong[] OwnerIds { get; set; }
 
         public int ShardCount { get; set; } = 1;
+
+        public string MongoDBConnectionString { get; set; } = "";
     }
 }

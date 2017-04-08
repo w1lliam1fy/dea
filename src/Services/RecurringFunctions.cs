@@ -1,11 +1,11 @@
 ﻿using Discord.WebSocket;
 using System;
-using System.Timers;
 using DEA.Database.Repository;
 using DEA.Database.Models;
 using System.Linq;
 using Discord;
-using System.Threading.Tasks;
+using System.Threading;
+using MongoDB.Driver;
 
 namespace DEA.Services
 {
@@ -24,91 +24,70 @@ namespace DEA.Services
 
         private void ResetTemporaryMultiplier()
         {
-            Timer t = new Timer(TimeSpan.FromHours(1).TotalMilliseconds);
-            t.AutoReset = true;
-            t.Elapsed += new ElapsedEventHandler(OnTimedTempMultiplierReset);
-            t.Start();
-        }
-
-        private async void OnTimedTempMultiplierReset(object source, ElapsedEventArgs e)
-        {
-            foreach (User user in BaseRepository<User>.GetAll())
-                if (user.TemporaryMultiplier != 1) user.TemporaryMultiplier = 1;
-
-            using (var db = new DEAContext())
+            Timer t = new Timer(async method =>
             {
-                await db.SaveChangesAsync();
-            }
+                await DEABot.Users.UpdateManyAsync("", DEABot.UserUpdateBuilder.Set(x => x.TemporaryMultiplier, 1));
+            }, 
+            null, 
+            Config.TEMP_MULTIPLIER_RESET_COOLDOWN, 
+            Timeout.Infinite);
         }
 
         private void ApplyInterestRate()
         {
-            Timer t = new Timer(TimeSpan.FromHours(1).TotalMilliseconds);
-            t.AutoReset = true;
-            t.Elapsed += new ElapsedEventHandler(OnTimedApplyInterest);
-            t.Start();
-        }
-
-        private async void OnTimedApplyInterest(object source, ElapsedEventArgs e)
-        {
-            foreach (var gang in BaseRepository<Gang>.GetAll())
+            Timer t = new Timer(method => 
             {
-                var InterestRate = 0.025f + ((gang.Wealth / 100) * .000075f);
-                if (InterestRate > 0.1) InterestRate = 0.1f;
-                gang.Wealth *= 1 + InterestRate;
-            }
-            using (var db = new DEAContext())
-            {
-                await db.SaveChangesAsync();
-            }
+                //TODO
+            },
+            null,
+            Config.INTEREST_RATE_COOLDOWN,
+            Timeout.Infinite);
         }
 
         private void AutoUnmute()
         {
-            Timer t = new Timer(TimeSpan.FromMinutes(5).TotalMilliseconds);
-            t.AutoReset = true;
-            t.Elapsed += new ElapsedEventHandler(OnTimedAutoUnmute);
-            t.Start();
-        }
-
-        private async void OnTimedAutoUnmute(object source, ElapsedEventArgs e)
-        {
-            foreach (Mute mute in BaseRepository<Mute>.GetAll())
+            Timer t = new Timer(async method => 
             {
-                if (DateTimeOffset.Now.Subtract(mute.MutedAt).TotalMilliseconds > mute.MuteLength.TotalMilliseconds)
+                foreach (Mute mute in await (await DEABot.Mutes.FindAsync("")).ToListAsync())
                 {
-                    var guild = _client.GetGuild((ulong)mute.Guild.Id);
-                    if (guild != null && guild.GetUser((ulong)mute.UserId) != null)
+                    if (DateTime.UtcNow.Subtract(mute.MutedAt).TotalMilliseconds > mute.MuteLength)
                     {
-                        var guildData = await GuildRepository.FetchGuildAsync(guild.Id);
-                        var mutedRole = guild.GetRole((ulong)guildData.MutedRoleId);
-                        if (mutedRole != null && guild.GetUser((ulong)mute.UserId).Roles.Any(x => x.Id == mutedRole.Id))
+                        var guild = _client.GetGuild(mute.GuildId);
+                        if (guild != null && guild.GetUser(mute.UserId) != null)
                         {
-                            var channel = guild.GetTextChannel((ulong)guildData.ModLogId);
-                            if (channel != null && guild.CurrentUser.GuildPermissions.EmbedLinks &&
-                                (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).SendMessages
-                                && (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).EmbedLinks)
+                            var guildData = GuildRepository.FetchGuild(guild.Id);
+                            var mutedRole = guild.GetRole(guildData.MutedRoleId);
+                            if (mutedRole != null && guild.GetUser(mute.UserId).Roles.Any(x => x.Id == mutedRole.Id))
                             {
-                                await guild.GetUser((ulong)mute.UserId).RemoveRoleAsync(mutedRole);
-                                var footer = new EmbedFooterBuilder()
+                                var channel = guild.GetTextChannel(guildData.ModLogId);
+                                if (channel != null && guild.CurrentUser.GuildPermissions.EmbedLinks &&
+                                    (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).SendMessages
+                                    && (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).EmbedLinks)
                                 {
-                                    IconUrl = "http://i.imgur.com/BQZJAqT.png",
-                                    Text = $"Case #{guildData.CaseNumber}"
-                                };
-                                var builder = new EmbedBuilder()
-                                {
-                                    Color = new Color(12, 255, 129),
-                                    Description = $"**Action:** Automatic Unmute\n**User:** {guild.GetUser((ulong)mute.UserId)} ({guild.GetUser((ulong)mute.UserId).Id})",
-                                    Footer = footer
-                                }.WithCurrentTimestamp();
-                                await GuildRepository.ModifyAsync(x => { x.CaseNumber++; return Task.CompletedTask; }, guild.Id);
-                                await channel.SendMessageAsync("", embed: builder);
+                                    await guild.GetUser(mute.UserId).RemoveRoleAsync(mutedRole);
+                                    var footer = new EmbedFooterBuilder()
+                                    {
+                                        IconUrl = "http://i.imgur.com/BQZJAqT.png",
+                                        Text = $"Case #{guildData.CaseNumber}"
+                                    };
+                                    var builder = new EmbedBuilder()
+                                    {
+                                        Color = new Color(12, 255, 129),
+                                        Description = $"**Action:** Automatic Unmute\n**User:** {guild.GetUser(mute.UserId)} ({guild.GetUser(mute.UserId).Id})",
+                                        Footer = footer
+                                    }.WithCurrentTimestamp();
+                                    GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.CaseNumber, ++guildData.CaseNumber), guild.Id);
+                                    await channel.SendMessageAsync("", embed: builder);
+                                }
                             }
                         }
+                        MuteRepository.RemoveMute(mute.UserId, mute.GuildId);
                     }
-                    await MuteRepository.RemoveMuteAsync((ulong)mute.UserId, (ulong)mute.Guild.Id);
                 }
-            }
+            },
+            null,
+            Config.AUTO_UNMUTE_COOLDOWN,
+            Timeout.Infinite);
         }
 
     }

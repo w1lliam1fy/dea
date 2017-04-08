@@ -22,7 +22,7 @@ namespace DEA.Events
 
         private async Task HandleReady()
         {
-            await _client.SetGameAsync("USE $help");
+            await _client.SetGameAsync(Config.GAME_STRING);
         }
 
     }

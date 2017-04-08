@@ -3,6 +3,8 @@ using DEA.Database.Repository;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using MongoDB.Driver;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,27 +16,27 @@ namespace DEA
         public static async Task Handle(IGuild guild, ulong userId)
         {
             if (!((await guild.GetCurrentUserAsync()).GuildPermissions.ManageRoles)) return;
-            double cash = (await UserRepository.FetchUserAsync(userId, guild.Id)).Cash;
+            double cash = (UserRepository.FetchUser(userId, guild.Id)).Cash;
             var user = await guild.GetUserAsync(userId); //FETCHES THE USER
             var currentUser = await guild.GetCurrentUserAsync() as SocketGuildUser; //FETCHES THE BOT'S USER
-            var guildData = await GuildRepository.FetchGuildAsync(guild.Id);
+            var guildData = GuildRepository.FetchGuild(guild.Id);
             List<IRole> rolesToAdd = new List<IRole>();
             List<IRole> rolesToRemove = new List<IRole>();
-            if (guild != null && user != null)
+            if (guild != null && user != null && guildData.RankRoles != null)
             {
                 //CHECKS IF THE ROLE EXISTS AND IF IT IS LOWER THAN THE BOT'S HIGHEST ROLE
                 foreach (var rankRole in guildData.RankRoles)
                 {
-                    var role = guild.GetRole((ulong)rankRole.RoleId);
+                    var role = guild.GetRole(Convert.ToUInt64(rankRole.Name));
                     if (role != null && role.Position < currentUser.Roles.OrderByDescending(x => x.Position).First().Position)
                     {
-                        if (cash >= rankRole.CashRequired && !user.RoleIds.Any(x => x == rankRole.RoleId)) rolesToAdd.Add(role);
-                        if (cash < rankRole.CashRequired && user.RoleIds.Any(x => x == rankRole.RoleId)) rolesToRemove.Add(role);
+                        if (cash >= rankRole.Value && !user.RoleIds.Any(x => x.ToString() == rankRole.Name)) rolesToAdd.Add(role);
+                        if (cash < rankRole.Value && user.RoleIds.Any(x => x.ToString() == rankRole.Name)) rolesToRemove.Add(role);
                     }
                     else
                     {
-                        guildData.RankRoles.Remove(rankRole);
-                        await BaseRepository<Guild>.UpdateAsync(guildData);
+                        guildData.RankRoles.Remove(rankRole.Name);
+                        await DEABot.Guilds.UpdateOneAsync(x => x.Id == guild.Id, DEABot.GuildUpdateBuilder.Set(x => x.RankRoles, guildData.RankRoles));
                     }
                 }
                 if (rolesToAdd.Count >= 1)
@@ -44,14 +46,15 @@ namespace DEA
             }
         }
 
-        public static async Task<IRole> FetchRank(SocketCommandContext context)
+        public static IRole FetchRank(SocketCommandContext context)
         {
-            var guild = await GuildRepository.FetchGuildAsync(context.Guild.Id);
-            var cash = await UserRepository.GetCashAsync(context);
+            var guild = GuildRepository.FetchGuild(context.Guild.Id);
+            var cash = UserRepository.FetchUser(context).Cash;
             IRole role = null;
-            foreach (var rankRole in guild.RankRoles.OrderBy(x => x.CashRequired))
-                if (cash >= rankRole.CashRequired)
-                    role = context.Guild.GetRole((ulong)rankRole.RoleId);
+            if (guild.RankRoles != null)
+                foreach (var rankRole in guild.RankRoles.OrderBy(x => x.Value))
+                    if (cash >= rankRole.Value)
+                        role = context.Guild.GetRole(Convert.ToUInt64(rankRole.Name));
             return role;
         }
     }

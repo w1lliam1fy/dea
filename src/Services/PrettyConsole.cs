@@ -41,38 +41,38 @@ namespace DEA
 
         public static void Log(LogSeverity severity, string source, string message)
         {
-            PrettyConsole.NewLine($"{DateTimeOffset.Now.ToString("hh:mm:ss")} ", ConsoleColor.DarkGray);
-            PrettyConsole.Append($"[{severity}] ", ConsoleColor.Red);
-            PrettyConsole.Append($"{source}: ", ConsoleColor.DarkGreen);
-            PrettyConsole.Append(message, ConsoleColor.White);
+            NewLine($"{DateTime.UtcNow.ToString("hh:mm:ss")} ", ConsoleColor.DarkGray);
+            Append($"[{severity}] ", ConsoleColor.Red);
+            Append($"{source}: ", ConsoleColor.DarkGreen);
+            Append(message, ConsoleColor.White);
         }
 
         public static void Log(IUserMessage msg)
         {
             var channel = (msg.Channel as IGuildChannel);
-            PrettyConsole.NewLine($"{DateTimeOffset.Now.ToString("hh:mm:ss")} ", ConsoleColor.Gray);
+            NewLine($"{DateTime.UtcNow.ToString("hh:mm:ss")} ", ConsoleColor.Gray);
 
             if (channel?.Guild == null)
-                PrettyConsole.Append($"[PM] ", ConsoleColor.Magenta);
+                Append($"[PM] ", ConsoleColor.Magenta);
             else
-                PrettyConsole.Append($"[{channel.Guild.Name} #{channel.Name}] ", ConsoleColor.DarkGreen);
+                Append($"[{channel.Guild.Name} #{channel.Name}] ", ConsoleColor.DarkGreen);
 
-            PrettyConsole.Append($"{msg.Author}: ", ConsoleColor.Green);
-            PrettyConsole.Append(msg.Content, ConsoleColor.White);
+            Append($"{msg.Author}: ", ConsoleColor.Green);
+            Append(msg.Content, ConsoleColor.White);
         }
 
         public static void Log(CommandContext c)
         {
             var channel = (c.Channel as SocketGuildChannel);
-            PrettyConsole.NewLine($"{DateTimeOffset.Now.ToString("hh:mm:ss")} ", ConsoleColor.Gray);
+            NewLine($"{DateTime.UtcNow.ToString("hh:mm:ss")} ", ConsoleColor.Gray);
 
             if (channel == null)
-                PrettyConsole.Append($"[PM] ", ConsoleColor.Magenta);
+                Append($"[PM] ", ConsoleColor.Magenta);
             else
-                PrettyConsole.Append($"[{c.Guild.Name} #{channel.Name}] ", ConsoleColor.DarkGreen);
+                Append($"[{c.Guild.Name} #{channel.Name}] ", ConsoleColor.DarkGreen);
 
-            PrettyConsole.Append($"{c.User}: ", ConsoleColor.Green);
-            PrettyConsole.Append(c.Message.Content, ConsoleColor.White);
+            Append($"{c.User}: ", ConsoleColor.Green);
+            Append(c.Message.Content, ConsoleColor.White);
         }
     }
 }

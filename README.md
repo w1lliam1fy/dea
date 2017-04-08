@@ -19,22 +19,12 @@ Keep in mind these features are fully optional, and will not in anyway affect th
 One of the best ways to keep an engaging and active community running. This bot encourages chatting and helps form relationships between other users, bonding communities closer together.
 
 The subtle references to the Nacro's show and many jokes slipped in here and there across the bots commands provides loads of amusement amongst groups. 
-## Known Issues
-As with any application, there will be occasional issues appearing here and there, and it is *very essential* that these issues are either reported to John in the [Official DEA Discord Server](https://discord.gg/Tuptja9).
+## Setup
 
-All commits to this repository fixing issues are highly welcome and even encouraged. As this bot continues to progress with more command and features, issues are bound to arise, and we are counting on *you*, the community, to help us solve them. Thank you.
+In order to run the bot, you must create a Credentials.json file, following the same format as the Credentials Example.json file. This will by default be gitignored, to prevent any accidental commits of your token.
 
-# Contributing
+Furthermore, a connection to either a local or hosted MongoDB database is required as the large majority of the commands depends on the database storage. The connection string format is displayed in the Credentials Example.json file.
 
-To run the bot, you must give it a bot account. You can get a bot account from https://discordapp.com/developers/applications/me/create and after adding a developer application, create a bot user
+## Contributing
 
-`Token.cs` (This is gitignored, your bot token will not accidentally be committed)
-
-    public static class Token
-    {
-        public static readonly string TOKEN = "token here",
-    }
-
-## Adding your development bot to your server
-
-https://discordapp.com/oauth2/authorize?client_id=PUT_YOUR_CLIENTID_HERE&scope=bot&permissions=477195286
+All forms of contributions are highly appreciated. Anywhere from posting a git issue suggesting a new feature all the way to reworking the database models, ANY type of help will be accepted. 

@@ -32,13 +32,13 @@ namespace System.Modules
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Info(string investString = null)
         {
-            var guild = await GuildRepository.FetchGuildAsync(Context.Guild.Id);
+            var guild = GuildRepository.FetchGuild(Context.Guild.Id);
             string p = guild.Prefix;
 
             var builder = new EmbedBuilder()
             {
                 Color = new Color(0x00AE86),
-                Description = $@"In order to gain money, you must send a message that is at least {Config.MIN_CHAR_LENGTH} characters in length. There is a 30 second cooldown between each message that will give you cash. However, these rates are not fixed. For every message you send, your chatting multiplier(which increases the amount of money you get per message) is increased by {Config.TEMP_MULTIPLIER_RATE}. This rate is reset every hour.
+                Description = $@"In order to gain money, you must send a message that is at least {Config.MIN_CHAR_LENGTH} characters in length. There is a 30 second cooldown between each message that will give you cash. However, these rates are not fixed. For every message you send, your chatting multiplier(which increases the amount of money you get per message) is increased by {guild.TempMultiplierIncreaseRate}. This rate is reset every hour.
 
 To view your steadily increasing chatting multiplier, you may use the `{p}rate` command, and the `{p}money` command to see your cash grow. This command shows you every single variable taken into consideration for every message you send. If you wish to improve these variables, you may use investments. With the `{p}investments` command, you may pay to have *permanent* changes to your message rates. These will stack with the chatting multiplier."
             };
@@ -51,7 +51,7 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
 **{guild.StealRequirement.ToString("C", Config.CI)}:** `{p}steal`
 **{guild.RobRequirement.ToString("C", Config.CI)}:** `{p}rob <Resources>`
 **{guild.BullyRequirement.ToString("C", Config.CI)}:** `{p}bully`
-**{guild.FiftyX2Requirement.ToString("C", Config.CI)}:** `{p}55x2 <Bet>"
+**{guild.FiftyX2Requirement.ToString("C", Config.CI)}:** `{p}50x2 <Bet>`"
             };
             var channel = await Context.User.CreateDMChannelAsync();
             await channel.SendMessageAsync("", embed: builder);
@@ -66,7 +66,7 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
         [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task HelpAsync(string commandOrModule = null)
         {
-            string prefix = (await GuildRepository.FetchGuildAsync(Context.Guild.Id)).Prefix;
+            string prefix = GuildRepository.FetchGuild(Context.Guild.Id).Prefix;
 
             if (commandOrModule != null)
             {
@@ -108,12 +108,14 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
                             }
                     }
                 }
-                string modules = null;
+                string modules = "";
                 foreach (var module in _service.Modules) modules += $"{module.Name}, ";
                 await ReplyAsync($"This command/module does not exist. Current list of modules: {modules.Substring(0, modules.Length - 2)}.");
             }
             else
             {
+                string modules = "";
+                foreach (var module in _service.Modules) modules += $"{module.Name}, ";
                 var help = new EmbedBuilder()
                 {
                     Title = "Welcome to DEA",
@@ -122,11 +124,11 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
 
 For all information about command usage and setup on your Discord Sever, view the documentation: <https://realblazeit.github.io/DEA/>
 
-This command may be used for view the commands for each of the following modules: System, Administration, Moderation, General, Gambling and Crime. It may also be used the view the usage of a specific command.
+This command may be used for view the commands for each of the following modules: {modules.Substring(0, modules.Length - 2)}. It may also be used the view the usage of a specific command.
 
 In order to **add DEA to your Discord Server**, click the following link: <https://discordapp.com/oauth2/authorize?client_id={Context.Client.CurrentUser.Id}&scope=bot&permissions=477195286> 
 
-If you have any other questions, you may join the **Official DEA Discord Server:** <https://discord.me/Rush>, a server home to infamous meme events such as a raids and insanity. Join for the dankest community a man could desire."
+If you have any other questions, you may join the **Official DEA Discord Server:** <https://discord.gg/Tuptja9>, a server home to infamous meme events such as insanity."
                 };
 
                 var channel = await Context.User.CreateDMChannelAsync();
@@ -141,17 +143,18 @@ If you have any other questions, you may join the **Official DEA Discord Server:
         [Summary("All the statistics about DEA.")]
         public async Task Info()
         {
-            var uptime = (DateTimeOffset.Now - _process.StartTime);
+            var uptime = (DateTime.UtcNow - _process.StartTime);
             var application = await Context.Client.GetApplicationInfoAsync();
-            var message =
-                $"```asciidoc\n= STATISTICS =\n" +
-                $"• Memory   :: {(GC.GetTotalMemory(true) / 1000000).ToString("0.##")} MB\n" +
-                $"• Uptime   :: Days: {uptime.Days}, Hours: {uptime.Hours}, Minutes: {uptime.Minutes}, Seconds: {uptime.Seconds}\n" +
-                $"• Users    :: {(Context.Client as DiscordSocketClient).Guilds.Sum(g => g.Users.Count)}\n" +
-                $"• Servers  :: {(Context.Client as DiscordSocketClient).Guilds.Count}\n" +
-                $"• Channels :: {(Context.Client as DiscordSocketClient).Guilds.Sum(g => g.Channels.Count)}\n" +
-                $"• Library  :: Discord.Net {DiscordConfig.Version}\n" +
-                $"• Runtime  :: {RuntimeInformation.FrameworkDescription} {RuntimeInformation.OSArchitecture}```";
+            Console.WriteLine(GC.GetTotalMemory(true));
+            var message = $@"```asciidoc
+= STATISTICS =
+• Memory   :: {(_process.PrivateMemorySize64 / 1000000).ToString("N2")} MB
+• Uptime   :: Days: {uptime.Days}, Hours: {uptime.Hours}, Minutes: {uptime.Minutes}, Seconds: {uptime.Seconds}
+• Users    :: {(Context.Client as DiscordSocketClient).Guilds.Sum(g => g.Users.Count)}
+• Servers  :: {(Context.Client as DiscordSocketClient).Guilds.Count}
+• Channels :: {(Context.Client as DiscordSocketClient).Guilds.Sum(g => g.Channels.Count)}
+• Library  :: Discord.Net {DiscordConfig.Version}
+• Runtime  :: {RuntimeInformation.FrameworkDescription} {RuntimeInformation.OSArchitecture}```";
             var channel = await Context.User.CreateDMChannelAsync();
             await channel.SendMessageAsync(message);
             await ReplyAsync($"{Context.User.Mention}, you have been DMed with all the statistics!");

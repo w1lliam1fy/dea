@@ -8,11 +8,11 @@ namespace DEA.Modules
     {
 
         [Command("21+")]
-        [Summary("Roll 20.83 or higher on a 100.00 sided die, win 0.2X your bet.")]
+        [Summary("Roll 20.84 or higher on a 100.00 sided die, win 0.2X your bet.")]
         [Remarks("21+ <Bet>")]
         public async Task XHalf(double bet)
         {
-            await ModuleMethods.Gamble(Context, bet, 20.83, 0.2);
+            await ModuleMethods.Gamble(Context, bet, 20.84, 0.2);
         }
 
         [Command("50x2")]
@@ -33,18 +33,18 @@ namespace DEA.Modules
         }
 
         [Command("75+")]
-        [Summary("Roll 75.00 or higher on a 100.00 sided die, win 2.8X your bet.")]
+        [Summary("Roll 75.01 or higher on a 100.00 sided die, win 2.8X your bet.")]
         [Remarks("75+ <Bet>")]
         public async Task X3dot8(double bet)
         {
-            await ModuleMethods.Gamble(Context, bet, 75.0, 2.8);
+            await ModuleMethods.Gamble(Context, bet, 75.01, 2.8);
         }
 
-        [Command("100x9499")]
-        [Remarks("100x9499 <Bet>")]
-        [Summary("Roll 100.00 on a 100.00 sided die, win 9499X your bet.")]
+        [Command("100x9500")]
+        [Remarks("100x9500 <Bet>")]
+        [Summary("Roll 100.00 on a 100.00 sided die, win 9500X your bet.")]
         public async Task X90(double bet) {
-            await ModuleMethods.Gamble(Context, bet, 100.0, 9499.0);
+            await ModuleMethods.Gamble(Context, bet, 100.0, 9500.0);
         }
 
     }
