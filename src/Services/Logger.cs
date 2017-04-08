@@ -74,13 +74,9 @@ namespace DEA.Services
 
         public static async Task Cooldown(SocketCommandContext context, string command, TimeSpan timeSpan)
         {
-            var builder = new EmbedBuilder()
-            {
-                Title = $"{command} cooldown for {context.User}",
-                Description = $"{timeSpan.Hours} Hours\n{timeSpan.Minutes} Minutes\n{timeSpan.Seconds} Seconds",
-                Color = new Color(49, 62, 255)
-            };
-            await context.Channel.SendMessageAsync("", embed: builder);
+            await ResponseMethods.Send(context, 
+                $"Hours: {timeSpan.Hours}\nMinutes: {timeSpan.Minutes}\nSeconds: {timeSpan.Seconds}",
+                $"{command} cooldown for {context.User}");
         }
     }
 }

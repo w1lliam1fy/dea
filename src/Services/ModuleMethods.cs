@@ -16,7 +16,7 @@ namespace DEA.Services
             if (guild.ModRoles != null)
                 foreach (var role in guild.ModRoles)
                     if (user.Guild.GetRole(Convert.ToUInt64(role.Value)) != null)
-                        if (user.RoleIds.Any(x => x.ToString() == role.Value)) return true;
+                        if (user.RoleIds.Any(x => x.ToString() == role.Value.AsString)) return true;
             return false;
         }
 
@@ -26,9 +26,9 @@ namespace DEA.Services
             {
                 var channel = await subject.CreateDMChannelAsync();
                 if (reason == "No reason.")
-                    await channel.SendMessageAsync($"{moderator} has attempted to {action.ToLower()} you.");
+                    await ResponseMethods.DM(channel, $"{moderator} has attempted to {action.ToLower()} you.");
                 else
-                    await channel.SendMessageAsync($"{moderator} has attempted to {action.ToLower()} you for the following reason: \"{reason}\"");
+                    await ResponseMethods.DM(channel, $"{moderator} has attempted to {action.ToLower()} you for the following reason: \"{reason}\"");
             }
             catch { }
         }
@@ -45,21 +45,16 @@ namespace DEA.Services
             if (roll >= odds)
             {
                 await UserRepository.EditCashAsync(context, (bet * payoutMultiplier));
-                await context.Channel.SendMessageAsync($"{context.User.Mention}, you rolled: {roll.ToString("N2")}. Congrats, you won " + 
-                                                       $"{(bet * payoutMultiplier).ToString("C", Config.CI)}! Balance: {(user.Cash + (bet * payoutMultiplier)).ToString("C", Config.CI)}.");
+                await ResponseMethods.Reply(context, $"You rolled: {roll.ToString("N2")}. Congrats, you won " + 
+                                                     $"{(bet * payoutMultiplier).ToString("C", Config.CI)}! Balance: {(user.Cash + (bet * payoutMultiplier)).ToString("C", Config.CI)}.");
             }
             else
             {
                 await UserRepository.EditCashAsync(context, -bet);
-                await context.Channel.SendMessageAsync($"{context.User.Mention}, you rolled: {roll.ToString("N2")}. Unfortunately, you lost " + 
-                                                       $"{bet.ToString("C", Config.CI)}. Balance: {(user.Cash - bet).ToString("C", Config.CI)}.");
+                await ResponseMethods.Reply(context, $"You rolled: {roll.ToString("N2")}. Unfortunately, you lost " + 
+                                                     $"{bet.ToString("C", Config.CI)}. Balance: {(user.Cash - bet).ToString("C", Config.CI)}.");
             }
         }
 
-        public static async Task Reply(SocketCommandContext context, string message)
-        {
-            message = message.Replace("@​everyone", "@every​one").Replace("@here", "@he​re");
-            await context.Channel.SendMessageAsync(message);
-        }
     }
 }

@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 using System.Linq;
 using Discord.WebSocket;
 using DEA.Services;
+using DEA.Resources;
 
 namespace DEA.Modules
 {
     [Require(Attributes.Moderator)]
-    public class Moderation : ModuleBase<SocketCommandContext>
+    public class Moderation : DEAModule
     {
         [Command("Ban")]
         [RequireBotPermission(GuildPermission.BanMembers)]
@@ -22,7 +23,7 @@ namespace DEA.Modules
             await ModuleMethods.InformSubjectAsync(Context.User, "Ban", userToBan, reason);
             await Context.Guild.AddBanAsync(userToBan);
             await Logger.ModLog(Context, "Ban", new Color(255, 0, 0), reason, userToBan);
-            await ReplyAsync($"{Context.User.Mention} has successfully banned {userToBan.Mention}!");
+            await Send($"{Context.User.Mention} has successfully banned {userToBan.Mention}!");
         }
 
         [Command("Kick")]
@@ -35,7 +36,7 @@ namespace DEA.Modules
             await ModuleMethods.InformSubjectAsync(Context.User, "Kick", userToKick, reason);
             await userToKick.KickAsync();
             await Logger.ModLog(Context, "Kick", new Color(255, 114, 14), reason, userToKick);
-            await ReplyAsync($"{Context.User.Mention} has successfully kicked {userToKick.Mention}!");
+            await Send($"{Context.User.Mention} has successfully kicked {userToKick.Mention}!");
         }
 
         [Command("Mute")]
@@ -53,7 +54,7 @@ namespace DEA.Modules
             await userToMute.AddRoleAsync(mutedRole);
             MuteRepository.AddMute(userToMute.Id, Context.Guild.Id, Config.DEFAULT_MUTE_TIME);
             await Logger.ModLog(Context, "Mute", new Color(255, 114, 14), reason, userToMute, $"\n**Length:** {Config.DEFAULT_MUTE_TIME.TotalHours} hours");
-            await ReplyAsync($"{Context.User.Mention} has successfully muted {userToMute.Mention}!");
+            await Send($"{Context.User.Mention} has successfully muted {userToMute.Mention}!");
         }
 
         [Command("CustomMute")]
@@ -76,7 +77,7 @@ namespace DEA.Modules
             await userToMute.AddRoleAsync(mutedRole);
             MuteRepository.AddMute(userToMute.Id, Context.Guild.Id, TimeSpan.FromHours(hours));
             await Logger.ModLog(Context, "Mute", new Color(255, 114, 14), reason, userToMute, $"\n**Length:** {hours} {time}");
-            await ReplyAsync($"{Context.User.Mention} has successfully muted {userToMute.Mention} for {hours} {time}!");
+            await Send($"{Context.User.Mention} has successfully muted {userToMute.Mention} for {hours} {time}!");
         }
 
         [Command("Unmute")]
@@ -91,7 +92,7 @@ namespace DEA.Modules
             await userToUnmute.RemoveRoleAsync(Context.Guild.GetRole(mutedRoleId));
             MuteRepository.RemoveMute(userToUnmute.Id, Context.Guild.Id);
             await Logger.ModLog(Context, "Unmute", new Color(12, 255, 129), reason, userToUnmute);
-            await ReplyAsync($"{Context.User.Mention} has successfully unmuted {userToUnmute.Mention}!");
+            await Send($"{Context.User.Mention} has successfully unmuted {userToUnmute.Mention}!");
         }
 
         [Command("Clear")]
@@ -122,7 +123,7 @@ namespace DEA.Modules
             var perms = channel.GetPermissionOverwrite(Context.Guild.EveryoneRole).Value;
             if (perms.SendMessages == PermValue.Deny) throw new Exception("This chat is already chilled.");
             await channel.AddPermissionOverwriteAsync(Context.Guild.EveryoneRole, new OverwritePermissions().Modify(perms.CreateInstantInvite, perms.ManageChannel, perms.AddReactions, perms.ReadMessages, PermValue.Deny));
-            await ReplyAsync($"{Context.User.Mention}, chat just got cooled down. Won't heat up until at least {seconds} seconds have passed.");
+            await Reply($"Chat just got cooled down. Won't heat up until at least {seconds} seconds have passed.");
             await Task.Delay(seconds * 1000);
             await channel.AddPermissionOverwriteAsync(Context.Guild.EveryoneRole, new OverwritePermissions().Modify(perms.CreateInstantInvite, perms.ManageChannel, perms.AddReactions, perms.ReadMessages, perms.SendMessages));
             await Logger.ModLog(Context, "Chill", new Color(34, 59, 255), reason, null, $"\n**Length:** {seconds} seconds");

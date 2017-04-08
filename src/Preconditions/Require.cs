@@ -71,23 +71,23 @@ namespace Discord.Commands
                         break;
                     case Attributes.Jump:
                         if (dbUser.Cash < Config.JUMP_REQUIREMENT)
-                            return PreconditionResult.FromError($"You do not have the permission to use this command. Required cash: {Config.JUMP_REQUIREMENT.ToString("C", Config.CI)}.");
+                            return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.JUMP_REQUIREMENT.ToString("C", Config.CI)}.");
                         break;
                     case Attributes.Steal:
                         if (dbUser.Cash < Config.STEAL_REQUIREMENT)
-                            return PreconditionResult.FromError($"You do not have the permission to use this command. Required cash: {Config.STEAL_REQUIREMENT.ToString("C", Config.CI)}.");
+                            return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.STEAL_REQUIREMENT.ToString("C", Config.CI)}.");
                         break;
                     case Attributes.Bully:
                         if (dbUser.Cash < Config.BULLY_REQUIREMENT)
-                            return PreconditionResult.FromError($"You do not have the permission to use this command. Required cash: {Config.ROB_REQUIREMENT.ToString("C", Config.CI)}.");
+                            return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.ROB_REQUIREMENT.ToString("C", Config.CI)}.");
                         break;
                     case Attributes.Rob:
                         if (dbUser.Cash < Config.ROB_REQUIREMENT)
-                            return PreconditionResult.FromError($"You do not have the permission to use this command. Required cash: {Config.BULLY_REQUIREMENT.ToString("C", Config.CI)}.");
+                            return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.BULLY_REQUIREMENT.ToString("C", Config.CI)}.");
                         break;
                     case Attributes.FiftyX2:
                         if (dbUser.Cash < Config.FIFTYX2_REQUIREMENT)
-                            return PreconditionResult.FromError($"You do not have the permission to use this command. Required cash: {Config.FIFTYX2_REQUIREMENT.ToString("C", Config.CI)}.");
+                            return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.FIFTYX2_REQUIREMENT.ToString("C", Config.CI)}.");
                         break;
                     default:
                         throw new Exception($"ERROR: The {attribute} attribute does not exist!");

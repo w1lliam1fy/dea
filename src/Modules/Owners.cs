@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 using DEA.Database.Repository;
 using MongoDB.Driver;
 using MongoDB.Bson;
+using DEA.Resources;
 
 namespace DEA.Modules
 {
     [Require(Attributes.ServerOwner)]
-    public class Owners : ModuleBase<SocketCommandContext>
+    public class Owners : DEAModule
     {
         [Command("ResetCooldowns")]
         [Summary("Resets all cooldowns for a specific user.")]
@@ -26,7 +27,7 @@ namespace DEA.Modules
                 DEABot.UserUpdateBuilder.Set(x => x.Steal, time),
                 DEABot.UserUpdateBuilder.Set(x => x.Rob, time),
                 DEABot.UserUpdateBuilder.Set(x => x.Withdraw, time)), user.Id, Context.Guild.Id);
-            await ReplyAsync($"Successfully reset all of {user.Mention} cooldowns.");
+            await Reply($"Successfully reset all of {user.Mention} cooldowns.");
         }
 
         [Command("Add")]
@@ -36,7 +37,7 @@ namespace DEA.Modules
         {
             if (money < 0) throw new Exception("You may not add negative money to a user's balance.");
             await UserRepository.EditCashAsync(Context, userMentioned.Id, money);
-            await ReplyAsync($"Successfully added {money.ToString("C", Config.CI)} to {userMentioned.Mention}'s balance.");
+            await Reply($"Successfully added {money.ToString("C", Config.CI)} to {userMentioned.Mention}'s balance.");
         }
 
         [Command("Remove")]
@@ -46,7 +47,7 @@ namespace DEA.Modules
         {
             if (money < 0) throw new Exception("You may not remove a negative amount of money from a user's balance.");
             await UserRepository.EditCashAsync(Context, userMentioned.Id, -money);
-            await ReplyAsync($"Successfully removed {money.ToString("C", Config.CI)} from {userMentioned.Mention}'s balance.");
+            await Reply($"Successfully removed {money.ToString("C", Config.CI)} from {userMentioned.Mention}'s balance.");
         }
 
         [Command("Reset")]
@@ -58,13 +59,13 @@ namespace DEA.Modules
             {
                 DEABot.Users.DeleteMany(x => x.GuildId == Context.Guild.Id);
                 DEABot.Gangs.DeleteMany(y => y.GuildId == Context.Guild.Id);
-                await ReplyAsync("You have successfully reset all data in your server!");
+                await Reply("Successfully reset all data in your server!");
             }
             else
             {
                 foreach (var user in Context.Guild.Users.Where(x => x.Roles.Any(y => y.Id == role.Id)))
                     DEABot.Users.DeleteOne(y => y.UserId == user.Id && y.GuildId == user.Guild.Id);
-                await ReplyAsync($"You have successfully reset all users with the {role.Mention} role!");
+                await Reply($"Successfully reset all users with the {role.Mention} role!");
             }
         }
 
@@ -85,7 +86,7 @@ namespace DEA.Modules
                 guild.ModRoles.Add(modRole.Id.ToString(), permissionLevel);
                 GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.ModRoles, guild.ModRoles), Context.Guild.Id);
             }
-            await ReplyAsync($"{Context.User.Mention}, You have successfully add {modRole.Mention} as a moderation role with a permission level of {permissionLevel}.");
+            await Reply($"You have successfully add {modRole.Mention} as a moderation role with a permission level of {permissionLevel}.");
         }
 
         [Command("RemoveModRole")]
@@ -99,7 +100,7 @@ namespace DEA.Modules
                 throw new Exception("This role is not a moderator role!");
             guild.ModRoles.Remove(modRole.Id.ToString());
             GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.ModRoles, guild.ModRoles), Context.Guild.Id);
-            await ReplyAsync($"{Context.User.Mention}, You have successfully set the moderator role to {modRole.Mention}!");
+            await Reply($"You have successfully set the moderator role to {modRole.Mention}!");
         }
 
     }

@@ -18,7 +18,6 @@
   <ItemGroup>
     <Folder Include="Database\Models\" />
     <Folder Include="Events\" />
-    <Folder Include="Resources\" />
     <Folder Include="Preconditions\" />
   </ItemGroup>
 

@@ -7,10 +7,11 @@ using System.Linq;
 using Newtonsoft.Json.Linq;
 using System.Net.Http;
 using System.Xml;
+using DEA.Resources;
 
 namespace DEA.Modules
 {
-    public class NSFW : ModuleBase<SocketCommandContext>
+    public class NSFW : DEAModule
     {
         [Command("ChangeNSFWSettings")]
         [Require(Attributes.Admin)]
@@ -22,11 +23,11 @@ namespace DEA.Modules
             {
                 case true:
                     GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.Nsfw, false), Context.Guild.Id);
-                    await ReplyAsync($"{Context.User.Mention}, You have successfully disabled NSFW commands!");
+                    await Reply($"You have successfully disabled NSFW commands!");
                     break;
                 case false:
                     GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.Nsfw, true), Context.Guild.Id);
-                    await ReplyAsync($"{Context.User.Mention}, You have successfully enabled NSFW commands!");
+                    await Reply($"You have successfully enabled NSFW commands!");
                     break;
             }
         }
@@ -44,7 +45,7 @@ namespace DEA.Modules
                 await nsfwChannel.AddPermissionOverwriteAsync(Context.Guild.EveryoneRole, new OverwritePermissions().Modify(null, null, null, PermValue.Deny));
                 await nsfwChannel.AddPermissionOverwriteAsync(nsfwRole, new OverwritePermissions().Modify(null, null, null, PermValue.Allow));
             }
-            await ReplyAsync($"{Context.User.Mention}, You have successfully set the NSFW channel to {nsfwChannel.Mention}.");
+            await Reply($"You have successfully set the NSFW channel to {nsfwChannel.Mention}.");
         }
 
         [Command("SetNSFWRole")]
@@ -62,7 +63,7 @@ namespace DEA.Modules
                 await nsfwChannel.AddPermissionOverwriteAsync(Context.Guild.EveryoneRole, new OverwritePermissions().Modify(null, null, null, PermValue.Deny));
                 await nsfwChannel.AddPermissionOverwriteAsync(nsfwRole, new OverwritePermissions().Modify(null, null, null, PermValue.Allow));
             }
-            await ReplyAsync($"{Context.User.Mention}, You have successfully set the NSFW role to {nsfwRole.Mention}.");
+            await Reply($"You have successfully set the NSFW role to {nsfwRole.Mention}.");
         }
 
         [Command("NSFW")]
@@ -79,12 +80,12 @@ namespace DEA.Modules
             if ((Context.User as IGuildUser).RoleIds.Any(x => x == guild.NsfwRoleId))
             {
                 await (Context.User as IGuildUser).RemoveRoleAsync(NsfwRole);
-                await ReplyAsync($"{Context.User.Mention}, You have successfully disabled your ability to use NSFW commands.");
+                await Reply($"You have successfully disabled your ability to use NSFW commands.");
             }
             else
             {
                 await (Context.User as IGuildUser).AddRoleAsync(NsfwRole);
-                await ReplyAsync($"{Context.User.Mention}, You have successfully enabled your ability to use NSFW commands.");
+                await Reply($"You have successfully enabled your ability to use NSFW commands.");
             }
         }
 
@@ -98,7 +99,7 @@ namespace DEA.Modules
             using (var http = new HttpClient())
             {
                 var obj = JArray.Parse(await http.GetStringAsync($"http://api.oboobs.ru/boobs/{new Random().Next(0, 10330)}").ConfigureAwait(false))[0];
-                await Context.Channel.SendMessageAsync($"http://media.oboobs.ru/{obj["preview"]}").ConfigureAwait(false);
+                await ReplyAsync($"http://media.oboobs.ru/{obj["preview"]}").ConfigureAwait(false);
             }
         }
 
@@ -112,7 +113,7 @@ namespace DEA.Modules
             using (var http = new HttpClient())
             {
                 var obj = JArray.Parse(await http.GetStringAsync($"http://api.obutts.ru/butts/{new Random().Next(0, 4335)}").ConfigureAwait(false))[0];
-                await Context.Channel.SendMessageAsync($"http://media.obutts.ru/{obj["preview"]}").ConfigureAwait(false);
+                await ReplyAsync($"http://media.obutts.ru/{obj["preview"]}").ConfigureAwait(false);
             }
         }
 
