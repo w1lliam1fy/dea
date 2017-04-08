@@ -35,7 +35,7 @@ namespace DEA.Modules
             if (GangRepository.InGang(user.Id, Context.Guild.Id)) throw new Exception("This user is already in a gang.");
             if (GangRepository.IsFull(Context.User.Id, Context.Guild.Id)) throw new Exception("Your gang is already full!");
             GangRepository.AddMember(Context.User.Id, Context.Guild.Id, user.Id);
-            await ReplyAsync($"{user} is now a new member of your gang!");
+            await ReplyAsync($"{Context.User.Mention}, {user} is now a new member of your gang!");
             var channel = await user.CreateDMChannelAsync();
             await channel.SendMessageAsync($"Congrats! You are now a member of {GangRepository.FetchGang(Context).Name}!");
         }
@@ -77,8 +77,6 @@ namespace DEA.Modules
             if (Context.Guild.GetUser(gang.LeaderId) != null) leader = $"<@{gang.LeaderId}>";
             foreach (var member in gang.Members)
                 if (Context.Guild.GetUser(member) != null) members += $"<@{member}>, ";
-            var InterestRate = 0.025f + ((gang.Wealth / 100) * .000075f);
-            if (InterestRate > 0.1) InterestRate = 0.1f;
             if (members.Length > 2) members = $"__**Members:**__ {members.Substring(0, members.Length - 2)}\n";
             var builder = new EmbedBuilder()
             {
@@ -87,7 +85,7 @@ namespace DEA.Modules
                 Description = $"__**Leader:**__ {leader}\n" +
                               members +
                               $"__**Wealth:**__ {gang.Wealth.ToString("C", Config.CI)}\n" +
-                              $"__**Interest rate:**__ {InterestRate.ToString("P")}"
+                              $"__**Interest rate:**__ {Services.Math.CalculateIntrestRate(gang.Wealth).ToString("P")}"
             };
             await ReplyAsync("", embed: builder);
         }
@@ -98,24 +96,27 @@ namespace DEA.Modules
         [Remarks("Gangs")]
         public async Task Ganglb()
         {
-            var gangs = await DEABot.Gangs.FindAsync(y => y.GuildId == Context.Guild.Id);
-            var sortedGangs = (await gangs.ToListAsync()).OrderByDescending(x => x.Wealth).ToList();
-            string message = "```asciidoc\n= The Wealthiest Gangs =\n";
-            int longest = 0;
+            var gangs = DEABot.Gangs.Find(y => y.GuildId == Context.Guild.Id).ToList();
+
+            if (gangs.Count == 0) throw new Exception("There aren't any gangs yet.");
+
+            var sortedGangs = gangs.OrderByDescending(x => x.Wealth).ToList();
+            string description = "";
 
             for (int i = 0; i < sortedGangs.Count(); i++)
             {
                 if (i + 1 >= Config.GANGSLB_CAP) break;
-                if (sortedGangs[i].Name.Length > longest) longest = $"{i + 1}. {sortedGangs[i].Name}".Length;
+                description += $"{i + 1}. {sortedGangs[i].Name}: {sortedGangs[i].Wealth.ToString("C", Config.CI)}\n";
             }
 
-            for (int i = 0; i < sortedGangs.Count(); i++)
+            var builder = new EmbedBuilder()
             {
-                if (i + 1 >= Config.GANGSLB_CAP) break;
-                message += $"{i + 1}. {sortedGangs[i].Name}".PadRight(longest + 2) + $" :: {sortedGangs[i].Wealth.ToString("C", Config.CI)}\n";
-            }
+                Title = $"The Wealthiest Gangs",
+                Color = new Color(0x00AE86),
+                Description = description
+            };
 
-            await ReplyAsync($"{message}```");
+            await ReplyAsync("", embed: builder);
         }
 
         [Command("LeaveGang")]
@@ -141,6 +142,8 @@ namespace DEA.Modules
         [Remarks("KickGangMember")]
         public async Task KickFromGang([Remainder] IGuildUser user)
         {
+            if (user.Id == Context.User.Id)
+                throw new Exception("You may not kick yourself!");
             if (!GangRepository.IsMemberOf(Context.User.Id, Context.Guild.Id, user.Id))
                 throw new Exception("This user is not a member of your gang!");
             var gang = GangRepository.FetchGang(Context);
@@ -170,11 +173,11 @@ namespace DEA.Modules
             var user = UserRepository.FetchUser(Context);
             if (user.Cash < Config.GANG_NAME_CHANGE_COST)
                 throw new Exception($"You do not have {Config.GANG_NAME_CHANGE_COST.ToString("C", Config.CI)}. Balance: {user.Cash.ToString("C", Config.CI)}.");
-            var gangs = await (await DEABot.Gangs.FindAsync(y => y.GuildId == Context.Guild.Id)).ToListAsync();
-            if (!gangs.Any(x => x.Name.ToLower() == name.ToLower())) throw new Exception($"There is already a gang by the name {name}.");
+            var gangs = DEABot.Gangs.Find(y => y.GuildId == Context.Guild.Id).ToList();
+            if (gangs.Any(x => x.Name.ToLower() == name.ToLower())) throw new Exception($"There is already a gang by the name {name}.");
             await UserRepository.EditCashAsync(Context, -Config.GANG_NAME_CHANGE_COST);
             GangRepository.Modify(DEABot.GangUpdateBuilder.Set(x => x.Name, name), Context);
-            await ReplyAsync($"You have successfully changed your gang name to {name} at the cost of {Config.GANG_NAME_CHANGE_COST.ToString("C", Config.CI)}.");
+            await ReplyAsync($"{Context.User.Mention}, You have successfully changed your gang name to {name} at the cost of {Config.GANG_NAME_CHANGE_COST.ToString("C", Config.CI)}.");
         }
 
         [Command("TransferLeadership")]
@@ -202,7 +205,7 @@ namespace DEA.Modules
         [Require(Attributes.InGang)]
         [Summary("Deposit cash into your gang's funds.")]
         [Remarks("Deposit <Cash>")]
-        public async Task Deposit(double cash)
+        public async Task Deposit(decimal cash)
         {
             var user = UserRepository.FetchUser(Context);
             if (cash < Config.MIN_DEPOSIT) throw new Exception($"The lowest deposit is {Config.MIN_DEPOSIT.ToString("C", Config.CI)}.");
@@ -219,7 +222,7 @@ namespace DEA.Modules
         [RequireCooldown]
         [Summary("Withdraw cash from your gang's funds.")]
         [Remarks("Withdraw <Cash>")]
-        public async Task Withdraw(double cash)
+        public async Task Withdraw(decimal cash)
         {
             var gang = GangRepository.FetchGang(Context);
             var user = UserRepository.FetchUser(Context);

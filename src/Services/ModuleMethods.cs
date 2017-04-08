@@ -33,7 +33,7 @@ namespace DEA.Services
             catch { }
         }
 
-        public static async Task Gamble(SocketCommandContext context, double bet, double odds, double payoutMultiplier)
+        public static async Task Gamble(SocketCommandContext context, decimal bet, decimal odds, decimal payoutMultiplier)
         {
             var user = UserRepository.FetchUser(context);
             var guild = GuildRepository.FetchGuild(context.Guild.Id);
@@ -41,7 +41,7 @@ namespace DEA.Services
                 throw new Exception($"You may only gamble in {context.Guild.GetTextChannel(guild.GambleId).Mention}!");
             if (bet < Config.BET_MIN) throw new Exception($"Lowest bet is {Config.BET_MIN}$.");
             if (bet > user.Cash) throw new Exception($"You do not have enough money. Balance: {user.Cash.ToString("C", Config.CI)}.");
-            double roll = new Random().Next(1, 10001) / 100.0;
+            decimal roll = new Random().Next(1, 10001) / 100m;
             if (roll >= odds)
             {
                 await UserRepository.EditCashAsync(context, (bet * payoutMultiplier));
@@ -54,6 +54,12 @@ namespace DEA.Services
                 await context.Channel.SendMessageAsync($"{context.User.Mention}, you rolled: {roll.ToString("N2")}. Unfortunately, you lost " + 
                                                        $"{bet.ToString("C", Config.CI)}. Balance: {(user.Cash - bet).ToString("C", Config.CI)}.");
             }
+        }
+
+        public static async Task Reply(SocketCommandContext context, string message)
+        {
+            message = message.Replace("@​everyone", "@every​one").Replace("@here", "@he​re");
+            await context.Channel.SendMessageAsync(message);
         }
     }
 }

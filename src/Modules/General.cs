@@ -20,7 +20,7 @@ namespace DEA.Modules
         {
             var guild = GuildRepository.FetchGuild(Context.Guild.Id);
             var user = UserRepository.FetchUser(Context);
-            double cash = user.Cash;
+            decimal cash = user.Cash;
             switch (investString)
             {
                 case "line":
@@ -118,6 +118,8 @@ namespace DEA.Modules
                 position++;
             }
 
+            if (description.Length == 0) throw new Exception("There is nobody on the leaderboards yet!");
+
             var builder = new EmbedBuilder()
             {
                 Title = $"The Richest Traffickers",
@@ -153,6 +155,8 @@ namespace DEA.Modules
                 position++;
             }
 
+            if (description.Length == 0) throw new Exception("There is nobody on the leaderboards yet!");
+
             var builder = new EmbedBuilder()
             {
                 Title = $"The Best Chatters",
@@ -167,17 +171,17 @@ namespace DEA.Modules
         [Alias("Sauce")]
         [Summary("Sauce some cash to one of your mates.")]
         [Remarks("Donate <@User> <Amount of cash>")]
-        public async Task Donate(IGuildUser userMentioned, double money)
+        public async Task Donate(IGuildUser userMentioned, decimal money)
         {
             var user = UserRepository.FetchUser(Context);
             if (userMentioned.Id == Context.User.Id) throw new Exception("Hey kids! Look at that retard, he is trying to give money to himself!");
             if (money < Config.DONATE_MIN) throw new Exception($"Lowest donation is {Config.DONATE_MIN}$.");
             if (user.Cash < money) throw new Exception($"You do not have enough money. Balance: {user.Cash.ToString("C", Config.CI)}.");
             await UserRepository.EditCashAsync(Context, -money);
-            double deaMoney = money * Config.DEA_CUT / 100;
+            decimal deaMoney = money * Config.DEA_CUT / 100;
             await UserRepository.EditCashAsync(Context, userMentioned.Id, money - deaMoney);
             await UserRepository.EditCashAsync(Context, Context.Guild.CurrentUser.Id, deaMoney);
-            await ReplyAsync($"Successfully donated {money.ToString("C", Config.CI)} to {userMentioned.Mention}. DEA has taken a {deaMoney.ToString("C", Config.CI)} cut out of this donation. Balance: {(user.Cash + money - deaMoney).ToString("C", Config.CI)}.");
+            await ReplyAsync($"Successfully donated {(money - deaMoney).ToString("C", Config.CI)} to {userMentioned.Mention}. DEA has taken a {deaMoney.ToString("C", Config.CI)} cut out of this donation. Balance: {(user.Cash + money - deaMoney).ToString("C", Config.CI)}.");
         }
 
         [Command("Rank")]

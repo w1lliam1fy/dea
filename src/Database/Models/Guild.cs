@@ -34,19 +34,9 @@ namespace DEA.Database.Models
 
         public string Prefix { get; set; } = Config.DEFAULT_PREFIX;
 
-        public double GlobalChattingMultiplier = 1;
+        public decimal GlobalChattingMultiplier = 1;
 
-        public double TempMultiplierIncreaseRate = 0.1;
-
-        public double JumpRequirement { get; set; } = 500;
-
-        public double StealRequirement { get; set; } = 2500;
-
-        public double BullyRequirement { get; set; } = 5000;
-
-        public double RobRequirement { get; set; } = 10000;
-
-        public double FiftyX2Requirement { get; set; } = 25000;
+        public decimal TempMultiplierIncreaseRate = 0.1m;
 
         //Misc
 

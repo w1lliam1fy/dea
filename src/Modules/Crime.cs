@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using DEA.Database.Repository;
 using Discord.WebSocket;
 using System.Collections.Generic;
+using DEA.Services;
 
 namespace DEA.Modules
 {
@@ -29,7 +30,7 @@ namespace DEA.Modules
             }
             else
             {
-                double moneyWhored = (double)(new Random().Next((int)(Config.MIN_WHORE) * 100, (int)(Config.MAX_WHORE) * 100)) / 100;
+                decimal moneyWhored = (new Random().Next((int)(Config.MIN_WHORE) * 100, (int)(Config.MAX_WHORE) * 100)) / 100m;
                 await UserRepository.EditCashAsync(Context, moneyWhored);
                 await ReplyAsync($"{Context.User.Mention}, you whip it out and manage to rake in {moneyWhored.ToString("C", Config.CI)}. Balance: {(user.Cash + moneyWhored).ToString("C", Config.CI)}");
             }
@@ -53,7 +54,7 @@ namespace DEA.Modules
             }
             else
             {
-                double moneyJumped = (double)(new Random().Next((int)(Config.MIN_JUMP) * 100, (int)(Config.MAX_JUMP) * 100)) / 100;
+                decimal moneyJumped = (new Random().Next((int)(Config.MIN_JUMP) * 100, (int)(Config.MAX_JUMP) * 100)) / 100m;
                 await UserRepository.EditCashAsync(Context, moneyJumped);
                 await ReplyAsync($"{Context.User.Mention}, you jump some random nigga on the streets and manage to get {moneyJumped.ToString("C", Config.CI)}. Balance: {(user.Cash + moneyJumped).ToString("C", Config.CI)}");
             }
@@ -79,7 +80,7 @@ namespace DEA.Modules
             }
             else
             {
-                double moneyStolen = (double)(new Random().Next((int)(Config.MIN_STEAL) * 100, (int)(Config.MAX_STEAL) * 100)) / 100;
+                decimal moneyStolen = (new Random().Next((int)(Config.MIN_STEAL) * 100, (int)(Config.MAX_STEAL) * 100)) / 100m;
                 await UserRepository.EditCashAsync(Context, moneyStolen);
                 string randomStore = Config.STORES[new Random().Next(1, Config.STORES.Length) - 1];
                 await ReplyAsync($"{Context.User.Mention}, you walk in to your local {randomStore}, point a fake gun at the clerk, and manage to walk away " +
@@ -96,7 +97,7 @@ namespace DEA.Modules
         {
             if (nickname.Length > 32) throw new Exception("The length of a nickname may not be longer than 32 characters.");
             await userToBully.ModifyAsync(x => x.Nickname = nickname);
-            await ReplyAsync($"{userToBully.Mention} just got ***BULLIED*** by {Context.User.Mention} with his new nickname: \"{nickname}\".");
+            await ModuleMethods.Reply(Context, $"{userToBully.Mention} just got ***BULLIED*** by {Context.User.Mention} with his new nickname: \"{nickname}\".");
         }
 
         [Command("Rob")]
@@ -104,7 +105,7 @@ namespace DEA.Modules
         [Summary("Lead a large scale operation on a local bank.")]
         [Remarks("Rob <Amount of cash to spend on resources>")]
         [RequireBotPermission(GuildPermission.EmbedLinks)]
-        public async Task Rob(double resources)
+        public async Task Rob(decimal resources)
         {
             var user = UserRepository.FetchUser(Context);
             if (user.Cash < resources) throw new Exception($"You do not have enough money. Balance: {user.Cash.ToString("C", Config.CI)}");
@@ -112,10 +113,10 @@ namespace DEA.Modules
             if (resources > Config.MAX_RESOURCES) throw new Exception($"The maximum amount of money to spend on resources for rob is {Config.MAX_RESOURCES.ToString("C", Config.CI)}.");
             UserRepository.Modify(DEABot.UserUpdateBuilder.Set(x => x.Rob, DateTime.UtcNow), Context);
             Random rand = new Random();
-            double succesRate = rand.Next(Config.MIN_ROB_ODDS * 100, Config.MAX_ROB_ODDS * 100) / 10000f;
-            double moneyStolen = resources / (succesRate / 1.50f); 
+            decimal succesRate = rand.Next(Config.MIN_ROB_ODDS * 100, Config.MAX_ROB_ODDS * 100) / 10000m;
+            decimal moneyStolen = resources / (succesRate / 1.50m); 
             string randomBank = Config.BANKS[rand.Next(1, Config.BANKS.Length) - 1];
-            if (rand.Next(10000) / 10000f >= succesRate)
+            if (rand.Next(10000) / 10000m >= succesRate)
             {
                 await UserRepository.EditCashAsync(Context, moneyStolen);
                 await ReplyAsync($"{Context.User.Mention}, with a {succesRate.ToString("P")} chance of success, you successfully stole " +

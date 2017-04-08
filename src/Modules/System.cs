@@ -47,11 +47,11 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
                 Color = new Color(0x00AE86),
                 Description = $@"Another common way of gaining money is by gambling, there are loads of different gambling commands, which can all be viewed with the `{p}help` command. You might be wondering what is the point of all these commands. This is where ranks come in. The full list of ranks may be viewed with the `{p}rank` command. Depending on how much money you have, you will get a certain rank, and mainly, gain access to more commands. As your cash stack grows, so do the quantity commands you can use:
 
-**{guild.JumpRequirement.ToString("C", Config.CI)}:** `{p}jump`
-**{guild.StealRequirement.ToString("C", Config.CI)}:** `{p}steal`
-**{guild.RobRequirement.ToString("C", Config.CI)}:** `{p}rob <Resources>`
-**{guild.BullyRequirement.ToString("C", Config.CI)}:** `{p}bully`
-**{guild.FiftyX2Requirement.ToString("C", Config.CI)}:** `{p}50x2 <Bet>`"
+**{Config.JUMP_REQUIREMENT.ToString("C", Config.CI)}:** `{p}jump`
+**{Config.STEAL_REQUIREMENT.ToString("C", Config.CI)}:** `{p}steal`
+**{Config.ROB_REQUIREMENT.ToString("C", Config.CI)}:** `{p}rob <Resources>`
+**{Config.BULLY_REQUIREMENT.ToString("C", Config.CI)}:** `{p}bully`
+**{Config.FIFTYX2_REQUIREMENT.ToString("C", Config.CI)}:** `{p}50x2 <Bet>`"
             };
             var channel = await Context.User.CreateDMChannelAsync();
             await channel.SendMessageAsync("", embed: builder);
