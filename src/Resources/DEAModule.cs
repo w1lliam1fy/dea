@@ -34,5 +34,17 @@ namespace DEA.Resources
 
             await ReplyAsync("", embed: builder);
         }
+
+        public async Task Error(string message)
+        {
+            var builder = new EmbedBuilder()
+            {
+                Description = message,
+                Color = new Color(255, 0, 0)
+            };
+
+            await ReplyAsync("", embed: builder);
+            throw new Exception();
+        }
     }
 }

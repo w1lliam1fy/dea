@@ -50,7 +50,7 @@ namespace DEA
             }
 
             DBClient = new MongoClient(Credentials.MongoDBConnectionString);
-            Database = DBClient.GetDatabase("dea");
+            Database = DBClient.GetDatabase("beta");
 
             Guilds = Database.GetCollection<Guild>("guilds");
             Users = Database.GetCollection<User>("users");

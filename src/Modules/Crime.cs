@@ -95,7 +95,7 @@ namespace DEA.Modules
         [RequireBotPermission(GuildPermission.ManageNicknames)]
         public async Task Bully(SocketGuildUser userToBully, [Remainder] string nickname)
         {
-            if (nickname.Length > 32) throw new Exception("The length of a nickname may not be longer than 32 characters.");
+            if (nickname.Length > 32) await Error("The length of a nickname may not be longer than 32 characters.");
             await userToBully.ModifyAsync(x => x.Nickname = nickname);
             await Send($"{userToBully.Mention} just got ***BULLIED*** by {Context.User.Mention} with his new nickname: \"{nickname}\".");
         }
@@ -108,9 +108,9 @@ namespace DEA.Modules
         public async Task Rob(decimal resources)
         {
             var user = UserRepository.FetchUser(Context);
-            if (user.Cash < resources) throw new Exception($"You do not have enough money. Balance: {user.Cash.ToString("C", Config.CI)}");
-            if (resources < Config.MIN_RESOURCES) throw new Exception($"The minimum amount of money to spend on resources for rob is {Config.MIN_RESOURCES.ToString("C", Config.CI)}.");
-            if (resources > Config.MAX_RESOURCES) throw new Exception($"The maximum amount of money to spend on resources for rob is {Config.MAX_RESOURCES.ToString("C", Config.CI)}.");
+            if (user.Cash < resources) await Error($"You do not have enough money. Balance: {user.Cash.ToString("C", Config.CI)}");
+            if (resources < Config.MIN_RESOURCES) await Error($"The minimum amount of money to spend on resources for rob is {Config.MIN_RESOURCES.ToString("C", Config.CI)}.");
+            if (resources > Config.MAX_RESOURCES) await Error($"The maximum amount of money to spend on resources for rob is {Config.MAX_RESOURCES.ToString("C", Config.CI)}.");
             UserRepository.Modify(DEABot.UserUpdateBuilder.Set(x => x.Rob, DateTime.UtcNow), Context);
             Random rand = new Random();
             decimal succesRate = rand.Next(Config.MIN_ROB_ODDS * 100, Config.MAX_ROB_ODDS * 100) / 10000m;
@@ -149,7 +149,7 @@ namespace DEA.Modules
                 if (cooldown.Value.TotalMilliseconds > 0)
                     description += $"{cooldown.Key}: {cooldown.Value.Hours}:{cooldown.Value.Minutes.ToString("D2")}:{cooldown.Value.Seconds.ToString("D2")}\n";
             }
-            if (description.Length == 0) throw new Exception("All your commands are available for use!");
+            if (description.Length == 0) await Error("All your commands are available for use!");
 
             await Send(description, $"All cooldowns for {Context.User}");
         }

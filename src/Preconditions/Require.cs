@@ -90,7 +90,7 @@ namespace Discord.Commands
                             return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.FIFTYX2_REQUIREMENT.ToString("C", Config.CI)}.");
                         break;
                     default:
-                        throw new Exception($"ERROR: The {attribute} attribute does not exist!");
+                        return PreconditionResult.FromError($"ERROR: The {attribute} attribute does not exist!");
                 }
             return PreconditionResult.FromSuccess();
         }

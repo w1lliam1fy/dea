@@ -38,9 +38,9 @@ namespace DEA.Services
             var user = UserRepository.FetchUser(context);
             var guild = GuildRepository.FetchGuild(context.Guild.Id);
             if (context.Guild.GetTextChannel(guild.GambleId) != null && context.Channel.Id != guild.GambleId)
-                throw new Exception($"You may only gamble in {context.Guild.GetTextChannel(guild.GambleId).Mention}!");
-            if (bet < Config.BET_MIN) throw new Exception($"Lowest bet is {Config.BET_MIN}$.");
-            if (bet > user.Cash) throw new Exception($"You do not have enough money. Balance: {user.Cash.ToString("C", Config.CI)}.");
+                await ResponseMethods.Error(context, $"You may only gamble in {context.Guild.GetTextChannel(guild.GambleId).Mention}!");
+            if (bet < Config.BET_MIN) await ResponseMethods.Error(context, $"Lowest bet is {Config.BET_MIN}$.");
+            if (bet > user.Cash) await ResponseMethods.Error(context, $"You do not have enough money. Balance: {user.Cash.ToString("C", Config.CI)}.");
             decimal roll = new Random().Next(1, 10001) / 100m;
             if (roll >= odds)
             {

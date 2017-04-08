@@ -48,5 +48,17 @@ namespace DEA.Services
 
             await channel.SendMessageAsync("", embed: builder);
         }
+
+        public static async Task Error(SocketCommandContext context, string message)
+        {
+            var builder = new EmbedBuilder()
+            {
+                Description = message,
+                Color = new Color(255, 0, 0)
+            };
+
+            await context.Channel.SendMessageAsync("", embed: builder);
+            throw new Exception();
+        }
     }
 }

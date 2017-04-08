@@ -114,7 +114,7 @@ namespace DEA.Modules
                 position++;
             }
 
-            if (description.Length == 0) throw new Exception("There is nobody on the leaderboards yet!");
+            if (description.Length == 0) await Error("There is nobody on the leaderboards yet!");
 
             await Send(description, "The Richest Traffickers");
         }
@@ -144,7 +144,7 @@ namespace DEA.Modules
                 position++;
             }
 
-            if (description.Length == 0) throw new Exception("There is nobody on the leaderboards yet!");
+            if (description.Length == 0) await Error("There is nobody on the leaderboards yet!");
 
             var builder = new EmbedBuilder()
             {
@@ -163,9 +163,9 @@ namespace DEA.Modules
         public async Task Donate(IGuildUser userMentioned, decimal money)
         {
             var user = UserRepository.FetchUser(Context);
-            if (userMentioned.Id == Context.User.Id) throw new Exception("Hey kids! Look at that retard, he is trying to give money to himself!");
-            if (money < Config.DONATE_MIN) throw new Exception($"Lowest donation is {Config.DONATE_MIN}$.");
-            if (user.Cash < money) throw new Exception($"You do not have enough money. Balance: {user.Cash.ToString("C", Config.CI)}.");
+            if (userMentioned.Id == Context.User.Id) await Error("Hey kids! Look at that retard, he is trying to give money to himself!");
+            if (money < Config.DONATE_MIN) await Error($"Lowest donation is {Config.DONATE_MIN}$.");
+            if (user.Cash < money) await Error($"You do not have enough money. Balance: {user.Cash.ToString("C", Config.CI)}.");
             await UserRepository.EditCashAsync(Context, -money);
             decimal deaMoney = money * Config.DEA_CUT / 100;
             await UserRepository.EditCashAsync(Context, userMentioned.Id, money - deaMoney);
@@ -208,7 +208,7 @@ namespace DEA.Modules
         public async Task Ranks()
         {
             var guild = GuildRepository.FetchGuild(Context.Guild.Id);
-            if (guild.RankRoles == null) throw new Exception("There are no ranks yet!");
+            if (guild.RankRoles == null) await Error("There are no ranks yet!");
             var description = "";
             foreach (var rank in guild.RankRoles.OrderBy(x => x.Value))
             {
@@ -221,7 +221,7 @@ namespace DEA.Modules
                 }
                 description += $"{rank.Value.AsDouble.ToString("C", Config.CI)}: {role.Mention}\n";
             }
-            if (description.Length > 2048) throw new Exception("You have too many ranks to be able to use this command.");
+            if (description.Length > 2048) await Error("You have too many ranks to be able to use this command.");
             await Send(description, "Ranks");
         }
 
@@ -232,7 +232,7 @@ namespace DEA.Modules
         public async Task ModRoles()
         {
             var guild = GuildRepository.FetchGuild(Context.Guild.Id);
-            if (guild.ModRoles == null) throw new Exception("There are no moderator roles yet!");
+            if (guild.ModRoles == null) await Error("There are no moderator roles yet!");
             var description = "";
             foreach (var modRole in guild.ModRoles.OrderBy(x => x.Value))
             {
@@ -245,7 +245,7 @@ namespace DEA.Modules
                 }
                 description += $"{role.Mention}: Pemission level {modRole.Value}\n";
             }
-            if (description.Length > 2048) throw new Exception("You have too many mod roles to be able to use this command.");
+            if (description.Length > 2048) await Error("You have too many mod roles to be able to use this command.");
             await Send(description, "Moderator Roles");
         }
 
