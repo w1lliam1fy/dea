@@ -81,7 +81,7 @@ namespace DEA
             CommandService = new CommandService(new CommandServiceConfig()
             {
                 CaseSensitiveCommands = false,
-                DefaultRunMode = RunMode.Sync
+                DefaultRunMode = RunMode.Async
             });
 
             var sw = Stopwatch.StartNew();

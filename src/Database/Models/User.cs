@@ -13,11 +13,11 @@ namespace DEA.Database.Models
 
         public ulong GuildId { get; set; }
 
-        public double Cash { get; set; } = 0;
+        public decimal Cash { get; set; } = 0;
 
-        public double InvestmentMultiplier { get; set; } = 1;
+        public decimal InvestmentMultiplier { get; set; } = 1;
 
-        public double TemporaryMultiplier { get; set; } = 1;
+        public decimal TemporaryMultiplier { get; set; } = 1;
 
         //Cooldowns
 

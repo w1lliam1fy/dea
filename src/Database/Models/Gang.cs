@@ -16,7 +16,7 @@ namespace DEA.Database.Models
 
         public ulong GuildId { get; set; }
 
-        public double Wealth { get; set; } = 0.0;
+        public decimal Wealth { get; set; } = 0;
 
         public ulong[] Members { get; set; } = new ulong[4] { 0, 0, 0, 0};
 

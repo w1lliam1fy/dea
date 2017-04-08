@@ -5,11 +5,13 @@ using System.Threading.Tasks;
 using DEA.Database.Repository;
 using System.Linq;
 using MongoDB.Bson;
+using DEA.Resources;
+using DEA.Services;
 
 namespace DEA.Modules
 {
     [Require(Attributes.Admin)]
-    public class Administration : ModuleBase<SocketCommandContext>
+    public class Administration : DEAModule
     {
 
         [Command("RoleIDs")]
@@ -21,8 +23,8 @@ namespace DEA.Modules
             foreach (var role in Context.Guild.Roles)
                 message += $"{role.Name}: {role.Id}\n";
             var channel = await Context.User.CreateDMChannelAsync();
-            await channel.SendMessageAsync(message);
-            await ReplyAsync($"{Context.User.Mention}, all Role IDs have been DMed to you!");
+            await ResponseMethods.DM(channel, message);
+            await Reply("All Role IDs have been DMed to you!");
         }
 
         [Command("SetPrefix")]
@@ -32,41 +34,7 @@ namespace DEA.Modules
         {
             if (prefix.Length > 3) throw new Exception("The maximum character length of a prefix is 3.");
             GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.Prefix, prefix), Context.Guild.Id);
-            await ReplyAsync($"{Context.User.Mention}, You have successfully set the prefix to {prefix}!");
-        }
-
-        [Command("AddModRole")]
-        [Summary("Adds a moderator role.")]
-        [Remarks("AddModRole <@ModRole>")]
-        public async Task AddModRole(IRole modRole, int permissionLevel = 1)
-        {
-            if (permissionLevel < 1 || permissionLevel > 3) throw new Exception("Permission levels:\nModeration: 1\nAdministration: 2\nServer Owner: 3");
-            var guild = GuildRepository.FetchGuild(Context.Guild.Id);
-            if (guild.ModRoles == null)
-                GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.ModRoles, new BsonDocument()
-                {
-                    { modRole.Id.ToString(), permissionLevel }
-                }), Context.Guild.Id);
-            else
-            {
-                guild.ModRoles.Add(modRole.Id.ToString(), permissionLevel);
-                GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.ModRoles, guild.ModRoles), Context.Guild.Id);
-            }
-            await ReplyAsync($"{Context.User.Mention}, You have successfully add {modRole.Mention} as a Moderation role with a permission level of {permissionLevel}.");
-        }
-
-        [Command("RemoveModRole")]
-        [Summary("Removes a moderator role.")]
-        [Remarks("RemoveModRole <@ModRole>")]
-        public async Task RemoveModRole(IRole modRole)
-        {
-            var guild = GuildRepository.FetchGuild(Context.Guild.Id);
-            if (guild.ModRoles == null) throw new Exception("There are no moderator roles yet!");
-            if (!guild.ModRoles.Any(x => x.Name == modRole.Id.ToString()))
-                throw new Exception("This role is not a moderator role!");
-            guild.ModRoles.Remove(modRole.Id.ToString());
-            GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.ModRoles, guild.ModRoles), Context.Guild.Id);
-            await ReplyAsync($"{Context.User.Mention}, You have successfully set the moderator role to {modRole.Mention}!");
+            await Reply($"You have successfully set the prefix to {prefix}!");
         }
 
         [Command("SetMutedRole")]
@@ -75,10 +43,10 @@ namespace DEA.Modules
         [Remarks("SetMutedRole <@MutedRole>")]
         public async Task SetMutedRole(IRole mutedRole)
         {
-            if (mutedRole.Position >= Context.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
+            if (mutedRole.Position > Context.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
                 throw new Exception($"DEA must be higher in the heigharhy than {mutedRole.Mention}.");
             GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.MutedRoleId, mutedRole.Id), Context.Guild.Id);
-            await ReplyAsync($"{Context.User.Mention}, You have successfully set the muted role to {mutedRole.Mention}!");
+            await Reply($"You have successfully set the muted role to {mutedRole.Mention}!");
         }
 
         [Command("AddRank")]
@@ -87,7 +55,7 @@ namespace DEA.Modules
         public async Task AddRank(IRole rankRole, double cashRequired)
         {
             var guild = GuildRepository.FetchGuild(Context.Guild.Id);
-            if (rankRole.Position >= Context.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
+            if (rankRole.Position > Context.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
                 throw new Exception($"DEA must be higher in the heigharhy than {rankRole.Mention}.");
             if (guild.RankRoles == null)
                 GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.RankRoles, new BsonDocument()
@@ -104,7 +72,7 @@ namespace DEA.Modules
                 GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.RankRoles, guild.RankRoles), Context.Guild.Id);
             }
             
-            await ReplyAsync($"You have successfully added the {rankRole.Mention} rank!");
+            await Reply($"You have successfully added the {rankRole.Mention} rank!");
         }
 
         [Command("RemoveRank")]
@@ -118,7 +86,7 @@ namespace DEA.Modules
                 throw new Exception("This role is not a rank role.");
             guild.RankRoles.Remove(rankRole.Id.ToString());
             GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.RankRoles, guild.RankRoles), Context.Guild.Id);
-            await ReplyAsync($"You have successfully removed the {rankRole.Mention} rank!");
+            await Reply($"You have successfully removed the {rankRole.Mention} rank!");
         }
 
         [Command("SetModLog")]
@@ -127,7 +95,7 @@ namespace DEA.Modules
         public async Task SetModLogChannel(ITextChannel modLogChannel)
         {
             GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.ModLogId, modLogChannel.Id), Context.Guild.Id);
-            await ReplyAsync($"{Context.User.Mention}, You have successfully set the moderator log channel to {modLogChannel.Mention}!");
+            await Reply($"You have successfully set the moderator log channel to {modLogChannel.Mention}!");
         }
 
         [Command("SetDetailedLogs")]
@@ -136,7 +104,7 @@ namespace DEA.Modules
         public async Task SetDetailedLogsChannel(ITextChannel detailedLogsChannel)
         {
             GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.DetailedLogsId, detailedLogsChannel.Id), Context.Guild.Id);
-            await ReplyAsync($"{Context.User.Mention}, You have successfully set the detailed logs channel to {detailedLogsChannel.Mention}!");
+            await Reply($"You have successfully set the detailed logs channel to {detailedLogsChannel.Mention}!");
         }
 
         [Command("SetGambleChannel")]
@@ -146,7 +114,7 @@ namespace DEA.Modules
         public async Task SetGambleChannel(ITextChannel gambleChannel)
         {
             GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.GambleId, gambleChannel.Id), Context.Guild.Id);
-            await ReplyAsync($"{Context.User.Mention}, You have successfully set the gamble channel to {gambleChannel.Mention}!");
+            await Reply($"You have successfully set the gamble channel to {gambleChannel.Mention}!");
         }
 
     }

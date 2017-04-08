@@ -9,12 +9,12 @@ using MongoDB.Driver;
 
 namespace DEA.Services
 {
-    public class RecurringFunctions
+    public class RecurringMethods
     {
 
         private DiscordSocketClient _client;
 
-        public RecurringFunctions(DiscordSocketClient client)
+        public RecurringMethods(DiscordSocketClient client)
         {
             _client = client;
             ResetTemporaryMultiplier();
@@ -26,7 +26,8 @@ namespace DEA.Services
         {
             Timer t = new Timer(async method =>
             {
-                await DEABot.Users.UpdateManyAsync("", DEABot.UserUpdateBuilder.Set(x => x.TemporaryMultiplier, 1));
+                var builder = Builders<User>.Filter;
+                await DEABot.Users.UpdateManyAsync(builder.Empty, DEABot.UserUpdateBuilder.Set(x => x.TemporaryMultiplier, 1));
             }, 
             null, 
             Config.TEMP_MULTIPLIER_RESET_COOLDOWN, 
@@ -35,9 +36,11 @@ namespace DEA.Services
 
         private void ApplyInterestRate()
         {
-            Timer t = new Timer(method => 
+            Timer t = new Timer(async method => 
             {
-                //TODO
+                var builder = Builders<Gang>.Filter;
+                foreach (var gang in await (await DEABot.Gangs.FindAsync(builder.Empty)).ToListAsync())
+                    await DEABot.Gangs.UpdateOneAsync(y => y.Id == gang.Id, DEABot.GangUpdateBuilder.Set(x => x.Wealth, Services.Math.CalculateIntrestRate(gang.Wealth)));
             },
             null,
             Config.INTEREST_RATE_COOLDOWN,

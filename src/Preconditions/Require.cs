@@ -29,15 +29,21 @@ namespace Discord.Commands
                             return PreconditionResult.FromError("Only an owner of this bot may use this command.");
                         break;
                     case Attributes.ServerOwner:
-                        if (user.Guild.OwnerId != user.Id && guild.ModRoles != null && !user.RoleIds.Any(x => guild.ModRoles.Any(y => y.Name == x.ToString() && y.Value.AsInt32 >= 3)))
+                        if (user.Guild.OwnerId != user.Id && guild.ModRoles == null)
+                            return PreconditionResult.FromError("Only the owners of this server may use this command.");
+                        else if (user.Guild.OwnerId != user.Id && guild.ModRoles != null && !user.RoleIds.Any(x => guild.ModRoles.Any(y => y.Name == x.ToString() && y.Value.AsInt32 >= 3)))
                             return PreconditionResult.FromError("Only the owners of this server may use this command.");
                         break;
                     case Attributes.Admin:
-                        if (!(context.User as IGuildUser).GuildPermissions.Administrator && guild.ModRoles != null && !user.RoleIds.Any(x => guild.ModRoles.Any(y => y.Name == x.ToString() && y.Value.AsInt32 >= 2)))
+                        if (!(context.User as IGuildUser).GuildPermissions.Administrator && guild.ModRoles == null)
+                            return PreconditionResult.FromError("The administrator permission is required to use this command.");
+                        else if (!(context.User as IGuildUser).GuildPermissions.Administrator && guild.ModRoles != null && !user.RoleIds.Any(x => guild.ModRoles.Any(y => y.Name == x.ToString() && y.Value.AsInt32 >= 2)))
                             return PreconditionResult.FromError("The administrator permission is required to use this command.");
                         break;
                     case Attributes.Moderator:
-                        if (guild.ModRoles != null && !user.RoleIds.Any(x => guild.ModRoles.Any(y => y.Name == x.ToString())))
+                        if (!(context.User as IGuildUser).GuildPermissions.Administrator && guild.ModRoles == null)
+                            return PreconditionResult.FromError("Only a moderator may use this command.");
+                        else if (!(context.User as IGuildUser).GuildPermissions.Administrator && guild.ModRoles != null && !user.RoleIds.Any(x => guild.ModRoles.Any(y => y.Name == x.ToString())))
                             return PreconditionResult.FromError("Only a moderator may use this command.");
                         break;
                     case Attributes.Nsfw:
@@ -64,24 +70,24 @@ namespace Discord.Commands
                             return PreconditionResult.FromError("You must be the leader of a gang to use this command.");
                         break;
                     case Attributes.Jump:
-                        if (dbUser.Cash < guild.JumpRequirement)
-                            return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {guild.JumpRequirement.ToString("C", Config.CI)}.");
+                        if (dbUser.Cash < Config.JUMP_REQUIREMENT)
+                            return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.JUMP_REQUIREMENT.ToString("C", Config.CI)}.");
                         break;
                     case Attributes.Steal:
-                        if (dbUser.Cash < guild.StealRequirement)
-                            return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {guild.StealRequirement.ToString("C", Config.CI)}.");
+                        if (dbUser.Cash < Config.STEAL_REQUIREMENT)
+                            return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.STEAL_REQUIREMENT.ToString("C", Config.CI)}.");
                         break;
                     case Attributes.Bully:
-                        if (dbUser.Cash < guild.BullyRequirement)
-                            return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {guild.BullyRequirement.ToString("C", Config.CI)}.");
+                        if (dbUser.Cash < Config.BULLY_REQUIREMENT)
+                            return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.ROB_REQUIREMENT.ToString("C", Config.CI)}.");
                         break;
                     case Attributes.Rob:
-                        if (dbUser.Cash < guild.RobRequirement)
-                            return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {guild.RobRequirement.ToString("C", Config.CI)}.");
+                        if (dbUser.Cash < Config.ROB_REQUIREMENT)
+                            return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.BULLY_REQUIREMENT.ToString("C", Config.CI)}.");
                         break;
                     case Attributes.FiftyX2:
-                        if (dbUser.Cash < guild.FiftyX2Requirement)
-                            return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {guild.FiftyX2Requirement.ToString("C", Config.CI)}.");
+                        if (dbUser.Cash < Config.FIFTYX2_REQUIREMENT)
+                            return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.FIFTYX2_REQUIREMENT.ToString("C", Config.CI)}.");
                         break;
                     default:
                         throw new Exception($"ERROR: The {attribute} attribute does not exist!");

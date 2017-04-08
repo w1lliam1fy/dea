@@ -17,12 +17,12 @@ namespace DEA.Events
             new UserEvents(_client);
             new RoleEvents(_client);
             new ChannelEvents(_client);
-            new RecurringFunctions(_client);
+            new RecurringMethods(_client);
         }
 
         private async Task HandleReady()
         {
-            await _client.SetGameAsync(Config.GAME_STRING);
+            await _client.SetGameAsync("USE $help");
         }
 
     }

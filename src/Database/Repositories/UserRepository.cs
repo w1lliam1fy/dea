@@ -54,19 +54,19 @@ namespace DEA.Database.Repository
             DEABot.Users.UpdateOne(y => y.UserId == userId && y.GuildId == guildId, update);
         }
 
-        public static async Task EditCashAsync(SocketCommandContext context, double change)
+        public static async Task EditCashAsync(SocketCommandContext context, decimal change)
         {
             var cash = FetchUser(context).Cash;
             DEABot.Users.UpdateOne(y => y.UserId == context.User.Id && y.GuildId == context.Guild.Id, 
-                DEABot.UserUpdateBuilder.Set(x => x.Cash, change + cash));
+                DEABot.UserUpdateBuilder.Set(x => x.Cash, Math.Round(change + cash, 2)));
             await RankHandler.Handle(context.Guild, context.User.Id);
         }
 
-        public static async Task EditCashAsync(SocketCommandContext context, ulong userId, double change)
+        public static async Task EditCashAsync(SocketCommandContext context, ulong userId, decimal change)
         {
             var cash = FetchUser(userId, context.Guild.Id).Cash;
             DEABot.Users.UpdateOne(y => y.UserId == userId && y.GuildId == context.Guild.Id,
-                DEABot.UserUpdateBuilder.Set(x => x.Cash, change + cash));
+                DEABot.UserUpdateBuilder.Set(x => x.Cash, Math.Round(change + cash, 2)));
             await RankHandler.Handle(context.Guild, userId);
         }
 

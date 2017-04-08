@@ -6,7 +6,6 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using DEA.Database.Repository;
-using DEA.Database.Models;
 using MongoDB.Driver;
 //using Discord.Addons.InteractiveCommands;
 
@@ -24,7 +23,11 @@ namespace DEA.Services
             _service = new CommandService(new CommandServiceConfig()
             {
                 CaseSensitiveCommands = false,
+#if DEBUG
                 DefaultRunMode = RunMode.Sync
+#elif RELEASE
+                DefaultRunMode = RunMode.Async
+#endif
             });
 
             await _service.AddModulesAsync(Assembly.GetEntryAssembly());
@@ -45,7 +48,9 @@ namespace DEA.Services
 
             if (!(Context.Channel is SocketTextChannel)) return;
 
-            if (!(Context.Guild.CurrentUser as IGuildUser).GetPermissions(Context.Channel as SocketTextChannel).SendMessages) return;
+            var perms = (Context.Guild.CurrentUser as IGuildUser).GetPermissions(Context.Channel as SocketTextChannel);
+
+            if (!perms.SendMessages || !perms.EmbedLinks) return;
 
             int argPos = 0;
 
@@ -62,18 +67,21 @@ namespace DEA.Services
                 {
                     var cmd = _service.Search(Context, argPos).Commands.First().Command;
                     if (result.ErrorReason.Length == 0) return;
+                    var message = "";
                     switch (result.Error)
                     {
                         case CommandError.BadArgCount:
-                            await msg.Channel.SendMessageAsync($"{Context.User.Mention}, You are incorrectly using this command. Usage: `{prefix}{cmd.Remarks}`");
+                            message = $"You are incorrectly using this command. Usage: `{prefix}{cmd.Remarks}`";
                             break;
                         case CommandError.ParseFailed:
-                            await msg.Channel.SendMessageAsync($"{Context.User.Mention}, Invalid number.");
+                            message = $"Invalid number.";
                             break;
                         default:
-                            await msg.Channel.SendMessageAsync($"{Context.User.Mention}, {result.ErrorReason}");
+                            message = $"{result.ErrorReason}";
                             break;
                     }
+
+                    await ResponseMethods.Reply(Context, message, null, new Color(255, 0, 0));
                 }
             }
             else if (msg.ToString().Length >= Config.MIN_CHAR_LENGTH && !msg.ToString().StartsWith(":"))
