@@ -90,7 +90,7 @@ namespace DEA.Modules
                 Error($"You may not leave a gang if you are the owner. Either destroy the gang with the `{prefix}DestroyGang` command, or " +
                                     $"transfer the ownership of the gang to another member with the `{prefix}TransferLeadership` command.");
             GangRepository.RemoveMember(Context.User.Id, Context.Guild.Id);
-            await Reply($"You have successfully left {gang.Name}");
+            await Reply($"You have successfully left {gang.Name}.");
             var channel = await Context.Client.GetUser(gang.LeaderId).CreateDMChannelAsync();
             await ResponseMethods.DM(channel, $"{Context.User} has left {gang.Name}.");
         }
@@ -166,9 +166,11 @@ namespace DEA.Modules
             if (user.Cash < cash) Error($"You do not have enough money. Balance: {user.Cash.ToString("C", Config.CI)}.");
             await UserRepository.EditCashAsync(Context, -cash);
             var gang = GangRepository.FetchGang(Context);
-            GangRepository.Modify(DEABot.GangUpdateBuilder.Set(x => x.Wealth, gang.Wealth + cash), Context.User.Id, Context.Guild.Id);
+            GangRepository.Modify(DEABot.GangUpdateBuilder.Set(x => x.Wealth, gang.Wealth + cash), Context);
             await Reply($"You have successfully deposited {cash.ToString("C", Config.CI)}. " +
                         $"{gang.Name}'s Wealth: {(gang.Wealth + cash).ToString("C", Config.CI)}");
+            var channel = await Context.Client.GetUser(gang.LeaderId).CreateDMChannelAsync();
+            await ResponseMethods.DM(channel, $"{Context.User} deposited {cash.ToString("C", Config.CI)} into your gang's wealth.");
         }
 
         [Command("Withdraw")]
@@ -184,10 +186,59 @@ namespace DEA.Modules
                 Error($"You may only withdraw {Config.WITHDRAW_CAP.ToString("P")} of your gang's wealth, " +
                                     $"that is {(gang.Wealth * Config.WITHDRAW_CAP).ToString("C", Config.CI)}.");
             UserRepository.Modify(DEABot.UserUpdateBuilder.Set(x => x.Withdraw, DateTime.UtcNow), Context);
-            GangRepository.Modify(DEABot.GangUpdateBuilder.Set(x => x.Wealth, gang.Wealth - cash), Context.User.Id, Context.Guild.Id);
+            GangRepository.Modify(DEABot.GangUpdateBuilder.Set(x => x.Wealth, gang.Wealth - cash), Context);
             await UserRepository.EditCashAsync(Context, +cash);
             await Reply($"You have successfully withdrawn {cash.ToString("C", Config.CI)}. " +
-                        $"{gang.Name}'s Wealth: {(gang.Wealth - cash).ToString("C", Config.CI)}");
+                        $"{gang.Name}'s Wealth: {(gang.Wealth - cash).ToString("C", Config.CI)}.");
+            var channel = await Context.Client.GetUser(gang.LeaderId).CreateDMChannelAsync();
+            await ResponseMethods.DM(channel, $"{Context.User} has withdrawn {cash.ToString("C", Config.CI)} from your gang's wealth.");
+        }
+
+        [Command("Raid")]
+        [Require(Attributes.InGang)]
+        [RequireCooldown]
+        [Summary("Raid another gang in attempt to steal some of their wealth.")]
+        public async Task Raid(decimal resources, string gangName)
+        {
+            if (resources < Config.MIN_RESOURCES) Error($"The minimum amount of money to spend on resources for a raid is {Config.MIN_RESOURCES.ToString("C", Config.CI)}.");
+            var gang = GangRepository.FetchGang(Context);
+            if (gang.Wealth < resources) Error($"Your gang does not have enough money. {gang.Name}'s Wealth {gang.Wealth.ToString("C", Config.CI)}.");
+
+            var raidedGang = GangRepository.FetchGang(gangName, Context.Guild.Id);
+            if (System.Math.Round(resources, 2) > System.Math.Round(raidedGang.Wealth / 20m, 2))
+                Error($"You are overkilling it. You only need {(raidedGang.Wealth / 20).ToString("C", Config.CI)} " +
+                      $"to steal 10% of their cash, that is {(raidedGang.Wealth / 10).ToString("C", Config.CI)}.");
+            var stolen = resources * 2;
+
+            int roll = new Random().Next(1, 101);
+            if (Config.RAID_SUCCESS_ODDS > roll)
+            {
+                GangRepository.Modify(DEABot.GangUpdateBuilder.Set(x => x.Wealth, raidedGang.Wealth - stolen), gangName, Context.Guild.Id);
+                GangRepository.Modify(DEABot.GangUpdateBuilder.Combine(
+                    DEABot.GangUpdateBuilder.Set(x => x.Wealth, gang.Wealth + stolen),
+                    DEABot.GangUpdateBuilder.Set(x => x.Raid, DateTime.UtcNow)), 
+                    Context);
+
+                var channel = await Context.Client.GetUser(raidedGang.LeaderId).CreateDMChannelAsync();
+                await ResponseMethods.DM(channel, $"{gang.Name} just raided your gang's wealth and managed to walk away with {stolen.ToString("C", Config.CI)}.");
+
+                await Reply($"With a {Config.RAID_SUCCESS_ODDS}.00% chance of success, you successfully stole {stolen.ToString("C", Config.CI)}. " +
+                            $"{gang.Name}'s Wealth {(gang.Wealth + stolen).ToString("C", Config.CI)}.");
+            }
+            else
+            {
+                GangRepository.Modify(DEABot.GangUpdateBuilder.Combine(
+                    DEABot.GangUpdateBuilder.Set(x => x.Wealth, gang.Wealth - resources),
+                    DEABot.GangUpdateBuilder.Set(x => x.Raid, DateTime.UtcNow)),
+                    Context);
+
+                var channel = await Context.Client.GetUser(raidedGang.LeaderId).CreateDMChannelAsync();
+                await ResponseMethods.DM(channel, $"{gang.Name} tried to raid your gang's stash, but one of your loyal sicarios gunned them out.");
+
+                await Reply($"With a {(Config.RAID_SUCCESS_ODDS / 100).ToString("P")} chance of success, you failed to steal {stolen.ToString("C", Config.CI)} " +
+                            $"and lost all resources in the process.");
+            }
+
         }
 
     }

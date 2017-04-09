@@ -75,9 +75,10 @@ namespace DEA.Services
 
         public static async Task Cooldown(SocketCommandContext context, string command, TimeSpan timeSpan)
         {
+            var user = command.ToLower() == "raid" ? GangRepository.FetchGang(context).Name : context.User.ToString();
             await ResponseMethods.Send(context, 
                 $"Hours: {timeSpan.Hours}\nMinutes: {timeSpan.Minutes}\nSeconds: {timeSpan.Seconds}",
-                $"{command} cooldown for {context.User}");
+                $"{command} cooldown for {user}");
         }
     }
 }

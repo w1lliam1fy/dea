@@ -67,7 +67,7 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
             string modules = string.Empty;
             foreach (var module in _service.Modules)
                 modules += $"{module.Name}, ";
-            modules = modules.Replace("DEAModule, ", string.Empty);
+            modules = modules.Replace("DEAModule, ", string.Empty).Replace("_", " ");
             await Reply("Current command modules: " + modules.Substring(0, modules.Length - 2) + ".");
             
         }
@@ -75,12 +75,13 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
         [Command("Help")]
         [Alias("commands", "cmd", "cmds", "command")]
         [Summary("All command information.")]
-        public async Task Help(string commandOrModule = null)
+        public async Task Help([Remainder] string commandOrModule = null)
         {
             string prefix = GuildRepository.FetchGuild(Context.Guild.Id).Prefix;
 
             if (commandOrModule != null)
             {
+                commandOrModule = commandOrModule.Replace(" ", "_");
                 if (commandOrModule.StartsWith(prefix)) commandOrModule = commandOrModule.Remove(0, prefix.Length);
                 foreach (var module in _service.Modules)
                 {
@@ -89,7 +90,7 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
                         var longestInModule = 0;
                         foreach (var cmd in module.Commands)
                             if (cmd.Aliases.First().Length > longestInModule) longestInModule = cmd.Aliases.First().Length;
-                        var moduleInfo = $"**{module.Name} Commands **: ```asciidoc\n";
+                        var moduleInfo = $"**{module.Name.Replace("_", " ")} Commands **: ```asciidoc\n";
                         foreach (var cmd in module.Commands)
                         {
                             moduleInfo += $"{prefix}{cmd.Aliases.First()}{new string(' ', (longestInModule + 1) - cmd.Aliases.First().Length)} :: {cmd.Summary}\n";
@@ -122,7 +123,7 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
                 string modules = string.Empty;
                 foreach (var module in _service.Modules)
                     modules += $"{module.Name}, ";
-                modules = modules.Replace("DEAModule, ", string.Empty);
+                modules = modules.Replace("DEAModule, ", string.Empty).Replace("_", " ");
 
                 await ResponseMethods.DM(channel,
                     $@"DEA is a multi-purpose Discord Bot mainly known for it's infamous Cash System with multiple subtleties referencing to the show Narcos, which inspired the creation of this masterpiece.

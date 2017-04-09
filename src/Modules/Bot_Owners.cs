@@ -1,0 +1,34 @@
+﻿using DEA.Resources;
+using DEA.Services;
+using Discord;
+using Discord.Commands;
+using System.Threading.Tasks;
+
+namespace DEA.Modules
+{
+    [Require(Attributes.BotOwner)]
+    public class Bot_Owner : DEAModule
+    {
+        [Command("SetGame")]
+        [Summary("Sets the game of DEA.")]
+        public async Task SetGame([Remainder] string game)
+        {
+            await DEABot.Client.SetGameAsync(game);
+            await Reply($"Successfully set the game to {game}.");
+        }
+
+        [Command("Global")]
+        [Summary("Send a global announcement in the default channel of all servers.")]
+        public async Task GlobalAnnouncement([Remainder] string announcement)
+        {
+            await Reply("Global announcement process has commenced...");
+            foreach (var guild in DEABot.Client.Guilds)
+            {
+                if (guild.Id == Context.Guild.Id) continue;
+                var perms = (guild.CurrentUser as IGuildUser).GetPermissions(guild.DefaultChannel);
+                if (perms.SendMessages && perms.EmbedLinks) await ResponseMethods.Send(guild.DefaultChannel,"__**Announcement:**__ " + announcement);
+            }
+            await Reply("All announcements have been delivered!");
+        }
+    }
+}

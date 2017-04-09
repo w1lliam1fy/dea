@@ -103,8 +103,8 @@ namespace DEA.Modules
         {
             var user = UserRepository.FetchUser(Context);
             if (user.Cash < resources) Error($"You do not have enough money. Balance: {user.Cash.ToString("C", Config.CI)}");
-            if (resources < Config.MIN_RESOURCES) Error($"The minimum amount of money to spend on resources for rob is {Config.MIN_RESOURCES.ToString("C", Config.CI)}.");
-            if (resources > Config.MAX_RESOURCES) Error($"The maximum amount of money to spend on resources for rob is {Config.MAX_RESOURCES.ToString("C", Config.CI)}.");
+            if (resources < Config.MIN_RESOURCES) Error($"The minimum amount of money to spend on resources for a robbery is {Config.MIN_RESOURCES.ToString("C", Config.CI)}.");
+            if (resources > Config.MAX_RESOURCES) Error($"The maximum amount of money to spend on resources for a robbery is {Config.MAX_RESOURCES.ToString("C", Config.CI)}.");
             UserRepository.Modify(DEABot.UserUpdateBuilder.Set(x => x.Rob, DateTime.UtcNow), Context);
             Random rand = new Random();
             decimal succesRate = rand.Next(Config.MIN_ROB_ODDS * 100, Config.MAX_ROB_ODDS * 100) / 10000m;

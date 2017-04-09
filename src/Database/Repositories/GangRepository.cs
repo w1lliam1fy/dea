@@ -23,6 +23,12 @@ namespace DEA.Database.Repository
             DEABot.Gangs.UpdateOne(c => (c.LeaderId == memberId || c.Members.Any(x => x == memberId)) && c.GuildId == guildId, update);
         }
 
+        public static void Modify(UpdateDefinition<Gang> update, string gangName, ulong guildId)
+        {
+            FetchGang(gangName, guildId);
+            DEABot.Gangs.UpdateOne(c => c.Name.ToLower() == gangName.ToLower() && c.GuildId == guildId, update);
+        }
+
         public static Gang FetchGang(SocketCommandContext context)
         {
             Expression<Func<Gang, bool>> expression = c => (c.LeaderId == context.User.Id || c.Members.Any(x => x == context.User.Id)) && c.GuildId == context.Guild.Id;

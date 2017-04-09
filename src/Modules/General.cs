@@ -262,6 +262,8 @@ namespace DEA.Modules
             cooldowns.Add("Steal", Config.STEAL_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(user.Steal)));
             cooldowns.Add("Rob", Config.ROB_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(user.Rob)));
             cooldowns.Add("Withdraw", Config.WITHDRAW_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(user.Withdraw)));
+            if (GangRepository.InGang(Context.User.Id, Context.Guild.Id))
+                cooldowns.Add("Raid", Config.RAID_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(GangRepository.FetchGang(Context).Raid)));
             var description = string.Empty;
             foreach (var cooldown in cooldowns)
             {

@@ -12,15 +12,15 @@ public static class Config
         new Color(242, 38, 255), new Color(255, 28, 142), new Color(104, 255, 34), new Color(255, 190, 17), new Color(41, 84, 255),
         new Color(150, 36, 237), new Color(168, 237, 0)};
 
-    public static readonly TimeSpan DEFAULT_MUTE_TIME = TimeSpan.FromDays(1), WHORE_COOLDOWN = TimeSpan.FromHours(2), 
-        JUMP_COOLDOWN = TimeSpan.FromHours(4), STEAL_COOLDOWN = TimeSpan.FromHours(6), ROB_COOLDOWN = TimeSpan.FromHours(8), 
-        WITHDRAW_COOLDOWN = TimeSpan.FromHours(4), LINE_COOLDOWN = TimeSpan.FromSeconds(25);
+    public static readonly TimeSpan DEFAULT_MUTE_TIME = TimeSpan.FromDays(1), WHORE_COOLDOWN = TimeSpan.FromHours(2),
+        JUMP_COOLDOWN = TimeSpan.FromHours(4), STEAL_COOLDOWN = TimeSpan.FromHours(6), ROB_COOLDOWN = TimeSpan.FromHours(8),
+        WITHDRAW_COOLDOWN = TimeSpan.FromHours(4), RAID_COOLDOWN = TimeSpan.FromHours(8), LINE_COOLDOWN = TimeSpan.FromSeconds(25);
 
     public static readonly int MIN_CHAR_LENGTH = 7, LEADERBOARD_CAP = 10, RATELB_CAP = 10, WHORE_ODDS = 90, JUMP_ODDS = 85, STEAL_ODDS = 80,
         MIN_CHILL = 5, MAX_CHILL = (int)TimeSpan.FromHours(1).TotalSeconds, MIN_CLEAR = 2, MAX_CLEAR = 1000, GANG_NAME_CHAR_LIMIT = 24,
         GANGSLB_CAP = 10, MIN_ROB_ODDS = 50, MAX_ROB_ODDS = 75, DEA_CUT = 10, TEMP_MULTIPLIER_RESET_COOLDOWN =
         (int)TimeSpan.FromHours(1).TotalMilliseconds, INTEREST_RATE_COOLDOWN = (int)TimeSpan.FromHours(1).TotalMilliseconds,
-        AUTO_UNMUTE_COOLDOWN = (int)TimeSpan.FromMinutes(5).TotalMilliseconds;
+        AUTO_UNMUTE_COOLDOWN = (int)TimeSpan.FromMinutes(5).TotalMilliseconds, RAID_SUCCESS_ODDS = 65;
 
     public static readonly double DEFAULT_MESSAGE_COOLDOWN = TimeSpan.FromSeconds(30).TotalMilliseconds;
 

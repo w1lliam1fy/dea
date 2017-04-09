@@ -35,6 +35,11 @@ namespace Discord.Commands
                     cooldown = Config.WITHDRAW_COOLDOWN;
                     lastUse = user.Withdraw;
                     break;
+                case "raid":
+                    var gang = GangRepository.FetchGang(context as SocketCommandContext);
+                    cooldown = Config.RAID_COOLDOWN;
+                    lastUse = gang.Raid;
+                    break;
                 default:
                     return PreconditionResult.FromSuccess();
             }
