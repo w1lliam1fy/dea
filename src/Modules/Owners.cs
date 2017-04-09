@@ -81,7 +81,7 @@ namespace DEA.Modules
 
         [Command("AddModRole")]
         [Summary("Adds a moderator role.")]
-        [Remarks("AddModRole <@ModRole>")]
+        [Remarks("AddModRole <@ModRole> <Permission level (1-3)>")]
         public async Task AddModRole(IRole modRole, int permissionLevel = 1)
         {
             if (permissionLevel < 1 || permissionLevel > 3) Error("Permission levels:\nModeration: 1\nAdministration: 2\nServer Owner: 3");
