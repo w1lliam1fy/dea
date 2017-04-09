@@ -257,11 +257,11 @@ namespace DEA.Modules
         {
             userToView = userToView ?? Context.User as IGuildUser;
             var user = UserRepository.FetchUser(Context);
-            await Send($"Chatting multiplier: {user.TemporaryMultiplier.ToString("N2")}\n" +
-                $"Investment multiplier: {user.InvestmentMultiplier.ToString("N2")}\n +
-                $"Total Cash Per Message: {(user.TemporaryMultiplier * user.InvestmentMultiplier).ToString("N2")}" +
-                $"Message cooldown: {user.MessageCooldown / 1000} seconds",
-                $"Rate of {userToView}");
+            await Send($"Cash/Msg: {(user.TemporaryMultiplier * user.InvestmentMultiplier).ToString("N2")}" +
+                       $"Chatting multiplier: {user.TemporaryMultiplier.ToString("N2")}\n" +
+                       $"Investment multiplier: {user.InvestmentMultiplier.ToString("N2")}\n + 
+                       $"Message cooldown: {user.MessageCooldown / 1000} seconds",
+                       $"Rate of {userToView}");
         }
     }
 }
