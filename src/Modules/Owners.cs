@@ -30,6 +30,16 @@ namespace DEA.Modules
             await Reply($"Successfully reset all of {user.Mention} cooldowns.");
         }
 
+        [Command("100k")]
+        [Summary("Sets the user's balance to $100,000.00.")]
+        [Remarks("100k [@User]")]
+        public async Task HundredK(IGuildUser userMentioned = null)
+        {
+            userMentioned = userMentioned ?? Context.User as IGuildUser;
+            await UserRepository.EditCashAsync(Context, userMentioned.Id, 100000);
+            await Reply($"Successfully set {userMentioned.Mention}'s balance to $100,000.00.");
+        }
+
         [Command("Add")]
         [Summary("Add cash into a user's balance.")]
         [Remarks("Add <@User> <Cash>")]

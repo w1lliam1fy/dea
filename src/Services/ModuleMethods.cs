@@ -16,8 +16,8 @@ namespace DEA.Services
             var guild = GuildRepository.FetchGuild(user.GuildId);
             if (guild.ModRoles != null)
                 foreach (var role in guild.ModRoles)
-                    if (user.Guild.GetRole(Convert.ToUInt64(role.Value)) != null)
-                        if (user.RoleIds.Any(x => x.ToString() == role.Value.AsString)) return true;
+                    if (user.Guild.GetRole(Convert.ToUInt64(role.Name)) != null)
+                        if (user.RoleIds.Any(x => x.ToString() == role.Name)) return true;
             return false;
         }
 
