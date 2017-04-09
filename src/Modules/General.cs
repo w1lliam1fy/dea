@@ -190,7 +190,7 @@ namespace DEA.Modules
         {
             user = user ?? Context.User as IGuildUser;
             var dbUser = UserRepository.FetchUser(user.Id, Context.Guild.Id);
-            await Send($"Cash/msg: {(dbUser.TemporaryMultiplier * dbUser.InvestmentMultiplier).ToString("N2")}\n" +
+            await Send($"Cash/msg: {(dbUser.TemporaryMultiplier * dbUser.InvestmentMultiplier).ToString("C", Config.CI)}\n" +
                        $"Chatting multiplier: {dbUser.TemporaryMultiplier.ToString("N2")}\n" +
                        $"Investment multiplier: {dbUser.InvestmentMultiplier.ToString("N2")}\n" +
                        $"Message cooldown: {dbUser.MessageCooldown / 1000} seconds",
