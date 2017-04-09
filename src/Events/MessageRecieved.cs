@@ -54,7 +54,6 @@ namespace DEA.Services
                 if (!result.IsSuccess && result.Error != CommandError.UnknownCommand)
                 {
                     var cmd = DEABot.CommandService.Search(Context, argPos).Commands.First().Command;
-                    if (result.ErrorReason.Length == 0) return;
                     var message = string.Empty;
                     switch (result.Error)
                     {
@@ -63,6 +62,9 @@ namespace DEA.Services
                             break;
                         case CommandError.ParseFailed:
                             message = $"Invalid number.";
+                            break;
+                        default:
+                            message = result.ErrorReason;
                             break;
                     }
                     if (!string.IsNullOrWhiteSpace(message))
