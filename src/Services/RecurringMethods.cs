@@ -49,7 +49,8 @@ namespace DEA.Services
         {
             Timer t = new Timer(async method => 
             {
-                foreach (Mute mute in await (await DEABot.Mutes.FindAsync("")).ToListAsync())
+                var builder = Builders<Mute>.Filter;
+                foreach (Mute mute in await (await DEABot.Mutes.FindAsync(builder.Empty)).ToListAsync())
                 {
                     if (DateTime.UtcNow.Subtract(mute.MutedAt).TotalMilliseconds > mute.MuteLength)
                     {
@@ -71,14 +72,14 @@ namespace DEA.Services
                                         IconUrl = "http://i.imgur.com/BQZJAqT.png",
                                         Text = $"Case #{guildData.CaseNumber}"
                                     };
-                                    var builder = new EmbedBuilder()
+                                    var embedBuilder = new EmbedBuilder()
                                     {
                                         Color = new Color(12, 255, 129),
                                         Description = $"**Action:** Automatic Unmute\n**User:** {guild.GetUser(mute.UserId)} ({guild.GetUser(mute.UserId).Id})",
                                         Footer = footer
                                     }.WithCurrentTimestamp();
                                     GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.CaseNumber, ++guildData.CaseNumber), guild.Id);
-                                    await channel.SendMessageAsync("", embed: builder);
+                                    await channel.SendMessageAsync("", embed: embedBuilder);
                                 }
                             }
                         }
