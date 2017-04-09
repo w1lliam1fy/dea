@@ -12,11 +12,8 @@ namespace DEA.Services
     public class RecurringMethods
     {
 
-        private DiscordSocketClient _client;
-
-        public RecurringMethods(DiscordSocketClient client)
+        public RecurringMethods()
         {
-            _client = client;
             ResetTemporaryMultiplier();
             AutoUnmute();
             ApplyInterestRate();
@@ -40,7 +37,8 @@ namespace DEA.Services
             {
                 var builder = Builders<Gang>.Filter;
                 foreach (var gang in await (await DEABot.Gangs.FindAsync(builder.Empty)).ToListAsync())
-                    await DEABot.Gangs.UpdateOneAsync(y => y.Id == gang.Id, DEABot.GangUpdateBuilder.Set(x => x.Wealth, Services.Math.CalculateIntrestRate(gang.Wealth)));
+                    await DEABot.Gangs.UpdateOneAsync(y => y.Id == gang.Id, 
+                        DEABot.GangUpdateBuilder.Set(x => x.Wealth, Math.CalculateIntrestRate(gang.Wealth) * gang.Wealth));
             },
             null,
             Config.INTEREST_RATE_COOLDOWN,
@@ -55,7 +53,7 @@ namespace DEA.Services
                 {
                     if (DateTime.UtcNow.Subtract(mute.MutedAt).TotalMilliseconds > mute.MuteLength)
                     {
-                        var guild = _client.GetGuild(mute.GuildId);
+                        var guild = DEABot.Client.GetGuild(mute.GuildId);
                         if (guild != null && guild.GetUser(mute.UserId) != null)
                         {
                             var guildData = GuildRepository.FetchGuild(guild.Id);

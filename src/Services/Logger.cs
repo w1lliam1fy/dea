@@ -39,6 +39,7 @@ namespace DEA.Services
                 GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.CaseNumber, ++guild.CaseNumber), context.Guild.Id);
             }
         }
+        
 
         public static async Task DetailedLog(SocketGuild guild, string actionType, string action, string objectType, string objectName, ulong id, Color color, bool incrementCaseNumber = true)
         {

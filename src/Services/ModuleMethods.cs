@@ -1,4 +1,5 @@
 ﻿using DEA.Database.Repository;
+using DEA.Resources;
 using Discord;
 using Discord.Commands;
 using System;
@@ -9,10 +10,10 @@ namespace DEA.Services
 {
     public static class ModuleMethods
     {
-        public static bool IsMod(SocketCommandContext context, IGuildUser user)
+        public static bool IsMod(IGuildUser user)
         {
             if (user.GuildPermissions.Administrator) return true;
-            var guild = GuildRepository.FetchGuild(context.Guild.Id);
+            var guild = GuildRepository.FetchGuild(user.GuildId);
             if (guild.ModRoles != null)
                 foreach (var role in guild.ModRoles)
                     if (user.Guild.GetRole(Convert.ToUInt64(role.Value)) != null)
@@ -38,9 +39,9 @@ namespace DEA.Services
             var user = UserRepository.FetchUser(context);
             var guild = GuildRepository.FetchGuild(context.Guild.Id);
             if (context.Guild.GetTextChannel(guild.GambleId) != null && context.Channel.Id != guild.GambleId)
-                await ResponseMethods.Error(context, $"You may only gamble in {context.Guild.GetTextChannel(guild.GambleId).Mention}!");
-            if (bet < Config.BET_MIN) await ResponseMethods.Error(context, $"Lowest bet is {Config.BET_MIN}$.");
-            if (bet > user.Cash) await ResponseMethods.Error(context, $"You do not have enough money. Balance: {user.Cash.ToString("C", Config.CI)}.");
+                throw new DEAException($"You may only gamble in {context.Guild.GetTextChannel(guild.GambleId).Mention}!");
+            if (bet < Config.BET_MIN) throw new DEAException($"Lowest bet is {Config.BET_MIN}$.");
+            if (bet > user.Cash) throw new DEAException($"You do not have enough money. Balance: {user.Cash.ToString("C", Config.CI)}.");
             decimal roll = new Random().Next(1, 10001) / 100m;
             if (roll >= odds)
             {

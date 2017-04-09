@@ -1,28 +1,24 @@
 ﻿using DEA.Services;
-using Discord.WebSocket;
 using System.Threading.Tasks;
 
 namespace DEA.Events
 {
     class Ready
     {
-        private DiscordSocketClient _client;
-
-        public Ready(DiscordSocketClient client)
+        public Ready()
         {
-            _client = client;
+            DEABot.Client.Ready += HandleReady;
 
-            _client.Ready += HandleReady;
-
-            new UserEvents(_client);
-            new RoleEvents(_client);
-            new ChannelEvents(_client);
-            new RecurringMethods(_client);
+            new UserEvents();
+            new RoleEvents();
+            new ChannelEvents();
+            new RecurringMethods();
+            new ErrorHandler();
         }
 
         private async Task HandleReady()
         {
-            await _client.SetGameAsync("USE $help");
+            await DEABot.Client.SetGameAsync("USE $help");
         }
 
     }

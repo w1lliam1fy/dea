@@ -55,7 +55,7 @@ namespace DEA.Modules
         public async Task SetNSFWRole(IRole nsfwRole)
         {
             if (nsfwRole.Position > Context.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
-                await Error("You may not set the NSFW role to a role that is higher in hierarchy than DEA's highest role.");
+                Error("You may not set the NSFW role to a role that is higher in hierarchy than DEA's highest role.");
             GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.NsfwRoleId, nsfwRole.Id), Context.Guild.Id);
             var nsfwChannel = Context.Guild.GetChannel(GuildRepository.FetchGuild(Context.Guild.Id).NsfwId);
             if (nsfwChannel != null && Context.Guild.CurrentUser.GuildPermissions.Administrator)
@@ -75,7 +75,7 @@ namespace DEA.Modules
         {
             var guild = GuildRepository.FetchGuild(Context.Guild.Id);
             var NsfwRole = Context.Guild.GetRole(guild.NsfwRoleId);
-            if (NsfwRole == null) await Error("Everyone will always be able to use NSFW commands since there has been no NSFW role that has been set.\n" +
+            if (NsfwRole == null) Error("Everyone will always be able to use NSFW commands since there has been no NSFW role that has been set.\n" +
                                                      $"In order to change this, an administrator may use the `{guild.Prefix}SetNSFWRole` command.");
             if ((Context.User as IGuildUser).RoleIds.Any(x => x == guild.NsfwRoleId))
             {
@@ -131,7 +131,7 @@ namespace DEA.Modules
                 doc.Load(data);
 
                 var node = doc.LastChild.ChildNodes[new Random().Next(0, doc.LastChild.ChildNodes.Count)];
-                if (node == null) await Error("No result found.");
+                if (node == null) Error("No result found.");
 
                 var url = node.Attributes["file_url"].Value;
 
