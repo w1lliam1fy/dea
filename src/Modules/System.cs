@@ -145,7 +145,7 @@ If you have any other questions, you may join the **Official DEA Discord Server:
         [Summary("All the statistics about DEA.")]
         public async Task Info()
         {
-            var uptime = (DateTime.UtcNow - _process.StartTime);
+            var uptime = (DateTime.Now - _process.StartTime);
             var application = await Context.Client.GetApplicationInfoAsync();
             var message = $@"```asciidoc
 = STATISTICS =
