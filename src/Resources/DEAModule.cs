@@ -7,7 +7,7 @@ namespace DEA.Resources
 {
     public class DEAModule : ModuleBase<SocketCommandContext>
     {
-        public async Task Reply(string description, string title = null, Color color = default(Color))
+        public async Task<IUserMessage> Reply(string description, string title = null, Color color = default(Color))
         {
             var rand = new Random();
             var builder = new EmbedBuilder()
@@ -18,10 +18,10 @@ namespace DEA.Resources
             if (title != null) builder.Title = title;
             if (color.RawValue != default(Color).RawValue) builder.Color = color;
 
-            await ReplyAsync(string.Empty, embed: builder);
+            return await ReplyAsync(string.Empty, embed: builder);
         }
 
-        public async Task Send(string description, string title = null, Color color = default(Color))
+        public async Task<IUserMessage> Send(string description, string title = null, Color color = default(Color))
         {
             var rand = new Random();
             var builder = new EmbedBuilder()
@@ -32,7 +32,7 @@ namespace DEA.Resources
             if (title != null) builder.Title = title;
             if (color.RawValue != default(Color).RawValue) builder.Color = color;
 
-            await ReplyAsync(string.Empty, embed: builder);
+            return await ReplyAsync(string.Empty, embed: builder);
         }
 
         public void Error(string message)

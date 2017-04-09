@@ -103,6 +103,9 @@ namespace DEA.Modules
             var messages = await Context.Channel.GetMessagesAsync(quantity).Flatten();
             await Context.Channel.DeleteMessagesAsync(messages);
             await Logger.ModLog(Context, "Clear", new Color(34, 59, 255), reason, null, $"\n**Quantity:** {quantity}");
+            var msg = await Reply($"Messages deleted: **{quantity}**.");
+            await Task.Delay(2500);
+            await msg.DeleteAsync();
         }
 
         [Command("Chill")]
