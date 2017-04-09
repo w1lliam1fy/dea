@@ -35,7 +35,7 @@ namespace DEA.Services
 
             if (context.Guild.GetTextChannel(guild.ModLogId) != null)
             {
-                await context.Guild.GetTextChannel(guild.ModLogId).SendMessageAsync("", embed: builder);
+                await context.Guild.GetTextChannel(guild.ModLogId).SendMessageAsync(string.Empty, embed: builder);
                 GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.CaseNumber, ++guild.CaseNumber), context.Guild.Id);
             }
         }
@@ -67,7 +67,7 @@ namespace DEA.Services
                         Footer = footer
                     }.WithCurrentTimestamp();
 
-                    await guild.GetTextChannel(guildData.DetailedLogsId).SendMessageAsync("", embed: builder);
+                    await guild.GetTextChannel(guildData.DetailedLogsId).SendMessageAsync(string.Empty, embed: builder);
                     if (incrementCaseNumber) GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.CaseNumber, ++guildData.CaseNumber), guild.Id);
                 }
             }

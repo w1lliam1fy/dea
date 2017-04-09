@@ -17,7 +17,6 @@ namespace DEA.Modules
         [Command("CreateGang")]
         [Require(Attributes.NoGang)]
         [Summary("Allows you to create a gang at a hefty price.")]
-        [Remarks("Create <Name>")]
         public async Task ResetCooldowns([Remainder] string name)
         {
             var user = UserRepository.FetchUser(Context);
@@ -31,27 +30,25 @@ namespace DEA.Modules
         [Command("AddGangMember")]
         [Require(Attributes.InGang, Attributes.GangLeader)]
         [Summary("Allows you to add a member to your gang.")]
-        [Remarks("AddGangMember <@GangMember>")]
-        public async Task AddToGang(IGuildUser user)
+        public async Task AddToGang(IGuildUser newMember)
         {
-            if (GangRepository.InGang(user.Id, Context.Guild.Id)) Error("This user is already in a gang.");
+            if (GangRepository.InGang(newMember.Id, Context.Guild.Id)) Error("This user is already in a gang.");
             if (GangRepository.IsFull(Context.User.Id, Context.Guild.Id)) Error("Your gang is already full!");
-            GangRepository.AddMember(Context.User.Id, Context.Guild.Id, user.Id);
-            await Reply($"{user} is now a new member of your gang!");
-            var channel = await user.CreateDMChannelAsync();
+            GangRepository.AddMember(Context.User.Id, Context.Guild.Id, newMember.Id);
+            await Reply($"{newMember} is now a new member of your gang!");
+            var channel = await newMember.CreateDMChannelAsync();
             await ResponseMethods.DM(channel, $"Congrats! You are now a member of {GangRepository.FetchGang(Context).Name}!");
         }
 
         [Command("Gang")]
         [Summary("Gives you all the info about any gang.")]
-        [Remarks("Gang [Gang name]")]
         public async Task Gang([Remainder] string gangName = null)
         {
             Gang gang;
             if (gangName == null) gang = GangRepository.FetchGang(Context);
             else gang = GangRepository.FetchGang(gangName, Context.Guild.Id);
-            var members = "";
-            var leader = "";
+            var members = string.Empty;
+            var leader = string.Empty;
             if (Context.Guild.GetUser(gang.LeaderId) != null) leader = $"<@{gang.LeaderId}>";
             foreach (var member in gang.Members)
                 if (Context.Guild.GetUser(member) != null) members += $"<@{member}>, ";
@@ -64,7 +61,6 @@ namespace DEA.Modules
         [Command("GangLb")]
         [Alias("gangs")]
         [Summary("Shows the wealthiest gangs.")]
-        [Remarks("Gangs")]
         public async Task Ganglb()
         {
             var gangs = DEABot.Gangs.Find(y => y.GuildId == Context.Guild.Id).ToList();
@@ -72,7 +68,7 @@ namespace DEA.Modules
             if (gangs.Count == 0) Error("There aren't any gangs yet.");
 
             var sortedGangs = gangs.OrderByDescending(x => x.Wealth).ToList();
-            string description = "";
+            string description = string.Empty;
 
             for (int i = 0; i < sortedGangs.Count(); i++)
             {
@@ -86,7 +82,6 @@ namespace DEA.Modules
         [Command("LeaveGang")]
         [Require(Attributes.InGang)]
         [Summary("Allows you to break all ties with a gang.")]
-        [Remarks("LeaveGang")]
         public async Task LeaveGang()
         {
             var gang = GangRepository.FetchGang(Context);
@@ -103,24 +98,22 @@ namespace DEA.Modules
         [Command("KickGangMember")]
         [Require(Attributes.InGang, Attributes.GangLeader)]
         [Summary("Kicks a user from your gang.")]
-        [Remarks("KickGangMember")]
-        public async Task KickFromGang([Remainder] IGuildUser user)
+        public async Task KickFromGang([Remainder] IGuildUser gangMember)
         {
-            if (user.Id == Context.User.Id)
+            if (gangMember.Id == Context.User.Id)
                 Error("You may not kick yourself!");
-            if (!GangRepository.IsMemberOf(Context.User.Id, Context.Guild.Id, user.Id))
+            if (!GangRepository.IsMemberOf(Context.User.Id, Context.Guild.Id, gangMember.Id))
                 Error("This user is not a member of your gang!");
             var gang = GangRepository.FetchGang(Context);
-            GangRepository.RemoveMember(user.Id, Context.Guild.Id);
-            await Reply($"You have successfully kicked {user} from {gang.Name}");
-            var channel = await user.CreateDMChannelAsync();
+            GangRepository.RemoveMember(gangMember.Id, Context.Guild.Id);
+            await Reply($"You have successfully kicked {gangMember} from {gang.Name}");
+            var channel = await gangMember.CreateDMChannelAsync();
             await ResponseMethods.DM(channel, $"You have been kicked from {gang.Name}.");
         }
 
         [Command("DestroyGang")]
         [Require(Attributes.InGang, Attributes.GangLeader)]
         [Summary("Destroys a gang entirely taking down all funds with it.")]
-        [Remarks("DestroyGang")]
         public async Task DestroyGang()
         {
             GangRepository.DestroyGang(Context.User.Id, Context.Guild.Id);
@@ -131,44 +124,41 @@ namespace DEA.Modules
         [Alias("ChangeName")]
         [Require(Attributes.InGang, Attributes.GangLeader)]
         [Summary("Changes the name of your gang.")]
-        [Remarks("ChangeGangName <New name>")]
-        public async Task ChangeGangName([Remainder] string name)
+        public async Task ChangeGangName([Remainder] string newName)
         {
             var user = UserRepository.FetchUser(Context);
             if (user.Cash < Config.GANG_NAME_CHANGE_COST)
                 Error($"You do not have {Config.GANG_NAME_CHANGE_COST.ToString("C", Config.CI)}. Balance: {user.Cash.ToString("C", Config.CI)}.");
             var gangs = DEABot.Gangs.Find(y => y.GuildId == Context.Guild.Id).ToList();
-            if (gangs.Any(x => x.Name.ToLower() == name.ToLower())) Error($"There is already a gang by the name {name}.");
+            if (gangs.Any(x => x.Name.ToLower() == newName.ToLower())) Error($"There is already a gang by the name {newName}.");
             await UserRepository.EditCashAsync(Context, -Config.GANG_NAME_CHANGE_COST);
-            GangRepository.Modify(DEABot.GangUpdateBuilder.Set(x => x.Name, name), Context);
-            await Reply($"You have successfully changed your gang name to {name} at the cost of {Config.GANG_NAME_CHANGE_COST.ToString("C", Config.CI)}.");
+            GangRepository.Modify(DEABot.GangUpdateBuilder.Set(x => x.Name, newName), Context);
+            await Reply($"You have successfully changed your gang name to {newName} at the cost of {Config.GANG_NAME_CHANGE_COST.ToString("C", Config.CI)}.");
         }
 
         [Command("TransferLeadership")]
         [Require(Attributes.InGang, Attributes.GangLeader)]
         [Summary("Transfers the leadership of your gang to another member.")]
-        [Remarks("TransferLeadership <@GangMember>")]
-        public async Task TransferLeadership(IGuildUser user)
+        public async Task TransferLeadership(IGuildUser gangMember)
         {
-            if (user.Id == Context.User.Id) Error("You are already the leader of this gang!");
+            if (gangMember.Id == Context.User.Id) Error("You are already the leader of this gang!");
             var gang = GangRepository.FetchGang(Context);
-            if (!GangRepository.IsMemberOf(Context.User.Id, Context.Guild.Id, user.Id)) Error("This user is not a member of your gang!");
+            if (!GangRepository.IsMemberOf(Context.User.Id, Context.Guild.Id, gangMember.Id)) Error("This user is not a member of your gang!");
             for (int i = 0; i < gang.Members.Length; i++)
-                if (gang.Members[i] == user.Id)
+                if (gang.Members[i] == gangMember.Id)
                 {
                     gang.Members[i] = Context.User.Id;
                     GangRepository.Modify(DEABot.GangUpdateBuilder.Combine(
-                        DEABot.GangUpdateBuilder.Set(x => x.LeaderId, user.Id),
+                        DEABot.GangUpdateBuilder.Set(x => x.LeaderId, gangMember.Id),
                         DEABot.GangUpdateBuilder.Set(x => x.Members, gang.Members)), Context);
                     break;
                 }
-            await Reply($"You have successfully transferred the leadership of {gang.Name} to {user.Mention}");
+            await Reply($"You have successfully transferred the leadership of {gang.Name} to {gangMember.Mention}");
         }
 
         [Command("Deposit")]
         [Require(Attributes.InGang)]
         [Summary("Deposit cash into your gang's funds.")]
-        [Remarks("Deposit <Cash>")]
         public async Task Deposit(decimal cash)
         {
             var user = UserRepository.FetchUser(Context);
@@ -185,7 +175,6 @@ namespace DEA.Modules
         [Require(Attributes.InGang)]
         [RequireCooldown]
         [Summary("Withdraw cash from your gang's funds.")]
-        [Remarks("Withdraw <Cash>")]
         public async Task Withdraw(decimal cash)
         {
             var gang = GangRepository.FetchGang(Context);

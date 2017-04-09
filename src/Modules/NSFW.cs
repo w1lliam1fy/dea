@@ -16,7 +16,6 @@ namespace DEA.Modules
         [Command("ChangeNSFWSettings")]
         [Require(Attributes.Admin)]
         [Summary("Enables/disables NSFW commands in your server.")]
-        [Remarks("ChangeNSFWSettings")]
         public async Task ChangeNSFWSettings()
         {
             switch (GuildRepository.FetchGuild(Context.Guild.Id).Nsfw)
@@ -35,7 +34,6 @@ namespace DEA.Modules
         [Command("SetNSFWChannel")]
         [Require(Attributes.Admin)]
         [Summary("Sets a specific channel for all NSFW commands.")]
-        [Remarks("SetNSFWChannel <#NSFWChannel>")]
         public async Task SetNSFWChannel(ITextChannel nsfwChannel)
         {
             GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.NsfwId, nsfwChannel.Id), Context.Guild.Id);
@@ -51,7 +49,6 @@ namespace DEA.Modules
         [Command("SetNSFWRole")]
         [Require(Attributes.Admin)]
         [Summary("Only allow users with a specific role to use NSFW commands.")]
-        [Remarks("SetNSFWRole <@NSFWRole>")]
         public async Task SetNSFWRole(IRole nsfwRole)
         {
             if (nsfwRole.Position > Context.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
@@ -70,7 +67,6 @@ namespace DEA.Modules
         [Alias("EnableNSFW", "DisableNSFW")]
         [Summary("Enables/disables the user's ability to use NSFW commands.")]
         [RequireBotPermission(GuildPermission.ManageRoles)]
-        [Remarks("NSFW")]
         public async Task JoinNSFW()
         {
             var guild = GuildRepository.FetchGuild(Context.Guild.Id);
@@ -93,7 +89,6 @@ namespace DEA.Modules
         [Alias("titties", "tities", "boobs", "boob")]
         [Require(Attributes.Nsfw)]
         [Summary("Motorboat that shit.")]
-        [Remarks("Tits")]
         public async Task Tits()
         {
             using (var http = new HttpClient())
@@ -107,7 +102,6 @@ namespace DEA.Modules
         [Alias("butt", "butts", "booty")]
         [Require(Attributes.Nsfw)]
         [Summary("Sauce me some booty how about that.")]
-        [Remarks("Ass")]
         public async Task Ass()
         {
             using (var http = new HttpClient())
@@ -120,7 +114,6 @@ namespace DEA.Modules
         [Command("Hentai")]
         [Require(Attributes.Nsfw)]
         [Summary("The real shit goes down with custom hentai tags.")]
-        [Remarks("Hentai [tag]")]
         public async Task Gelbooru([Remainder] string tag = "")
         {
             tag = tag?.Replace(" ", "_");

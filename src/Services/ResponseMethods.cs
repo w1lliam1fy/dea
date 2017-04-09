@@ -18,7 +18,7 @@ namespace DEA.Services
             if (title != null) builder.Title = title;
             if (color.RawValue != default(Color).RawValue) builder.Color = color;
 
-            await context.Channel.SendMessageAsync("", embed: builder);
+            await context.Channel.SendMessageAsync(string.Empty, embed: builder);
         }
 
         public static async Task Send(SocketCommandContext context, string description, string title = null, Color color = default(Color))
@@ -32,7 +32,7 @@ namespace DEA.Services
             if (title != null) builder.Title = title;
             if (color.RawValue != default(Color).RawValue) builder.Color = color;
 
-            await context.Channel.SendMessageAsync("", embed: builder);
+            await context.Channel.SendMessageAsync(string.Empty, embed: builder);
         }
 
         public static async Task DM(IDMChannel channel, string description, string title = null, Color color = default(Color))
@@ -46,7 +46,7 @@ namespace DEA.Services
             if (title != null) builder.Title = title;
             if (color.RawValue != default(Color).RawValue) builder.Color = color;
 
-            await channel.SendMessageAsync("", embed: builder);
+            await channel.SendMessageAsync(string.Empty, embed: builder);
         }
 
     }

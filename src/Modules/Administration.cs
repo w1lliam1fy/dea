@@ -15,7 +15,6 @@ namespace DEA.Modules
 
         [Command("RoleIDs")]
         [Summary("Gets the ID of all roles in the guild.")]
-        [Remarks("RoleIDs")]
         public async Task RoleIDs()
         {
             string message = null;
@@ -28,7 +27,6 @@ namespace DEA.Modules
 
         [Command("SetPrefix")]
         [Summary("Sets the guild specific prefix.")]
-        [Remarks("SetPrefix <Prefix>")]
         public async Task SetPrefix(string prefix)
         {
             if (prefix.Length > 3) Error("The maximum character length of a prefix is 3.");
@@ -39,7 +37,6 @@ namespace DEA.Modules
         [Command("SetMutedRole")]
         [Alias("SetMuteRole")]
         [Summary("Sets the muted role.")]
-        [Remarks("SetMutedRole <@MutedRole>")]
         public async Task SetMutedRole(IRole mutedRole)
         {
             if (mutedRole.Position > Context.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
@@ -50,8 +47,7 @@ namespace DEA.Modules
 
         [Command("AddRank")]
         [Summary("Adds a rank role for the DEA cash system.")]
-        [Remarks("AddRank <@RankRole> <Cash required>")]
-        public async Task AddRank(IRole rankRole, double cashRequired)
+        public async Task AddRank(IRole rankRole, double cashRequired = 500)
         {
             var guild = GuildRepository.FetchGuild(Context.Guild.Id);
             if (rankRole.Position > Context.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
@@ -65,6 +61,7 @@ namespace DEA.Modules
             {
                 if (guild.RankRoles.Any(x => x.Name == rankRole.Id.ToString()))
                     Error("This role is already a rank role.");
+                if (cashRequired == 500) cashRequired = guild.RankRoles.OrderByDescending(x => x.Value).First().Value.AsDouble * 2;
                 if (guild.RankRoles.Any(x => (int)x.Value.AsDouble == (int)cashRequired))
                     Error("There is already a role set to that amount of cash required.");
                 guild.RankRoles.Add(rankRole.Id.ToString(), cashRequired);
@@ -76,7 +73,6 @@ namespace DEA.Modules
 
         [Command("RemoveRank")]
         [Summary("Removes a rank role for the DEA cash system.")]
-        [Remarks("RemoveRank <@RankRole>")]
         public async Task RemoveRank(IRole rankRole)
         {
             var guild = GuildRepository.FetchGuild(Context.Guild.Id);
@@ -90,7 +86,6 @@ namespace DEA.Modules
 
         [Command("SetModLog")]
         [Summary("Sets the moderation log.")]
-        [Remarks("SetModLog <#ModLog>")]
         public async Task SetModLogChannel(ITextChannel modLogChannel)
         {
             GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.ModLogId, modLogChannel.Id), Context.Guild.Id);
@@ -99,7 +94,6 @@ namespace DEA.Modules
 
         [Command("SetDetailedLogs")]
         [Summary("Sets the detailed logs.")]
-        [Remarks("SetDetailedLogs <#DetailsLogs>")]
         public async Task SetDetailedLogsChannel(ITextChannel detailedLogsChannel)
         {
             GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.DetailedLogsId, detailedLogsChannel.Id), Context.Guild.Id);
@@ -109,7 +103,6 @@ namespace DEA.Modules
         [Command("SetGambleChannel")]
         [Alias("SetGamble")]
         [Summary("Sets the gambling channel.")]
-        [Remarks("SetGambleChannel <#GambleChannel>")]
         public async Task SetGambleChannel(ITextChannel gambleChannel)
         {
             GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.GambleId, gambleChannel.Id), Context.Guild.Id);

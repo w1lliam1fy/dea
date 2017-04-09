@@ -81,7 +81,7 @@ namespace DEA.Services
                                         Footer = footer
                                     }.WithCurrentTimestamp();
                                     GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.CaseNumber, ++guildData.CaseNumber), guild.Id);
-                                    await channel.SendMessageAsync("", embed: embedBuilder);
+                                    await channel.SendMessageAsync(string.Empty, embed: embedBuilder);
                                 }
                             }
                         }

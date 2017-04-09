@@ -16,7 +16,6 @@ namespace DEA.Modules
         [Command("Ban")]
         [RequireBotPermission(GuildPermission.BanMembers)]
         [Summary("Bans a user from the server.")]
-        [Remarks("Ban <@User> [Reason]")]
         public async Task Ban(IGuildUser userToBan, [Remainder] string reason = "No reason.")
         {
             if (ModuleMethods.IsMod(userToBan)) Error("You cannot ban another mod!");
@@ -29,7 +28,6 @@ namespace DEA.Modules
         [Command("Kick")]
         [RequireBotPermission(GuildPermission.KickMembers)]
         [Summary("Kicks a user from the server.")]
-        [Remarks("Kick <@User> [Reason]")]
         public async Task Kick(IGuildUser userToKick, [Remainder] string reason = "No reason.")
         {
             if (ModuleMethods.IsMod(userToKick)) Error("You cannot kick another mod!");
@@ -42,7 +40,6 @@ namespace DEA.Modules
         [Command("Mute")]
         [RequireBotPermission(GuildPermission.ManageRoles)]
         [Summary("Temporarily mutes a user.")]
-        [Remarks("Mute <@User> [Reason]")]
         public async Task Mute(IGuildUser userToMute, [Remainder] string reason = "No reason.")
         {
             var guild = GuildRepository.FetchGuild(Context.Guild.Id);
@@ -61,7 +58,6 @@ namespace DEA.Modules
         [Alias("CMute")]
         [RequireBotPermission(GuildPermission.ManageRoles)]
         [Summary("Temporarily mutes a user for x amount of hours.")]
-        [Remarks("CustomMute <Hours> <@User> [Reason]")]
         public async Task CustomMute(double hours, IGuildUser userToMute, [Remainder] string reason = "No reason.")
         {
             if (hours > 168) Error("You may not mute a user for more than a week.");
@@ -83,7 +79,6 @@ namespace DEA.Modules
         [Command("Unmute")]
         [RequireBotPermission(GuildPermission.ManageRoles)]
         [Summary("Unmutes a muted user.")]
-        [Remarks("Unmute <@User> [Reason]")]
         public async Task Unmute(IGuildUser userToUnmute, [Remainder] string reason = "No reason.")
         {
             var mutedRoleId = GuildRepository.FetchGuild(Context.Guild.Id).MutedRoleId;
@@ -98,23 +93,21 @@ namespace DEA.Modules
         [Command("Clear")]
         [RequireBotPermission(GuildPermission.ManageMessages)]
         [Summary("Deletes x amount of messages.")]
-        [Remarks("Clear [Quantity of messages]")]
-        public async Task CleanAsync(int count = 25, [Remainder] string reason = "No reason.")
+        public async Task CleanAsync(int quantity = 25, [Remainder] string reason = "No reason.")
         {
-            if (count < Config.MIN_CLEAR) Error($"You may not clear less than {Config.MIN_CLEAR} messages.");
-            if (count > Config.MAX_CLEAR) Error($"You may not clear more than {Config.MAX_CLEAR} messages.");
+            if (quantity < Config.MIN_CLEAR) Error($"You may not clear less than {Config.MIN_CLEAR} messages.");
+            if (quantity > Config.MAX_CLEAR) Error($"You may not clear more than {Config.MAX_CLEAR} messages.");
             var guild = GuildRepository.FetchGuild(Context.Guild.Id);
             if (Context.Channel.Id == guild.ModLogId || Context.Channel.Id == guild.DetailedLogsId)
                 Error("For security reasons, you may not use this command in a log channel.");
-            var messages = await Context.Channel.GetMessagesAsync(count).Flatten();
+            var messages = await Context.Channel.GetMessagesAsync(quantity).Flatten();
             await Context.Channel.DeleteMessagesAsync(messages);
-            await Logger.ModLog(Context, "Clear", new Color(34, 59, 255), reason, null, $"\n**Quantity:** {count}");
+            await Logger.ModLog(Context, "Clear", new Color(34, 59, 255), reason, null, $"\n**Quantity:** {quantity}");
         }
 
         [Command("Chill")]
         [RequireBotPermission(GuildPermission.Administrator)]
         [Summary("Prevents users from talking in a specific channel for x amount of seconds.")]
-        [Remarks("Chill [Number of seconds]")]
         public async Task Chill(int seconds = 30, [Remainder] string reason = "No reason.")
         {
             if (seconds < Config.MIN_CHILL) Error($"You may not chill for less than {Config.MIN_CHILL} seconds.");

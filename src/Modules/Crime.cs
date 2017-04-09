@@ -1,11 +1,8 @@
 ﻿using Discord;
 using Discord.Commands;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using DEA.Database.Repository;
-using Discord.WebSocket;
-using System.Collections.Generic;
 using DEA.Resources;
 using DEA.Services;
 
@@ -17,7 +14,6 @@ namespace DEA.Modules
 
         [Command("Whore")]
         [Summary("Sell your body for some quick cash.")]
-        [Remarks("Whore")]
         public async Task Whore()
         {
             UserRepository.Modify(DEABot.UserUpdateBuilder.Set(x => x.Whore, DateTime.UtcNow), Context);
@@ -40,7 +36,6 @@ namespace DEA.Modules
         [Command("Jump")]
         [Require(Attributes.Jump)]
         [Summary("Jump some random nigga in the hood.")]
-        [Remarks("Jump")]
         public async Task Jump()
         {
             UserRepository.Modify(DEABot.UserUpdateBuilder.Set(x => x.Jump, DateTime.UtcNow), Context);
@@ -63,7 +58,6 @@ namespace DEA.Modules
         [Command("Steal")]
         [Require(Attributes.Steal)]
         [Summary("Snipe some goodies from your local stores.")]
-        [Remarks("Steal")]
         public async Task Steal()
         {
             UserRepository.Modify(DEABot.UserUpdateBuilder.Set(x => x.Steal, DateTime.UtcNow), Context);
@@ -90,9 +84,8 @@ namespace DEA.Modules
         [Command("Bully")]
         [Require(Attributes.Bully)]
         [Summary("Bully anyone's nickname to whatever you please.")]
-        [Remarks("Bully <@User> <Nickname>")]
         [RequireBotPermission(GuildPermission.ManageNicknames)]
-        public async Task Bully(SocketGuildUser userToBully, [Remainder] string nickname)
+        public async Task Bully(IGuildUser userToBully, [Remainder] string nickname)
         {
             if (nickname.Length > 32) Error("The length of a nickname may not be longer than 32 characters.");
             if (ModuleMethods.IsMod(userToBully))
@@ -106,7 +99,6 @@ namespace DEA.Modules
         [Command("Rob")]
         [Require(Attributes.Rob)]
         [Summary("Lead a large scale operation on a local bank.")]
-        [Remarks("Rob <Amount of cash to spend on resources>")]
         public async Task Rob(decimal resources)
         {
             var user = UserRepository.FetchUser(Context);
@@ -132,27 +124,5 @@ namespace DEA.Modules
             }
         }
 
-        [Command("Cooldowns")]
-        [Remarks("Cooldowns")]
-        [Summary("Check when you can sauce out more cash.")]
-        public async Task Cooldowns()
-        {
-            var user = UserRepository.FetchUser(Context);
-            var cooldowns = new Dictionary<String, TimeSpan>();
-            cooldowns.Add("Whore", Config.WHORE_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(user.Whore)));
-            cooldowns.Add("Jump", Config.JUMP_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(user.Jump)));
-            cooldowns.Add("Steal", Config.STEAL_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(user.Steal)));
-            cooldowns.Add("Rob", Config.ROB_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(user.Rob)));
-            cooldowns.Add("Withdraw", Config.WITHDRAW_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(user.Withdraw)));
-            var description = "";
-            foreach (var cooldown in cooldowns)
-            {
-                if (cooldown.Value.TotalMilliseconds > 0)
-                    description += $"{cooldown.Key}: {cooldown.Value.Hours}:{cooldown.Value.Minutes.ToString("D2")}:{cooldown.Value.Seconds.ToString("D2")}\n";
-            }
-            if (description.Length == 0) Error("All your commands are available for use!");
-
-            await Send(description, $"All cooldowns for {Context.User}");
-        }
     }
 }

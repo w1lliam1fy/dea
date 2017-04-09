@@ -18,7 +18,7 @@ namespace DEA.Resources
             if (title != null) builder.Title = title;
             if (color.RawValue != default(Color).RawValue) builder.Color = color;
 
-            await ReplyAsync("", embed: builder);
+            await ReplyAsync(string.Empty, embed: builder);
         }
 
         public async Task Send(string description, string title = null, Color color = default(Color))
@@ -32,7 +32,7 @@ namespace DEA.Resources
             if (title != null) builder.Title = title;
             if (color.RawValue != default(Color).RawValue) builder.Color = color;
 
-            await ReplyAsync("", embed: builder);
+            await ReplyAsync(string.Empty, embed: builder);
         }
 
         public void Error(string message)

@@ -58,7 +58,7 @@ namespace DEA.Services
                     switch (result.Error)
                     {
                         case CommandError.BadArgCount:
-                            message = $"You are incorrectly using this command. Usage: `{prefix}{cmd.Remarks}`";
+                            message = $"You are incorrectly using this command. Usage: `{guild.Prefix}{CommandHelper.GetUsage(cmd)}`";
                             break;
                         case CommandError.ParseFailed:
                             message = $"Invalid number.";
@@ -75,7 +75,7 @@ namespace DEA.Services
                             Color = new Color(255, 0, 0)
                         };
 
-                        await Context.Channel.SendMessageAsync("", embed: builder);
+                        await Context.Channel.SendMessageAsync(string.Empty, embed: builder);
                     }
                         
                 }

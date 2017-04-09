@@ -28,7 +28,7 @@ namespace DEA.Events
                         Color = new Color(255, 0, 0)
                     };
 
-                    await cmdEx.Context.Channel.SendMessageAsync("", embed: builder);
+                    await cmdEx.Context.Channel.SendMessageAsync(string.Empty, embed: builder);
                 }
                 else
                 {
@@ -41,10 +41,10 @@ namespace DEA.Events
                         Color = new Color(255, 0, 0)
                     };
 
-                    await cmdEx.Context.Channel.SendMessageAsync("", embed: builder);
+                    await cmdEx.Context.Channel.SendMessageAsync(string.Empty, embed: builder);
 
                     if ((await cmdEx.Context.Guild.GetCurrentUserAsync() as IGuildUser).GetPermissions(cmdEx.Context.Channel as SocketTextChannel).AttachFiles)
-                        using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(cmdEx.ToString() ?? "")))
+                        using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(cmdEx.ToString() ?? string.Empty)))
                             await cmdEx.Context.Channel.SendFileAsync(ms, "Stack_Trace.txt");
                 }
             }

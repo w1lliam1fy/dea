@@ -43,7 +43,7 @@ namespace Discord.Commands
             else
             {
                 await Logger.Cooldown(context as SocketCommandContext, command.Name, cooldown.Subtract(DateTime.UtcNow.Subtract(lastUse)));
-                return PreconditionResult.FromError("");
+                return PreconditionResult.FromError(string.Empty);
             }
         }
     }

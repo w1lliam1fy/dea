@@ -28,18 +28,16 @@ namespace System.Modules
         }
 
         [Command("Invite")]
-        [Remarks("Invite")]
         [Summary("Invite DEA to your server!")]
-        public async Task Invite(string investString = null)
+        public async Task Invite()
         {
             await Reply($"Click on the following link to add DEA to your server: <https://discordapp.com/oauth2/authorize?client_id={Context.Guild.CurrentUser.Id}&scope=bot&permissions=410119182>");
         }
 
         [Command("Information")]
         [Alias("info")]
-        [Remarks("Information")]
         [Summary("Information about the DEA Cash System.")]
-        public async Task Info(string investString = null)
+        public async Task Info()
         {
             var guild = GuildRepository.FetchGuild(Context.Guild.Id);
             string p = guild.Prefix;
@@ -64,19 +62,20 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
         [Command("Modules")]
         [Alias("module")]
         [Summary("All command modules.")]
-        [Remarks("Modules")]
         public async Task Modules()
         {
-            string modules = "";
-            foreach (var module in _service.Modules) modules += $"{module.Name}, ";
+            string modules = string.Empty;
+            foreach (var module in _service.Modules)
+                modules += $"{module.Name}, ";
+            modules = modules.Replace("DEAModule, ", string.Empty);
             await Reply("Current command modules: " + modules.Substring(0, modules.Length - 2) + ".");
+            
         }
 
         [Command("Help")]
         [Alias("commands", "cmd", "cmds", "command")]
         [Summary("All command information.")]
-        [Remarks("Help [Command or Module]")]
-        public async Task HelpAsync(string commandOrModule = null)
+        public async Task Help(string commandOrModule = null)
         {
             string prefix = GuildRepository.FetchGuild(Context.Guild.Id).Prefix;
 
@@ -108,7 +107,7 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
                         foreach (var alias in cmd.Aliases)
                             if (alias == commandOrModule.ToLower())
                             {
-                                await Send($"**Description:** {cmd.Summary}\n**Usage:** `{prefix}{cmd.Remarks}`", cmd.Name);
+                                await Send($"**Description:** {cmd.Summary}\n**Usage:** `{prefix}{CommandHelper.GetUsage(cmd)}`", cmd.Name);
                                 return;
                             }
                     }
@@ -120,8 +119,10 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
             {
                 var channel = await Context.User.CreateDMChannelAsync();
 
-                string modules = "";
-                foreach (var module in _service.Modules) modules += $"{module.Name}, ";
+                string modules = string.Empty;
+                foreach (var module in _service.Modules)
+                    modules += $"{module.Name}, ";
+                modules = modules.Replace("DEAModule, ", string.Empty);
 
                 await ResponseMethods.DM(channel,
                     $@"DEA is a multi-purpose Discord Bot mainly known for it's infamous Cash System with multiple subtleties referencing to the show Narcos, which inspired the creation of this masterpiece.
@@ -141,9 +142,8 @@ If you have any other questions, you may join the **Official DEA Discord Server:
 
         [Command("Stats")]
         [Alias("statistics")]
-        [Remarks("Stats")]
         [Summary("All the statistics about DEA.")]
-        public async Task Info()
+        public async Task Stats()
         {
             var uptime = (DateTime.Now - _process.StartTime);
             var application = await Context.Client.GetApplicationInfoAsync();

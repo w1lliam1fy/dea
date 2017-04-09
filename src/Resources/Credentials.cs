@@ -8,7 +8,7 @@
 
         public int ShardCount { get; set; } = 1;
 
-        public string MongoDBConnectionString { get; set; } = "";
+        public string MongoDBConnectionString { get; set; } = string.Empty;
 
         public string DatabaseName { get; set; }
     }
