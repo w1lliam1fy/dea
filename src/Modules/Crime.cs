@@ -1,11 +1,13 @@
 ﻿using Discord;
 using Discord.Commands;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using DEA.Database.Repository;
 using Discord.WebSocket;
 using System.Collections.Generic;
 using DEA.Resources;
+using DEA.Services;
 
 namespace DEA.Modules
 {
@@ -16,7 +18,6 @@ namespace DEA.Modules
         [Command("Whore")]
         [Summary("Sell your body for some quick cash.")]
         [Remarks("Whore")]
-        [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Whore()
         {
             UserRepository.Modify(DEABot.UserUpdateBuilder.Set(x => x.Whore, DateTime.UtcNow), Context);
@@ -40,7 +41,6 @@ namespace DEA.Modules
         [Require(Attributes.Jump)]
         [Summary("Jump some random nigga in the hood.")]
         [Remarks("Jump")]
-        [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Jump()
         {
             UserRepository.Modify(DEABot.UserUpdateBuilder.Set(x => x.Jump, DateTime.UtcNow), Context);
@@ -64,7 +64,6 @@ namespace DEA.Modules
         [Require(Attributes.Steal)]
         [Summary("Snipe some goodies from your local stores.")]
         [Remarks("Steal")]
-        [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Steal()
         {
             UserRepository.Modify(DEABot.UserUpdateBuilder.Set(x => x.Steal, DateTime.UtcNow), Context);
@@ -95,7 +94,11 @@ namespace DEA.Modules
         [RequireBotPermission(GuildPermission.ManageNicknames)]
         public async Task Bully(SocketGuildUser userToBully, [Remainder] string nickname)
         {
-            if (nickname.Length > 32) throw new Exception("The length of a nickname may not be longer than 32 characters.");
+            if (nickname.Length > 32) Error("The length of a nickname may not be longer than 32 characters.");
+            if (ModuleMethods.IsMod(userToBully))
+                Error("You may not bully a moderator.");
+            if (UserRepository.FetchUser(userToBully.Id, Context.Guild.Id).Cash > UserRepository.FetchUser(Context).Cash)
+                Error("You may not bully a user with more money than you.");
             await userToBully.ModifyAsync(x => x.Nickname = nickname);
             await Send($"{userToBully.Mention} just got ***BULLIED*** by {Context.User.Mention} with his new nickname: \"{nickname}\".");
         }
@@ -104,13 +107,12 @@ namespace DEA.Modules
         [Require(Attributes.Rob)]
         [Summary("Lead a large scale operation on a local bank.")]
         [Remarks("Rob <Amount of cash to spend on resources>")]
-        [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Rob(decimal resources)
         {
             var user = UserRepository.FetchUser(Context);
-            if (user.Cash < resources) throw new Exception($"You do not have enough money. Balance: {user.Cash.ToString("C", Config.CI)}");
-            if (resources < Config.MIN_RESOURCES) throw new Exception($"The minimum amount of money to spend on resources for rob is {Config.MIN_RESOURCES.ToString("C", Config.CI)}.");
-            if (resources > Config.MAX_RESOURCES) throw new Exception($"The maximum amount of money to spend on resources for rob is {Config.MAX_RESOURCES.ToString("C", Config.CI)}.");
+            if (user.Cash < resources) Error($"You do not have enough money. Balance: {user.Cash.ToString("C", Config.CI)}");
+            if (resources < Config.MIN_RESOURCES) Error($"The minimum amount of money to spend on resources for rob is {Config.MIN_RESOURCES.ToString("C", Config.CI)}.");
+            if (resources > Config.MAX_RESOURCES) Error($"The maximum amount of money to spend on resources for rob is {Config.MAX_RESOURCES.ToString("C", Config.CI)}.");
             UserRepository.Modify(DEABot.UserUpdateBuilder.Set(x => x.Rob, DateTime.UtcNow), Context);
             Random rand = new Random();
             decimal succesRate = rand.Next(Config.MIN_ROB_ODDS * 100, Config.MAX_ROB_ODDS * 100) / 10000m;
@@ -133,7 +135,6 @@ namespace DEA.Modules
         [Command("Cooldowns")]
         [Remarks("Cooldowns")]
         [Summary("Check when you can sauce out more cash.")]
-        [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Cooldowns()
         {
             var user = UserRepository.FetchUser(Context);
@@ -149,7 +150,7 @@ namespace DEA.Modules
                 if (cooldown.Value.TotalMilliseconds > 0)
                     description += $"{cooldown.Key}: {cooldown.Value.Hours}:{cooldown.Value.Minutes.ToString("D2")}:{cooldown.Value.Seconds.ToString("D2")}\n";
             }
-            if (description.Length == 0) throw new Exception("All your commands are available for use!");
+            if (description.Length == 0) Error("All your commands are available for use!");
 
             await Send(description, $"All cooldowns for {Context.User}");
         }

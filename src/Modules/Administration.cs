@@ -1,6 +1,5 @@
 ﻿using Discord;
 using Discord.Commands;
-using System;
 using System.Threading.Tasks;
 using DEA.Database.Repository;
 using System.Linq;
@@ -32,7 +31,7 @@ namespace DEA.Modules
         [Remarks("SetPrefix <Prefix>")]
         public async Task SetPrefix(string prefix)
         {
-            if (prefix.Length > 3) throw new Exception("The maximum character length of a prefix is 3.");
+            if (prefix.Length > 3) Error("The maximum character length of a prefix is 3.");
             GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.Prefix, prefix), Context.Guild.Id);
             await Reply($"You have successfully set the prefix to {prefix}!");
         }
@@ -44,7 +43,7 @@ namespace DEA.Modules
         public async Task SetMutedRole(IRole mutedRole)
         {
             if (mutedRole.Position > Context.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
-                throw new Exception($"DEA must be higher in the heigharhy than {mutedRole.Mention}.");
+                Error($"DEA must be higher in the heigharhy than {mutedRole.Mention}.");
             GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.MutedRoleId, mutedRole.Id), Context.Guild.Id);
             await Reply($"You have successfully set the muted role to {mutedRole.Mention}!");
         }
@@ -56,7 +55,7 @@ namespace DEA.Modules
         {
             var guild = GuildRepository.FetchGuild(Context.Guild.Id);
             if (rankRole.Position > Context.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
-                throw new Exception($"DEA must be higher in the heigharhy than {rankRole.Mention}.");
+                Error($"DEA must be higher in the heigharhy than {rankRole.Mention}.");
             if (guild.RankRoles == null)
                 GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.RankRoles, new BsonDocument()
                 {
@@ -65,9 +64,9 @@ namespace DEA.Modules
             else
             {
                 if (guild.RankRoles.Any(x => x.Name == rankRole.Id.ToString()))
-                    throw new Exception("This role is already a rank role.");
+                    Error("This role is already a rank role.");
                 if (guild.RankRoles.Any(x => (int)x.Value.AsDouble == (int)cashRequired))
-                    throw new Exception("There is already a role set to that amount of cash required.");
+                    Error("There is already a role set to that amount of cash required.");
                 guild.RankRoles.Add(rankRole.Id.ToString(), cashRequired);
                 GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.RankRoles, guild.RankRoles), Context.Guild.Id);
             }
@@ -81,9 +80,9 @@ namespace DEA.Modules
         public async Task RemoveRank(IRole rankRole)
         {
             var guild = GuildRepository.FetchGuild(Context.Guild.Id);
-            if (guild.RankRoles == null) throw new Exception("There are no ranks yet!");
+            if (guild.RankRoles == null) Error("There are no ranks yet!");
             if (!guild.RankRoles.Any(x => x.Name == rankRole.Id.ToString()))
-                throw new Exception("This role is not a rank role.");
+                Error("This role is not a rank role.");
             guild.RankRoles.Remove(rankRole.Id.ToString());
             GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.RankRoles, guild.RankRoles), Context.Guild.Id);
             await Reply($"You have successfully removed the {rankRole.Mention} rank!");

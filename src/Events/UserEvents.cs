@@ -9,15 +9,13 @@ namespace DEA.Events
 {
     class UserEvents
     {
-        private DiscordSocketClient _client;
 
-        public UserEvents(DiscordSocketClient client)
+        public UserEvents()
         {
-            _client = client;
-            _client.UserJoined += HandleUserJoin;
-            _client.UserBanned += HandleUserBanned;
-            _client.UserLeft += HandleUserLeft;
-            _client.UserUnbanned += HandleUserUnbanned;
+            DEABot.Client.UserJoined += HandleUserJoin;
+            DEABot.Client.UserBanned += HandleUserBanned;
+            DEABot.Client.UserLeft += HandleUserLeft;
+            DEABot.Client.UserUnbanned += HandleUserUnbanned;
         }
 
         private async Task HandleUserJoin(SocketGuildUser u)

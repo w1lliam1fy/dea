@@ -1,4 +1,5 @@
 ﻿using DEA.Database.Models;
+using DEA.Resources;
 using Discord.Commands;
 using MongoDB.Driver;
 using System;
@@ -25,29 +26,29 @@ namespace DEA.Database.Repository
         public static Gang FetchGang(SocketCommandContext context)
         {
             Expression<Func<Gang, bool>> expression = c => (c.LeaderId == context.User.Id || c.Members.Any(x => x == context.User.Id)) && c.GuildId == context.Guild.Id;
-            if (!DEABot.Gangs.Find(expression).Limit(1).Any()) throw new Exception("You are not in a gang.");
+            if (!DEABot.Gangs.Find(expression).Limit(1).Any()) throw new DEAException("You are not in a gang.");
             return DEABot.Gangs.Find(expression).Limit(1).First();
         }
 
         public static Gang FetchGang(ulong userId, ulong guildId)
         {
             Expression<Func<Gang, bool>> expression = c => (c.LeaderId == userId || c.Members.Any(x => x == userId)) && c.GuildId == guildId;
-            if (!DEABot.Gangs.Find(expression).Limit(1).Any()) throw new Exception("This user is not in a gang.");
+            if (!DEABot.Gangs.Find(expression).Limit(1).Any()) throw new DEAException("This user is not in a gang.");
             return DEABot.Gangs.Find(expression).Limit(1).First();
         }
 
         public static Gang FetchGang(string gangName, ulong guildId)
         {
             Expression<Func<Gang, bool>> expression = c => c.Name.ToLower() == gangName.ToLower() && c.GuildId == guildId;
-            if (!DEABot.Gangs.Find(expression).Limit(1).Any()) throw new Exception("This gang does not exist.");
+            if (!DEABot.Gangs.Find(expression).Limit(1).Any()) throw new DEAException("This gang does not exist.");
             return DEABot.Gangs.Find(expression).Limit(1).First();
         }
 
         public static Gang CreateGang(ulong leaderId, ulong guildId, string name)
         {
             Expression<Func<Gang, bool>> expression = x => x.Name.ToLower() == name.ToLower() && x.GuildId == guildId;
-            if (DEABot.Gangs.Find(expression).Limit(1).Any()) throw new Exception($"There is already a gang by the name {name}.");
-            if (name.Length > Config.GANG_NAME_CHAR_LIMIT) throw new Exception($"The length of a gang name may not be longer than {Config.GANG_NAME_CHAR_LIMIT} characters.");
+            if (DEABot.Gangs.Find(expression).Limit(1).Any()) throw new DEAException($"There is already a gang by the name {name}.");
+            if (name.Length > Config.GANG_NAME_CHAR_LIMIT) throw new DEAException($"The length of a gang name may not be longer than {Config.GANG_NAME_CHAR_LIMIT} characters.");
             var createdGang = new Gang()
             {
                 GuildId = guildId,

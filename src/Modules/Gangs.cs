@@ -22,7 +22,7 @@ namespace DEA.Modules
         {
             var user = UserRepository.FetchUser(Context);
             if (user.Cash < Config.GANG_CREATION_COST)
-                throw new Exception($"You do not have {Config.GANG_CREATION_COST.ToString("C", Config.CI)}. Balance: {user.Cash.ToString("C", Config.CI)}.");
+                Error($"You do not have {Config.GANG_CREATION_COST.ToString("C", Config.CI)}. Balance: {user.Cash.ToString("C", Config.CI)}.");
             var gang = GangRepository.CreateGang(Context.User.Id, Context.Guild.Id, name);
             await UserRepository.EditCashAsync(Context, -Config.GANG_CREATION_COST);
             await Reply($"You have successfully created the {gang.Name} gang!");
@@ -34,8 +34,8 @@ namespace DEA.Modules
         [Remarks("AddGangMember <@GangMember>")]
         public async Task AddToGang(IGuildUser user)
         {
-            if (GangRepository.InGang(user.Id, Context.Guild.Id)) throw new Exception("This user is already in a gang.");
-            if (GangRepository.IsFull(Context.User.Id, Context.Guild.Id)) throw new Exception("Your gang is already full!");
+            if (GangRepository.InGang(user.Id, Context.Guild.Id)) Error("This user is already in a gang.");
+            if (GangRepository.IsFull(Context.User.Id, Context.Guild.Id)) Error("Your gang is already full!");
             GangRepository.AddMember(Context.User.Id, Context.Guild.Id, user.Id);
             await Reply($"{user} is now a new member of your gang!");
             var channel = await user.CreateDMChannelAsync();
@@ -47,8 +47,6 @@ namespace DEA.Modules
         [Remarks("Gang [Gang name]")]
         public async Task Gang([Remainder] string gangName = null)
         {
-            if (gangName == null && !GangRepository.InGang(Context.User.Id, Context.Guild.Id))
-                throw new Exception($"You are not in a gang.");
             Gang gang;
             if (gangName == null) gang = GangRepository.FetchGang(Context);
             else gang = GangRepository.FetchGang(gangName, Context.Guild.Id);
@@ -71,7 +69,7 @@ namespace DEA.Modules
         {
             var gangs = DEABot.Gangs.Find(y => y.GuildId == Context.Guild.Id).ToList();
 
-            if (gangs.Count == 0) throw new Exception("There aren't any gangs yet.");
+            if (gangs.Count == 0) Error("There aren't any gangs yet.");
 
             var sortedGangs = gangs.OrderByDescending(x => x.Wealth).ToList();
             string description = "";
@@ -94,7 +92,7 @@ namespace DEA.Modules
             var gang = GangRepository.FetchGang(Context);
             var prefix = GuildRepository.FetchGuild(Context.Guild.Id).Prefix;
             if (gang.LeaderId == Context.User.Id)
-                throw new Exception($"You may not leave a gang if you are the owner. Either destroy the gang with the `{prefix}DestroyGang` command, or " +
+                Error($"You may not leave a gang if you are the owner. Either destroy the gang with the `{prefix}DestroyGang` command, or " +
                                     $"transfer the ownership of the gang to another member with the `{prefix}TransferLeadership` command.");
             GangRepository.RemoveMember(Context.User.Id, Context.Guild.Id);
             await Reply($"You have successfully left {gang.Name}");
@@ -109,9 +107,9 @@ namespace DEA.Modules
         public async Task KickFromGang([Remainder] IGuildUser user)
         {
             if (user.Id == Context.User.Id)
-                throw new Exception("You may not kick yourself!");
+                Error("You may not kick yourself!");
             if (!GangRepository.IsMemberOf(Context.User.Id, Context.Guild.Id, user.Id))
-                throw new Exception("This user is not a member of your gang!");
+                Error("This user is not a member of your gang!");
             var gang = GangRepository.FetchGang(Context);
             GangRepository.RemoveMember(user.Id, Context.Guild.Id);
             await Reply($"You have successfully kicked {user} from {gang.Name}");
@@ -138,9 +136,9 @@ namespace DEA.Modules
         {
             var user = UserRepository.FetchUser(Context);
             if (user.Cash < Config.GANG_NAME_CHANGE_COST)
-                throw new Exception($"You do not have {Config.GANG_NAME_CHANGE_COST.ToString("C", Config.CI)}. Balance: {user.Cash.ToString("C", Config.CI)}.");
+                Error($"You do not have {Config.GANG_NAME_CHANGE_COST.ToString("C", Config.CI)}. Balance: {user.Cash.ToString("C", Config.CI)}.");
             var gangs = DEABot.Gangs.Find(y => y.GuildId == Context.Guild.Id).ToList();
-            if (gangs.Any(x => x.Name.ToLower() == name.ToLower())) throw new Exception($"There is already a gang by the name {name}.");
+            if (gangs.Any(x => x.Name.ToLower() == name.ToLower())) Error($"There is already a gang by the name {name}.");
             await UserRepository.EditCashAsync(Context, -Config.GANG_NAME_CHANGE_COST);
             GangRepository.Modify(DEABot.GangUpdateBuilder.Set(x => x.Name, name), Context);
             await Reply($"You have successfully changed your gang name to {name} at the cost of {Config.GANG_NAME_CHANGE_COST.ToString("C", Config.CI)}.");
@@ -152,9 +150,9 @@ namespace DEA.Modules
         [Remarks("TransferLeadership <@GangMember>")]
         public async Task TransferLeadership(IGuildUser user)
         {
-            if (user.Id == Context.User.Id) throw new Exception("You are already the leader of this gang!");
+            if (user.Id == Context.User.Id) Error("You are already the leader of this gang!");
             var gang = GangRepository.FetchGang(Context);
-            if (!GangRepository.IsMemberOf(Context.User.Id, Context.Guild.Id, user.Id)) throw new Exception("This user is not a member of your gang!");
+            if (!GangRepository.IsMemberOf(Context.User.Id, Context.Guild.Id, user.Id)) Error("This user is not a member of your gang!");
             for (int i = 0; i < gang.Members.Length; i++)
                 if (gang.Members[i] == user.Id)
                 {
@@ -174,8 +172,8 @@ namespace DEA.Modules
         public async Task Deposit(decimal cash)
         {
             var user = UserRepository.FetchUser(Context);
-            if (cash < Config.MIN_DEPOSIT) throw new Exception($"The lowest deposit is {Config.MIN_DEPOSIT.ToString("C", Config.CI)}.");
-            if (user.Cash < cash) throw new Exception($"You do not have enough money. Balance: {user.Cash.ToString("C", Config.CI)}.");
+            if (cash < Config.MIN_DEPOSIT) Error($"The lowest deposit is {Config.MIN_DEPOSIT.ToString("C", Config.CI)}.");
+            if (user.Cash < cash) Error($"You do not have enough money. Balance: {user.Cash.ToString("C", Config.CI)}.");
             await UserRepository.EditCashAsync(Context, -cash);
             var gang = GangRepository.FetchGang(Context);
             GangRepository.Modify(DEABot.GangUpdateBuilder.Set(x => x.Wealth, gang.Wealth + cash), Context.User.Id, Context.Guild.Id);
@@ -192,9 +190,9 @@ namespace DEA.Modules
         {
             var gang = GangRepository.FetchGang(Context);
             var user = UserRepository.FetchUser(Context);
-            if (cash < Config.MIN_WITHDRAW) throw new Exception($"The minimum withdrawal is {Config.MIN_WITHDRAW.ToString("C", Config.CI)}.");
+            if (cash < Config.MIN_WITHDRAW) Error($"The minimum withdrawal is {Config.MIN_WITHDRAW.ToString("C", Config.CI)}.");
             if (cash > gang.Wealth * Config.WITHDRAW_CAP)
-                throw new Exception($"You may only withdraw {Config.WITHDRAW_CAP.ToString("P")} of your gang's wealth, " +
+                Error($"You may only withdraw {Config.WITHDRAW_CAP.ToString("P")} of your gang's wealth, " +
                                     $"that is {(gang.Wealth * Config.WITHDRAW_CAP).ToString("C", Config.CI)}.");
             UserRepository.Modify(DEABot.UserUpdateBuilder.Set(x => x.Withdraw, DateTime.UtcNow), Context);
             GangRepository.Modify(DEABot.GangUpdateBuilder.Set(x => x.Wealth, gang.Wealth - cash), Context.User.Id, Context.Guild.Id);

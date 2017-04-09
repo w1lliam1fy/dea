@@ -13,28 +13,16 @@ namespace DEA.Services
 {
     public class MessageRecieved
     {
-        private DiscordSocketClient _client;
-        private CommandService _service;
+
         private IDependencyMap _map;
 
-        public async Task InitializeAsync(DiscordSocketClient c, IDependencyMap map)
+        public async Task InitializeAsync(IDependencyMap map)
         {
-            _client = c;
-            _service = new CommandService(new CommandServiceConfig()
-            {
-                CaseSensitiveCommands = false,
-#if DEBUG
-                DefaultRunMode = RunMode.Sync
-#elif RELEASE
-                DefaultRunMode = RunMode.Async
-#endif
-            });
-
-            await _service.AddModulesAsync(Assembly.GetEntryAssembly());
+            await DEABot.CommandService.AddModulesAsync(Assembly.GetEntryAssembly());
             _map = map;
             //_map.Add(new InteractiveService(_client));
 
-            _client.MessageReceived += HandleCommandAsync;
+            DEABot.Client.MessageReceived += HandleCommandAsync;
         }
 
         private async Task HandleCommandAsync(SocketMessage s)
@@ -42,7 +30,7 @@ namespace DEA.Services
             var msg = s as SocketUserMessage;
             if (msg == null) return;
 
-            var Context = new SocketCommandContext(_client, msg);
+            var Context = new SocketCommandContext(DEABot.Client, msg);
 
             if (Context.User.IsBot) return;
 
@@ -59,15 +47,14 @@ namespace DEA.Services
             string prefix = guild.Prefix;
 
             if (msg.HasStringPrefix(prefix, ref argPos) ||
-                msg.HasMentionPrefix(_client.CurrentUser, ref argPos))
+                msg.HasMentionPrefix(DEABot.Client.CurrentUser, ref argPos))
             {
                 PrettyConsole.Log(LogSeverity.Debug, $"Guild: {Context.Guild.Name}, User: {Context.User}", msg.Content);
-                var result = await _service.ExecuteAsync(Context, argPos, _map);
+                var result = await DEABot.CommandService.ExecuteAsync(Context, argPos, _map);
                 if (!result.IsSuccess && result.Error != CommandError.UnknownCommand)
                 {
-                    var cmd = _service.Search(Context, argPos).Commands.First().Command;
-                    if (result.ErrorReason.Length == 0) return;
-                    var message = "";
+                    var cmd = DEABot.CommandService.Search(Context, argPos).Commands.First().Command;
+                    var message = string.Empty;
                     switch (result.Error)
                     {
                         case CommandError.BadArgCount:
@@ -77,11 +64,20 @@ namespace DEA.Services
                             message = $"Invalid number.";
                             break;
                         default:
-                            message = $"{result.ErrorReason}";
+                            message = result.ErrorReason;
                             break;
                     }
+                    if (!string.IsNullOrWhiteSpace(message))
+                    {
+                        var builder = new EmbedBuilder()
+                        {
+                            Description = $"{Context.User.Mention}, {message}",
+                            Color = new Color(255, 0, 0)
+                        };
 
-                    await ResponseMethods.Reply(Context, message, null, new Color(255, 0, 0));
+                        await Context.Channel.SendMessageAsync("", embed: builder);
+                    }
+                        
                 }
             }
             else if (msg.ToString().Length >= Config.MIN_CHAR_LENGTH && !msg.ToString().StartsWith(":"))

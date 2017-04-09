@@ -27,11 +27,18 @@ namespace System.Modules
             _service = service;
         }
 
+        [Command("Invite")]
+        [Remarks("Invite")]
+        [Summary("Invite DEA to your server!")]
+        public async Task Invite(string investString = null)
+        {
+            await Reply($"Click on the following link to add DEA to your server: <https://discordapp.com/oauth2/authorize?client_id={Context.Guild.CurrentUser.Id}&scope=bot&permissions=410119182>");
+        }
+
         [Command("Information")]
         [Alias("info")]
         [Remarks("Information")]
         [Summary("Information about the DEA Cash System.")]
-        [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Info(string investString = null)
         {
             var guild = GuildRepository.FetchGuild(Context.Guild.Id);
@@ -58,7 +65,6 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
         [Alias("module")]
         [Summary("All command modules.")]
         [Remarks("Modules")]
-        [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task Modules()
         {
             string modules = "";
@@ -70,12 +76,9 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
         [Alias("commands", "cmd", "cmds", "command")]
         [Summary("All command information.")]
         [Remarks("Help [Command or Module]")]
-        [RequireBotPermission(GuildPermission.EmbedLinks)]
         public async Task HelpAsync(string commandOrModule = null)
         {
             string prefix = GuildRepository.FetchGuild(Context.Guild.Id).Prefix;
-
-            
 
             if (commandOrModule != null)
             {
@@ -127,7 +130,7 @@ For all information about command usage and setup on your Discord Sever, view th
 
 This command may be used for view the commands for each of the following modules: {modules.Substring(0, modules.Length - 2)}. It may also be used the view the usage of a specific command.
 
-In order to **add DEA to your Discord Server**, click the following link: <https://discordapp.com/oauth2/authorize?client_id={Context.Client.CurrentUser.Id}&scope=bot&permissions=477195286> 
+In order to **add DEA to your Discord Server**, click the following link: <https://discordapp.com/oauth2/authorize?client_id={Context.Guild.CurrentUser.Id}&scope=bot&permissions=410119182> 
 
 If you have any other questions, you may join the **Official DEA Discord Server:** <https://discord.gg/Tuptja9>, a server home to infamous meme events such as insanity.",
                     "Welcome to DEA");
@@ -144,7 +147,6 @@ If you have any other questions, you may join the **Official DEA Discord Server:
         {
             var uptime = (DateTime.UtcNow - _process.StartTime);
             var application = await Context.Client.GetApplicationInfoAsync();
-            Console.WriteLine(GC.GetTotalMemory(true));
             var message = $@"```asciidoc
 = STATISTICS =
 • Memory   :: {(_process.PrivateMemorySize64 / 1000000).ToString("N2")} MB

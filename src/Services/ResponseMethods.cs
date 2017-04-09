@@ -48,5 +48,6 @@ namespace DEA.Services
 
             await channel.SendMessageAsync("", embed: builder);
         }
+
     }
 }

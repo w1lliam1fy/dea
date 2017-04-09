@@ -35,7 +35,7 @@ namespace DEA.Modules
         [Remarks("Add <@User> <Cash>")]
         public async Task Give(IGuildUser userMentioned, decimal money)
         {
-            if (money < 0) throw new Exception("You may not add negative money to a user's balance.");
+            if (money < 0) Error("You may not add negative money to a user's balance.");
             await UserRepository.EditCashAsync(Context, userMentioned.Id, money);
             await Reply($"Successfully added {money.ToString("C", Config.CI)} to {userMentioned.Mention}'s balance.");
         }
@@ -45,7 +45,7 @@ namespace DEA.Modules
         [Remarks("Remove <@User> <Cash>")]
         public async Task Remove(IGuildUser userMentioned, decimal money)
         {
-            if (money < 0) throw new Exception("You may not remove a negative amount of money from a user's balance.");
+            if (money < 0) Error("You may not remove a negative amount of money from a user's balance.");
             await UserRepository.EditCashAsync(Context, userMentioned.Id, -money);
             await Reply($"Successfully removed {money.ToString("C", Config.CI)} from {userMentioned.Mention}'s balance.");
         }
@@ -74,7 +74,7 @@ namespace DEA.Modules
         [Remarks("AddModRole <@ModRole>")]
         public async Task AddModRole(IRole modRole, int permissionLevel = 1)
         {
-            if (permissionLevel < 1 || permissionLevel > 3) throw new Exception("Permission levels:\nModeration: 1\nAdministration: 2\nServer Owner: 3");
+            if (permissionLevel < 1 || permissionLevel > 3) Error("Permission levels:\nModeration: 1\nAdministration: 2\nServer Owner: 3");
             var guild = GuildRepository.FetchGuild(Context.Guild.Id);
             if (guild.ModRoles == null)
                 GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.ModRoles, new BsonDocument()
@@ -95,9 +95,9 @@ namespace DEA.Modules
         public async Task RemoveModRole(IRole modRole)
         {
             var guild = GuildRepository.FetchGuild(Context.Guild.Id);
-            if (guild.ModRoles == null) throw new Exception("There are no moderator roles yet!");
+            if (guild.ModRoles == null) Error("There are no moderator roles yet!");
             if (!guild.ModRoles.Any(x => x.Name == modRole.Id.ToString()))
-                throw new Exception("This role is not a moderator role!");
+                Error("This role is not a moderator role!");
             guild.ModRoles.Remove(modRole.Id.ToString());
             GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.ModRoles, guild.ModRoles), Context.Guild.Id);
             await Reply($"You have successfully set the moderator role to {modRole.Mention}!");

@@ -34,5 +34,10 @@ namespace DEA.Resources
 
             await ReplyAsync("", embed: builder);
         }
+
+        public void Error(string message)
+        {
+            throw new DEAException(message);
+        }
     }
 }

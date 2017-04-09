@@ -7,14 +7,11 @@ namespace DEA.Events
 {
     class RoleEvents
     {
-        private DiscordSocketClient _client;
-
-        public RoleEvents(DiscordSocketClient client)
+        public RoleEvents()
         {
-            _client = client;
-            _client.RoleCreated += HandleRoleCreated;
-            _client.RoleUpdated += HandleRoleUpdated;
-            _client.RoleDeleted += HandleRoleDeleted;
+            DEABot.Client.RoleCreated += HandleRoleCreated;
+            DEABot.Client.RoleUpdated += HandleRoleUpdated;
+            DEABot.Client.RoleDeleted += HandleRoleDeleted;
         }
 
         private async Task HandleRoleCreated(SocketRole role)

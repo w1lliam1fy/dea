@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace DEA
@@ -44,13 +45,13 @@ namespace DEA
             }
             catch (IOException e)
             {
-                PrettyConsole.Log(LogSeverity.Error, "Error while loading up Credentials.json, please fix this issue and restart the bot", e.Message);
-                Console.ReadKey();
+                PrettyConsole.Log(LogSeverity.Critical, "Error while loading up Credentials.json, please fix this issue and restart the bot", e.Message);
+                Console.ReadLine();
                 Environment.Exit(0);
             }
 
             DBClient = new MongoClient(Credentials.MongoDBConnectionString);
-            Database = DBClient.GetDatabase("dea");
+            Database = DBClient.GetDatabase("beta");
 
             Guilds = Database.GetCollection<Guild>("guilds");
             Users = Database.GetCollection<User>("users");
@@ -68,25 +69,42 @@ namespace DEA
             PrettyConsole.NewLine();
             Client = new DiscordSocketClient(new DiscordSocketConfig()
             {
-                LogLevel = LogSeverity.Error,
                 MessageCacheSize = 10,
                 TotalShards = Credentials.ShardCount,
                 //AlwaysDownloadUsers = true,
             });
 
-            Client.Log += (l)
-                => Task.Run(()
-                => PrettyConsole.Log(l.Severity, l.Source, l.Exception?.ToString() ?? l.Message));
-
             CommandService = new CommandService(new CommandServiceConfig()
             {
                 CaseSensitiveCommands = false,
-                DefaultRunMode = RunMode.Async
+                LogLevel = LogSeverity.Debug,
+#if DEBUG
+                DefaultRunMode = RunMode.Sync,
+#elif RELEASE
+                DefaultRunMode = RunMode.Async,
+#endif
             });
 
             var sw = Stopwatch.StartNew();
             //Connection
-            await Client.LoginAsync(TokenType.Bot, Credentials.Token).ConfigureAwait(false);
+            try
+            {
+                await Client.LoginAsync(TokenType.Bot, Credentials.Token);
+            }
+            catch (Discord.Net.HttpException httpEx)
+            {
+                switch (httpEx.HttpCode)
+                {
+                    case HttpStatusCode.Unauthorized:
+                        PrettyConsole.Log(LogSeverity.Critical, "Login failed", "Invalid token.");
+                        break;
+                    default:
+                        PrettyConsole.Log(LogSeverity.Critical, $"Login failed", httpEx.Reason);
+                        break;
+                }
+                Console.ReadLine();
+                Environment.Exit(0);
+            }
             await Client.StartAsync().ConfigureAwait(false);
             //await Client.DownloadAllUsersAsync().ConfigureAwait(false);
             sw.Stop();
@@ -94,8 +112,8 @@ namespace DEA
 
             var Map = new DependencyMap();
             ConfigureServices(Map);
-            await new MessageRecieved().InitializeAsync(Client, Map);
-            new Ready(Client);
+            await new MessageRecieved().InitializeAsync(Map);
+            new Ready();
             PrettyConsole.Log(LogSeverity.Info, "Events and mapping successfully initialized", $"Client ready.");
         }
 

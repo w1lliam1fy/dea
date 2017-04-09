@@ -7,14 +7,12 @@ namespace DEA.Events
 {
     class ChannelEvents
     {
-        private DiscordSocketClient _client;
 
-        public ChannelEvents(DiscordSocketClient client)
+        public ChannelEvents()
         {
-            _client = client;
-            _client.ChannelCreated += HandleChannelCreated;
-            _client.ChannelDestroyed += HandleChannelDestroyed;
-            _client.ChannelUpdated += HandleChannelUpdated;
+            DEABot.Client.ChannelCreated += HandleChannelCreated;
+            DEABot.Client.ChannelDestroyed += HandleChannelDestroyed;
+            DEABot.Client.ChannelUpdated += HandleChannelUpdated;
         }
 
         private async Task HandleChannelCreated(SocketChannel socketChannel)

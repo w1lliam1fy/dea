@@ -12,11 +12,8 @@ namespace DEA.Services
     public class RecurringMethods
     {
 
-        private DiscordSocketClient _client;
-
-        public RecurringMethods(DiscordSocketClient client)
+        public RecurringMethods()
         {
-            _client = client;
             ResetTemporaryMultiplier();
             AutoUnmute();
             ApplyInterestRate();
@@ -40,7 +37,8 @@ namespace DEA.Services
             {
                 var builder = Builders<Gang>.Filter;
                 foreach (var gang in await (await DEABot.Gangs.FindAsync(builder.Empty)).ToListAsync())
-                    await DEABot.Gangs.UpdateOneAsync(y => y.Id == gang.Id, DEABot.GangUpdateBuilder.Set(x => x.Wealth, Services.Math.CalculateIntrestRate(gang.Wealth)));
+                    await DEABot.Gangs.UpdateOneAsync(y => y.Id == gang.Id, 
+                        DEABot.GangUpdateBuilder.Set(x => x.Wealth, Math.CalculateIntrestRate(gang.Wealth) * gang.Wealth + gang.Wealth));
             },
             null,
             Config.INTEREST_RATE_COOLDOWN,
@@ -51,11 +49,12 @@ namespace DEA.Services
         {
             Timer t = new Timer(async method => 
             {
-                foreach (Mute mute in await (await DEABot.Mutes.FindAsync("")).ToListAsync())
+                var builder = Builders<Mute>.Filter;
+                foreach (Mute mute in await (await DEABot.Mutes.FindAsync(builder.Empty)).ToListAsync())
                 {
                     if (DateTime.UtcNow.Subtract(mute.MutedAt).TotalMilliseconds > mute.MuteLength)
                     {
-                        var guild = _client.GetGuild(mute.GuildId);
+                        var guild = DEABot.Client.GetGuild(mute.GuildId);
                         if (guild != null && guild.GetUser(mute.UserId) != null)
                         {
                             var guildData = GuildRepository.FetchGuild(guild.Id);
@@ -73,14 +72,14 @@ namespace DEA.Services
                                         IconUrl = "http://i.imgur.com/BQZJAqT.png",
                                         Text = $"Case #{guildData.CaseNumber}"
                                     };
-                                    var builder = new EmbedBuilder()
+                                    var embedBuilder = new EmbedBuilder()
                                     {
                                         Color = new Color(12, 255, 129),
                                         Description = $"**Action:** Automatic Unmute\n**User:** {guild.GetUser(mute.UserId)} ({guild.GetUser(mute.UserId).Id})",
                                         Footer = footer
                                     }.WithCurrentTimestamp();
                                     GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.CaseNumber, ++guildData.CaseNumber), guild.Id);
-                                    await channel.SendMessageAsync("", embed: builder);
+                                    await channel.SendMessageAsync("", embed: embedBuilder);
                                 }
                             }
                         }
