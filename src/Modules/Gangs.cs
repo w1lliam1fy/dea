@@ -235,7 +235,7 @@ namespace DEA.Modules
                 var channel = await Context.Client.GetUser(raidedGang.LeaderId).CreateDMChannelAsync();
                 await ResponseMethods.DM(channel, $"{gang.Name} tried to raid your gang's stash, but one of your loyal sicarios gunned them out.");
 
-                await Reply($"With a {(Config.RAID_SUCCESS_ODDS / 100).ToString("P")} chance of success, you failed to steal {stolen.ToString("C", Config.CI)} " +
+                await Reply($"With a {Config.RAID_SUCCESS_ODDS}.00% chance of success, you failed to steal {stolen.ToString("C", Config.CI)} " +
                             $"and lost all resources in the process.");
             }
 
