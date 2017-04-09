@@ -23,7 +23,7 @@ The subtle references to the Nacro's show and many jokes slipped in here and the
 
 In order to run the bot, you must create a Credentials.json file, following the same format as the Credentials Example.json file. This will by default be gitignored, to prevent any accidental commits of your token.
 
-Furthermore, a connection to either a local or hosted MongoDB database is required as the large majority of the commands depends on the database storage. The connection string format is displayed in the Credentials Example.json file.
+Furthermore, a connection to either a local or hosted MongoDB database is required as the large majority of the commands depends on the database storage. The connection string format is displayed in the Credentials Example.json file. The best site for free MongoDB hosting with easy setup: https://mlab.com/
 
 ## Contributing
 
