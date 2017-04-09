@@ -29,8 +29,8 @@ namespace DEA.Services
                 await DEABot.Users.UpdateManyAsync(builder.Empty, DEABot.UserUpdateBuilder.Set(x => x.TemporaryMultiplier, 1));
             }, 
             null,
-            Config.TEMP_MULTIPLIER_RESET_COOLDOWN, 
-            Config.TEMP_MULTIPLIER_RESET_COOLDOWN));
+            0, 
+            10000));
         }
 
         private void ApplyInterestRate()
@@ -90,7 +90,7 @@ namespace DEA.Services
                 }
             },
             null,
-            Config.AUTO_UNMUTE_COOLDOWN,
+            0,
             Config.AUTO_UNMUTE_COOLDOWN));
         }
 
