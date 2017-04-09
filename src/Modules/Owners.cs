@@ -102,6 +102,24 @@ namespace DEA.Modules
             GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.ModRoles, guild.ModRoles), Context.Guild.Id);
             await Reply($"You have successfully set the moderator role to {modRole.Mention}!");
         }
+        
+        [Command("SetGlobalMultiplier")]
+        [Summary("Sets the global chatting multiplier.")]
+        [Remarks("SetGlobalMultiplier <Global multiplier>")]
+        public async Task SetGlobalMultiplier(decimal globalMultiplier){
+            if (globalMultiplier < 0) Error("The global multiplier may not be negative.");
+            GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.GlobalChattingMultiplier, globalMultiplier), Context.Guild.Id);
+            await Reply($"You have successfully set the global chatting multiplier to {globalMultiplier.ToString("N2")}!");
+        }
+        
+        [Command("SetRate")]
+        [Summary("Sets the global temporary multiplier increase rate.")]
+        [Remarks("SetRate <Increase rate>)"]
+        public async Task SetMultiplierIncrease(decimal rate){
+            if (rate < 0) Error("The temporary multiplier increase rate may not be negative.");
+            GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.TempMultiplierIncreaseRate, rate), Context.Guild.Id);
+            await Reply($"You have successfully set the global temporary multiplier increase rate to {rate.ToString("N2")}!");
+        }
 
     }
 }
