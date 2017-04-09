@@ -91,8 +91,12 @@ namespace DEA.Modules
                                     $"transfer the ownership of the gang to another member with the `{prefix}TransferLeadership` command.");
             GangRepository.RemoveMember(Context.User.Id, Context.Guild.Id);
             await Reply($"You have successfully left {gang.Name}.");
-            var channel = await Context.Client.GetUser(gang.LeaderId).CreateDMChannelAsync();
-            await ResponseMethods.DM(channel, $"{Context.User} has left {gang.Name}.");
+            var userToDM = Context.Guild.GetUser(gang.LeaderId);
+            if (userToDM != null)
+            {
+                var channel = await userToDM.CreateDMChannelAsync();
+                await ResponseMethods.DM(channel, $"{Context.User} has left {gang.Name}.");
+            }
         }
 
         [Command("KickGangMember")]
@@ -169,8 +173,12 @@ namespace DEA.Modules
             GangRepository.Modify(DEABot.GangUpdateBuilder.Set(x => x.Wealth, gang.Wealth + cash), Context);
             await Reply($"You have successfully deposited {cash.ToString("C", Config.CI)}. " +
                         $"{gang.Name}'s Wealth: {(gang.Wealth + cash).ToString("C", Config.CI)}");
-            var channel = await Context.Client.GetUser(gang.LeaderId).CreateDMChannelAsync();
-            await ResponseMethods.DM(channel, $"{Context.User} deposited {cash.ToString("C", Config.CI)} into your gang's wealth.");
+            var userToDM = Context.Guild.GetUser(gang.LeaderId);
+            if (userToDM != null)
+            {
+                var channel = await userToDM.CreateDMChannelAsync();
+                await ResponseMethods.DM(channel, $"{Context.User} deposited {cash.ToString("C", Config.CI)} into your gang's wealth.");
+            }
         }
 
         [Command("Withdraw")]
@@ -190,8 +198,12 @@ namespace DEA.Modules
             await UserRepository.EditCashAsync(Context, +cash);
             await Reply($"You have successfully withdrawn {cash.ToString("C", Config.CI)}. " +
                         $"{gang.Name}'s Wealth: {(gang.Wealth - cash).ToString("C", Config.CI)}.");
-            var channel = await Context.Client.GetUser(gang.LeaderId).CreateDMChannelAsync();
-            await ResponseMethods.DM(channel, $"{Context.User} has withdrawn {cash.ToString("C", Config.CI)} from your gang's wealth.");
+            var userToDM = Context.Guild.GetUser(gang.LeaderId);
+            if (userToDM != null)
+            {
+                var channel = await userToDM.CreateDMChannelAsync();
+                await ResponseMethods.DM(channel, $"{Context.User} has withdrawn {cash.ToString("C", Config.CI)} from your gang's wealth.");
+            }
         }
 
         [Command("Raid")]
@@ -219,8 +231,12 @@ namespace DEA.Modules
                     DEABot.GangUpdateBuilder.Set(x => x.Raid, DateTime.UtcNow)), 
                     Context);
 
-                var channel = await Context.Client.GetUser(raidedGang.LeaderId).CreateDMChannelAsync();
-                await ResponseMethods.DM(channel, $"{gang.Name} just raided your gang's wealth and managed to walk away with {stolen.ToString("C", Config.CI)}.");
+                var userToDM = Context.Guild.GetUser(gang.LeaderId);
+                if (userToDM != null)
+                {
+                    var channel = await userToDM.CreateDMChannelAsync();
+                    await ResponseMethods.DM(channel, $"{gang.Name} just raided your gang's wealth and managed to walk away with {stolen.ToString("C", Config.CI)}.");
+                }
 
                 await Reply($"With a {Config.RAID_SUCCESS_ODDS}.00% chance of success, you successfully stole {stolen.ToString("C", Config.CI)}. " +
                             $"{gang.Name}'s Wealth {(gang.Wealth + stolen).ToString("C", Config.CI)}.");
@@ -232,9 +248,13 @@ namespace DEA.Modules
                     DEABot.GangUpdateBuilder.Set(x => x.Raid, DateTime.UtcNow)),
                     Context);
 
-                var channel = await Context.Client.GetUser(raidedGang.LeaderId).CreateDMChannelAsync();
-                await ResponseMethods.DM(channel, $"{gang.Name} tried to raid your gang's stash, but one of your loyal sicarios gunned them out.");
-
+                var userToDM = Context.Guild.GetUser(gang.LeaderId);
+                if (userToDM != null)
+                {
+                    var channel = await userToDM.CreateDMChannelAsync();
+                    await ResponseMethods.DM(channel, $"{gang.Name} tried to raid your gang's stash, but one of your loyal sicarios gunned them out.");
+                }
+                
                 await Reply($"With a {Config.RAID_SUCCESS_ODDS}.00% chance of success, you failed to steal {stolen.ToString("C", Config.CI)} " +
                             $"and lost all resources in the process.");
             }
