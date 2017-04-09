@@ -12,7 +12,7 @@ namespace DEA.Events
             new UserEvents();
             new RoleEvents();
             new ChannelEvents();
-            new RecurringMethods();
+            new Timers();
             new ErrorHandler();
         }
 

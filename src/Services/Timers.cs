@@ -9,10 +9,10 @@ using MongoDB.Driver;
 
 namespace DEA.Services
 {
-    public class RecurringMethods
+    public class Timers
     {
 
-        public RecurringMethods()
+        public Timers()
         {
             ResetTemporaryMultiplier();
             AutoUnmute();
@@ -27,22 +27,23 @@ namespace DEA.Services
                 await DEABot.Users.UpdateManyAsync(builder.Empty, DEABot.UserUpdateBuilder.Set(x => x.TemporaryMultiplier, 1));
             }, 
             null, 
-            Config.TEMP_MULTIPLIER_RESET_COOLDOWN, 
-            Timeout.Infinite);
+            Timeout.Infinite, 
+            Config.TEMP_MULTIPLIER_RESET_COOLDOWN);
         }
 
         private void ApplyInterestRate()
         {
             Timer t = new Timer(async method => 
             {
+                await (DEABot.Client.GetChannel(295617446096928768) as ITextChannel).SendMessageAsync("Testing!");
                 var builder = Builders<Gang>.Filter;
                 foreach (var gang in await (await DEABot.Gangs.FindAsync(builder.Empty)).ToListAsync())
                     await DEABot.Gangs.UpdateOneAsync(y => y.Id == gang.Id, 
                         DEABot.GangUpdateBuilder.Set(x => x.Wealth, Math.CalculateIntrestRate(gang.Wealth) * gang.Wealth + gang.Wealth));
             },
             null,
-            Config.INTEREST_RATE_COOLDOWN,
-            Timeout.Infinite);
+            Timeout.Infinite,
+            Config.INTEREST_RATE_COOLDOWN);
         }
 
         private void AutoUnmute()
@@ -88,8 +89,8 @@ namespace DEA.Services
                 }
             },
             null,
-            Config.AUTO_UNMUTE_COOLDOWN,
-            Timeout.Infinite);
+            Timeout.Infinite,
+            Config.AUTO_UNMUTE_COOLDOWN);
         }
 
     }

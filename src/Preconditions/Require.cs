@@ -77,12 +77,13 @@ namespace Discord.Commands
                         if (dbUser.Cash < Config.STEAL_REQUIREMENT)
                             return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.STEAL_REQUIREMENT.ToString("C", Config.CI)}.");
                         break;
-                    case Attributes.Bully:
-                        if (dbUser.Cash < Config.BULLY_REQUIREMENT)
-                            return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.ROB_REQUIREMENT.ToString("C", Config.CI)}.");
-                        break;
+                    
                     case Attributes.Rob:
                         if (dbUser.Cash < Config.ROB_REQUIREMENT)
+                            return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.ROB_REQUIREMENT.ToString("C", Config.CI)}.");
+                        break;
+                    case Attributes.Bully:
+                        if (dbUser.Cash < Config.BULLY_REQUIREMENT)
                             return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.BULLY_REQUIREMENT.ToString("C", Config.CI)}.");
                         break;
                     case Attributes.FiftyX2:
