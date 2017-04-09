@@ -38,7 +38,7 @@ namespace DEA.Services
                 var builder = Builders<Gang>.Filter;
                 foreach (var gang in await (await DEABot.Gangs.FindAsync(builder.Empty)).ToListAsync())
                     await DEABot.Gangs.UpdateOneAsync(y => y.Id == gang.Id, 
-                        DEABot.GangUpdateBuilder.Set(x => x.Wealth, Math.CalculateIntrestRate(gang.Wealth) * gang.Wealth));
+                        DEABot.GangUpdateBuilder.Set(x => x.Wealth, Math.CalculateIntrestRate(gang.Wealth) * gang.Wealth + gang.Wealth));
             },
             null,
             Config.INTEREST_RATE_COOLDOWN,
