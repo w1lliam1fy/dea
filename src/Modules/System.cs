@@ -69,7 +69,7 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
         {
             string modules = "";
             foreach (var module in _service.Modules) modules += $"{module.Name}, ";
-            await Reply(modules.Substring(0, modules.Length - 2));
+            await Reply("Current command modules: " + modules.Substring(0, modules.Length - 2) + ".");
         }
 
         [Command("Help")]
