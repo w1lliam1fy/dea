@@ -184,6 +184,19 @@ namespace DEA.Modules
             await Send(description, $"Ranking of {user}");
         }
 
+        [Command("Rate")]
+        [Summary("View the money/message rate of anyone.")]
+        public async Task Rate(IGuildUser user = null)
+        {
+            user = user ?? Context.User as IGuildUser;
+            var dbUser = UserRepository.FetchUser(user.Id, Context.Guild.Id);
+            await Send($"Cash/msg: {(dbUser.TemporaryMultiplier * dbUser.InvestmentMultiplier).ToString("N2")}\n" +
+                       $"Chatting multiplier: {dbUser.TemporaryMultiplier.ToString("N2")}\n" +
+                       $"Investment multiplier: {dbUser.InvestmentMultiplier.ToString("N2")}\n" +
+                       $"Message cooldown: {dbUser.MessageCooldown / 1000} seconds",
+                       $"Rate of {user}");
+        }
+
         [Command("Money")]
         [Alias("Cash", "Balance", "Bal")]
         [Summary("View the wealth of anyone.")]
@@ -236,19 +249,6 @@ namespace DEA.Modules
             }
             if (description.Length > 2048) Error("You have too many mod roles to be able to use this command.");
             await Send(description, "Moderator Roles");
-        }
-
-        [Command("Rate")]
-        [Summary("View the money/message rate of anyone.")]
-        public async Task Rate(IGuildUser user = null)
-        {
-            user = user ?? Context.User as IGuildUser;
-            var dbUser = UserRepository.FetchUser(user.Id, Context.Guild.Id);
-            await Send($"Cash/msg: {(dbUser.TemporaryMultiplier * dbUser.InvestmentMultiplier).ToString("N2")}\n" +
-                       $"Chatting multiplier: {dbUser.TemporaryMultiplier.ToString("N2")}\n" +
-                       $"Investment multiplier: {dbUser.InvestmentMultiplier.ToString("N2")}\n" + 
-                       $"Message cooldown: {dbUser.MessageCooldown / 1000} seconds",
-                       $"Rate of {dbUser}");
         }
 
         [Command("Cooldowns")]
