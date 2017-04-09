@@ -6,11 +6,13 @@ using System.Linq;
 using Discord;
 using System.Threading;
 using MongoDB.Driver;
+using System.Collections.Generic;
 
 namespace DEA.Services
 {
     public class Timers
     {
+        private List<Timer> _timers = new List<Timer>();
 
         public Timers()
         {
@@ -21,34 +23,33 @@ namespace DEA.Services
 
         private void ResetTemporaryMultiplier()
         {
-            Timer t = new Timer(async method =>
+            _timers.Add(new Timer(async method =>
             {
                 var builder = Builders<User>.Filter;
                 await DEABot.Users.UpdateManyAsync(builder.Empty, DEABot.UserUpdateBuilder.Set(x => x.TemporaryMultiplier, 1));
             }, 
-            null, 
-            Timeout.Infinite, 
-            Config.TEMP_MULTIPLIER_RESET_COOLDOWN);
+            null,
+            Config.TEMP_MULTIPLIER_RESET_COOLDOWN, 
+            Config.TEMP_MULTIPLIER_RESET_COOLDOWN));
         }
 
         private void ApplyInterestRate()
         {
-            Timer t = new Timer(async method => 
+            _timers.Add(new Timer(async method => 
             {
-                await (DEABot.Client.GetChannel(295617446096928768) as ITextChannel).SendMessageAsync("Testing!");
                 var builder = Builders<Gang>.Filter;
                 foreach (var gang in await (await DEABot.Gangs.FindAsync(builder.Empty)).ToListAsync())
                     await DEABot.Gangs.UpdateOneAsync(y => y.Id == gang.Id, 
                         DEABot.GangUpdateBuilder.Set(x => x.Wealth, Math.CalculateIntrestRate(gang.Wealth) * gang.Wealth + gang.Wealth));
             },
             null,
-            Timeout.Infinite,
-            Config.INTEREST_RATE_COOLDOWN);
+            Config.INTEREST_RATE_COOLDOWN,
+            Config.INTEREST_RATE_COOLDOWN));
         }
 
         private void AutoUnmute()
         {
-            Timer t = new Timer(async method => 
+            _timers.Add(new Timer(async method => 
             {
                 var builder = Builders<Mute>.Filter;
                 foreach (Mute mute in await (await DEABot.Mutes.FindAsync(builder.Empty)).ToListAsync())
@@ -89,8 +90,8 @@ namespace DEA.Services
                 }
             },
             null,
-            Timeout.Infinite,
-            Config.AUTO_UNMUTE_COOLDOWN);
+            Config.AUTO_UNMUTE_COOLDOWN,
+            Config.AUTO_UNMUTE_COOLDOWN));
         }
 
     }

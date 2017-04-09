@@ -114,7 +114,7 @@ namespace DEA.Modules
         
         [Command("SetRate")]
         [Summary("Sets the global temporary multiplier increase rate.")]
-        [Remarks("SetRate <Increase rate>)"]
+        [Remarks("SetRate <Increase rate>")]
         public async Task SetMultiplierIncrease(decimal rate){
             if (rate < 0) Error("The temporary multiplier increase rate may not be negative.");
             GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.TempMultiplierIncreaseRate, rate), Context.Guild.Id);

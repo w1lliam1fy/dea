@@ -254,7 +254,7 @@ namespace DEA.Modules
             var user = UserRepository.FetchUser(userToView.Id, Context.Guild.Id);
             await Send($"Cash/msg: {(user.TemporaryMultiplier * user.InvestmentMultiplier).ToString("N2")}" +
                        $"Chatting multiplier: {user.TemporaryMultiplier.ToString("N2")}\n" +
-                       $"Investment multiplier: {user.InvestmentMultiplier.ToString("N2")}\n + 
+                       $"Investment multiplier: {user.InvestmentMultiplier.ToString("N2")}\n" + 
                        $"Message cooldown: {user.MessageCooldown / 1000} seconds",
                        $"Rate of {userToView}");
 

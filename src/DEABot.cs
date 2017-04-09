@@ -51,7 +51,7 @@ namespace DEA
             }
 
             DBClient = new MongoClient(Credentials.MongoDBConnectionString);
-            Database = DBClient.GetDatabase("beta");
+            Database = DBClient.GetDatabase(Credentials.DatabaseName);
 
             Guilds = Database.GetCollection<Guild>("guilds");
             Users = Database.GetCollection<User>("users");
@@ -78,11 +78,7 @@ namespace DEA
             {
                 CaseSensitiveCommands = false,
                 LogLevel = LogSeverity.Debug,
-#if DEBUG
-                DefaultRunMode = RunMode.Sync,
-#elif RELEASE
                 DefaultRunMode = RunMode.Async,
-#endif
             });
 
             var sw = Stopwatch.StartNew();
