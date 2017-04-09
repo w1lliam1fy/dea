@@ -102,21 +102,23 @@ namespace DEA.Modules
             GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.ModRoles, guild.ModRoles), Context.Guild.Id);
             await Reply($"You have successfully set the moderator role to {modRole.Mention}!");
         }
+        
         [Command("SetGlobalMultiplier")]
         [Summary("Sets the global chatting multiplier.")]
-        [Remarks("SetGlobalMultiplier <amount>")]
-        public async Task SetGlobalMultiplier(decimal amount){
-            if (amount < 1) throw new Exception("Global chatting multiplier cannot be less than 1");
-            GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.GlobalChattingMultiplier, amount), Context.Guild.Id);
-            await Reply($"You have successfully set the global chatting multiplier to {amount.ToString("C2", Config.CI)}!");
+        [Remarks("SetGlobalMultiplier <Global multiplier>")]
+        public async Task SetGlobalMultiplier(decimal globalMultiplier){
+            if (globalMultiplier < 0) Error("The global multiplier may not be negative.");
+            GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.GlobalChattingMultiplier, globalMultiplier), Context.Guild.Id);
+            await Reply($"You have successfully set the global chatting multiplier to {globalMultiplier.ToString("N2")}!");
         }
-        [Command("SetMultiplierIncrease")]
-        [Summary("Sets the global temporary multiplier increase rate")]
-        [Remarks("SetMultiplierIncrease <amount>)"]
-        public async Task SetMultiplierIncrease(decimal amount){
-            if (amount <= 0) throw new Exception("Temporary multiplier increase rate cannot be less than 0");
-            GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.TempMultiplierIncreaseRate, amount), Context.Guild.Id);
-            await Reply($"You have successfully set the global temporary multiplier increase rate to {amount.ToString("C2", Config.CI)}!");
+        
+        [Command("SetRate")]
+        [Summary("Sets the global temporary multiplier increase rate.")]
+        [Remarks("SetRate <Increase rate>)"]
+        public async Task SetMultiplierIncrease(decimal rate){
+            if (rate < 0) Error("The temporary multiplier increase rate may not be negative.");
+            GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.TempMultiplierIncreaseRate, rate), Context.Guild.Id);
+            await Reply($"You have successfully set the global temporary multiplier increase rate to {rate.ToString("N2")}!");
         }
 
     }
