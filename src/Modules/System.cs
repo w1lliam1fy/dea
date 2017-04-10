@@ -45,7 +45,7 @@ namespace System.Modules
 
             var channel = await Context.User.CreateDMChannelAsync();
 
-            await ResponseMethods.DM(channel, $@"In order to gain money, you must send a message that is at least {Config.MIN_CHAR_LENGTH} characters in length. There is a 30 second cooldown between each message that will give you cash. However, these rates are not fixed. For every message you send, your chatting multiplier(which increases the amount of money you get per message) is increased by {guild.TempMultiplierIncreaseRate}. This rate is reset every hour.
+            await ResponseMethods.DM(channel, $@"In order to gain money, you must send a message that is at least {Config.MIN_CHAR_LENGTH} characters in length. There is a 30 second cooldown between each message that will give you cash. However, these rates are not fixed. For every message you send, your chatting multiplier (which increases the amount of money you get per message) is increased by {guild.TempMultiplierIncreaseRate}. This rate is reset every hour.
 
 To view your steadily increasing chatting multiplier, you may use the `{p}rate` command, and the `{p}money` command to see your cash grow. This command shows you every single variable taken into consideration for every message you send. If you wish to improve these variables, you may use investments. With the `{p}investments` command, you may pay to have *permanent* changes to your message rates. These will stack with the chatting multiplier.");
 
@@ -68,7 +68,7 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
             string modules = string.Empty;
             foreach (var module in _service.Modules)
                 modules += $"{module.Name}, ";
-            modules = modules.Replace("DEAModule, ", string.Empty).Replace("_", " ");
+            modules = modules.Replace("DEAModule, ", string.Empty);
             await Reply("Current command modules: " + modules.Substring(0, modules.Length - 2) + ".");
             
         }
@@ -91,7 +91,7 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
                         var longestInModule = 0;
                         foreach (var cmd in module.Commands)
                             if (cmd.Aliases.First().Length > longestInModule) longestInModule = cmd.Aliases.First().Length;
-                        var moduleInfo = $"**{module.Name.Replace("_", " ")} Commands **: ```asciidoc\n";
+                        var moduleInfo = $"**{module.Name} Commands **: ```asciidoc\n";
                         foreach (var cmd in module.Commands)
                         {
                             moduleInfo += $"{prefix}{cmd.Aliases.First()}{new string(' ', (longestInModule + 1) - cmd.Aliases.First().Length)} :: {cmd.Summary}\n";
@@ -124,7 +124,7 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
                 string modules = string.Empty;
                 foreach (var module in _service.Modules)
                     modules += $"{module.Name}, ";
-                modules = modules.Replace("DEAModule, ", string.Empty).Replace("_", " ");
+                modules = modules.Replace("DEAModule, ", string.Empty);
 
                 await ResponseMethods.DM(channel,
                     $@"DEA is a multi-purpose Discord Bot mainly known for it's infamous Cash System with multiple subtleties referencing to the show Narcos, which inspired the creation of this masterpiece.
@@ -152,7 +152,7 @@ If you have any other questions, you may join the **Official DEA Discord Server:
                 .WithAuthor(x => {
                     x.Name = "DEA v1.3";
                     x.IconUrl = DEABot.Client.CurrentUser.GetAvatarUrl();
-                    x.Url = "https://discordapp.com/oauth2/authorize?client_id={Context.Guild.CurrentUser.Id}&scope=bot&permissions=410119182";
+                    x.Url = $"https://discordapp.com/oauth2/authorize?client_id={Context.Guild.CurrentUser.Id}&scope=bot&permissions=410119182";
                     })
                 .AddInlineField("Author", "John#0969")
                 .AddInlineField("Shard", $"#{DEABot.Client.ShardId}/{DEABot.Credentials.ShardCount}")

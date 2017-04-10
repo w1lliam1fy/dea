@@ -72,7 +72,7 @@ namespace DEA.Modules
 
             for (int i = 0; i < sortedGangs.Count(); i++)
             {
-                if (i + 1 >= Config.GANGSLB_CAP) break;
+                if (i + 1 > Config.GANGSLB_CAP) break;
                 description += $"{i + 1}. {sortedGangs[i].Name}: {sortedGangs[i].Wealth.ToString("C", Config.CI)}\n";
             }
 

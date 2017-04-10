@@ -21,6 +21,11 @@ namespace DEA.Resources
             return await ReplyAsync(string.Empty, embed: builder);
         }
 
+        protected override void BeforeExecute()
+        {
+            //TO DO ADD ALL SPICY SHITS
+        }
+
         public async Task<IUserMessage> Send(string description, string title = null, Color color = default(Color))
         {
             var rand = new Random();

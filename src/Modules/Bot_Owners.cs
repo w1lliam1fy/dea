@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace DEA.Modules
 {
+    [Name("Bot Owners")]
     [Require(Attributes.BotOwner)]
-    public class Bot_Owner : DEAModule
+    public class Bot_Owners : DEAModule
     {
         [Command("SetGame")]
         [Summary("Sets the game of DEA.")]

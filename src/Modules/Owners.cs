@@ -111,6 +111,7 @@ namespace DEA.Modules
                 }), Context.Guild.Id);
             else
             {
+                if (guild.ModRoles.Any(x => x.Name == modRole.Id.ToString())) Error("You have already set this mod role.");
                 guild.ModRoles.Add(modRole.Id.ToString(), permissionLevel);
                 GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.ModRoles, guild.ModRoles), Context.Guild.Id);
             }
