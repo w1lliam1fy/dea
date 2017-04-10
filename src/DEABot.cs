@@ -71,7 +71,7 @@ namespace DEA
             {
                 MessageCacheSize = 10,
                 TotalShards = Credentials.ShardCount,
-                //AlwaysDownloadUsers = true,
+                AlwaysDownloadUsers = true,
             });
 
             CommandService = new CommandService(new CommandServiceConfig()
@@ -102,7 +102,7 @@ namespace DEA
                 Environment.Exit(0);
             }
             await Client.StartAsync().ConfigureAwait(false);
-            //await Client.DownloadAllUsersAsync().ConfigureAwait(false);
+            foreach (var guild in Client.Guilds) await guild.DownloadUsersAsync();
             sw.Stop();
             PrettyConsole.Log(LogSeverity.Info, "Successfully connected", $"Elapsed time: {sw.Elapsed.TotalSeconds.ToString()} seconds.");
 

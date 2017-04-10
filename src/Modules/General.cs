@@ -8,6 +8,7 @@ using System.Linq;
 using MongoDB.Driver;
 using DEA.Resources;
 using System.Collections.Generic;
+using DEA.Services.Handlers;
 
 namespace DEA.Modules
 {

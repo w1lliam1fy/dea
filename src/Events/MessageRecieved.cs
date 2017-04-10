@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using DEA.Database.Repository;
 using MongoDB.Driver;
+using DEA.Services.Handlers;
 //using Discord.Addons.InteractiveCommands;
 
 namespace DEA.Services

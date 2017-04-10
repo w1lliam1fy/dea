@@ -4,6 +4,7 @@ using Discord;
 using Discord.WebSocket;
 using System.Linq;
 using System.Threading.Tasks;
+using DEA.Services.Handlers;
 
 namespace DEA.Events
 {

@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DEA
+namespace DEA.Services.Handlers
 {
     public static class RankHandler
     {

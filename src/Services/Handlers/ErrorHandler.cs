@@ -1,5 +1,4 @@
 ﻿using DEA.Resources;
-using DEA.Services;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
@@ -7,7 +6,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DEA.Events
+namespace DEA.Services.Handlers
 {
     class ErrorHandler
     {

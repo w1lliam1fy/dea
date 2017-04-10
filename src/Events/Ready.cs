@@ -1,4 +1,5 @@
-﻿using DEA.Services;
+﻿using DEA.Services.Handlers;
+using DEA.Services.Timers;
 using System.Threading.Tasks;
 
 namespace DEA.Events
@@ -16,8 +17,10 @@ namespace DEA.Events
             new UserEvents();
             new RoleEvents();
             new ChannelEvents();
-            new Timers();
             new ErrorHandler();
+            new ApplyIntrestRate();
+            new AutoUnmute();
+            new ResetTempMultiplier();
         }
 
     }

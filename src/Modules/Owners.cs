@@ -7,6 +7,7 @@ using DEA.Database.Repository;
 using MongoDB.Driver;
 using MongoDB.Bson;
 using DEA.Resources;
+using DEA.Services.Handlers;
 
 namespace DEA.Modules
 {
@@ -41,11 +42,22 @@ namespace DEA.Modules
 
         [Command("Add")]
         [Summary("Add cash into a user's balance.")]
-        public async Task Give(IGuildUser user, decimal money)
+        public async Task Add(IGuildUser user, decimal money)
         {
             if (money < 0) Error("You may not add negative money to a user's balance.");
             await UserRepository.EditCashAsync(Context, user.Id, money);
             await Reply($"Successfully added {money.ToString("C", Config.CI)} to {user.Mention}'s balance.");
+        }
+
+        [Command("AddTo")]
+        [Summary("Add cash to every users balance in a specific role.")]
+        public async Task Add(IRole role, decimal money)
+        {
+            if (money < 0) Error("You may not add negative money to these users's balances.");
+            await Reply("The addition of cash has commenced...");
+            foreach (var user in Context.Guild.Users.Where(x => x.Roles.Any(y => y.Id == role.Id)))
+                await UserRepository.EditCashAsync(Context, user.Id, money);
+            await Reply($"Successfully added {money.ToString("C", Config.CI)} to the balance of every user in the {role.Mention} role.");
         }
 
         [Command("Remove")]
@@ -55,6 +67,17 @@ namespace DEA.Modules
             if (money < 0) Error("You may not remove a negative amount of money from a user's balance.");
             await UserRepository.EditCashAsync(Context, user.Id, -money);
             await Reply($"Successfully removed {money.ToString("C", Config.CI)} from {user.Mention}'s balance.");
+        }
+
+        [Command("RemoveFrom")]
+        [Summary("Remove cash to every users balance in a specific role.")]
+        public async Task Remove(IRole role, decimal money)
+        {
+            if (money < 0) Error("You may not remove negative money from these users's balances.");
+            await Reply("The cash removal has commenced...");
+            foreach (var user in Context.Guild.Users.Where(x => x.Roles.Any(y => y.Id == role.Id)))
+                await UserRepository.EditCashAsync(Context, user.Id, -money);
+            await Reply($"Successfully removed {money.ToString("C", Config.CI)} from the balance of every user in the {role.Mention} role.");
         }
 
         [Command("Reset")]
