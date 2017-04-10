@@ -19,7 +19,7 @@ namespace DEA.Services.Timers
 
             TimerCallback TimerDelegate = new TimerCallback(TimerTask);
 
-            _timer = new Timer(TimerDelegate, StateObj, 0, 10000);
+            _timer = new Timer(TimerDelegate, StateObj, 0, Config.AUTO_UNMUTE_COOLDOWN);
 
             StateObj.TimerReference = _timer;
         }
