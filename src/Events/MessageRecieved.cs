@@ -28,6 +28,8 @@ namespace DEA.Services
 
         private async Task HandleCommandAsync(SocketMessage s)
         {
+            DEABot.Messages++;
+
             var msg = s as SocketUserMessage;
             if (msg == null) return;
 
@@ -78,8 +80,10 @@ namespace DEA.Services
 
                         await Context.Channel.SendMessageAsync(string.Empty, embed: builder);
                     }
-                        
+
                 }
+                else
+                    DEABot.Commands++;
             }
             else if (msg.ToString().Length >= Config.MIN_CHAR_LENGTH && !msg.ToString().StartsWith(":"))
             {

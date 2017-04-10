@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using DEA.Database.Repository;
 using DEA.Resources;
 using DEA.Services;
+using DEA;
 
 namespace System.Modules
 {
@@ -147,18 +148,25 @@ If you have any other questions, you may join the **Official DEA Discord Server:
         public async Task Stats()
         {
             var uptime = (DateTime.Now - _process.StartTime);
-            var application = await Context.Client.GetApplicationInfoAsync();
-            var message = $@"```asciidoc
-= STATISTICS =
-• Memory   :: {(_process.PrivateMemorySize64 / 1000000).ToString("N2")} MB
-• Uptime   :: Days: {uptime.Days}, Hours: {uptime.Hours}, Minutes: {uptime.Minutes}, Seconds: {uptime.Seconds}
-• Users    :: {(Context.Client as DiscordSocketClient).Guilds.Sum(g => g.Users.Count)}
-• Servers  :: {(Context.Client as DiscordSocketClient).Guilds.Count}
-• Channels :: {(Context.Client as DiscordSocketClient).Guilds.Sum(g => g.Channels.Count)}
-• Library  :: Discord.Net {DiscordConfig.Version}
-• Runtime  :: {RuntimeInformation.FrameworkDescription} {RuntimeInformation.OSArchitecture}```";
+            var builder = new EmbedBuilder()
+                .WithAuthor(x => {
+                    x.Name = "DEA v1.3";
+                    x.IconUrl = DEABot.Client.CurrentUser.GetAvatarUrl();
+                    x.Url = "https://discordapp.com/oauth2/authorize?client_id={Context.Guild.CurrentUser.Id}&scope=bot&permissions=410119182";
+                    })
+                .AddInlineField("Author", "John#0969")
+                .AddInlineField("Shard", $"#{DEABot.Client.ShardId}/{DEABot.Credentials.ShardCount}")
+                .AddInlineField("Library", $"Discord.Net {DiscordConfig.Version}")
+                .AddInlineField("Servers", $"{DEABot.Client.Guilds.Count}")
+                .AddInlineField("Channels", $"{DEABot.Client.Guilds.Sum(g => g.Channels.Count) + DEABot.Client.DMChannels.Count}")
+                .AddInlineField("Memory", $"{(_process.PrivateMemorySize64 / 1000000).ToString("N2")} MB")
+                .AddInlineField("Uptime", $"Days: {uptime.Days}\nHours: {uptime.Hours}\nMinutes: {uptime.Minutes}")
+                .AddInlineField("Messages", $"{DEABot.Messages} ({(DEABot.Messages / uptime.TotalSeconds).ToString("N2")}/sec)")
+                .AddInlineField("Commands", $"{DEABot.Commands}")
+                .WithColor(Config.COLORS[new Random().Next(1, Config.COLORS.Length) - 1]);
+            
             var channel = await Context.User.CreateDMChannelAsync();
-            await channel.SendMessageAsync(message);
+            await channel.SendMessageAsync(string.Empty, embed: builder);
             await Reply($"You have been DMed with all the statistics!");
         }
     }

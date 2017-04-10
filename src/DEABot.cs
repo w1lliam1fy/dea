@@ -33,6 +33,9 @@ namespace DEA
         public static UpdateDefinitionBuilder<User> UserUpdateBuilder { get; private set; }
         public static UpdateDefinitionBuilder<Gang> GangUpdateBuilder { get; private set; }
 
+        public static int Commands { get; set; }
+        public static int Messages { get; set; }
+
         static DEABot()
         {
             try

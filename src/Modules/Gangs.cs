@@ -30,7 +30,7 @@ namespace DEA.Modules
         [Command("AddGangMember")]
         [Require(Attributes.InGang, Attributes.GangLeader)]
         [Summary("Allows you to add a member to your gang.")]
-        public async Task AddToGang(IGuildUser newMember)
+        public async Task AddToGang([Remainder] IGuildUser newMember)
         {
             if (GangRepository.InGang(newMember.Id, Context.Guild.Id)) Error("This user is already in a gang.");
             if (GangRepository.IsFull(Context.User.Id, Context.Guild.Id)) Error("Your gang is already full!");
@@ -143,7 +143,7 @@ namespace DEA.Modules
         [Command("TransferLeadership")]
         [Require(Attributes.InGang, Attributes.GangLeader)]
         [Summary("Transfers the leadership of your gang to another member.")]
-        public async Task TransferLeadership(IGuildUser gangMember)
+        public async Task TransferLeadership([Remainder] IGuildUser gangMember)
         {
             if (gangMember.Id == Context.User.Id) Error("You are already the leader of this gang!");
             var gang = GangRepository.FetchGang(Context);
@@ -210,7 +210,7 @@ namespace DEA.Modules
         [Require(Attributes.InGang)]
         [RequireCooldown]
         [Summary("Raid another gang in attempt to steal some of their wealth.")]
-        public async Task Raid(decimal resources, string gangName)
+        public async Task Raid(decimal resources, [Remainder] string gangName)
         {
             if (resources < Config.MIN_RESOURCES) Error($"The minimum amount of money to spend on resources for a raid is {Config.MIN_RESOURCES.ToString("C", Config.CI)}.");
             var gang = GangRepository.FetchGang(Context);
@@ -235,7 +235,7 @@ namespace DEA.Modules
                 if (userToDM != null)
                 {
                     var channel = await userToDM.CreateDMChannelAsync();
-                    await ResponseMethods.DM(channel, $"{gang.Name} just raided your gang's wealth and managed to walk away with {stolen.ToString("C", Config.CI)}.");
+                    await ResponseMethods.DM(channel, $"{raidedGang.Name} just raided your gang's wealth and managed to walk away with {stolen.ToString("C", Config.CI)}.");
                 }
 
                 await Reply($"With a {Config.RAID_SUCCESS_ODDS}.00% chance of success, you successfully stole {stolen.ToString("C", Config.CI)}. " +
@@ -252,7 +252,7 @@ namespace DEA.Modules
                 if (userToDM != null)
                 {
                     var channel = await userToDM.CreateDMChannelAsync();
-                    await ResponseMethods.DM(channel, $"{gang.Name} tried to raid your gang's stash, but one of your loyal sicarios gunned them out.");
+                    await ResponseMethods.DM(channel, $"{raidedGang.Name} tried to raid your gang's stash, but one of your loyal sicarios gunned them out.");
                 }
                 
                 await Reply($"With a {Config.RAID_SUCCESS_ODDS}.00% chance of success, you failed to steal {stolen.ToString("C", Config.CI)} " +
