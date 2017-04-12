@@ -103,17 +103,16 @@ namespace DEA.Modules
         public async Task AddModRole(IRole modRole, int permissionLevel = 1)
         {
             if (permissionLevel < 1 || permissionLevel > 3) Error("Permission levels:\nModeration: 1\nAdministration: 2\nServer Owner: 3");
-            var guild = GuildRepository.FetchGuild(Context.Guild.Id);
-            if (guild.ModRoles == null)
+            if (DbGuild.ModRoles == null)
                 GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.ModRoles, new BsonDocument()
                 {
                     { modRole.Id.ToString(), permissionLevel }
                 }), Context.Guild.Id);
             else
             {
-                if (guild.ModRoles.Any(x => x.Name == modRole.Id.ToString())) Error("You have already set this mod role.");
-                guild.ModRoles.Add(modRole.Id.ToString(), permissionLevel);
-                GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.ModRoles, guild.ModRoles), Context.Guild.Id);
+                if (DbGuild.ModRoles.Any(x => x.Name == modRole.Id.ToString())) Error("You have already set this mod role.");
+                DbGuild.ModRoles.Add(modRole.Id.ToString(), permissionLevel);
+                GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.ModRoles, DbGuild.ModRoles), Context.Guild.Id);
             }
             await Reply($"You have successfully added {modRole.Mention} as a moderation role with a permission level of {permissionLevel}.");
         }
@@ -122,12 +121,11 @@ namespace DEA.Modules
         [Summary("Removes a moderator role.")]
         public async Task RemoveModRole(IRole modRole)
         {
-            var guild = GuildRepository.FetchGuild(Context.Guild.Id);
-            if (guild.ModRoles == null) Error("There are no moderator roles yet!");
-            if (!guild.ModRoles.Any(x => x.Name == modRole.Id.ToString()))
+            if (DbGuild.ModRoles == null) Error("There are no moderator roles yet!");
+            if (!DbGuild.ModRoles.Any(x => x.Name == modRole.Id.ToString()))
                 Error("This role is not a moderator role!");
-            guild.ModRoles.Remove(modRole.Id.ToString());
-            GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.ModRoles, guild.ModRoles), Context.Guild.Id);
+            DbGuild.ModRoles.Remove(modRole.Id.ToString());
+            GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.ModRoles, DbGuild.ModRoles), Context.Guild.Id);
             await Reply($"You have successfully removed the {modRole.Mention} moderation role.");
         }
         

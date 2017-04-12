@@ -75,12 +75,11 @@ namespace DEA.Modules
         [Summary("Removes a rank role for the DEA cash system.")]
         public async Task RemoveRank(IRole rankRole)
         {
-            var guild = GuildRepository.FetchGuild(Context.Guild.Id);
-            if (guild.RankRoles == null) Error("There are no ranks yet!");
-            if (!guild.RankRoles.Any(x => x.Name == rankRole.Id.ToString()))
+            if (DbGuild.RankRoles == null) Error("There are no ranks yet!");
+            if (!DbGuild.RankRoles.Any(x => x.Name == rankRole.Id.ToString()))
                 Error("This role is not a rank role.");
-            guild.RankRoles.Remove(rankRole.Id.ToString());
-            GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.RankRoles, guild.RankRoles), Context.Guild.Id);
+            DbGuild.RankRoles.Remove(rankRole.Id.ToString());
+            GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.RankRoles, DbGuild.RankRoles), Context.Guild.Id);
             await Reply($"You have successfully removed the {rankRole.Mention} rank!");
         }
 

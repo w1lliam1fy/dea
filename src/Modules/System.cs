@@ -40,12 +40,11 @@ namespace System.Modules
         [Summary("Information about the DEA Cash System.")]
         public async Task Info()
         {
-            var guild = GuildRepository.FetchGuild(Context.Guild.Id);
-            string p = guild.Prefix;
+            string p = Prefix;
 
             var channel = await Context.User.CreateDMChannelAsync();
 
-            await ResponseMethods.DM(channel, $@"In order to gain money, you must send a message that is at least {Config.MIN_CHAR_LENGTH} characters in length. There is a 30 second cooldown between each message that will give you cash. However, these rates are not fixed. For every message you send, your chatting multiplier (which increases the amount of money you get per message) is increased by {guild.TempMultiplierIncreaseRate}. This rate is reset every hour.
+            await ResponseMethods.DM(channel, $@"In order to gain money, you must send a message that is at least {Config.MIN_CHAR_LENGTH} characters in length. There is a 30 second cooldown between each message that will give you cash. However, these rates are not fixed. For every message you send, your chatting multiplier (which increases the amount of money you get per message) is increased by {DbGuild.TempMultiplierIncreaseRate}. This rate is reset every hour.
 
 To view your steadily increasing chatting multiplier, you may use the `{p}rate` command, and the `{p}money` command to see your cash grow. This command shows you every single variable taken into consideration for every message you send. If you wish to improve these variables, you may use investments. With the `{p}investments` command, you may pay to have *permanent* changes to your message rates. These will stack with the chatting multiplier.");
 
@@ -149,20 +148,15 @@ If you have any other questions, you may join the **Official DEA Discord Server:
         {
             var uptime = (DateTime.Now - _process.StartTime);
             var builder = new EmbedBuilder()
-                .WithAuthor(x => {
-                    x.Name = "DEA v1.3";
-                    x.IconUrl = DEABot.Client.CurrentUser.GetAvatarUrl();
-                    x.Url = $"https://discordapp.com/oauth2/authorize?client_id={Context.Guild.CurrentUser.Id}&scope=bot&permissions=410119182";
-                    })
                 .AddInlineField("Author", "John#0969")
                 .AddInlineField("Shard", $"#{DEABot.Client.ShardId}/{DEABot.Credentials.ShardCount}")
                 .AddInlineField("Library", $"Discord.Net {DiscordConfig.Version}")
                 .AddInlineField("Servers", $"{DEABot.Client.Guilds.Count}")
                 .AddInlineField("Channels", $"{DEABot.Client.Guilds.Sum(g => g.Channels.Count) + DEABot.Client.DMChannels.Count}")
-                .AddInlineField("Memory", $"{(_process.PrivateMemorySize64 / 1000000).ToString("N2")} MB")
+                .AddInlineField("Memory", $"{(_process.PrivateMemorySize64 / 1000000d).ToString("N2")} MB")
                 .AddInlineField("Uptime", $"Days: {uptime.Days}\nHours: {uptime.Hours}\nMinutes: {uptime.Minutes}")
                 .AddInlineField("Messages", $"{DEABot.Messages} ({(DEABot.Messages / uptime.TotalSeconds).ToString("N2")}/sec)")
-                .AddInlineField("Commands", $"{DEABot.Commands}")
+                .AddInlineField("Commands Used", $"{DEABot.Commands}")
                 .WithColor(Config.COLORS[new Random().Next(1, Config.COLORS.Length) - 1]);
             
             var channel = await Context.User.CreateDMChannelAsync();

@@ -19,18 +19,15 @@ namespace DEA.Modules
         [Summary("Increase your money per message")]
         public async Task Invest([Remainder] string investment = null)
         {
-            var guild = GuildRepository.FetchGuild(Context.Guild.Id);
-            var user = UserRepository.FetchUser(Context);
-            decimal cash = user.Cash;
             switch (investment)
             {
                 case "line":
-                    if (Config.LINE_COST > cash)
+                    if (Config.LINE_COST > Cash)
                     {
-                        await Reply($"You do not have enough money. Balance: {cash.ToString("C", Config.CI)}");
+                        await Reply($"You do not have enough money. Balance: {Cash.ToString("C", Config.CI)}");
                         break;
                     }
-                    if (user.MessageCooldown == Config.LINE_COOLDOWN.TotalMilliseconds)
+                    if (DbUser.MessageCooldown == Config.LINE_COOLDOWN.TotalMilliseconds)
                     {
                         await Reply($"You have already purchased this investment.");
                         break;
@@ -41,12 +38,12 @@ namespace DEA.Modules
                     break;
                 case "pound":
                 case "lb":
-                    if (Config.POUND_COST > cash)
+                    if (Config.POUND_COST > Cash)
                     {
-                        await Reply($"You do not have enough money. Balance: {cash.ToString("C", Config.CI)}");
+                        await Reply($"You do not have enough money. Balance: {Cash.ToString("C", Config.CI)}");
                         break;
                     }
-                    if (user.InvestmentMultiplier >= Config.POUND_MULTIPLIER)
+                    if (DbUser.InvestmentMultiplier >= Config.POUND_MULTIPLIER)
                     {
                         await Reply("You already purchased this investment.");
                         break;
@@ -58,17 +55,17 @@ namespace DEA.Modules
                 case "kg":
                 case "kilo":
                 case "kilogram":
-                    if (Config.KILO_COST > cash)
+                    if (Config.KILO_COST > Cash)
                     {
-                        await Reply($"You do not have enough money. Balance: {cash.ToString("C", Config.CI)}");
+                        await Reply($"You do not have enough money. Balance: {Cash.ToString("C", Config.CI)}");
                         break;
                     }
-                    if (user.InvestmentMultiplier != Config.POUND_MULTIPLIER)
+                    if (DbUser.InvestmentMultiplier != Config.POUND_MULTIPLIER)
                     {
                         await Reply("You must purchase the pound of cocaine investment before buying this one.");
                         break;
                     }
-                    if (user.InvestmentMultiplier >= Config.KILO_MULTIPLIER)
+                    if (DbUser.InvestmentMultiplier >= Config.KILO_MULTIPLIER)
                     {
                         await Reply("You already purchased this investment.");
                         break;
@@ -78,11 +75,11 @@ namespace DEA.Modules
                     await Reply("Only the black jews would actually enjoy 4$/msg.");
                     break;
                 default:
-                    await Send($"\n**Cost: {Config.LINE_COST}$** | Command: `{guild.Prefix}investments line` | Description: " +
+                    await Send($"\n**Cost: {Config.LINE_COST}$** | Command: `{Prefix}investments line` | Description: " +
                         $"One line of blow. Seems like nothing, yet it's enough to lower the message cooldown from 30 to 25 seconds." +
-                        $"\n**Cost: {Config.POUND_COST}$** | Command: `{guild.Prefix}investments pound` | Description: " +
+                        $"\n**Cost: {Config.POUND_COST}$** | Command: `{Prefix}investments pound` | Description: " +
                         $"This one pound of coke will double the amount of cash you get per message\n**Cost: {Config.KILO_COST}$** | Command: " +
-                        $"`{guild.Prefix}investments kilo` | Description: A kilo of cocaine is more than enough to " +
+                        $"`{Prefix}investments kilo` | Description: A kilo of cocaine is more than enough to " +
                         $"quadruple your cash/message.\n These investments stack with the chatting multiplier. However, they will not stack with themselves.",
                         "Available Investments:");
                     break;
@@ -157,15 +154,14 @@ namespace DEA.Modules
         [Summary("Sauce some cash to one of your mates.")]
         public async Task Donate(IGuildUser user, decimal money)
         {
-            var dbUser = UserRepository.FetchUser(Context);
             if (user.Id == Context.User.Id) Error("Hey kids! Look at that retard, he is trying to give money to himself!");
             if (money < Config.DONATE_MIN) Error($"Lowest donation is {Config.DONATE_MIN}$.");
-            if (dbUser.Cash < money) Error($"You do not have enough money. Balance: {dbUser.Cash.ToString("C", Config.CI)}.");
+            if (Cash < money) Error($"You do not have enough money. Balance: {Cash.ToString("C", Config.CI)}.");
             await UserRepository.EditCashAsync(Context, -money);
             decimal deaMoney = money * Config.DEA_CUT / 100;
             await UserRepository.EditCashAsync(Context, user.Id, money - deaMoney);
             await UserRepository.EditCashAsync(Context, Context.Guild.CurrentUser.Id, deaMoney);
-            await Reply($"Successfully donated {(money - deaMoney).ToString("C", Config.CI)} to {user.Mention}.\nDEA has taken a {deaMoney.ToString("C", Config.CI)} cut out of this donation. Balance: {(dbUser.Cash + money - deaMoney).ToString("C", Config.CI)}.");
+            await Reply($"Successfully donated {(money - deaMoney).ToString("C", Config.CI)} to {user.Mention}.\nDEA has taken a {deaMoney.ToString("C", Config.CI)} cut out of this donation. Balance: {(Cash + money - deaMoney).ToString("C", Config.CI)}.");
         }
 
         [Command("Rank")]
@@ -211,16 +207,15 @@ namespace DEA.Modules
         [Summary("View all ranks.")]
         public async Task Ranks()
         {
-            var guild = GuildRepository.FetchGuild(Context.Guild.Id);
-            if (guild.RankRoles == null) Error("There are no ranks yet!");
+            if (DbGuild.RankRoles == null) Error("There are no ranks yet!");
             var description = string.Empty;
-            foreach (var rank in guild.RankRoles.OrderBy(x => x.Value))
+            foreach (var rank in DbGuild.RankRoles.OrderBy(x => x.Value))
             {
                 var role = Context.Guild.GetRole(Convert.ToUInt64(rank.Name));
                 if (role == null)
                 {
-                    guild.RankRoles.Remove(rank.Name);
-                    GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.RankRoles, guild.RankRoles), Context.Guild.Id);
+                    DbGuild.RankRoles.Remove(rank.Name);
+                    GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.RankRoles, DbGuild.RankRoles), Context.Guild.Id);
                     continue;
                 }
                 description += $"{rank.Value.AsDouble.ToString("C", Config.CI)}: {role.Mention}\n";
@@ -234,16 +229,15 @@ namespace DEA.Modules
         [Summary("View all the moderator roles.")]
         public async Task ModRoles()
         {
-            var guild = GuildRepository.FetchGuild(Context.Guild.Id);
-            if (guild.ModRoles == null) Error("There are no moderator roles yet!");
+            if (DbGuild.ModRoles == null) Error("There are no moderator roles yet!");
             var description = string.Empty;
-            foreach (var modRole in guild.ModRoles.OrderBy(x => x.Value))
+            foreach (var modRole in DbGuild.ModRoles.OrderBy(x => x.Value))
             {
                 var role = Context.Guild.GetRole(Convert.ToUInt64(modRole.Name));
                 if (role == null)
                 {
-                    guild.ModRoles.Remove(modRole.Name);
-                    GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.ModRoles, guild.ModRoles), Context.Guild.Id);
+                    DbGuild.ModRoles.Remove(modRole.Name);
+                    GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.ModRoles, DbGuild.ModRoles), Context.Guild.Id);
                     continue;
                 }
                 description += $"{role.Mention}: Pemission level {modRole.Value}\n";
@@ -256,15 +250,14 @@ namespace DEA.Modules
         [Summary("Check when you can sauce out more cash.")]
         public async Task Cooldowns()
         {
-            var user = UserRepository.FetchUser(Context);
             var cooldowns = new Dictionary<String, TimeSpan>();
-            cooldowns.Add("Whore", Config.WHORE_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(user.Whore)));
-            cooldowns.Add("Jump", Config.JUMP_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(user.Jump)));
-            cooldowns.Add("Steal", Config.STEAL_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(user.Steal)));
-            cooldowns.Add("Rob", Config.ROB_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(user.Rob)));
-            cooldowns.Add("Withdraw", Config.WITHDRAW_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(user.Withdraw)));
-            if (GangRepository.InGang(Context.User.Id, Context.Guild.Id))
-                cooldowns.Add("Raid", Config.RAID_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(GangRepository.FetchGang(Context).Raid)));
+            cooldowns.Add("Whore", Config.WHORE_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(DbUser.Whore)));
+            cooldowns.Add("Jump", Config.JUMP_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(DbUser.Jump)));
+            cooldowns.Add("Steal", Config.STEAL_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(DbUser.Steal)));
+            cooldowns.Add("Rob", Config.ROB_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(DbUser.Rob)));
+            cooldowns.Add("Withdraw", Config.WITHDRAW_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(DbUser.Withdraw)));
+            if (Gang != null)
+                cooldowns.Add("Raid", Config.RAID_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(Gang.Raid)));
             var description = string.Empty;
             foreach (var cooldown in cooldowns)
             {
