@@ -14,6 +14,11 @@ namespace DEA.Modules
 {
     public class General : DEAModule
     {
+        protected override void BeforeExecute()
+        {
+            InitializeData();
+        }
+
         [Command("Investments")]
         [Alias("Investment")]
         [Summary("Increase your money per message")]

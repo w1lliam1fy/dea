@@ -21,6 +21,7 @@ namespace System.Modules
         protected override void BeforeExecute()
         {
             _process = Process.GetCurrentProcess();
+            InitializeData();
         }
 
         public System(CommandService service)

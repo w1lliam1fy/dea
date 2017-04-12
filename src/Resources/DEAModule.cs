@@ -18,16 +18,16 @@ namespace DEA.Resources
 
         public Gang Gang;
 
-        protected override void BeforeExecute()
+        public void InitializeData()
         {
             var user = UserRepository.FetchUser(Context);
             var guild = GuildRepository.FetchGuild(Context.Guild.Id);
 
             DbUser = user;
-            Cash = user.Cash;
+            Cash = DbUser.Cash;
 
             DbGuild = guild;
-            Prefix = guild.Prefix;
+            Prefix = DbGuild.Prefix;
 
             if (GangRepository.InGang(Context.User.Id, Context.Guild.Id))
                 Gang = GangRepository.FetchGang(Context);

@@ -13,6 +13,11 @@ namespace DEA.Modules
     [Require(Attributes.Moderator)]
     public class Moderation : DEAModule
     {
+        protected override void BeforeExecute()
+        {
+            InitializeData();
+        }
+
         [Command("Ban")]
         [RequireBotPermission(GuildPermission.BanMembers)]
         [Summary("Bans a user from the server.")]

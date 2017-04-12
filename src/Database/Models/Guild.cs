@@ -34,9 +34,9 @@ namespace DEA.Database.Models
 
         public string Prefix { get; set; } = Config.DEFAULT_PREFIX;
 
-        public decimal GlobalChattingMultiplier = 1;
+        public decimal GlobalChattingMultiplier { get; set; } = 1;
 
-        public decimal TempMultiplierIncreaseRate = 0.1m;
+        public decimal TempMultiplierIncreaseRate { get; set; } = 0.1m;
 
         //Misc
 

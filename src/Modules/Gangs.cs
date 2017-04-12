@@ -13,6 +13,10 @@ namespace DEA.Modules
 {
     public class Gangs : DEAModule
     {
+        protected override void BeforeExecute()
+        {
+            InitializeData();
+        }
 
         [Command("CreateGang")]
         [Require(Attributes.NoGang)]

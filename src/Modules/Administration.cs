@@ -12,6 +12,10 @@ namespace DEA.Modules
     [Require(Attributes.Admin)]
     public class Administration : DEAModule
     {
+        protected override void BeforeExecute()
+        {
+            InitializeData();
+        }
 
         [Command("RoleIDs")]
         [Summary("Gets the ID of all roles in the guild.")]

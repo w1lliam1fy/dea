@@ -14,6 +14,11 @@ namespace DEA.Modules
     [Require(Attributes.ServerOwner)]
     public class Owners : DEAModule
     {
+        protected override void BeforeExecute()
+        {
+            InitializeData();
+        }
+
         [Command("ResetCooldowns")]
         [Summary("Resets all cooldowns for a specific user.")]
         public async Task ResetCooldowns(IGuildUser user = null)

@@ -11,6 +11,10 @@ namespace DEA.Modules
     [RequireCooldown]
     public class Crime : DEAModule
     {
+        protected override void BeforeExecute()
+        {
+            InitializeData();
+        }
 
         [Command("Whore")]
         [Summary("Sell your body for some quick cash.")]

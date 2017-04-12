@@ -13,6 +13,11 @@ namespace DEA.Modules
 {
     public class NSFW : DEAModule
     {
+        protected override void BeforeExecute()
+        {
+            InitializeData();
+        }
+
         [Command("ChangeNSFWSettings")]
         [Require(Attributes.Admin)]
         [Summary("Enables/disables NSFW commands in your server.")]
