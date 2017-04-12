@@ -50,12 +50,13 @@ namespace DEA.Modules
             Gang gang;
             if (gangName == null) gang = Gang;
             else gang = GangRepository.FetchGang(gangName, Context.Guild.Id);
+            if (Gang == null) Error("You are not in a gang.");
             var members = string.Empty;
             var leader = string.Empty;
             if (Context.Guild.GetUser(gang.LeaderId) != null) leader = $"<@{gang.LeaderId}>";
             foreach (var member in gang.Members)
                 if (Context.Guild.GetUser(member) != null) members += $"<@{member}>, ";
-            if (members.Length > 2) members = $"__**Members:**__ {members.Substring(0, members.Length - 2)}\n";
+            if (members.Length != 0) members = $"__**Members:**__ {members.Substring(0, members.Length - 2)}\n";
             var description = $"__**Leader:**__ {leader}\n" + members + $"__**Wealth:**__ {gang.Wealth.ToString("C", Config.CI)}\n" +
                               $"__**Interest rate:**__ {Services.Math.CalculateIntrestRate(gang.Wealth).ToString("P")}";
             await Send(description, gang.Name);
