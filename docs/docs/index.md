@@ -2,7 +2,7 @@
 
 To invite DEA to your Discord Server, click the image below.
 
-[![img][img]](https://discordapp.com/oauth2/authorize?client_id={Context.Guild.CurrentUser.Id}&scope=bot&permissions=410119182)
+[![img][img]](https://discordapp.com/oauth2/authorize?client_id=290823959669374987&scope=bot&permissions=410119182)
 
 DEA is a multi-purpose Discord Bot mainly known for it's infamous Cash System with multiple subtleties referencing to the show Narcos, which inspired the start the creation of this masterpiece. 
 
