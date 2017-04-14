@@ -229,7 +229,7 @@ namespace DEA.Modules
                 if (userToDM != null)
                 {
                     var channel = await userToDM.CreateDMChannelAsync();
-                    await ResponseMethods.DM(channel, $"{raidedGang.Name} just raided your gang's wealth and managed to walk away with {stolen.ToString("C", Config.CI)}.");
+                    await ResponseMethods.DM(channel, $"{Gang.Name} just raided your gang's wealth and managed to walk away with {stolen.ToString("C", Config.CI)}.");
                 }
 
                 await Reply($"With a {Config.RAID_SUCCESS_ODDS}.00% chance of success, you successfully stole {stolen.ToString("C", Config.CI)}. " +
@@ -246,7 +246,7 @@ namespace DEA.Modules
                 if (userToDM != null)
                 {
                     var channel = await userToDM.CreateDMChannelAsync();
-                    await ResponseMethods.DM(channel, $"{raidedGang.Name} tried to raid your gang's stash, but one of your loyal sicarios gunned them out.");
+                    await ResponseMethods.DM(channel, $"{Gang.Name} tried to raid your gang's stash, but one of your loyal sicarios gunned them out.");
                 }
                 
                 await Reply($"With a {Config.RAID_SUCCESS_ODDS}.00% chance of success, you failed to steal {stolen.ToString("C", Config.CI)} " +
