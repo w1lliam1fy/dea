@@ -8,6 +8,7 @@ using DEA.Database.Models;
 using MongoDB.Driver;
 using DEA.Services;
 using DEA.Common;
+using System.Text.RegularExpressions;
 
 namespace DEA.Modules
 {
@@ -25,6 +26,7 @@ namespace DEA.Modules
         {
             if (Cash < Config.GANG_CREATION_COST)
                 Error($"You do not have {Config.GANG_CREATION_COST.ToString("C", Config.CI)}. Balance: {Cash.ToString("C", Config.CI)}.");
+            if (!new Regex(@"^[a-zA-Z0-9\s]*$").IsMatch(name)) Error("Gang names may not contain any non alphanumeric characters.");
             var gang = GangRepository.CreateGang(Context.User.Id, Context.Guild.Id, name);
             await UserRepository.EditCashAsync(Context, -Config.GANG_CREATION_COST);
             await Reply($"You have successfully created the {gang.Name} gang!");
@@ -135,6 +137,7 @@ namespace DEA.Modules
                 Error($"You do not have {Config.GANG_NAME_CHANGE_COST.ToString("C", Config.CI)}. Balance: {Cash.ToString("C", Config.CI)}.");
             var gangs = DEABot.Gangs.Find(y => y.GuildId == Context.Guild.Id).ToList();
             if (gangs.Any(x => x.Name.ToLower() == newName.ToLower())) Error($"There is already a gang by the name {newName}.");
+            if (!new Regex(@"^[a-zA-Z0-9\s]*$").IsMatch(newName)) Error("Gang names may not contain any non alphanumeric characters.");
             await UserRepository.EditCashAsync(Context, -Config.GANG_NAME_CHANGE_COST);
             GangRepository.Modify(DEABot.GangUpdateBuilder.Set(x => x.Name, newName), Context);
             await Reply($"You have successfully changed your gang name to {newName} at the cost of {Config.GANG_NAME_CHANGE_COST.ToString("C", Config.CI)}.");

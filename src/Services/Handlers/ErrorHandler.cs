@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace DEA.Services.Handlers
@@ -25,19 +26,38 @@ namespace DEA.Services.Handlers
             if (logMessage.Exception is CommandException cmdEx)
             {
                 if (cmdEx.InnerException is DEAException)
-                    await ResponseMethods.Send(cmdEx.Context as SocketCommandContext, $"{ResponseMethods.Name(cmdEx.Context.User as IGuildUser)}, {cmdEx.InnerException.Message}", null, new Color(255, 0, 0));
+                    await ResponseMethods.Reply(cmdEx.Context as SocketCommandContext, cmdEx.InnerException.Message, null, new Color(255, 0, 0));
+                else if (cmdEx.InnerException is HttpException httpEx)
+                {
+                    var message = string.Empty;
+                    switch (httpEx.DiscordCode)
+                    {
+                        case null:
+                            message = "DEA does not have permission to do that.";
+                            break;
+                        case 50007:
+                            message = "DEA does not have permission to send messages to this user.";
+                            break;
+                        default:
+                            message = httpEx.Message.Remove(0, 39) + ".";
+                            break;
+                    }
+                    await ResponseMethods.Reply(cmdEx.Context as SocketCommandContext, message, null, new Color(255, 0, 0));
+                }
                 else
                 {
                     var message = cmdEx.InnerException.Message;
                     if (cmdEx.InnerException.InnerException != null) message += $"\n**Inner Exception:** {cmdEx.InnerException.InnerException.Message}";
 
-                    await ResponseMethods.Send(cmdEx.Context as SocketCommandContext, $"{ResponseMethods.Name(cmdEx.Context.User as IGuildUser)}, {message}", null, new Color(255, 0, 0));
+                    await ResponseMethods.Reply(cmdEx.Context as SocketCommandContext, message, null, new Color(255, 0, 0));
 
                     if ((await cmdEx.Context.Guild.GetCurrentUserAsync() as IGuildUser).GetPermissions(cmdEx.Context.Channel as SocketTextChannel).AttachFiles)
                         using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(cmdEx.ToString() ?? string.Empty)))
                             await cmdEx.Context.Channel.SendFileAsync(ms, "Stack_Trace.txt");
                 }
             }
+            else if (logMessage.Exception != null)
+                await Logger.Log(LogSeverity.Error, logMessage.Exception.Source, $"{logMessage.Exception.Message}: {logMessage.Exception.StackTrace}");
         }
 
         public static async Task HandleCommandFailureAsync(SocketCommandContext context, IResult result, int argPos, Guild guild)
@@ -64,12 +84,23 @@ namespace DEA.Services.Handlers
                 case CommandError.ParseFailed:
                     message = $"Invalid number.";
                     break;
+                case CommandError.UnmetPrecondition:
+                    if (result.ErrorReason.StartsWith("Command requires guild permission "))
+                    {
+                        var permission = result.ErrorReason.Replace("Command requires guild permission ", string.Empty);
+                        permission = Regex.Replace(permission, "(?<=[a-z])([A-Z])", " $1", RegexOptions.Compiled).Trim();
+                        message = $"DEA requires the server pemission \"{permission}\" in order to be able to execute this command.";
+                    }
+                    else
+                        message = result.ErrorReason;
+                    break;
                 default:
                     message = result.ErrorReason;
                     break;
             }
+
             if (!string.IsNullOrWhiteSpace(message))
-                await ResponseMethods.Send(context, $"{ResponseMethods.Name(context.User as IGuildUser)}, {message}", null, new Color(255, 0, 0));
+                await ResponseMethods.Reply(context, message, null, new Color(255, 0, 0));
         }
 
         public static async Task HandleLoginFailure(HttpException httpEx)

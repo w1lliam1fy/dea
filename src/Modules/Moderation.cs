@@ -44,7 +44,7 @@ namespace DEA.Modules
 
         [Command("Mute")]
         [RequireBotPermission(GuildPermission.ManageRoles)]
-        [Summary("Temporarily mutes a user.")]
+        [Summary("Permanently mutes a user.")]
         public async Task Mute(IGuildUser userToMute, [Remainder] string reason = "No reason.")
         {
             var mutedRole = Context.Guild.GetRole(DbGuild.MutedRoleId);
