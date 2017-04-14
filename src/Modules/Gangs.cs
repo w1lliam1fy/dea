@@ -52,7 +52,7 @@ namespace DEA.Modules
             Gang gang;
             if (gangName == null) gang = Gang;
             else gang = GangRepository.FetchGang(gangName, Context.Guild.Id);
-            if (Gang == null) Error("You are not in a gang.");
+            if (gang == null) Error("You are not in a gang.");
             var members = string.Empty;
             var leader = string.Empty;
             if (Context.Guild.GetUser(gang.LeaderId) != null) leader = $"<@{gang.LeaderId}>";
