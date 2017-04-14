@@ -9,6 +9,7 @@ using MongoDB.Driver;
 using DEA.Resources;
 using System.Collections.Generic;
 using DEA.Services.Handlers;
+using DEA.Services;
 
 namespace DEA.Modules
 {
@@ -166,7 +167,7 @@ namespace DEA.Modules
             decimal deaMoney = money * Config.DEA_CUT / 100;
             await UserRepository.EditCashAsync(Context, user.Id, money - deaMoney);
             await UserRepository.EditCashAsync(Context, Context.Guild.CurrentUser.Id, deaMoney);
-            await Reply($"Successfully donated {(money - deaMoney).ToString("C", Config.CI)} to {user.Mention}.\nDEA has taken a {deaMoney.ToString("C", Config.CI)} cut out of this donation. Balance: {(Cash + money - deaMoney).ToString("C", Config.CI)}.");
+            await Reply($"Successfully donated {(money - deaMoney).ToString("C", Config.CI)} to {ResponseMethods.Name(user)}.\nDEA has taken a {deaMoney.ToString("C", Config.CI)} cut out of this donation. Balance: {(Cash + money - deaMoney).ToString("C", Config.CI)}.");
         }
 
         [Command("Rank")]
@@ -178,17 +179,17 @@ namespace DEA.Modules
             var users = DEABot.Users.Find(y => y.GuildId == Context.Guild.Id).ToList();
             var sorted = users.OrderByDescending(x => x.Cash).ToList();
             IRole rank = null;
-            rank = RankHandler.FetchRank(Context);
+            rank = RankHandler.FetchRank(user.Id, user.GuildId);
             var description = $"Balance: {dbUser.Cash.ToString("C", Config.CI)}\n" +
                               $"Position: #{sorted.FindIndex(x => x.UserId == user.Id) + 1}\n";
             if (rank != null)
                 description += $"Rank: {rank.Mention}";
-            await Send(description, $"Ranking of {user}");
+            await Send(description, $"Ranking of {ResponseMethods.Name(user)}");
         }
 
         [Command("Rate")]
         [Summary("View the money/message rate of anyone.")]
-        public async Task Rate(IGuildUser user = null)
+        public async Task Rate([Remainder] IGuildUser user = null)
         {
             user = user ?? Context.User as IGuildUser;
             var dbUser = UserRepository.FetchUser(user.Id, Context.Guild.Id);
@@ -196,7 +197,7 @@ namespace DEA.Modules
                        $"Chatting multiplier: {dbUser.TemporaryMultiplier.ToString("N2")}\n" +
                        $"Investment multiplier: {dbUser.InvestmentMultiplier.ToString("N2")}\n" +
                        $"Message cooldown: {dbUser.MessageCooldown / 1000} seconds",
-                       $"Rate of {user}");
+                       $"Rate of {ResponseMethods.Name(user)}");
         }
 
         [Command("Money")]
@@ -205,7 +206,7 @@ namespace DEA.Modules
         public async Task Money([Remainder] IGuildUser user = null)
         {
             user = user ?? Context.User as IGuildUser;
-            await Send($"{user.Mention}'s balance: {(UserRepository.FetchUser(user.Id, Context.Guild.Id)).Cash.ToString("C", Config.CI)}.");
+            await Send($"{ResponseMethods.Name(user)}'s balance: {(UserRepository.FetchUser(user.Id, Context.Guild.Id)).Cash.ToString("C", Config.CI)}.");
         }
 
         [Command("Ranks")]
@@ -255,12 +256,14 @@ namespace DEA.Modules
         [Summary("Check when you can sauce out more cash.")]
         public async Task Cooldowns()
         {
-            var cooldowns = new Dictionary<String, TimeSpan>();
-            cooldowns.Add("Whore", Config.WHORE_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(DbUser.Whore)));
-            cooldowns.Add("Jump", Config.JUMP_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(DbUser.Jump)));
-            cooldowns.Add("Steal", Config.STEAL_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(DbUser.Steal)));
-            cooldowns.Add("Rob", Config.ROB_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(DbUser.Rob)));
-            cooldowns.Add("Withdraw", Config.WITHDRAW_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(DbUser.Withdraw)));
+            var cooldowns = new Dictionary<String, TimeSpan>
+            {
+                { "Whore", Config.WHORE_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(DbUser.Whore)) },
+                { "Jump", Config.JUMP_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(DbUser.Jump)) },
+                { "Steal", Config.STEAL_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(DbUser.Steal)) },
+                { "Rob", Config.ROB_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(DbUser.Rob)) },
+                { "Withdraw", Config.WITHDRAW_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(DbUser.Withdraw)) }
+            };
             if (Gang != null)
                 cooldowns.Add("Raid", Config.RAID_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(Gang.Raid)));
             var description = string.Empty;
@@ -271,7 +274,7 @@ namespace DEA.Modules
             }
             if (description.Length == 0) Error("All your commands are available for use!");
 
-            await Send(description, $"All cooldowns for {Context.User}");
+            await Send(description, $"All cooldowns for {Name()}");
         }
 
     }

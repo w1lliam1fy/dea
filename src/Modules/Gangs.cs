@@ -156,7 +156,7 @@ namespace DEA.Modules
                         DEABot.GangUpdateBuilder.Set(x => x.Members, Gang.Members)), Context);
                     break;
                 }
-            await Reply($"You have successfully transferred the leadership of {Gang.Name} to {gangMember.Mention}");
+            await Reply($"You have successfully transferred the leadership of {Gang.Name} to {ResponseMethods.Name(gangMember)}.");
         }
 
         [Command("Deposit")]

@@ -21,6 +21,24 @@ namespace DEA.Services
             return false;
         }
 
+        public static bool IsHigherMod(IGuildUser mod, IGuildUser user)
+        {
+            var guild = GuildRepository.FetchGuild(user.GuildId);
+            if (guild.ModRoles != null) return false;
+            int highest = 0;
+            int highestForUser = 0;
+
+            foreach (var role in guild.ModRoles.OrderByDescending(x => x.Value))
+                if (mod.Guild.GetRole(Convert.ToUInt64(role.Name)) != null)
+                    if (mod.RoleIds.Any(x => x.ToString() == role.Name)) highest = role.Value.AsInt32;
+
+            foreach (var role in guild.ModRoles.OrderByDescending(x => x.Value))
+                if (user.Guild.GetRole(Convert.ToUInt64(role.Name)) != null)
+                    if (user.RoleIds.Any(x => x.ToString() == role.Name)) highestForUser = role.Value.AsInt32;
+
+            return highest > highestForUser;
+        }
+
         public static async Task InformSubjectAsync(IUser moderator, string action, IUser subject, string reason)
         {
             try

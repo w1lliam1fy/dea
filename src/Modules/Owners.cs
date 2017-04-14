@@ -8,6 +8,7 @@ using MongoDB.Driver;
 using MongoDB.Bson;
 using DEA.Resources;
 using DEA.Services.Handlers;
+using DEA.Services;
 
 namespace DEA.Modules
 {
@@ -32,7 +33,7 @@ namespace DEA.Modules
                 DEABot.UserUpdateBuilder.Set(x => x.Steal, time),
                 DEABot.UserUpdateBuilder.Set(x => x.Rob, time),
                 DEABot.UserUpdateBuilder.Set(x => x.Withdraw, time)), user.Id, Context.Guild.Id);
-            await Reply($"Successfully reset all of {user.Mention} cooldowns.");
+            await Reply($"Successfully reset all of {ResponseMethods.Name(user)} cooldowns.");
         }
 
         [Command("100k")]
@@ -42,7 +43,7 @@ namespace DEA.Modules
             user = user ?? Context.User as IGuildUser;
             UserRepository.Modify(DEABot.UserUpdateBuilder.Set(x => x.Cash, 100000), user.Id, Context.Guild.Id);
             await RankHandler.Handle(Context.Guild, user.Id);
-            await Reply($"Successfully set {user.Mention}'s balance to $100,000.00.");
+            await Reply($"Successfully set {ResponseMethods.Name(user)}'s balance to $100,000.00.");
         }
 
         [Command("Add")]
@@ -51,7 +52,7 @@ namespace DEA.Modules
         {
             if (money < 0) Error("You may not add negative money to a user's balance.");
             await UserRepository.EditCashAsync(Context, user.Id, money);
-            await Reply($"Successfully added {money.ToString("C", Config.CI)} to {user.Mention}'s balance.");
+            await Reply($"Successfully added {money.ToString("C", Config.CI)} to {ResponseMethods.Name(user)}'s balance.");
         }
 
         [Command("AddTo")]
@@ -71,7 +72,7 @@ namespace DEA.Modules
         {
             if (money < 0) Error("You may not remove a negative amount of money from a user's balance.");
             await UserRepository.EditCashAsync(Context, user.Id, -money);
-            await Reply($"Successfully removed {money.ToString("C", Config.CI)} from {user.Mention}'s balance.");
+            await Reply($"Successfully removed {money.ToString("C", Config.CI)} from {ResponseMethods.Name(user)}'s balance.");
         }
 
         [Command("RemoveFrom")]

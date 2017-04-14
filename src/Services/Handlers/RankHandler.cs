@@ -45,15 +45,16 @@ namespace DEA.Services.Handlers
             }
         }
 
-        public static IRole FetchRank(SocketCommandContext context)
+        public static IRole FetchRank(ulong userId, ulong guildId)
         {
-            var guild = GuildRepository.FetchGuild(context.Guild.Id);
-            var cash = UserRepository.FetchUser(context).Cash;
+            var dbGuild = GuildRepository.FetchGuild(guildId);
+            var cash = UserRepository.FetchUser(userId, guildId).Cash;
             IRole role = null;
-            if (guild.RankRoles != null)
-                foreach (var rankRole in guild.RankRoles.OrderBy(x => x.Value))
+            IGuild guild = DEABot.Client.GetGuild(guildId);
+            if (dbGuild.RankRoles != null && guild != null)
+                foreach (var rankRole in dbGuild.RankRoles.OrderBy(x => x.Value))
                     if (cash >= (decimal)rankRole.Value.AsDouble)
-                        role = context.Guild.GetRole(Convert.ToUInt64(rankRole.Name));
+                        role = guild.GetRole(Convert.ToUInt64(rankRole.Name));
             return role;
         }
     }

@@ -23,11 +23,11 @@ namespace DEA.Modules
         [Summary("Bans a user from the server.")]
         public async Task Ban(IGuildUser userToBan, [Remainder] string reason = "No reason.")
         {
-            if (ModuleMethods.IsMod(userToBan)) Error("You cannot ban another mod!");
+            if (!ModuleMethods.IsHigherMod(Context.User as IGuildUser, userToBan)) Error("You cannot ban another mod with a permission level higher or equal to your own!");
             await ModuleMethods.InformSubjectAsync(Context.User, "Ban", userToBan, reason);
             await Context.Guild.AddBanAsync(userToBan);
             await Logger.ModLog(Context, "Ban", new Color(255, 0, 0), reason, userToBan);
-            await Send($"{Context.User.Mention} has successfully banned {userToBan.Mention}!");
+            await Send($"{(Context.User as IGuildUser).Nickname} has successfully banned {userToBan.Mention}!");
         }
 
         [Command("Kick")]
@@ -39,7 +39,7 @@ namespace DEA.Modules
             await ModuleMethods.InformSubjectAsync(Context.User, "Kick", userToKick, reason);
             await userToKick.KickAsync();
             await Logger.ModLog(Context, "Kick", new Color(255, 114, 14), reason, userToKick);
-            await Send($"{Context.User.Mention} has successfully kicked {userToKick.Mention}!");
+            await Send($"{(Context.User as IGuildUser).Nickname} has successfully kicked {userToKick.Mention}!");
         }
 
         [Command("Mute")]
@@ -53,9 +53,9 @@ namespace DEA.Modules
             if (ModuleMethods.IsMod(userToMute)) Error("You cannot mute another mod!");
             await ModuleMethods.InformSubjectAsync(Context.User, "Mute", userToMute, reason);
             await userToMute.AddRoleAsync(mutedRole);
-            MuteRepository.AddMute(userToMute.Id, Context.Guild.Id, Config.DEFAULT_MUTE_TIME);
-            await Logger.ModLog(Context, "Mute", new Color(255, 114, 14), reason, userToMute, $"\n**Length:** {Config.DEFAULT_MUTE_TIME.TotalHours} hours");
-            await Send($"{Context.User.Mention} has successfully muted {userToMute.Mention}!");
+            MuteRepository.AddMute(userToMute.Id, Context.Guild.Id, TimeSpan.FromDays(365));
+            await Logger.ModLog(Context, "Mute", new Color(255, 114, 14), reason, userToMute, null);
+            await Send($"{(Context.User as IGuildUser).Nickname} has successfully muted {userToMute.Mention}!");
         }
 
         [Command("CustomMute")]
@@ -66,8 +66,7 @@ namespace DEA.Modules
         {
             if (hours > 168) Error("You may not mute a user for more than a week.");
             if (hours < 1) Error("You may not mute a user for less than 1 hour.");
-            string time = "hours";
-            if (hours == 1) time = "hour";
+            string time = (hours == 1) ? "hour" : "hours";
             var mutedRole = Context.Guild.GetRole(DbGuild.MutedRoleId);
             if (mutedRole == null) Error($"You may not mute users if the muted role is not valid.\nPlease use the " +
                                                        $"{DbGuild.Prefix}SetMutedRole command to change that.");
@@ -76,7 +75,7 @@ namespace DEA.Modules
             await userToMute.AddRoleAsync(mutedRole);
             MuteRepository.AddMute(userToMute.Id, Context.Guild.Id, TimeSpan.FromHours(hours));
             await Logger.ModLog(Context, "Mute", new Color(255, 114, 14), reason, userToMute, $"\n**Length:** {hours} {time}");
-            await Send($"{Context.User.Mention} has successfully muted {userToMute.Mention} for {hours} {time}!");
+            await Send($"{(Context.User as IGuildUser).Nickname} has successfully muted {userToMute.Mention} for {hours} {time}!");
         }
 
         [Command("Unmute")]
@@ -89,7 +88,7 @@ namespace DEA.Modules
             await userToUnmute.RemoveRoleAsync(Context.Guild.GetRole(DbGuild.MutedRoleId));
             MuteRepository.RemoveMute(userToUnmute.Id, Context.Guild.Id);
             await Logger.ModLog(Context, "Unmute", new Color(12, 255, 129), reason, userToUnmute);
-            await Send($"{Context.User.Mention} has successfully unmuted {userToUnmute.Mention}!");
+            await Send($"{(Context.User as IGuildUser).Nickname} has successfully unmuted {userToUnmute.Mention}!");
         }
 
         [Command("Clear")]

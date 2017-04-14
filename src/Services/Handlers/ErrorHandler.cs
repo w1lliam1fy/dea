@@ -23,7 +23,7 @@ namespace DEA.Services.Handlers
                 {
                     var builder = new EmbedBuilder()
                     {
-                        Description = $"{cmdEx.Context.User.Mention}, {cmdEx.InnerException.Message}",
+                        Description = $"{ResponseMethods.Name(cmdEx.Context.User as IGuildUser)}, {cmdEx.InnerException.Message}",
                         Color = new Color(255, 0, 0)
                     };
 
@@ -36,7 +36,7 @@ namespace DEA.Services.Handlers
 
                     var builder = new EmbedBuilder()
                     {
-                        Description = $"{cmdEx.Context.User.Mention}, {message}",
+                        Description = $"{ResponseMethods.Name(cmdEx.Context.User as IGuildUser)}, {message}",
                         Color = new Color(255, 0, 0)
                     };
 

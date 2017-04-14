@@ -35,9 +35,9 @@ namespace DEA.Services
 
             var Context = new SocketCommandContext(DEABot.Client, msg);
 
-            if (Context.User.IsBot) return;
+            //if (Context.Guild == null) return;
 
-            if (!(Context.Channel is SocketTextChannel)) return;
+            if (Context.User.IsBot) return;
 
             var perms = (Context.Guild.CurrentUser as IGuildUser).GetPermissions(Context.Channel as SocketTextChannel);
 
@@ -74,7 +74,7 @@ namespace DEA.Services
                     {
                         var builder = new EmbedBuilder()
                         {
-                            Description = $"{Context.User.Mention}, {message}",
+                            Description = $"{ResponseMethods.Name(Context.User as IGuildUser)}, {message}",
                             Color = new Color(255, 0, 0)
                         };
 

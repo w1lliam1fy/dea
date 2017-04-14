@@ -10,15 +10,21 @@ namespace DEA.Services
         public static async Task Reply(SocketCommandContext context, string description, string title = null, Color color = default(Color))
         {
             var rand = new Random();
+
             var builder = new EmbedBuilder()
             {
-                Description = $"{context.User.Mention}, {description}",
+                Description = $"{Name(context.User as IGuildUser)}, {description}",
                 Color = Config.COLORS[rand.Next(1, Config.COLORS.Length) - 1]
             };
             if (title != null) builder.Title = title;
             if (color.RawValue != default(Color).RawValue) builder.Color = color;
 
             await context.Channel.SendMessageAsync(string.Empty, embed: builder);
+        }
+
+        public static string Name(IGuildUser user)
+        {
+            return (string.IsNullOrWhiteSpace(user.Nickname)) ? $"**{user.Username}**" : $"**{user.Nickname}**";
         }
 
         public static async Task Send(SocketCommandContext context, string description, string title = null, Color color = default(Color))

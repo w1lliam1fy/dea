@@ -94,7 +94,7 @@ namespace DEA.Modules
             if (UserRepository.FetchUser(userToBully.Id, Context.Guild.Id).Cash > UserRepository.FetchUser(Context).Cash)
                 Error("You may not bully a user with more money than you.");
             await userToBully.ModifyAsync(x => x.Nickname = nickname);
-            await Send($"{userToBully.Mention} just got ***BULLIED*** by {Context.User.Mention} with his new nickname: \"{nickname}\".");
+            await Send($"{ResponseMethods.Name(userToBully)} just got ***BULLIED*** by {Name()} with his new nickname: \"{nickname}\".");
         }
 
         [Command("Rob")]
