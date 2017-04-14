@@ -12,7 +12,6 @@ using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace DEA
@@ -66,11 +65,6 @@ namespace DEA
             GuildUpdateBuilder = Builders<Guild>.Update;
             UserUpdateBuilder = Builders<User>.Update;
             GangUpdateBuilder = Builders<Gang>.Update;
-
-            var builder = Builders<Gang>.Filter;
-            foreach (var gang in Gangs.Find(builder.Empty).ToList())
-                Gangs.UpdateOne(y => y.Id == gang.Id,
-                    GangUpdateBuilder.Set(x => x.Name, new Regex(@"[^A-Za-z0-9 ]").Replace(gang.Name, string.Empty)));
         }
 
         public async Task RunAsync(params string[] args)
