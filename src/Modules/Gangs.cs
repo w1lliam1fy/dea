@@ -97,7 +97,7 @@ namespace DEA.Modules
             if (userToDM != null)
             {
                 var channel = await userToDM.CreateDMChannelAsync();
-                await ResponseMethods.DM(channel, $"{Context.User} has left {Gang.Name}.");
+                await ResponseMethods.DM(channel, $"{Context.User.Mention} has left {Gang.Name}.");
             }
         }
 
