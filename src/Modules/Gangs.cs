@@ -6,8 +6,8 @@ using DEA.Database.Repository;
 using System.Linq;
 using DEA.Database.Models;
 using MongoDB.Driver;
-using DEA.Resources;
 using DEA.Services;
+using DEA.Common;
 
 namespace DEA.Modules
 {

@@ -1,4 +1,4 @@
-﻿namespace DEA.Resources
+﻿namespace DEA.Common
 {
     public class Credentials
     {

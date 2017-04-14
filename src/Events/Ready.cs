@@ -14,6 +14,7 @@ namespace DEA.Events
         private async Task HandleReady()
         {
             await DEABot.Client.SetGameAsync("USE $help");
+            new MessageRecieved();
             new UserEvents();
             new RoleEvents();
             new ChannelEvents();

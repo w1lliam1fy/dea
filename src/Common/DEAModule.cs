@@ -6,7 +6,7 @@ using Discord.Commands;
 using System;
 using System.Threading.Tasks;
 
-namespace DEA.Resources
+namespace DEA.Common
 {
     public class DEAModule : ModuleBase<SocketCommandContext>
     {

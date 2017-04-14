@@ -1,5 +1,5 @@
-﻿using DEA.Database.Models;
-using DEA.Resources;
+﻿using DEA.Common;
+using DEA.Database.Models;
 using Discord.Commands;
 using MongoDB.Driver;
 using System;

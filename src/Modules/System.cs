@@ -1,32 +1,22 @@
 ﻿using Discord;
-using Discord.WebSocket;
 using Discord.Commands;
 using System.Linq;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using DEA.Database.Repository;
-using DEA.Resources;
 using DEA.Services;
 using DEA;
+using DEA.Common;
+using DEA.Services.Handlers;
 
 namespace System.Modules
 {
     public class System : DEAModule
     {
 
-        private Process _process;
-        private CommandService _service;
-
         protected override void BeforeExecute()
         {
-            _process = Process.GetCurrentProcess();
             InitializeData();
-        }
-
-        public System(CommandService service)
-        {
-            _service = service;
         }
 
         [Command("Invite")]
@@ -66,7 +56,7 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
         public async Task Modules()
         {
             string modules = string.Empty;
-            foreach (var module in _service.Modules)
+            foreach (var module in DEABot.CommandService.Modules)
                 modules += $"{module.Name}, ";
             modules = modules.Replace("DEAModule, ", string.Empty);
             await Reply("Current command modules: " + modules.Substring(0, modules.Length - 2) + ".");
@@ -84,7 +74,7 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
             {
                 commandOrModule = commandOrModule.Replace(" ", "_");
                 if (commandOrModule.StartsWith(prefix)) commandOrModule = commandOrModule.Remove(0, prefix.Length);
-                foreach (var module in _service.Modules)
+                foreach (var module in DEABot.CommandService.Modules)
                 {
                     if (module.Name.ToLower() == commandOrModule.ToLower())
                     {
@@ -102,14 +92,14 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
                     }
                 }
 
-                foreach (var module in _service.Modules)
+                foreach (var module in DEABot.CommandService.Modules)
                 {
                     foreach (var cmd in module.Commands)
                     {
                         foreach (var alias in cmd.Aliases)
-                            if (alias == commandOrModule.ToLower())
+                            if (alias.ToLower() == commandOrModule.ToLower())
                             {
-                                await Send($"**Description:** {cmd.Summary}\n**Usage:** `{prefix}{CommandHelper.GetUsage(cmd)}`", cmd.Name);
+                                await Send($"**Description:** {cmd.Summary}\n**Usage:** `{prefix}{CommandHandler.GetUsage(cmd, commandOrModule)}`", CommandHandler.UpperFirstChar(commandOrModule));
                                 return;
                             }
                     }
@@ -122,7 +112,7 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
                 var channel = await Context.User.CreateDMChannelAsync();
 
                 string modules = string.Empty;
-                foreach (var module in _service.Modules)
+                foreach (var module in DEABot.CommandService.Modules)
                     modules += $"{module.Name}, ";
                 modules = modules.Replace("DEAModule, ", string.Empty);
 
@@ -147,18 +137,21 @@ If you have any other questions, you may join the **Official DEA Discord Server:
         [Summary("All the statistics about DEA.")]
         public async Task Stats()
         {
-            var uptime = (DateTime.Now - _process.StartTime);
-            var builder = new EmbedBuilder()
-                .AddInlineField("Author", "John#0969")
+            var builder = new EmbedBuilder();
+            using (var process = Process.GetCurrentProcess())
+            {
+                var uptime = (DateTime.Now - process.StartTime);
+                builder.AddInlineField("Author", "John#0969")
                 .AddInlineField("Shard", $"#{DEABot.Client.ShardId}/{DEABot.Credentials.ShardCount}")
                 .AddInlineField("Library", $"Discord.Net {DiscordConfig.Version}")
                 .AddInlineField("Servers", $"{DEABot.Client.Guilds.Count}")
                 .AddInlineField("Channels", $"{DEABot.Client.Guilds.Sum(g => g.Channels.Count) + DEABot.Client.DMChannels.Count}")
-                .AddInlineField("Memory", $"{(_process.PrivateMemorySize64 / 1000000d).ToString("N2")} MB")
+                .AddInlineField("Memory", $"{(process.PrivateMemorySize64 / 1000000d).ToString("N2")} MB")
                 .AddInlineField("Uptime", $"Days: {uptime.Days}\nHours: {uptime.Hours}\nMinutes: {uptime.Minutes}")
                 .AddInlineField("Messages", $"{DEABot.Messages} ({(DEABot.Messages / uptime.TotalSeconds).ToString("N2")}/sec)")
                 .AddInlineField("Commands Used", $"{DEABot.Commands}")
                 .WithColor(Config.COLORS[new Random().Next(1, Config.COLORS.Length) - 1]);
+            }
             
             var channel = await Context.User.CreateDMChannelAsync();
             await channel.SendMessageAsync(string.Empty, embed: builder);

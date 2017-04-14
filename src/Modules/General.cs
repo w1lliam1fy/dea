@@ -6,10 +6,10 @@ using DEA.Database.Models;
 using DEA.Database.Repository;
 using System.Linq;
 using MongoDB.Driver;
-using DEA.Resources;
 using System.Collections.Generic;
 using DEA.Services.Handlers;
 using DEA.Services;
+using DEA.Common;
 
 namespace DEA.Modules
 {
@@ -21,7 +21,6 @@ namespace DEA.Modules
         }
 
         [Command("Investments")]
-        [Alias("Investment")]
         [Summary("Increase your money per message")]
         public async Task Invest([Remainder] string investment = null)
         {
@@ -93,7 +92,7 @@ namespace DEA.Modules
         }
 
         [Command("Leaderboards")]
-        [Alias("lb", "rankings", "highscores", "leaderboard", "highscore")]
+        [Alias("lb", "rankings", "highscores")]
         [Summary("View the richest Drug Traffickers.")]
         public async Task Leaderboards()
         {
@@ -121,7 +120,7 @@ namespace DEA.Modules
         }
 
         [Command("Rates")]
-        [Alias("highestrate", "ratehighscore", "bestrate", "highestrates", "ratelb", "rateleaderboards")]
+        [Alias("highestrate", "ratehighscore", "highestrates", "ratelb", "rateleaderboards")]
         [Summary("View the richest Drug Traffickers.")]
         public async Task Chatters()
         {

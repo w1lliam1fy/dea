@@ -1,5 +1,5 @@
-﻿using DEA.Database.Repository;
-using DEA.Resources;
+﻿using DEA.Common;
+using DEA.Database.Repository;
 using Discord;
 using Discord.Commands;
 using System;
@@ -23,16 +23,16 @@ namespace DEA.Services
 
         public static bool IsHigherMod(IGuildUser mod, IGuildUser user)
         {
-            var guild = GuildRepository.FetchGuild(user.GuildId);
-            if (guild.ModRoles != null) return false;
-            int highest = 0;
-            int highestForUser = 0;
+            var guild = GuildRepository.FetchGuild(mod.GuildId);
+            int highest = mod.GuildPermissions.Administrator ? 2 : 0;
+            int highestForUser = user.GuildPermissions.Administrator ? 2 : 0;
+            if (guild.ModRoles == null) return highest > highestForUser;
 
-            foreach (var role in guild.ModRoles.OrderByDescending(x => x.Value))
+            foreach (var role in guild.ModRoles.OrderBy(x => x.Value))
                 if (mod.Guild.GetRole(Convert.ToUInt64(role.Name)) != null)
                     if (mod.RoleIds.Any(x => x.ToString() == role.Name)) highest = role.Value.AsInt32;
 
-            foreach (var role in guild.ModRoles.OrderByDescending(x => x.Value))
+            foreach (var role in guild.ModRoles.OrderBy(x => x.Value))
                 if (user.Guild.GetRole(Convert.ToUInt64(role.Name)) != null)
                     if (user.RoleIds.Any(x => x.ToString() == role.Name)) highestForUser = role.Value.AsInt32;
 

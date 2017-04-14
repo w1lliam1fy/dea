@@ -2,7 +2,7 @@
 
 namespace DEA.Services.Timers
 {
-    public class ObjectState
+    class ObjectState
     {
         public Timer TimerReference;
 

@@ -3,8 +3,8 @@ using Discord.Commands;
 using System;
 using System.Threading.Tasks;
 using DEA.Database.Repository;
-using DEA.Resources;
 using DEA.Services;
+using DEA.Common;
 
 namespace DEA.Modules
 {

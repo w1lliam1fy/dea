@@ -7,7 +7,7 @@ using System.Linq;
 using Newtonsoft.Json.Linq;
 using System.Net.Http;
 using System.Xml;
-using DEA.Resources;
+using DEA.Common;
 
 namespace DEA.Modules
 {

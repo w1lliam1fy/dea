@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using DEA.Database.Repository;
 using MongoDB.Driver;
 using MongoDB.Bson;
-using DEA.Resources;
 using DEA.Services.Handlers;
 using DEA.Services;
+using DEA.Common;
 
 namespace DEA.Modules
 {

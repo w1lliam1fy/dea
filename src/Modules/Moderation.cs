@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using Discord.WebSocket;
 using DEA.Services;
-using DEA.Resources;
+using DEA.Common;
 
 namespace DEA.Modules
 {

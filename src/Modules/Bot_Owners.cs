@@ -1,4 +1,4 @@
-﻿using DEA.Resources;
+﻿using DEA.Common;
 using DEA.Services;
 using Discord;
 using Discord.Commands;

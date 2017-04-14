@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DEA.Resources
+namespace DEA.Common
 {
     class DEAException : Exception
     {
