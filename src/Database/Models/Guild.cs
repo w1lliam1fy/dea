@@ -10,9 +10,9 @@ namespace DEA.Database.Models
         public ulong Id { get; set; }
 
         //Roles
-        public BsonDocument ModRoles { get; set; }
+        public BsonDocument ModRoles { get; set; } = new BsonDocument();
 
-        public BsonDocument RankRoles { get; set; }
+        public BsonDocument RankRoles { get; set; } = new BsonDocument();
 
         public ulong MutedRoleId { get; set; }
 

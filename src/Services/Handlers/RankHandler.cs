@@ -23,7 +23,7 @@ namespace DEA.Services.Handlers
             List<IRole> rolesToAdd = new List<IRole>();
             List<IRole> rolesToRemove = new List<IRole>();
 
-            if (guild != null && user != null && guildData.RankRoles.ElementCount != 0)
+            if (user != null && guildData.RankRoles.ElementCount != 0)
             {
                 //CHECKS IF THE ROLE EXISTS AND IF IT IS LOWER THAN THE BOT'S HIGHEST ROLE
                 foreach (var rankRole in guildData.RankRoles)
