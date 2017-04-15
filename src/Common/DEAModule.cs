@@ -34,13 +34,13 @@ namespace DEA.Common
                 Gang = GangRepository.FetchGang(Context);
         }
 
-        public async Task<IUserMessage> Reply(string description, string title = null, Color color = default(Color))
+        public async Task<IUserMessage> Reply( string description, string title = null, Color color = default(Color))
         {
             var rand = new Random();
 
             var builder = new EmbedBuilder()
             {
-                Description = $"{ResponseMethods.Name(Context.User as IGuildUser)}, {description}",
+                Description = $"{ResponseMethods.Name(Context.User as IGuildUser, DbUser)}, {description}",
                 Color = Config.COLORS[rand.Next(1, Config.COLORS.Length) - 1]
             };
             if (title != null) builder.Title = title;
@@ -66,13 +66,19 @@ namespace DEA.Common
         public string Name()
         {
             var user = Context.User as IGuildUser;
-            return (string.IsNullOrWhiteSpace(user.Nickname)) ? $"**{user.Username}**" : $"**{user.Nickname}**";
+            if (string.IsNullOrWhiteSpace(DbUser.Name))
+                return (string.IsNullOrWhiteSpace(user.Nickname)) ? $"**{user.Username}**" : $"**{user.Nickname}**";
+            else
+                return $"**{DbUser.Name}**";
         }
 
         public string TitleName()
         {
             var user = Context.User as IGuildUser;
-            return (string.IsNullOrWhiteSpace(user.Nickname)) ? user.Username : user.Nickname;
+            if (string.IsNullOrWhiteSpace(DbUser.Name))
+                return (string.IsNullOrWhiteSpace(user.Nickname)) ? user.Username : user.Nickname;
+            else
+                return DbUser.Name;
         }
 
         public void Error(string message)

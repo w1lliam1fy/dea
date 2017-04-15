@@ -1,4 +1,6 @@
-﻿using Discord;
+﻿using DEA.Database.Models;
+using DEA.Database.Repository;
+using Discord;
 using Discord.Commands;
 using System;
 using System.Threading.Tasks;
@@ -24,12 +26,28 @@ namespace DEA.Services
 
         public static string Name(IGuildUser user)
         {
-            return (string.IsNullOrWhiteSpace(user.Nickname)) ? $"**{user.Username}**" : $"**{user.Nickname}**";
+            var dbUser = UserRepository.FetchUser(user.Id, user.GuildId);
+            if (string.IsNullOrWhiteSpace(dbUser.Name))
+                return (string.IsNullOrWhiteSpace(user.Nickname)) ? $"**{user.Username}**" : $"**{user.Nickname}**";
+            else
+                return $"**{dbUser.Name}**";
+        }
+
+        public static string Name(IGuildUser user, User dbUser)
+        {
+            if (string.IsNullOrWhiteSpace(dbUser.Name))
+                return (string.IsNullOrWhiteSpace(user.Nickname)) ? $"**{user.Username}**" : $"**{user.Nickname}**";
+            else
+                return $"**{dbUser.Name}**";
         }
 
         public static string TitleName(IGuildUser user)
         {
-            return (string.IsNullOrWhiteSpace(user.Nickname)) ? user.Username : user.Nickname;
+            var dbUser = UserRepository.FetchUser(user.Id, user.GuildId);
+            if (string.IsNullOrWhiteSpace(dbUser.Name))
+                return (string.IsNullOrWhiteSpace(user.Nickname)) ? user.Username : user.Nickname;
+            else
+                return dbUser.Name;
         }
 
         public static async Task Send(SocketCommandContext context, string description, string title = null, Color color = default(Color))
