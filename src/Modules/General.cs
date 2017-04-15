@@ -276,5 +276,14 @@ namespace DEA.Modules
             await Send(description, $"All cooldowns for {TitleName()}");
         }
 
+        [Command("Callme")]
+        [Summary("Tell the bot what you want it to call you.")]
+        public async Task Callme([Remainder] string name)
+        {
+            if (name.Length > 32) Error("Your DEA nickname may not be longer than 32 characters.");
+            UserRepository.Modify(DEABot.UserUpdateBuilder.Set(x => x.Name, name), Context);
+            await Send($"How's it going, *{name}*?");
+        }
+
     }
 }
