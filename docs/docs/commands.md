@@ -33,6 +33,7 @@ Command | Description | Usage
 ----------------|--------------|-------
 AddModRole|Adds a moderator role with different permission levels.|`$AddModRole <@ModRole> <Perm level>`
 RemoveModRole|Removes a moderator role.|`$RemoveModRole <@ModRole>`
+ModifyModRole|Modifies a moderator role.|`$ModifyModRole <@ModRole> <Perm level>`
 ResetCooldowns|Resets all cooldowns for a specific user.|`$ResetCooldowns [@User]`
 100k|Sets the user's balance to $100,000.00.|`$100k [@User]`
 Add|Add cash into a user's balance.|`$Add <@User> <Cash>]`
@@ -54,6 +55,7 @@ SetPrefix|Sets the guild specific prefix.|`$SetPrefix <Prefix>`
 SetMutedRole|Sets the muted role.|`$SetMutedRole <@MutedRole>`
 AddRank|Adds a rank roles for the DEA cash system.|`$AddRank <@RankRole> <CashRequired>`
 RemoveRank|Removes a rank role for the DEA cash system.|`$RemoveRank <@RankRole>`
+ModifyRank|Modifies a rank role for the DEA cash system.|`$ModifyRank <@RankRole> <CashRequired>`
 SetModLog|Sets the moderation log.|`$SetModLog <#ModLog>`
 SetDetailedLog|Sets the detailed logs channel.|`$SetDetailedLogs <#DetailedLogs>`
 SetGambleChannel|Sets the gambling channel.|`$SetGambleChannel <#GambleChannel>`
