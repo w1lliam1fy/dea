@@ -7,6 +7,7 @@ using System.Linq;
 using Discord.WebSocket;
 using DEA.Services;
 using DEA.Common;
+using DEA.Common.Preconditions;
 
 namespace DEA.Modules
 {

@@ -23,7 +23,7 @@ namespace DEA.Services.Handlers
             List<IRole> rolesToAdd = new List<IRole>();
             List<IRole> rolesToRemove = new List<IRole>();
 
-            if (guild != null && user != null && guildData.RankRoles != null)
+            if (guild != null && user != null && guildData.RankRoles.ElementCount != 0)
             {
                 //CHECKS IF THE ROLE EXISTS AND IF IT IS LOWER THAN THE BOT'S HIGHEST ROLE
                 foreach (var rankRole in guildData.RankRoles)
@@ -56,7 +56,7 @@ namespace DEA.Services.Handlers
             IRole role = null;
             IGuild guild = DEABot.Client.GetGuild(guildId);
 
-            if (dbGuild.RankRoles != null && guild != null)
+            if (dbGuild.RankRoles.ElementCount != 0 && guild != null)
                 foreach (var rankRole in dbGuild.RankRoles.OrderBy(x => x.Value))
                     if (cash >= (decimal)rankRole.Value.AsDouble)
                         role = guild.GetRole(Convert.ToUInt64(rankRole.Name));

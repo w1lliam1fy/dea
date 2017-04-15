@@ -14,7 +14,7 @@ namespace DEA.Services
         {
             if (user.GuildPermissions.Administrator) return true;
             var guild = GuildRepository.FetchGuild(user.GuildId);
-            if (guild.ModRoles != null)
+            if (guild.ModRoles.ElementCount != 0)
                 foreach (var role in guild.ModRoles)
                     if (user.Guild.GetRole(Convert.ToUInt64(role.Name)) != null)
                         if (user.RoleIds.Any(x => x.ToString() == role.Name)) return true;
@@ -26,7 +26,7 @@ namespace DEA.Services
             var guild = GuildRepository.FetchGuild(mod.GuildId);
             int highest = mod.GuildPermissions.Administrator ? 2 : 0;
             int highestForUser = user.GuildPermissions.Administrator ? 2 : 0;
-            if (guild.ModRoles == null) return highest > highestForUser;
+            if (guild.ModRoles.ElementCount == 0) return highest > highestForUser;
 
             foreach (var role in guild.ModRoles.OrderBy(x => x.Value))
                 if (mod.Guild.GetRole(Convert.ToUInt64(role.Name)) != null)

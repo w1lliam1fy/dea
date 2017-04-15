@@ -9,6 +9,7 @@ using MongoDB.Driver;
 using DEA.Services;
 using DEA.Common;
 using System.Text.RegularExpressions;
+using DEA.Common.Preconditions;
 
 namespace DEA.Modules
 {
@@ -255,7 +256,6 @@ namespace DEA.Modules
                 await Reply($"With a {Config.RAID_SUCCESS_ODDS}.00% chance of success, you failed to steal {stolen.ToString("C", Config.CI)} " +
                             $"and lost all resources in the process.");
             }
-
         }
 
     }

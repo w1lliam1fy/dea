@@ -27,6 +27,11 @@ namespace DEA.Services
             return (string.IsNullOrWhiteSpace(user.Nickname)) ? $"**{user.Username}**" : $"**{user.Nickname}**";
         }
 
+        public static string TitleName(IGuildUser user)
+        {
+            return (string.IsNullOrWhiteSpace(user.Nickname)) ? user.Username : user.Nickname;
+        }
+
         public static async Task Send(SocketCommandContext context, string description, string title = null, Color color = default(Color))
         {
             var rand = new Random();

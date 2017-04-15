@@ -17,7 +17,7 @@
 
   <ItemGroup>
     <Folder Include="Database\Models\" />
-    <Folder Include="Preconditions\" />
+    <Folder Include="Common\Preconditions\" />
   </ItemGroup>
 
 </Project>

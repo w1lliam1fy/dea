@@ -33,6 +33,7 @@ namespace DEA.Services.Handlers
                     switch (httpEx.DiscordCode)
                     {
                         case null:
+                        case 50013:
                             message = "DEA does not have permission to do that.";
                             break;
                         case 50007:
@@ -44,7 +45,7 @@ namespace DEA.Services.Handlers
                     }
                     await ResponseMethods.Reply(cmdEx.Context as SocketCommandContext, message, null, new Color(255, 0, 0));
                 }
-                else
+                else if (cmdEx.InnerException.GetType() != typeof(RateLimitedException))
                 {
                     var message = cmdEx.InnerException.Message;
                     if (cmdEx.InnerException.InnerException != null) message += $"\n**Inner Exception:** {cmdEx.InnerException.InnerException.Message}";

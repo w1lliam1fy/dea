@@ -183,7 +183,7 @@ namespace DEA.Modules
                               $"Position: #{sorted.FindIndex(x => x.UserId == user.Id) + 1}\n";
             if (rank != null)
                 description += $"Rank: {rank.Mention}";
-            await Send(description, $"Ranking of {ResponseMethods.Name(user)}");
+            await Send(description, $"Ranking of {ResponseMethods.TitleName(user)}");
         }
 
         [Command("Rate")]
@@ -196,7 +196,7 @@ namespace DEA.Modules
                        $"Chatting multiplier: {dbUser.TemporaryMultiplier.ToString("N2")}\n" +
                        $"Investment multiplier: {dbUser.InvestmentMultiplier.ToString("N2")}\n" +
                        $"Message cooldown: {dbUser.MessageCooldown / 1000} seconds",
-                       $"Rate of {ResponseMethods.Name(user)}");
+                       $"Rate of {ResponseMethods.TitleName(user)}");
         }
 
         [Command("Money")]
@@ -212,7 +212,7 @@ namespace DEA.Modules
         [Summary("View all ranks.")]
         public async Task Ranks()
         {
-            if (DbGuild.RankRoles == null) Error("There are no ranks yet!");
+            if (DbGuild.RankRoles.ElementCount == 0) Error("There are no ranks yet!");
             var description = string.Empty;
             foreach (var rank in DbGuild.RankRoles.OrderBy(x => x.Value))
             {
@@ -234,8 +234,8 @@ namespace DEA.Modules
         [Summary("View all the moderator roles.")]
         public async Task ModRoles()
         {
-            if (DbGuild.ModRoles == null) Error("There are no moderator roles yet!");
-            var description = string.Empty;
+            if (DbGuild.ModRoles.ElementCount == 0) Error("There are no moderator roles yet!");
+            var description = "**Moderation Roles:**\n";
             foreach (var modRole in DbGuild.ModRoles.OrderBy(x => x.Value))
             {
                 var role = Context.Guild.GetRole(Convert.ToUInt64(modRole.Name));
@@ -245,10 +245,10 @@ namespace DEA.Modules
                     GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.ModRoles, DbGuild.ModRoles), Context.Guild.Id);
                     continue;
                 }
-                description += $"{role.Mention}: Pemission level {modRole.Value}\n";
+                description += $"{role.Mention}: {modRole.Value}\n";
             }
-            if (description.Length > 2048) Error("You have too many mod roles to be able to use this command.");
-            await Send(description, "Moderator Roles");
+            if (description.Length > 2000) Error("You have too many mod roles to be able to use this command.");
+            await Send(description + "\n**Permission Levels:**\n1: Moderator\n2: Administrator\n3: Owner");
         }
 
         [Command("Cooldowns")]
@@ -273,7 +273,7 @@ namespace DEA.Modules
             }
             if (description.Length == 0) Error("All your commands are available for use!");
 
-            await Send(description, $"All cooldowns for {Name()}");
+            await Send(description, $"All cooldowns for {TitleName()}");
         }
 
     }

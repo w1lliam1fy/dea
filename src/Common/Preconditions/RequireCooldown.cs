@@ -2,8 +2,9 @@
 using DEA.Database.Repository;
 using System;
 using System.Threading.Tasks;
+using Discord.Commands;
 
-namespace Discord.Commands
+namespace DEA.Common.Preconditions
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
     public class RequireCooldownAttribute : PreconditionAttribute

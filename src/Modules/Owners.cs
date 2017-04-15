@@ -9,6 +9,7 @@ using MongoDB.Bson;
 using DEA.Services.Handlers;
 using DEA.Services;
 using DEA.Common;
+using DEA.Common.Preconditions;
 
 namespace DEA.Modules
 {
@@ -109,7 +110,7 @@ namespace DEA.Modules
         public async Task AddModRole(IRole modRole, int permissionLevel = 1)
         {
             if (permissionLevel < 1 || permissionLevel > 3) Error("Permission levels:\nModeration: 1\nAdministration: 2\nServer Owner: 3");
-            if (DbGuild.ModRoles == null)
+            if (DbGuild.ModRoles.ElementCount == 0)
                 GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.ModRoles, new BsonDocument()
                 {
                     { modRole.Id.ToString(), permissionLevel }
@@ -127,14 +128,28 @@ namespace DEA.Modules
         [Summary("Removes a moderator role.")]
         public async Task RemoveModRole(IRole modRole)
         {
-            if (DbGuild.ModRoles == null) Error("There are no moderator roles yet!");
+            if (DbGuild.ModRoles.ElementCount == 0) Error("There are no moderator roles yet!");
             if (!DbGuild.ModRoles.Any(x => x.Name == modRole.Id.ToString()))
                 Error("This role is not a moderator role!");
             DbGuild.ModRoles.Remove(modRole.Id.ToString());
             GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.ModRoles, DbGuild.ModRoles), Context.Guild.Id);
-            await Reply($"You have successfully removed the {modRole.Mention} moderation role.");
+            await Reply($"You have successfully removed the {modRole.Mention} moderator role.");
         }
-        
+
+        [Command("ModifyModRole")]
+        [Summary("Modfies a moderator role.")]
+        public async Task ModifyRank(IRole modRole, int permissionLevel)
+        {
+            if (DbGuild.ModRoles.ElementCount == 0) Error("There are no moderator roles yet!");
+            if (!DbGuild.ModRoles.Any(x => x.Name == modRole.Id.ToString()))
+                Error("This role is not a moderator role!");
+            if (DbGuild.ModRoles.First(x => x.Name == modRole.Id.ToString()).Value == permissionLevel)
+                Error($"This mod role already has a permission level of {permissionLevel}");
+            DbGuild.ModRoles[DbGuild.ModRoles.IndexOfName(modRole.Id.ToString())] = permissionLevel;
+            GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.ModRoles, DbGuild.ModRoles), Context.Guild.Id);
+            await Reply($"You have successfully set the permission level of the {modRole.Mention} moderator role to {permissionLevel}.");
+        }
+
         [Command("SetGlobalMultiplier")]
         [Summary("Sets the global chatting multiplier.")]
         public async Task SetGlobalMultiplier(decimal globalMultiplier){

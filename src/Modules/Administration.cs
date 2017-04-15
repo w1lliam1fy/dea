@@ -6,6 +6,7 @@ using System.Linq;
 using MongoDB.Bson;
 using DEA.Services;
 using DEA.Common;
+using DEA.Common.Preconditions;
 
 namespace DEA.Modules
 {
@@ -53,23 +54,22 @@ namespace DEA.Modules
         [Summary("Adds a rank role for the DEA cash system.")]
         public async Task AddRank(IRole rankRole, double cashRequired = 500)
         {
-            var guild = GuildRepository.FetchGuild(Context.Guild.Id);
             if (rankRole.Position > Context.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
                 Error($"DEA must be higher in the heigharhy than {rankRole.Mention}.");
-            if (guild.RankRoles == null)
+            if (DbGuild.RankRoles.ElementCount == 0)
                 GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.RankRoles, new BsonDocument()
                 {
                     { rankRole.Id.ToString(), cashRequired }
                 }), Context.Guild.Id);
             else
             {
-                if (guild.RankRoles.Any(x => x.Name == rankRole.Id.ToString()))
+                if (DbGuild.RankRoles.Any(x => x.Name == rankRole.Id.ToString()))
                     Error("This role is already a rank role.");
-                if (cashRequired == 500) cashRequired = guild.RankRoles.OrderByDescending(x => x.Value).First().Value.AsDouble * 2;
-                if (guild.RankRoles.Any(x => (int)x.Value.AsDouble == (int)cashRequired))
+                if (cashRequired == 500) cashRequired = DbGuild.RankRoles.OrderByDescending(x => x.Value).First().Value.AsDouble * 2;
+                if (DbGuild.RankRoles.Any(x => (int)x.Value.AsDouble == (int)cashRequired))
                     Error("There is already a role set to that amount of cash required.");
-                guild.RankRoles.Add(rankRole.Id.ToString(), cashRequired);
-                GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.RankRoles, guild.RankRoles), Context.Guild.Id);
+                DbGuild.RankRoles.Add(rankRole.Id.ToString(), cashRequired);
+                GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.RankRoles, DbGuild.RankRoles), Context.Guild.Id);
             }
             
             await Reply($"You have successfully added the {rankRole.Mention} rank!");
@@ -79,12 +79,26 @@ namespace DEA.Modules
         [Summary("Removes a rank role for the DEA cash system.")]
         public async Task RemoveRank(IRole rankRole)
         {
-            if (DbGuild.RankRoles == null) Error("There are no ranks yet!");
+            if (DbGuild.RankRoles.ElementCount == 0) Error("There are no ranks yet!");
             if (!DbGuild.RankRoles.Any(x => x.Name == rankRole.Id.ToString()))
                 Error("This role is not a rank role.");
             DbGuild.RankRoles.Remove(rankRole.Id.ToString());
             GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.RankRoles, DbGuild.RankRoles), Context.Guild.Id);
             await Reply($"You have successfully removed the {rankRole.Mention} rank!");
+        }
+
+        [Command("ModifyRank")]
+        [Summary("Modfies a rank role for the DEA cash system.")]
+        public async Task ModifyRank(IRole rankRole, double newCashRequired)
+        {
+            if (DbGuild.RankRoles.ElementCount == 0) Error("There are no ranks yet!");
+            if (!DbGuild.RankRoles.Any(x => x.Name == rankRole.Id.ToString()))
+                Error("This role is not a rank role.");
+            if (DbGuild.RankRoles.Any(x => (int)x.Value.AsDouble == (int)newCashRequired))
+                Error("There is already a role set to that amount of cash required.");
+            DbGuild.RankRoles[DbGuild.RankRoles.IndexOfName(rankRole.Id.ToString())] = newCashRequired;
+            GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.RankRoles, DbGuild.RankRoles), Context.Guild.Id);
+            await Reply($"You have successfully set the cash required for the {rankRole.Mention} rank to {newCashRequired.ToString("C", Config.CI)}.");
         }
 
         [Command("SetModLog")]

@@ -69,6 +69,12 @@ namespace DEA.Common
             return (string.IsNullOrWhiteSpace(user.Nickname)) ? $"**{user.Username}**" : $"**{user.Nickname}**";
         }
 
+        public string TitleName()
+        {
+            var user = Context.User as IGuildUser;
+            return (string.IsNullOrWhiteSpace(user.Nickname)) ? user.Username : user.Nickname;
+        }
+
         public void Error(string message)
         {
             throw new DEAException(message);

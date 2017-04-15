@@ -1,10 +1,11 @@
-﻿using DEA;
-using DEA.Database.Repository;
+﻿using DEA.Database.Repository;
+using Discord;
+using Discord.Commands;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Discord.Commands
+namespace DEA.Common.Preconditions
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
     public class RequireAttribute : PreconditionAttribute
@@ -29,21 +30,21 @@ namespace Discord.Commands
                             return PreconditionResult.FromError("Only an owner of this bot may use this command.");
                         break;
                     case Attributes.ServerOwner:
-                        if (user.Guild.OwnerId != user.Id && guild.ModRoles == null)
+                        if (user.Guild.OwnerId != user.Id && guild.ModRoles.ElementCount == 0)
                             return PreconditionResult.FromError("Only the owners of this server may use this command.");
                         else if (user.Guild.OwnerId != user.Id && guild.ModRoles != null && !user.RoleIds.Any(x => guild.ModRoles.Any(y => y.Name == x.ToString() && y.Value.AsInt32 >= 3)))
                             return PreconditionResult.FromError("Only the owners of this server may use this command.");
                         break;
                     case Attributes.Admin:
-                        if (!(context.User as IGuildUser).GuildPermissions.Administrator && guild.ModRoles == null)
+                        if (!(context.User as IGuildUser).GuildPermissions.Administrator && guild.ModRoles.ElementCount == 0)
                             return PreconditionResult.FromError("The administrator permission is required to use this command.");
-                        else if (!(context.User as IGuildUser).GuildPermissions.Administrator && guild.ModRoles != null && !user.RoleIds.Any(x => guild.ModRoles.Any(y => y.Name == x.ToString() && y.Value.AsInt32 >= 2)))
+                        else if (!(context.User as IGuildUser).GuildPermissions.Administrator && guild.ModRoles.ElementCount != 0 && !user.RoleIds.Any(x => guild.ModRoles.Any(y => y.Name == x.ToString() && y.Value.AsInt32 >= 2)))
                             return PreconditionResult.FromError("The administrator permission is required to use this command.");
                         break;
                     case Attributes.Moderator:
-                        if (!(context.User as IGuildUser).GuildPermissions.Administrator && guild.ModRoles == null)
+                        if (!(context.User as IGuildUser).GuildPermissions.Administrator && guild.ModRoles.ElementCount == 0)
                             return PreconditionResult.FromError("Only a moderator may use this command.");
-                        else if (!(context.User as IGuildUser).GuildPermissions.Administrator && guild.ModRoles != null && !user.RoleIds.Any(x => guild.ModRoles.Any(y => y.Name == x.ToString())))
+                        else if (!(context.User as IGuildUser).GuildPermissions.Administrator && guild.ModRoles.ElementCount != 0 && !user.RoleIds.Any(x => guild.ModRoles.Any(y => y.Name == x.ToString())))
                             return PreconditionResult.FromError("Only a moderator may use this command.");
                         break;
                     case Attributes.Nsfw:
