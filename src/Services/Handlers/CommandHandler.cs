@@ -42,7 +42,7 @@ namespace DEA.Services.Handlers
                 else
                     DEABot.Commands++;
             }
-            else
+            else if (msg.Content.Length >= Config.MIN_CHAR_LENGTH)
                 await CashPerMsg.Apply(context.DbGuild, context.DbUser);
         }
 

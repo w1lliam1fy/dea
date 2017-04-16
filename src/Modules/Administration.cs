@@ -30,7 +30,7 @@ namespace DEA.Modules
         [Summary("Sets the guild specific prefix.")]
         public async Task SetPrefix(string prefix)
         {
-            if (prefix.Length > 3) Error("The maximum character length of a prefix is 3.");
+            if (prefix.Length > 3) await ErrorAsync("The maximum character length of a prefix is 3.");
             await GuildRepository.ModifyAsync(Context.Guild.Id, x => x.Prefix, prefix);
             await Reply($"You have successfully set the prefix to {prefix}!");
         }
@@ -38,10 +38,10 @@ namespace DEA.Modules
         [Command("SetMutedRole")]
         [Alias("SetMuteRole")]
         [Summary("Sets the muted role.")]
-        public async Task SetMutedRole(IRole mutedRole)
+        public async Task SetMutedRole([Remainder] IRole mutedRole)
         {
             if (mutedRole.Position > Context.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
-                Error($"DEA must be higher in the heigharhy than {mutedRole.Mention}.");
+                await ErrorAsync($"DEA must be higher in the heigharhy than {mutedRole.Mention}.");
             await GuildRepository.ModifyAsync(Context.Guild.Id, x => x.MutedRoleId, mutedRole.Id);
             await Reply($"You have successfully set the muted role to {mutedRole.Mention}!");
         }
@@ -51,7 +51,7 @@ namespace DEA.Modules
         public async Task AddRank(IRole rankRole, double cashRequired = 500)
         {
             if (rankRole.Position > Context.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
-                Error($"DEA must be higher in the heigharhy than {rankRole.Mention}.");
+                await ErrorAsync($"DEA must be higher in the heigharhy than {rankRole.Mention}.");
             if (Context.DbGuild.RankRoles.ElementCount == 0)
                 await GuildRepository.ModifyAsync(Context.Guild.Id, x => x.RankRoles, new BsonDocument()
                 {
@@ -60,10 +60,10 @@ namespace DEA.Modules
             else
             {
                 if (Context.DbGuild.RankRoles.Any(x => x.Name == rankRole.Id.ToString()))
-                    Error("This role is already a rank role.");
+                    await ErrorAsync("This role is already a rank role.");
                 if (cashRequired == 500) cashRequired = Context.DbGuild.RankRoles.OrderByDescending(x => x.Value).First().Value.AsDouble * 2;
                 if (Context.DbGuild.RankRoles.Any(x => (int)x.Value.AsDouble == (int)cashRequired))
-                    Error("There is already a role set to that amount of cash required.");
+                    await ErrorAsync("There is already a role set to that amount of cash required.");
                 Context.DbGuild.RankRoles.Add(rankRole.Id.ToString(), cashRequired);
                 await GuildRepository.ModifyAsync(Context.Guild.Id, x => x.RankRoles, Context.DbGuild.RankRoles);
             }
@@ -73,11 +73,11 @@ namespace DEA.Modules
 
         [Command("RemoveRank")]
         [Summary("Removes a rank role for the DEA cash system.")]
-        public async Task RemoveRank(IRole rankRole)
+        public async Task RemoveRank([Remainder] IRole rankRole)
         {
-            if (Context.DbGuild.RankRoles.ElementCount == 0) Error("There are no ranks yet!");
+            if (Context.DbGuild.RankRoles.ElementCount == 0) await ErrorAsync("There are no ranks yet!");
             if (!Context.DbGuild.RankRoles.Any(x => x.Name == rankRole.Id.ToString()))
-                Error("This role is not a rank role.");
+                await ErrorAsync("This role is not a rank role.");
             Context.DbGuild.RankRoles.Remove(rankRole.Id.ToString());
             await GuildRepository.ModifyAsync(Context.Guild.Id, x => x.RankRoles, Context.DbGuild.RankRoles);
             await Reply($"You have successfully removed the {rankRole.Mention} rank!");
@@ -87,11 +87,11 @@ namespace DEA.Modules
         [Summary("Modfies a rank role for the DEA cash system.")]
         public async Task ModifyRank(IRole rankRole, double newCashRequired)
         {
-            if (Context.DbGuild.RankRoles.ElementCount == 0) Error("There are no ranks yet!");
+            if (Context.DbGuild.RankRoles.ElementCount == 0) await ErrorAsync("There are no ranks yet!");
             if (!Context.DbGuild.RankRoles.Any(x => x.Name == rankRole.Id.ToString()))
-                Error("This role is not a rank role.");
+                await ErrorAsync("This role is not a rank role.");
             if (Context.DbGuild.RankRoles.Any(x => (int)x.Value.AsDouble == (int)newCashRequired))
-                Error("There is already a role set to that amount of cash required.");
+                await ErrorAsync("There is already a role set to that amount of cash required.");
             Context.DbGuild.RankRoles[Context.DbGuild.RankRoles.IndexOfName(rankRole.Id.ToString())] = newCashRequired;
             await GuildRepository.ModifyAsync(Context.Guild.Id, x => x.RankRoles, Context.DbGuild.RankRoles);
             await Reply($"You have successfully set the cash required for the {rankRole.Mention} rank to {newCashRequired.ToString("C", Config.CI)}.");
@@ -99,7 +99,7 @@ namespace DEA.Modules
 
         [Command("SetModLog")]
         [Summary("Sets the moderation log.")]
-        public async Task SetModLogChannel(ITextChannel modLogChannel)
+        public async Task SetModLogChannel([Remainder] ITextChannel modLogChannel)
         {
             await GuildRepository.ModifyAsync(Context.Guild.Id, x => x.ModLogId, modLogChannel.Id);
             await Reply($"You have successfully set the moderator log channel to {modLogChannel.Mention}!");
@@ -107,7 +107,7 @@ namespace DEA.Modules
 
         [Command("SetDetailedLogs")]
         [Summary("Sets the detailed logs.")]
-        public async Task SetDetailedLogsChannel(ITextChannel detailedLogsChannel)
+        public async Task SetDetailedLogsChannel([Remainder] ITextChannel detailedLogsChannel)
         {
             await GuildRepository.ModifyAsync(Context.Guild.Id, x => x.DetailedLogsId, detailedLogsChannel.Id);
             await Reply($"You have successfully set the detailed logs channel to {detailedLogsChannel.Mention}!");
@@ -116,7 +116,7 @@ namespace DEA.Modules
         [Command("SetGambleChannel")]
         [Alias("SetGamble")]
         [Summary("Sets the gambling channel.")]
-        public async Task SetGambleChannel(ITextChannel gambleChannel)
+        public async Task SetGambleChannel([Remainder] ITextChannel gambleChannel)
         {
             await GuildRepository.ModifyAsync(Context.Guild.Id, x => x.GambleId, gambleChannel.Id);
             await Reply($"You have successfully set the gamble channel to {gambleChannel.Mention}!");

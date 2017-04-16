@@ -1,8 +1,6 @@
 ﻿using DEA.Common;
-using DEA.Database.Models;
 using DEA.Database.Repository;
 using Discord;
-using Discord.Commands;
 using Discord.WebSocket;
 using System;
 using System.Threading.Tasks;

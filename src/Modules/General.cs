@@ -110,7 +110,7 @@ namespace DEA.Modules
                 position++;
             }
 
-            if (description.Length == 0) Error("There is nobody on the leaderboards yet!");
+            if (description.Length == 0) await ErrorAsync("There is nobody on the leaderboards yet!");
 
             await Send(description, "The Richest Traffickers");
         }
@@ -138,7 +138,7 @@ namespace DEA.Modules
                 position++;
             }
 
-            if (description.Length == 0) Error("There is nobody on the leaderboards yet!");
+            if (description.Length == 0) await ErrorAsync("There is nobody on the leaderboards yet!");
 
             var builder = new EmbedBuilder()
             {
@@ -155,9 +155,9 @@ namespace DEA.Modules
         [Summary("Sauce some cash to one of your mates.")]
         public async Task Donate(IGuildUser user, decimal money)
         {
-            if (user.Id == Context.User.Id) Error("Hey kids! Look at that retard, he is trying to give money to himself!");
-            if (money < Config.DONATE_MIN) Error($"Lowest donation is {Config.DONATE_MIN}$.");
-            if (Context.Cash < money) Error($"You do not have enough money. Balance: {Context.Cash.ToString("C", Config.CI)}.");
+            if (user.Id == Context.User.Id) await ErrorAsync("Hey kids! Look at that retard, he is trying to give money to himself!");
+            if (money < Config.DONATE_MIN) await ErrorAsync($"Lowest donation is {Config.DONATE_MIN}$.");
+            if (Context.Cash < money) await ErrorAsync($"You do not have enough money. Balance: {Context.Cash.ToString("C", Config.CI)}.");
             await UserRepository.EditCashAsync(Context, -money);
             decimal deaMoney = money * Config.DEA_CUT / 100;
             await UserRepository.EditCashAsync(user, money - deaMoney);
@@ -173,7 +173,7 @@ namespace DEA.Modules
             var dbUser = await UserRepository.FetchUserAsync(user);
             var users = DEABot.Users.Find(y => y.GuildId == Context.Guild.Id).ToList();
             var sorted = users.OrderByDescending(x => x.Cash).ToList();
-            IRole rank = RankHandler.FetchRankAsync(Context, dbUser);
+            IRole rank = await RankHandler.FetchRankAsync(Context, dbUser);
             var description = $"Balance: {dbUser.Cash.ToString("C", Config.CI)}\n" +
                               $"Position: #{sorted.FindIndex(x => x.UserId == user.Id) + 1}\n";
             if (rank != null)
@@ -208,7 +208,7 @@ namespace DEA.Modules
         [Summary("View all ranks.")]
         public async Task Ranks()
         {
-            if (Context.DbGuild.RankRoles.ElementCount == 0) Error("There are no ranks yet!");
+            if (Context.DbGuild.RankRoles.ElementCount == 0) await ErrorAsync("There are no ranks yet!");
             var description = string.Empty;
             foreach (var rank in Context.DbGuild.RankRoles.OrderBy(x => x.Value))
             {
@@ -221,7 +221,7 @@ namespace DEA.Modules
                 }
                 description += $"{rank.Value.AsDouble.ToString("C", Config.CI)}: {role.Mention}\n";
             }
-            if (description.Length > 2048) Error("You have too many ranks to be able to use this command.");
+            if (description.Length > 2048) await ErrorAsync("You have too many ranks to be able to use this command.");
             await Send(description, "Ranks");
         }
 
@@ -230,7 +230,7 @@ namespace DEA.Modules
         [Summary("View all the moderator roles.")]
         public async Task ModRoles()
         {
-            if (Context.DbGuild.ModRoles.ElementCount == 0) Error("There are no moderator roles yet!");
+            if (Context.DbGuild.ModRoles.ElementCount == 0) await ErrorAsync("There are no moderator roles yet!");
             var description = "**Moderation Roles:**\n";
             foreach (var modRole in Context.DbGuild.ModRoles.OrderBy(x => x.Value))
             {
@@ -243,7 +243,7 @@ namespace DEA.Modules
                 }
                 description += $"{role.Mention}: {modRole.Value}\n";
             }
-            if (description.Length > 2000) Error("You have too many mod roles to be able to use this command.");
+            if (description.Length > 2000) await ErrorAsync("You have too many mod roles to be able to use this command.");
             await Send(description + "\n**Permission Levels:**\n1: Moderator\n2: Administrator\n3: Owner");
         }
 
@@ -267,16 +267,16 @@ namespace DEA.Modules
                 if (cooldown.Value.TotalMilliseconds > 0)
                     description += $"{cooldown.Key}: {cooldown.Value.Hours}:{cooldown.Value.Minutes.ToString("D2")}:{cooldown.Value.Seconds.ToString("D2")}\n";
             }
-            if (description.Length == 0) Error("All your commands are available for use!");
+            if (description.Length == 0) await ErrorAsync("All your commands are available for use!");
 
-            await Send(description, $"All cooldowns for {TitleName()}");
+            await Send(description, $"All cooldowns for {await TitleNameAsync()}");
         }
 
         [Command("Callme")]
         [Summary("Tell the bot what you want it to call you.")]
         public async Task Callme([Remainder] string name)
         {
-            if (name.Length > 32) Error("Your DEA nickname may not be longer than 32 characters.");
+            if (name.Length > 32) await ErrorAsync("Your DEA nickname may not be longer than 32 characters.");
             name = name.Replace("\n", string.Empty);
             await UserRepository.ModifyAsync(Context, x => x.Name, name);
             await Send($"How's it going, *{name}*?");

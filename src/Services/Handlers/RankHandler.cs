@@ -51,15 +51,15 @@ namespace DEA.Services.Handlers
             }
         }
 
-        public static IRole FetchRankAsync(DEAContext context, User dbUser)
+        public static Task<IRole> FetchRankAsync(DEAContext context, User dbUser)
         {
             IRole role = null;
 
             if (context.DbGuild.RankRoles.ElementCount != 0 && context.Guild != null)
                 foreach (var rankRole in context.DbGuild.RankRoles.OrderBy(x => x.Value))
-                    if (context.Cash >= (decimal)rankRole.Value.AsDouble)
+                    if (dbUser.Cash >= (decimal)rankRole.Value.AsDouble)
                         role = context.Guild.GetRole(Convert.ToUInt64(rankRole.Name));
-            return role;
+            return Task.FromResult(role);
         }
     }
 }

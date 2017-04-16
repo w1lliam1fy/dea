@@ -85,13 +85,13 @@ namespace DEA.Modules
         [RequireBotPermission(GuildPermission.ManageNicknames)]
         public async Task Bully(IGuildUser userToBully, [Remainder] string nickname)
         {
-            if (nickname.Length > 32) Error("The length of a nickname may not be longer than 32 characters.");
-            if (ModuleMethods.IsMod(Context, userToBully))
-                Error("You may not bully a moderator.");
+            if (nickname.Length > 32) await ErrorAsync("The length of a nickname may not be longer than 32 characters.");
+            if (await IsModAsync(Context, userToBully))
+                await ErrorAsync("You may not bully a moderator.");
             if ((await UserRepository.FetchUserAsync(userToBully)).Cash > Context.Cash)
-                Error("You may not bully a user with more money than you.");
+                await ErrorAsync("You may not bully a user with more money than you.");
             await userToBully.ModifyAsync(x => x.Nickname = nickname);
-            await Send($"{ResponseMethods.Name(userToBully, await UserRepository.FetchUserAsync(userToBully))} just got ***BULLIED*** by {Name()} with his new nickname: \"{nickname}\".");
+            await Send($"{ResponseMethods.Name(userToBully, await UserRepository.FetchUserAsync(userToBully))} just got ***BULLIED*** by {await NameAsync()} with his new nickname: \"{nickname}\".");
         }
 
         [Command("Rob")]
@@ -99,9 +99,9 @@ namespace DEA.Modules
         [Summary("Lead a large scale operation on a local bank.")]
         public async Task Rob(decimal resources)
         {
-            if (Context.Cash < resources) Error($"You do not have enough money. Balance: {Context.Cash.ToString("C", Config.CI)}");
-            if (resources < Config.MIN_RESOURCES) Error($"The minimum amount of money to spend on resources for a robbery is {Config.MIN_RESOURCES.ToString("C", Config.CI)}.");
-            if (resources > Config.MAX_RESOURCES) Error($"The maximum amount of money to spend on resources for a robbery is {Config.MAX_RESOURCES.ToString("C", Config.CI)}.");
+            if (Context.Cash < resources) await ErrorAsync($"You do not have enough money. Balance: {Context.Cash.ToString("C", Config.CI)}");
+            if (resources < Config.MIN_RESOURCES) await ErrorAsync($"The minimum amount of money to spend on resources for a robbery is {Config.MIN_RESOURCES.ToString("C", Config.CI)}.");
+            if (resources > Config.MAX_RESOURCES) await ErrorAsync($"The maximum amount of money to spend on resources for a robbery is {Config.MAX_RESOURCES.ToString("C", Config.CI)}.");
             await UserRepository.ModifyAsync(Context, x => x.Rob, DateTime.UtcNow);
             Random rand = new Random();
             decimal succesRate = rand.Next(Config.MIN_ROB_ODDS * 100, Config.MAX_ROB_ODDS * 100) / 10000m;

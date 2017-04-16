@@ -32,6 +32,8 @@ namespace DEA.Database.Models
 
         public bool Nsfw { get; set; } = false;
 
+        public bool AutoTrivia { get; set; } = false;
+
         public string Prefix { get; set; } = Config.DEFAULT_PREFIX;
 
         public decimal GlobalChattingMultiplier { get; set; } = 1;
@@ -41,6 +43,8 @@ namespace DEA.Database.Models
         //Misc
 
         public int CaseNumber { get; set; } = 1;
+
+        public BsonDocument Trivia { get; set; } = new BsonDocument();
 
     }
 }

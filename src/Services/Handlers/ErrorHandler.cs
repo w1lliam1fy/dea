@@ -1,5 +1,4 @@
 ﻿using DEA.Common;
-using DEA.Database.Models;
 using Discord;
 using Discord.Commands;
 using Discord.Net;

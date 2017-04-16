@@ -3,7 +3,6 @@ using Discord.Commands;
 using System.Linq;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using DEA.Database.Repository;
 using DEA.Services;
 using DEA;
 using DEA.Common;
@@ -53,7 +52,6 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
             string modules = string.Empty;
             foreach (var module in DEABot.CommandService.Modules)
                 modules += $"{module.Name}, ";
-            modules = modules.Replace("DEAModule, ", string.Empty);
             await Reply("Current command modules: " + modules.Substring(0, modules.Length - 2) + ".");
             
         }

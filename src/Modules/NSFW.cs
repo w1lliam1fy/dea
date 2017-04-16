@@ -36,7 +36,7 @@ namespace DEA.Modules
         [Command("SetNSFWChannel")]
         [Require(Attributes.Admin)]
         [Summary("Sets a specific channel for all NSFW commands.")]
-        public async Task SetNSFWChannel(ITextChannel nsfwChannel)
+        public async Task SetNSFWChannel([Remainder] ITextChannel nsfwChannel)
         {
             await GuildRepository.ModifyAsync(Context.Guild.Id, x => x.NsfwId, nsfwChannel.Id);
             var nsfwRole = Context.Guild.GetRole(Context.DbGuild.NsfwRoleId);
@@ -51,10 +51,10 @@ namespace DEA.Modules
         [Command("SetNSFWRole")]
         [Require(Attributes.Admin)]
         [Summary("Only allow users with a specific role to use NSFW commands.")]
-        public async Task SetNSFWRole(IRole nsfwRole)
+        public async Task SetNSFWRole([Remainder] IRole nsfwRole)
         {
             if (nsfwRole.Position > Context.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
-                Error("You may not set the NSFW role to a role that is higher in hierarchy than DEA's highest role.");
+                await ErrorAsync("You may not set the NSFW role to a role that is higher in hierarchy than DEA's highest role.");
             await GuildRepository.ModifyAsync(Context.Guild.Id, x => x.NsfwRoleId, nsfwRole.Id);
             var nsfwChannel = Context.Guild.GetChannel(Context.DbGuild.NsfwId);
             if (nsfwChannel != null && Context.Guild.CurrentUser.GuildPermissions.Administrator)
@@ -72,7 +72,7 @@ namespace DEA.Modules
         public async Task JoinNSFW()
         {
             var NsfwRole = Context.Guild.GetRole(Context.DbGuild.NsfwRoleId);
-            if (NsfwRole == null) Error("Everyone will always be able to use NSFW commands since there has been no NSFW role that has been set.\n" +
+            if (NsfwRole == null) await ErrorAsync("Everyone will always be able to use NSFW commands since there has been no NSFW role that has been set.\n" +
                                                      $"In order to change this, an administrator may use the `{Context.Prefix}SetNSFWRole` command.");
             if ((Context.User as IGuildUser).RoleIds.Any(x => x == Context.DbGuild.NsfwRoleId))
             {
@@ -125,7 +125,7 @@ namespace DEA.Modules
                 doc.Load(data);
 
                 var node = doc.LastChild.ChildNodes[new Random().Next(0, doc.LastChild.ChildNodes.Count)];
-                if (node == null) Error("No result found.");
+                if (node == null) await ErrorAsync("No result found.");
 
                 var url = node.Attributes["file_url"].Value;
 

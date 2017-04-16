@@ -2,7 +2,6 @@
 using DEA.Database.Models;
 using DEA.Database.Repository;
 using Discord;
-using Discord.Commands;
 using System;
 using System.Threading.Tasks;
 
