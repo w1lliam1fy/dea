@@ -276,7 +276,7 @@ namespace DEA.Modules
         public async Task Callme([Remainder] string name)
         {
             if (name.Length > 32) Error("Your DEA nickname may not be longer than 32 characters.");
-            name = name.Replace(Environment.NewLine, string.Empty);
+            name = name.Replace("\n", string.Empty);
             await UserRepository.ModifyAsync(Context, x => x.Name, name);
             await Send($"How's it going, *{name}*?");
         }
