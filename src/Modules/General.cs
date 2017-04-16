@@ -25,7 +25,7 @@ namespace DEA.Modules
                 case "line":
                     if (Config.LINE_COST > Context.Cash)
                     {
-                        await Reply($"You do not have enough money. Balance: {Context.Cash.ToString("C", Config.CI)}");
+                        await Reply($"You do not have enough money. Balance: {Context.Cash.ToString("C", Config.CI)}.");
                         break;
                     }
                     if (Context.DbUser.MessageCooldown == Config.LINE_COOLDOWN.TotalMilliseconds)
@@ -41,7 +41,7 @@ namespace DEA.Modules
                 case "lb":
                     if (Config.POUND_COST > Context.Cash)
                     {
-                        await Reply($"You do not have enough money. Balance: {Context.Cash.ToString("C", Config.CI)}");
+                        await Reply($"You do not have enough money. Balance: {Context.Cash.ToString("C", Config.CI)}.");
                         break;
                     }
                     if (Context.DbUser.InvestmentMultiplier >= Config.POUND_MULTIPLIER)
@@ -58,7 +58,7 @@ namespace DEA.Modules
                 case "kilogram":
                     if (Config.KILO_COST > Context.Cash)
                     {
-                        await Reply($"You do not have enough money. Balance: {Context.Cash.ToString("C", Config.CI)}");
+                        await Reply($"You do not have enough money. Balance: {Context.Cash.ToString("C", Config.CI)}.");
                         break;
                     }
                     if (Context.DbUser.InvestmentMultiplier != Config.POUND_MULTIPLIER)

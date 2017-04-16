@@ -23,13 +23,13 @@ namespace DEA.Modules
             {
                 await UserRepository.EditCashAsync(Context, -Config.WHORE_FINE);
                 await Reply($"What are the fucking odds that one of your main clients was a cop... " +
-                            $"You are lucky you only got a {Config.WHORE_FINE.ToString("C", Config.CI)} fine. Balance: {(Context.Cash - Config.WHORE_FINE).ToString("C", Config.CI)}");
+                            $"You are lucky you only got a {Config.WHORE_FINE.ToString("C", Config.CI)} fine. Balance: {(Context.Cash - Config.WHORE_FINE).ToString("C", Config.CI)}.");
             }
             else
             {
                 decimal moneyWhored = (new Random().Next((int)(Config.MIN_WHORE) * 100, (int)(Config.MAX_WHORE) * 100)) / 100m;
                 await UserRepository.EditCashAsync(Context, moneyWhored);
-                await Reply($"You whip it out and manage to rake in {moneyWhored.ToString("C", Config.CI)}. Balance: {(Context.Cash + moneyWhored).ToString("C", Config.CI)}");
+                await Reply($"You whip it out and manage to rake in {moneyWhored.ToString("C", Config.CI)}. Balance: {(Context.Cash + moneyWhored).ToString("C", Config.CI)}.");
             }
         }
 
@@ -44,13 +44,13 @@ namespace DEA.Modules
             {
                 await UserRepository.EditCashAsync(Context, -Config.JUMP_FINE);
                 await Reply($"Turns out the nigga was a black belt, whooped your ass, and brought you in. " +
-                            $"Court's final ruling was a {Config.JUMP_FINE.ToString("C", Config.CI)} fine. Balance: {(Context.Cash - Config.JUMP_FINE).ToString("C", Config.CI)}");
+                            $"Court's final ruling was a {Config.JUMP_FINE.ToString("C", Config.CI)} fine. Balance: {(Context.Cash - Config.JUMP_FINE).ToString("C", Config.CI)}.");
             }
             else
             {
                 decimal moneyJumped = (new Random().Next((int)(Config.MIN_JUMP) * 100, (int)(Config.MAX_JUMP) * 100)) / 100m;
                 await UserRepository.EditCashAsync(Context, moneyJumped);
-                await Reply($"You jump some random nigga on the streets and manage to get {moneyJumped.ToString("C", Config.CI)}. Balance: {(Context.Cash + moneyJumped).ToString("C", Config.CI)}");
+                await Reply($"You jump some random nigga on the streets and manage to get {moneyJumped.ToString("C", Config.CI)}. Balance: {(Context.Cash + moneyJumped).ToString("C", Config.CI)}.");
             }
         }
 
@@ -67,7 +67,7 @@ namespace DEA.Modules
                 await Reply($"You were on your way out with the cash, but then some hot chick asked you if you " +
                             $"wanted to bust a nut. Turns out she was cop, and raped you before turning you in. Since she passed on some " +
                             $"nice words to the judge about you not resisting arrest, you managed to walk away with only a " +
-                            $"{Config.STEAL_FINE.ToString("C", Config.CI)} fine. Balance: {(Context.Cash - Config.STEAL_FINE).ToString("C", Config.CI)}");
+                            $"{Config.STEAL_FINE.ToString("C", Config.CI)} fine. Balance: {(Context.Cash - Config.STEAL_FINE).ToString("C", Config.CI)}.");
             }
             else
             {
@@ -75,7 +75,7 @@ namespace DEA.Modules
                 await UserRepository.EditCashAsync(Context, moneyStolen);
                 string randomStore = Config.STORES[new Random().Next(1, Config.STORES.Length) - 1];
                 await Reply($"You walk in to your local {randomStore}, point a fake gun at the clerk, and manage to walk away " +
-                            $"with {moneyStolen.ToString("C", Config.CI)}. Balance: {(Context.Cash + moneyStolen).ToString("C", Config.CI)}");
+                            $"with {moneyStolen.ToString("C", Config.CI)}. Balance: {(Context.Cash + moneyStolen).ToString("C", Config.CI)}.");
             }
         }
 

@@ -1,10 +1,13 @@
 ﻿using Discord;
 using System;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 public static class Config
 {
     public static readonly string DEFAULT_PREFIX = "$";
+
+    public static readonly Regex ALPHANUMERICAL = new Regex(@"^[a-zA-Z0-9\s]*$");
 
     public static readonly CultureInfo CI = new CultureInfo("en-CA");
 
