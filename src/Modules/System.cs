@@ -63,12 +63,10 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
         [Summary("All command information.")]
         public async Task Help([Remainder] string commandOrModule = null)
         {
-            string prefix = (await GuildRepository.FetchGuildAsync(Context.Guild.Id)).Prefix;
-
             if (commandOrModule != null)
             {
                 commandOrModule = commandOrModule.Replace(" ", "_");
-                if (commandOrModule.StartsWith(prefix)) commandOrModule = commandOrModule.Remove(0, prefix.Length);
+                if (commandOrModule.StartsWith(Context.Prefix)) commandOrModule = commandOrModule.Remove(0, Context.Prefix.Length);
                 foreach (var module in DEABot.CommandService.Modules)
                 {
                     if (module.Name.ToLower() == commandOrModule.ToLower())
@@ -79,7 +77,7 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
                         var moduleInfo = $"**{module.Name} Commands **: ```asciidoc\n";
                         foreach (var cmd in module.Commands)
                         {
-                            moduleInfo += $"{prefix}{cmd.Aliases.First()}{new string(' ', (longestInModule + 1) - cmd.Aliases.First().Length)} :: {cmd.Summary}\n";
+                            moduleInfo += $"{Context.Prefix}{cmd.Aliases.First()}{new string(' ', (longestInModule + 1) - cmd.Aliases.First().Length)} :: {cmd.Summary}\n";
                         }
                         moduleInfo += "```";
                         await ReplyAsync(moduleInfo);
@@ -94,7 +92,7 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
                         foreach (var alias in cmd.Aliases)
                             if (alias.ToLower() == commandOrModule.ToLower())
                             {
-                                await Send($"**Description:** {cmd.Summary}\n**Usage:** `{prefix}{CommandHandler.GetUsage(cmd, commandOrModule)}`", CommandHandler.UpperFirstChar(commandOrModule));
+                                await Send($"**Description:** {cmd.Summary}\n**Usage:** `{Context.Prefix}{CommandHandler.GetUsage(cmd, commandOrModule)}`", CommandHandler.UpperFirstChar(commandOrModule));
                                 return;
                             }
                     }
