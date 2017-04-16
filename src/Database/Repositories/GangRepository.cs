@@ -52,14 +52,14 @@ namespace DEA.Database.Repository
         public static async Task<Gang> FetchGangAsync(IGuildUser user)
         {
             var gang = await (await DEABot.Gangs.FindAsync(c => (c.LeaderId == user.Id || c.Members.Any(x => x == user.Id)) && c.GuildId == user.GuildId)).SingleOrDefaultAsync();
-            if (gang == default(Gang)) throw new DEAException("You are not in a gang.");
+            if (gang == default(Gang)) throw new DEAException("This user is not in a gang.");
             return gang;
         }
 
         public static async Task<Gang> FetchGangAsync(string gangName, ulong guildId)
         {
             var gang = await (await DEABot.Gangs.FindAsync(c => c.Name.ToLower() == gangName.ToLower() && c.GuildId == guildId)).SingleOrDefaultAsync();
-            if (gang == default(Gang)) throw new DEAException("You are not in a gang.");
+            if (gang == default(Gang)) throw new DEAException("This gang does not exist.");
             return gang;
         }
 

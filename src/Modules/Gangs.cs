@@ -48,7 +48,7 @@ namespace DEA.Modules
             Gang gang;
             if (gangName == null) gang = Context.Gang;
             else gang = await GangRepository.FetchGangAsync(gangName, Context.Guild.Id);
-            if (gang == null) Error("You are not in a gang.");
+            if (gang == null && gangName == null) Error("You are not in a gang.");
             var members = string.Empty;
             foreach (var member in gang.Members)
                 members += $"<@{member}>, ";
