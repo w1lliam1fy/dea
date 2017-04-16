@@ -44,13 +44,14 @@ namespace DEA.Modules
         public async Task AddTrivia(string question, [Remainder] string answer)
         {
             if (Context.DbGuild.Trivia.Contains(question)) await ErrorAsync("That question already exists.");
+            if (question.Contains(".")) await ErrorAsync("Trivia questions may not contain periods.");
             if (!Config.ALPHANUMERICAL.IsMatch(answer)) await ErrorAsync("Trivia answers may only contain alphanumerical characters.");
             Context.DbGuild.Trivia.Add(question, answer);
             await GuildRepository.ModifyAsync(Context.Guild.Id, x => x.Trivia, Context.DbGuild.Trivia);
             await ReplyAsync($"Successfully added the \"{question}\" trivia question.");
         }
 
-        [Command("RemoveTrivia")]
+        [Command("RemoveQuestion")]
         [Require(Attributes.Moderator)]
         [Summary("Remove a trivia question.")]
         public async Task RemoveTrivia([Remainder] string question)
@@ -96,13 +97,13 @@ namespace DEA.Modules
             int roll = new Random().Next(0, Context.DbGuild.Trivia.ElementCount);
             var element = Context.DbGuild.Trivia.GetElement(roll);
             await ReplyAsync("__**TRIVIA:**__ " + element.Name);
-            var answer = await WaitForMessage(Context.Channel, element.Value.AsString);
+            var answer = await WaitForMessage(Context.Channel, y => LevenshteinDistance.Compute(y.Content, element.Value.AsString) <= 2 && y.Author.Id != Context.User.Id);
             if (answer != null)
             {
                 var user = answer.Author as IGuildUser;
                 await UserRepository.EditCashAsync(user, Config.TRIVIA_PAYOUT);
                 await Send($"{ResponseMethods.Name(user, await UserRepository.FetchUserAsync(user))}, Congrats! You just " +
-                           $"won {Config.TRIVIA_PAYOUT.ToString("C", Config.CI)} for correctly answering the trivia question!");
+                           $"won {Config.TRIVIA_PAYOUT.ToString("C", Config.CI)} for correctly answering the \"{element.Value.AsString}\" trivia question!");
             }
             else
             {

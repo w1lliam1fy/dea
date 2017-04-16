@@ -4,6 +4,7 @@ using Discord;
 using Discord.Commands;
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,7 +13,7 @@ namespace DEA.Common
     public abstract class DEAModule : ModuleBase<DEAContext>
     {
 
-        public async Task<IUserMessage> WaitForMessage(IMessageChannel channel, string contentFilter, TimeSpan? timeout = null, IUser user = null)
+        public async Task<IUserMessage> WaitForMessage(IMessageChannel channel, Expression<Func<IUserMessage, bool>> filter, TimeSpan? timeout = null, IUser user = null)
         {
             if (timeout == null) timeout = Config.DEFAULT_WAITFORMESSAGE;
 
@@ -23,7 +24,7 @@ namespace DEA.Common
             {
                 var message = messageParameter as IUserMessage;
                 if (message == null) return Task.CompletedTask;
-                if (LevenshteinDistance.Compute(message.Content, contentFilter) > 3) return Task.CompletedTask;
+                if (!filter.Compile()(message)) return Task.CompletedTask;
                 if (user != null && message.Author.Id != user.Id) return Task.CompletedTask;
                 if (message.Channel.Id != channel.Id) return Task.CompletedTask;
                 var context = new ResponseContext(DEABot.Client, message);
