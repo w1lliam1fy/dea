@@ -53,7 +53,7 @@ namespace DEA.Modules
         [Command("RemoveTrivia")]
         [Require(Attributes.Moderator)]
         [Summary("Remove a trivia question.")]
-        public async Task RemoveTrivia(string question)
+        public async Task RemoveTrivia([Remainder] string question)
         {
             if (!Context.DbGuild.Trivia.Contains(question)) await ErrorAsync($"That quesiton does not exist.");
             Context.DbGuild.Trivia.Remove(question);

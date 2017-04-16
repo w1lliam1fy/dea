@@ -58,11 +58,6 @@ namespace DEA
             Users = Database.GetCollection<User>("users");
             Gangs = Database.GetCollection<Gang>("gangs");
             Mutes = Database.GetCollection<Mute>("mutes");
-
-            //ADD NEW DATA
-            var builder = Builders<Guild>.Update;
-            Guilds.UpdateMany(y => y.CaseNumber != -1, builder.Set(x => x.Trivia, new BsonDocument()));
-            Guilds.UpdateMany(y => y.CaseNumber != -1, builder.Set(x => x.AutoTrivia, false));
         }
 
         private async Task RunAsync(params string[] args)
