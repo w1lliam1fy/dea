@@ -9,8 +9,6 @@ namespace DEA.Services.Handlers
 {
     public class CommandHandler
     {
-        public IDependencyMap _map;
-
         public async Task InitializeAsync()
         {
             await DEABot.CommandService.AddModulesAsync(Assembly.GetEntryAssembly());
