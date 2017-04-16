@@ -24,7 +24,7 @@ namespace DEA.Services.Timers
             var builder = Builders<Gang>.Filter;
             var updateBuilder = Builders<Gang>.Update;
             foreach (var gang in await(await DEABot.Gangs.FindAsync(builder.Empty)).ToListAsync())
-                if (gang.Wealth < 50228162514264337593543950335m)
+                if (gang.Wealth < 1000000000000000000000m)
                     await DEABot.Gangs.UpdateOneAsync(y => y.Id == gang.Id,
                         updateBuilder.Set(x => x.Wealth, Math.CalculateIntrestRate(gang.Wealth) * gang.Wealth + gang.Wealth));
         }
