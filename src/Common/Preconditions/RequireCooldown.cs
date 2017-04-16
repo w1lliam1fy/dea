@@ -49,7 +49,7 @@ namespace DEA.Common.Preconditions
                 return PreconditionResult.FromSuccess();
             else
             {
-                await Logger.Cooldown(deaContext, command.Name, cooldown.Subtract(DateTime.UtcNow.Subtract(lastUse)));
+                await Logger.CooldownAsync(deaContext, command.Name, cooldown.Subtract(DateTime.UtcNow.Subtract(lastUse)));
                 return PreconditionResult.FromError(string.Empty);
             }
         }

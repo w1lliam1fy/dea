@@ -58,7 +58,7 @@ namespace DEA.Services.Handlers
                 }
             }
             else if (logMessage.Exception != null)
-                await Logger.Log(LogSeverity.Error, logMessage.Exception.Source, $"{logMessage.Exception.Message}: {logMessage.Exception.StackTrace}");
+                await Logger.LogAsync(LogSeverity.Error, logMessage.Exception.Source, $"{logMessage.Exception.Message}: {logMessage.Exception.StackTrace}");
         }
 
         public static async Task HandleCommandFailureAsync(DEAContext context, IResult result, int argPos)
@@ -109,10 +109,10 @@ namespace DEA.Services.Handlers
             switch (httpEx.HttpCode)
             {
                 case HttpStatusCode.Unauthorized:
-                    await Logger.Log(LogSeverity.Critical, "Login failed", "Invalid token.");
+                    await Logger.LogAsync(LogSeverity.Critical, "Login failed", "Invalid token.");
                     break;
                 default:
-                    await Logger.Log(LogSeverity.Critical, $"Login failed", httpEx.Reason);
+                    await Logger.LogAsync(LogSeverity.Critical, $"Login failed", httpEx.Reason);
                     break;
             }
             Console.ReadLine();

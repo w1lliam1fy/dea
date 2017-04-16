@@ -86,12 +86,12 @@ namespace DEA.Modules
         public async Task Bully(IGuildUser userToBully, [Remainder] string nickname)
         {
             if (nickname.Length > 32) Error("The length of a nickname may not be longer than 32 characters.");
-            if (await ModuleMethods.IsModAsync(userToBully))
+            if (ModuleMethods.IsMod(Context, userToBully))
                 Error("You may not bully a moderator.");
             if ((await UserRepository.FetchUserAsync(userToBully)).Cash > Context.Cash)
                 Error("You may not bully a user with more money than you.");
             await userToBully.ModifyAsync(x => x.Nickname = nickname);
-            await Send($"{await ResponseMethods.NameAsync(userToBully)} just got ***BULLIED*** by {Name()} with his new nickname: \"{nickname}\".");
+            await Send($"{ResponseMethods.Name(userToBully, await UserRepository.FetchUserAsync(userToBully))} just got ***BULLIED*** by {Name()} with his new nickname: \"{nickname}\".");
         }
 
         [Command("Rob")]

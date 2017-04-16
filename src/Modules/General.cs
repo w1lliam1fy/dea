@@ -162,7 +162,7 @@ namespace DEA.Modules
             decimal deaMoney = money * Config.DEA_CUT / 100;
             await UserRepository.EditCashAsync(user, money - deaMoney);
             await UserRepository.EditCashAsync(Context.Guild.CurrentUser, deaMoney);
-            await Reply($"Successfully donated {(money - deaMoney).ToString("C", Config.CI)} to {await ResponseMethods.NameAsync(user)}.\nDEA has taken a {deaMoney.ToString("C", Config.CI)} cut out of this donation. Balance: {(Context.Cash + money - deaMoney).ToString("C", Config.CI)}.");
+            await Reply($"Successfully donated {(money - deaMoney).ToString("C", Config.CI)} to {ResponseMethods.Name(user, await UserRepository.FetchUserAsync(user))}.\nDEA has taken a {deaMoney.ToString("C", Config.CI)} cut out of this donation. Balance: {(Context.Cash + money - deaMoney).ToString("C", Config.CI)}.");
         }
 
         [Command("Rank")]
@@ -173,7 +173,7 @@ namespace DEA.Modules
             var dbUser = await UserRepository.FetchUserAsync(user);
             var users = DEABot.Users.Find(y => y.GuildId == Context.Guild.Id).ToList();
             var sorted = users.OrderByDescending(x => x.Cash).ToList();
-            IRole rank = await RankHandler.FetchRankAsync(user.Id, user.GuildId);
+            IRole rank = RankHandler.FetchRankAsync(Context, dbUser);
             var description = $"Balance: {dbUser.Cash.ToString("C", Config.CI)}\n" +
                               $"Position: #{sorted.FindIndex(x => x.UserId == user.Id) + 1}\n";
             if (rank != null)
@@ -200,7 +200,8 @@ namespace DEA.Modules
         public async Task Money([Remainder] IGuildUser user = null)
         {
             user = user ?? Context.User as IGuildUser;
-            await Send($"{await ResponseMethods.NameAsync(user)}'s balance: {(await UserRepository.FetchUserAsync(user)).Cash.ToString("C", Config.CI)}.");
+            var dbUser = await UserRepository.FetchUserAsync(user);
+            await Send($"{ResponseMethods.Name(user, dbUser)}'s balance: {dbUser.Cash.ToString("C", Config.CI)}.");
         }
 
         [Command("Ranks")]

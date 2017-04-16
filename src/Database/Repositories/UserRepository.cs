@@ -83,8 +83,7 @@ namespace DEA.Database.Repository
 
         public static async Task EditCashAsync(DEAContext context, decimal change)
         {
-            var cash = (await FetchUserAsync(context)).Cash;
-            await ModifyAsync(context, x => x.Cash, Math.Round(cash + change, 2));
+            await ModifyAsync(context, x => x.Cash, Math.Round(context.Cash + change, 2));
             await RankHandler.HandleAsync(context.Guild, context.User.Id);
         }
 

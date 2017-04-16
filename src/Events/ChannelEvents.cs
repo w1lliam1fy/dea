@@ -49,7 +49,7 @@ namespace DEA.Events
                 guild = (socketChannel as SocketVoiceChannel).Guild;
             }
             SocketChannel channel = socketChannel as SocketTextChannel;
-            await Logger.DetailedLog(guild, "Action", action, channelType, channelName, socketChannel.Id, color);
+            await Logger.DetailedLogAsync(guild, "Action", action, channelType, channelName, socketChannel.Id, color);
         }
     }
 }

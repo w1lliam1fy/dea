@@ -17,7 +17,7 @@ public static class Config
 
     public static readonly TimeSpan WHORE_COOLDOWN = TimeSpan.FromHours(2), JUMP_COOLDOWN = TimeSpan.FromHours(4), 
         STEAL_COOLDOWN = TimeSpan.FromHours(6), ROB_COOLDOWN = TimeSpan.FromHours(8), WITHDRAW_COOLDOWN = TimeSpan.FromHours(4), 
-        RAID_COOLDOWN = TimeSpan.FromHours(8), LINE_COOLDOWN = TimeSpan.FromSeconds(25);
+        RAID_COOLDOWN = TimeSpan.FromHours(4), LINE_COOLDOWN = TimeSpan.FromSeconds(25);
 
     public static readonly int MIN_CHAR_LENGTH = 7, LEADERBOARD_CAP = 10, RATELB_CAP = 10, WHORE_ODDS = 90, JUMP_ODDS = 85, STEAL_ODDS = 80,
         MIN_CHILL = 5, MAX_CHILL = (int)TimeSpan.FromHours(1).TotalSeconds, MIN_CLEAR = 2, MAX_CLEAR = 1000, GANG_NAME_CHAR_LIMIT = 24,

@@ -45,7 +45,7 @@ namespace DEA
             }
             catch (IOException e)
             {
-                Logger.Log(LogSeverity.Critical, "Error while loading up Credentials.json, please fix this issue and restart the bot", e.Message).RunSynchronously();
+                Logger.LogAsync(LogSeverity.Critical, "Error while loading up Credentials.json, please fix this issue and restart the bot", e.Message).RunSynchronously();
                 Console.ReadLine();
                 Environment.Exit(0);
             }
@@ -59,7 +59,7 @@ namespace DEA
             Mutes = Database.GetCollection<Mute>("mutes");
         }
 
-        public async Task RunAsync(params string[] args)
+        private async Task RunAsync(params string[] args)
         {
             await Logger.NewLine("===   DEA   ===");
             await Logger.NewLine();
@@ -88,11 +88,11 @@ namespace DEA
                
             await Client.StartAsync().ConfigureAwait(false);
             sw.Stop();
-            await Logger.Log(LogSeverity.Info, "Successfully connected", $"Elapsed time: {sw.Elapsed.TotalSeconds.ToString()} seconds.");
+            await Logger.LogAsync(LogSeverity.Info, "Successfully connected", $"Elapsed time: {sw.Elapsed.TotalSeconds.ToString()} seconds.");
 
             await new CommandHandler().InitializeAsync();
             new Ready();
-            await Logger.Log(LogSeverity.Info, "Events and mapping successfully initialized", $"Client ready.");
+            await Logger.LogAsync(LogSeverity.Info, "Events and mapping successfully initialized", $"Client ready.");
         }
 
         public async Task RunAndBlockAsync(params string[] args)

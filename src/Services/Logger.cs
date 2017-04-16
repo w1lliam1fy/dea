@@ -11,7 +11,7 @@ namespace DEA.Services
 {
     public static class Logger
     {
-        public static async Task Log(LogSeverity severity, string source, string message)
+        public static async Task LogAsync(LogSeverity severity, string source, string message)
         {
             await NewLine($"{DateTime.Now.ToString("hh:mm:ss")} ", ConsoleColor.DarkGray);
             await Append($"[{severity}] ", ConsoleColor.Red);
@@ -45,7 +45,7 @@ namespace DEA.Services
             return Task.CompletedTask;
         }
 
-        public static async Task ModLog(DEAContext context, string action, Color color, string reason, IUser subject = null, string extra = "")
+        public static async Task ModLogAsync(DEAContext context, string action, Color color, string reason, IUser subject = null, string extra = "")
         {
             EmbedFooterBuilder footer = new EmbedFooterBuilder()
             {
@@ -76,7 +76,7 @@ namespace DEA.Services
         }
         
 
-        public static async Task DetailedLog(SocketGuild guild, string actionType, string action, string objectType, string objectName, ulong id, Color color, bool incrementCaseNumber = true)
+        public static async Task DetailedLogAsync(SocketGuild guild, string actionType, string action, string objectType, string objectName, ulong id, Color color, bool incrementCaseNumber = true)
         {
             var dbGuild = await GuildRepository.FetchGuildAsync(guild.Id);
             if (guild.GetTextChannel(dbGuild.DetailedLogsId) != null)
@@ -108,7 +108,7 @@ namespace DEA.Services
             }
         }
 
-        public static async Task Cooldown(DEAContext context, string command, TimeSpan timeSpan)
+        public static async Task CooldownAsync(DEAContext context, string command, TimeSpan timeSpan)
         {
             var user = command.ToLower() == "raid" ? context.Gang.Name : await ResponseMethods.TitleNameAsync(context.User as IGuildUser);
             await ResponseMethods.Send(context, 

@@ -10,29 +10,27 @@ namespace DEA.Services
 {
     public static class ModuleMethods
     {
-        public static async Task<bool> IsModAsync(IGuildUser user)
+        public static bool IsMod(DEAContext context, IGuildUser user)
         {
             if (user.GuildPermissions.Administrator) return true;
-            var guild = await GuildRepository.FetchGuildAsync(user.GuildId);
-            if (guild.ModRoles.ElementCount != 0)
-                foreach (var role in guild.ModRoles)
+            if (context.DbGuild.ModRoles.ElementCount != 0)
+                foreach (var role in context.DbGuild.ModRoles)
                     if (user.Guild.GetRole(Convert.ToUInt64(role.Name)) != null)
                         if (user.RoleIds.Any(x => x.ToString() == role.Name)) return true;
             return false;
         }
 
-        public static async Task<bool> IsHigherModAsync(IGuildUser mod, IGuildUser user)
+        public static bool IsHigherMod(DEAContext context, IGuildUser mod, IGuildUser user)
         {
-            var guild = await GuildRepository.FetchGuildAsync(mod.GuildId);
             int highest = mod.GuildPermissions.Administrator ? 2 : 0;
             int highestForUser = user.GuildPermissions.Administrator ? 2 : 0;
-            if (guild.ModRoles.ElementCount == 0) return highest > highestForUser;
+            if (context.DbGuild.ModRoles.ElementCount == 0) return highest > highestForUser;
 
-            foreach (var role in guild.ModRoles.OrderBy(x => x.Value))
+            foreach (var role in context.DbGuild.ModRoles.OrderBy(x => x.Value))
                 if (mod.Guild.GetRole(Convert.ToUInt64(role.Name)) != null)
                     if (mod.RoleIds.Any(x => x.ToString() == role.Name)) highest = role.Value.AsInt32;
 
-            foreach (var role in guild.ModRoles.OrderBy(x => x.Value))
+            foreach (var role in context.DbGuild.ModRoles.OrderBy(x => x.Value))
                 if (user.Guild.GetRole(Convert.ToUInt64(role.Name)) != null)
                     if (user.RoleIds.Any(x => x.ToString() == role.Name)) highestForUser = role.Value.AsInt32;
 

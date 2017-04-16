@@ -16,22 +16,13 @@ namespace DEA.Services
 
             var builder = new EmbedBuilder()
             {
-                Description = $"{await NameAsync(context.User as IGuildUser)}, {description}",
+                Description = $"{Name(context.User as IGuildUser, context.DbUser)}, {description}",
                 Color = Config.COLORS[rand.Next(1, Config.COLORS.Length) - 1]
             };
             if (title != null) builder.Title = title;
             if (color.RawValue != default(Color).RawValue) builder.Color = color;
 
             await context.Channel.SendMessageAsync(string.Empty, embed: builder);
-        }
-
-        public static async Task<string> NameAsync(IGuildUser user)
-        {
-            var dbUser = await UserRepository.FetchUserAsync(user.Id, user.GuildId);
-            if (string.IsNullOrWhiteSpace(dbUser.Name))
-                return (string.IsNullOrWhiteSpace(user.Nickname)) ? $"**{user.Username}**" : $"**{user.Nickname}**";
-            else
-                return $"**{dbUser.Name}**";
         }
 
         public static string Name(IGuildUser user, User dbUser)

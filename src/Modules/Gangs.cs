@@ -107,7 +107,7 @@ namespace DEA.Modules
             if (!GangRepository.IsMemberOf(Context.Gang, gangMember.Id))
                 Error("This user is not a member of your gang!");
             await GangRepository.RemoveMemberAsync(Context.Gang, gangMember.Id);
-            await Reply($"You have successfully kicked {gangMember} from {Context.Gang.Name}");
+            await Reply($"You have successfully kicked {gangMember} from {Context.Gang.Name}.");
             var channel = await gangMember.CreateDMChannelAsync();
             await ResponseMethods.DM(channel, $"You have been kicked from {Context.Gang.Name}.");
         }
@@ -147,7 +147,7 @@ namespace DEA.Modules
             await GangRepository.RemoveMemberAsync(Context.Gang, gangMember.Id);
             await GangRepository.ModifyAsync(Context.User as IGuildUser, x => x.LeaderId, gangMember.Id);
             await GangRepository.AddMemberAsync(Context.Gang, Context.User.Id);
-            await Reply($"You have successfully transferred the leadership of {Context.Gang.Name} to {await ResponseMethods.NameAsync(gangMember)}.");
+            await Reply($"You have successfully transferred the leadership of {Context.Gang.Name} to {ResponseMethods.Name(gangMember, await UserRepository.FetchUserAsync(gangMember))}.");
         }
 
         [Command("Deposit")]

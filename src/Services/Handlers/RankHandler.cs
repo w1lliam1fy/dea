@@ -1,4 +1,5 @@
-﻿using DEA.Database.Models;
+﻿using DEA.Common;
+using DEA.Database.Models;
 using DEA.Database.Repository;
 using Discord;
 using Discord.WebSocket;
@@ -50,18 +51,14 @@ namespace DEA.Services.Handlers
             }
         }
 
-        public static async Task<IRole> FetchRankAsync(ulong userId, ulong guildId)
+        public static IRole FetchRankAsync(DEAContext context, User dbUser)
         {
-            var dbGuild = await GuildRepository.FetchGuildAsync(guildId);
-            var cash = (await UserRepository.FetchUserAsync(userId, guildId)).Cash;
-
             IRole role = null;
-            IGuild guild = DEABot.Client.GetGuild(guildId);
 
-            if (dbGuild.RankRoles.ElementCount != 0 && guild != null)
-                foreach (var rankRole in dbGuild.RankRoles.OrderBy(x => x.Value))
-                    if (cash >= (decimal)rankRole.Value.AsDouble)
-                        role = guild.GetRole(Convert.ToUInt64(rankRole.Name));
+            if (context.DbGuild.RankRoles.ElementCount != 0 && context.Guild != null)
+                foreach (var rankRole in context.DbGuild.RankRoles.OrderBy(x => x.Value))
+                    if (context.Cash >= (decimal)rankRole.Value.AsDouble)
+                        role = context.Guild.GetRole(Convert.ToUInt64(rankRole.Name));
             return role;
         }
     }

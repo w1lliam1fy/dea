@@ -23,7 +23,7 @@ namespace DEA.Modules
         {
             user = user ?? Context.User as IGuildUser;
             await DEABot.Users.DeleteOneAsync(y => y.UserId == user.Id && y.GuildId == user.GuildId);
-            await Reply($"Successfully reset {await ResponseMethods.NameAsync(user)}'s data.");
+            await Reply($"Successfully reset {ResponseMethods.Name(user, await UserRepository.FetchUserAsync(user))}'s data.");
         }
 
         [Command("100k")]
@@ -33,7 +33,7 @@ namespace DEA.Modules
             user = user ?? Context.User as IGuildUser;
             await UserRepository.ModifyAsync(user, x => x.Cash, 100000);
             await RankHandler.HandleAsync(Context.Guild, user.Id);
-            await Reply($"Successfully set {await ResponseMethods.NameAsync(user)}'s balance to $100,000.00.");
+            await Reply($"Successfully set {ResponseMethods.Name(user, await UserRepository.FetchUserAsync(user))}'s balance to $100,000.00.");
         }
 
         [Command("Add")]
@@ -42,7 +42,7 @@ namespace DEA.Modules
         {
             if (money < 0) Error("You may not add negative money to a user's balance.");
             await UserRepository.EditCashAsync(user, money);
-            await Reply($"Successfully added {money.ToString("C", Config.CI)} to {await ResponseMethods.NameAsync(user)}'s balance.");
+            await Reply($"Successfully added {money.ToString("C", Config.CI)} to {ResponseMethods.Name(user, await UserRepository.FetchUserAsync(user))}'s balance.");
         }
 
         [Command("AddTo")]
@@ -62,7 +62,7 @@ namespace DEA.Modules
         {
             if (money < 0) Error("You may not remove a negative amount of money from a user's balance.");
             await UserRepository.EditCashAsync(user, -money);
-            await Reply($"Successfully removed {money.ToString("C", Config.CI)} from {await ResponseMethods.NameAsync(user)}'s balance.");
+            await Reply($"Successfully removed {money.ToString("C", Config.CI)} from {ResponseMethods.Name(user, await UserRepository.FetchUserAsync(user))}'s balance.");
         }
 
         [Command("RemoveFrom")]
