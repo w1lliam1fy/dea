@@ -103,7 +103,7 @@ namespace DEA.Modules
                 var user = answer.Author as IGuildUser;
                 await UserRepository.EditCashAsync(user, Config.TRIVIA_PAYOUT);
                 await Send($"{ResponseMethods.Name(user, await UserRepository.FetchUserAsync(user))}, Congrats! You just " +
-                           $"won {Config.TRIVIA_PAYOUT.ToString("C", Config.CI)} for correctly answering the \"{element.Value.AsString}\" trivia question!");
+                           $"won {Config.TRIVIA_PAYOUT.ToString("C", Config.CI)} for correctly answering \"{element.Value.AsString}\"");
             }
             else
             {

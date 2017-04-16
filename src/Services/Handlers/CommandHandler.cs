@@ -18,6 +18,7 @@ namespace DEA.Services.Handlers
 
         public async Task HandleCommandAsync(SocketMessage s)
         {
+            DEABot.Messages++;
             var msg = s as SocketUserMessage;
             if (msg == null) return;
 
