@@ -15,10 +15,6 @@ namespace DEA.Modules
 {
     public class General : DEAModule
     {
-        protected override void BeforeExecute()
-        {
-            InitializeData();
-        }
 
         [Command("Investments")]
         [Summary("Increase your money per message")]
@@ -27,64 +23,64 @@ namespace DEA.Modules
             switch (investment)
             {
                 case "line":
-                    if (Config.LINE_COST > Cash)
+                    if (Config.LINE_COST > Context.Cash)
                     {
-                        await Reply($"You do not have enough money. Balance: {Cash.ToString("C", Config.CI)}");
+                        await Reply($"You do not have enough money. Balance: {Context.Cash.ToString("C", Config.CI)}");
                         break;
                     }
-                    if (DbUser.MessageCooldown == Config.LINE_COOLDOWN.TotalMilliseconds)
+                    if (Context.DbUser.MessageCooldown == Config.LINE_COOLDOWN.TotalMilliseconds)
                     {
                         await Reply($"You have already purchased this investment.");
                         break;
                     }
                     await UserRepository.EditCashAsync(Context, -Config.LINE_COST);
-                    UserRepository.Modify(DEABot.UserUpdateBuilder.Set(x => x.MessageCooldown, Config.LINE_COOLDOWN.TotalMilliseconds), Context);
+                    await UserRepository.ModifyAsync(Context, x => x.MessageCooldown, Config.LINE_COOLDOWN.TotalMilliseconds);
                     await Reply("Don't forget to wipe your nose when you are done with that line.");
                     break;
                 case "pound":
                 case "lb":
-                    if (Config.POUND_COST > Cash)
+                    if (Config.POUND_COST > Context.Cash)
                     {
-                        await Reply($"You do not have enough money. Balance: {Cash.ToString("C", Config.CI)}");
+                        await Reply($"You do not have enough money. Balance: {Context.Cash.ToString("C", Config.CI)}");
                         break;
                     }
-                    if (DbUser.InvestmentMultiplier >= Config.POUND_MULTIPLIER)
+                    if (Context.DbUser.InvestmentMultiplier >= Config.POUND_MULTIPLIER)
                     {
                         await Reply("You already purchased this investment.");
                         break;
                     }
                     await UserRepository.EditCashAsync(Context, -Config.POUND_COST);
-                    UserRepository.Modify(DEABot.UserUpdateBuilder.Set(x => x.InvestmentMultiplier, Config.POUND_MULTIPLIER), Context);
+                    await UserRepository.ModifyAsync(Context, x => x.InvestmentMultiplier, Config.POUND_MULTIPLIER);
                     await Reply("***DOUBLE CASH SMACK DAB CENTER NIGGA!***");
                     break;
                 case "kg":
                 case "kilo":
                 case "kilogram":
-                    if (Config.KILO_COST > Cash)
+                    if (Config.KILO_COST > Context.Cash)
                     {
-                        await Reply($"You do not have enough money. Balance: {Cash.ToString("C", Config.CI)}");
+                        await Reply($"You do not have enough money. Balance: {Context.Cash.ToString("C", Config.CI)}");
                         break;
                     }
-                    if (DbUser.InvestmentMultiplier != Config.POUND_MULTIPLIER)
+                    if (Context.DbUser.InvestmentMultiplier != Config.POUND_MULTIPLIER)
                     {
                         await Reply("You must purchase the pound of cocaine investment before buying this one.");
                         break;
                     }
-                    if (DbUser.InvestmentMultiplier >= Config.KILO_MULTIPLIER)
+                    if (Context.DbUser.InvestmentMultiplier >= Config.KILO_MULTIPLIER)
                     {
                         await Reply("You already purchased this investment.");
                         break;
                     }
                     await UserRepository.EditCashAsync(Context, -Config.KILO_COST);
-                    UserRepository.Modify(DEABot.UserUpdateBuilder.Set(x => x.InvestmentMultiplier, Config.KILO_MULTIPLIER), Context);
+                    await UserRepository.ModifyAsync(Context, x => x.InvestmentMultiplier, Config.KILO_MULTIPLIER);
                     await Reply("Only the black jews would actually enjoy 4$/msg.");
                     break;
                 default:
-                    await Send($"\n**Cost: {Config.LINE_COST}$** | Command: `{Prefix}investments line` | Description: " +
+                    await Send($"\n**Cost: {Config.LINE_COST}$** | Command: `{Context.Prefix}investments line` | Description: " +
                         $"One line of blow. Seems like nothing, yet it's enough to lower the message cooldown from 30 to 25 seconds." +
-                        $"\n**Cost: {Config.POUND_COST}$** | Command: `{Prefix}investments pound` | Description: " +
+                        $"\n**Cost: {Config.POUND_COST}$** | Command: `{Context.Prefix}investments pound` | Description: " +
                         $"This one pound of coke will double the amount of cash you get per message\n**Cost: {Config.KILO_COST}$** | Command: " +
-                        $"`{Prefix}investments kilo` | Description: A kilo of cocaine is more than enough to " +
+                        $"`{Context.Prefix}investments kilo` | Description: A kilo of cocaine is more than enough to " +
                         $"quadruple your cash/message.\n These investments stack with the chatting multiplier. However, they will not stack with themselves.",
                         "Available Investments:");
                     break;
@@ -161,12 +157,12 @@ namespace DEA.Modules
         {
             if (user.Id == Context.User.Id) Error("Hey kids! Look at that retard, he is trying to give money to himself!");
             if (money < Config.DONATE_MIN) Error($"Lowest donation is {Config.DONATE_MIN}$.");
-            if (Cash < money) Error($"You do not have enough money. Balance: {Cash.ToString("C", Config.CI)}.");
+            if (Context.Cash < money) Error($"You do not have enough money. Balance: {Context.Cash.ToString("C", Config.CI)}.");
             await UserRepository.EditCashAsync(Context, -money);
             decimal deaMoney = money * Config.DEA_CUT / 100;
-            await UserRepository.EditCashAsync(Context, user.Id, money - deaMoney);
-            await UserRepository.EditCashAsync(Context, Context.Guild.CurrentUser.Id, deaMoney);
-            await Reply($"Successfully donated {(money - deaMoney).ToString("C", Config.CI)} to {ResponseMethods.Name(user)}.\nDEA has taken a {deaMoney.ToString("C", Config.CI)} cut out of this donation. Balance: {(Cash + money - deaMoney).ToString("C", Config.CI)}.");
+            await UserRepository.EditCashAsync(user, money - deaMoney);
+            await UserRepository.EditCashAsync(Context.Guild.CurrentUser, deaMoney);
+            await Reply($"Successfully donated {(money - deaMoney).ToString("C", Config.CI)} to {await ResponseMethods.NameAsync(user)}.\nDEA has taken a {deaMoney.ToString("C", Config.CI)} cut out of this donation. Balance: {(Context.Cash + money - deaMoney).ToString("C", Config.CI)}.");
         }
 
         [Command("Rank")]
@@ -174,16 +170,15 @@ namespace DEA.Modules
         public async Task Rank([Remainder] IGuildUser user = null)
         {
             user = user ?? Context.User as IGuildUser;
-            var dbUser = UserRepository.FetchUser(user.Id, user.GuildId);
+            var dbUser = await UserRepository.FetchUserAsync(user);
             var users = DEABot.Users.Find(y => y.GuildId == Context.Guild.Id).ToList();
             var sorted = users.OrderByDescending(x => x.Cash).ToList();
-            IRole rank = null;
-            rank = RankHandler.FetchRank(user.Id, user.GuildId);
+            IRole rank = await RankHandler.FetchRankAsync(user.Id, user.GuildId);
             var description = $"Balance: {dbUser.Cash.ToString("C", Config.CI)}\n" +
                               $"Position: #{sorted.FindIndex(x => x.UserId == user.Id) + 1}\n";
             if (rank != null)
                 description += $"Rank: {rank.Mention}";
-            await Send(description, $"Ranking of {ResponseMethods.TitleName(user)}");
+            await Send(description, $"Ranking of {await ResponseMethods.TitleNameAsync(user)}");
         }
 
         [Command("Rate")]
@@ -191,12 +186,12 @@ namespace DEA.Modules
         public async Task Rate([Remainder] IGuildUser user = null)
         {
             user = user ?? Context.User as IGuildUser;
-            var dbUser = UserRepository.FetchUser(user.Id, Context.Guild.Id);
+            var dbUser = await UserRepository.FetchUserAsync(user);
             await Send($"Cash/msg: {(dbUser.TemporaryMultiplier * dbUser.InvestmentMultiplier).ToString("C", Config.CI)}\n" +
                        $"Chatting multiplier: {dbUser.TemporaryMultiplier.ToString("N2")}\n" +
                        $"Investment multiplier: {dbUser.InvestmentMultiplier.ToString("N2")}\n" +
                        $"Message cooldown: {dbUser.MessageCooldown / 1000} seconds",
-                       $"Rate of {ResponseMethods.TitleName(user)}");
+                       $"Rate of {await ResponseMethods.TitleNameAsync(user)}");
         }
 
         [Command("Money")]
@@ -205,22 +200,22 @@ namespace DEA.Modules
         public async Task Money([Remainder] IGuildUser user = null)
         {
             user = user ?? Context.User as IGuildUser;
-            await Send($"{ResponseMethods.Name(user)}'s balance: {(UserRepository.FetchUser(user.Id, Context.Guild.Id)).Cash.ToString("C", Config.CI)}.");
+            await Send($"{await ResponseMethods.NameAsync(user)}'s balance: {(await UserRepository.FetchUserAsync(user)).Cash.ToString("C", Config.CI)}.");
         }
 
         [Command("Ranks")]
         [Summary("View all ranks.")]
         public async Task Ranks()
         {
-            if (DbGuild.RankRoles.ElementCount == 0) Error("There are no ranks yet!");
+            if (Context.DbGuild.RankRoles.ElementCount == 0) Error("There are no ranks yet!");
             var description = string.Empty;
-            foreach (var rank in DbGuild.RankRoles.OrderBy(x => x.Value))
+            foreach (var rank in Context.DbGuild.RankRoles.OrderBy(x => x.Value))
             {
                 var role = Context.Guild.GetRole(Convert.ToUInt64(rank.Name));
                 if (role == null)
                 {
-                    DbGuild.RankRoles.Remove(rank.Name);
-                    GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.RankRoles, DbGuild.RankRoles), Context.Guild.Id);
+                    Context.DbGuild.RankRoles.Remove(rank.Name);
+                    await GuildRepository.ModifyAsync(Context.Guild.Id, x => x.RankRoles, Context.DbGuild.RankRoles);
                     continue;
                 }
                 description += $"{rank.Value.AsDouble.ToString("C", Config.CI)}: {role.Mention}\n";
@@ -234,15 +229,15 @@ namespace DEA.Modules
         [Summary("View all the moderator roles.")]
         public async Task ModRoles()
         {
-            if (DbGuild.ModRoles.ElementCount == 0) Error("There are no moderator roles yet!");
+            if (Context.DbGuild.ModRoles.ElementCount == 0) Error("There are no moderator roles yet!");
             var description = "**Moderation Roles:**\n";
-            foreach (var modRole in DbGuild.ModRoles.OrderBy(x => x.Value))
+            foreach (var modRole in Context.DbGuild.ModRoles.OrderBy(x => x.Value))
             {
                 var role = Context.Guild.GetRole(Convert.ToUInt64(modRole.Name));
                 if (role == null)
                 {
-                    DbGuild.ModRoles.Remove(modRole.Name);
-                    GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.ModRoles, DbGuild.ModRoles), Context.Guild.Id);
+                    Context.DbGuild.ModRoles.Remove(modRole.Name);
+                    await GuildRepository.ModifyAsync(Context.Guild.Id, x => x.ModRoles, Context.DbGuild.ModRoles);
                     continue;
                 }
                 description += $"{role.Mention}: {modRole.Value}\n";
@@ -257,14 +252,14 @@ namespace DEA.Modules
         {
             var cooldowns = new Dictionary<String, TimeSpan>
             {
-                { "Whore", Config.WHORE_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(DbUser.Whore)) },
-                { "Jump", Config.JUMP_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(DbUser.Jump)) },
-                { "Steal", Config.STEAL_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(DbUser.Steal)) },
-                { "Rob", Config.ROB_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(DbUser.Rob)) },
-                { "Withdraw", Config.WITHDRAW_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(DbUser.Withdraw)) }
+                { "Whore", Config.WHORE_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(Context.DbUser.Whore)) },
+                { "Jump", Config.JUMP_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(Context.DbUser.Jump)) },
+                { "Steal", Config.STEAL_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(Context.DbUser.Steal)) },
+                { "Rob", Config.ROB_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(Context.DbUser.Rob)) },
+                { "Withdraw", Config.WITHDRAW_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(Context.DbUser.Withdraw)) }
             };
-            if (Gang != null)
-                cooldowns.Add("Raid", Config.RAID_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(Gang.Raid)));
+            if (Context.Gang != null)
+                cooldowns.Add("Raid", Config.RAID_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(Context.Gang.Raid)));
             var description = string.Empty;
             foreach (var cooldown in cooldowns)
             {
@@ -281,7 +276,7 @@ namespace DEA.Modules
         public async Task Callme([Remainder] string name)
         {
             if (name.Length > 32) Error("Your DEA nickname may not be longer than 32 characters.");
-            UserRepository.Modify(DEABot.UserUpdateBuilder.Set(x => x.Name, name), Context);
+            await UserRepository.ModifyAsync(Context, x => x.Name, name);
             await Send($"How's it going, *{name}*?");
         }
 

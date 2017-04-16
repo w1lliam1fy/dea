@@ -1,4 +1,5 @@
-﻿using DEA.Database.Repository;
+﻿using DEA.Database.Models;
+using DEA.Database.Repository;
 using Discord;
 using Discord.WebSocket;
 using MongoDB.Driver;
@@ -11,11 +12,11 @@ namespace DEA.Services.Handlers
 {
     public static class RankHandler
     {
-        public static async Task Handle(IGuild guild, ulong userId)
+        public static async Task HandleAsync(IGuild guild, ulong userId)
         {
             if (!((await guild.GetCurrentUserAsync()).GuildPermissions.ManageRoles)) return;
-            decimal cash = UserRepository.FetchUser(userId, guild.Id).Cash;
-            var guildData = GuildRepository.FetchGuild(guild.Id);
+            decimal cash = (await UserRepository.FetchUserAsync(userId, guild.Id)).Cash;
+            var guildData = await GuildRepository.FetchGuildAsync(guild.Id);
 
             var user = await guild.GetUserAsync(userId); //FETCHES THE USER
             var currentUser = await guild.GetCurrentUserAsync() as SocketGuildUser; //FETCHES THE BOT'S USER
@@ -37,7 +38,8 @@ namespace DEA.Services.Handlers
                     else
                     {
                         guildData.RankRoles.Remove(rankRole.Name);
-                        await DEABot.Guilds.UpdateOneAsync(x => x.Id == guild.Id, DEABot.GuildUpdateBuilder.Set(x => x.RankRoles, guildData.RankRoles));
+                        var builder = Builders<Guild>.Update;
+                        await DEABot.Guilds.UpdateOneAsync(x => x.Id == guild.Id, builder.Set(x => x.RankRoles, guildData.RankRoles));
                     }
                 }
 
@@ -48,10 +50,10 @@ namespace DEA.Services.Handlers
             }
         }
 
-        public static IRole FetchRank(ulong userId, ulong guildId)
+        public static async Task<IRole> FetchRankAsync(ulong userId, ulong guildId)
         {
-            var dbGuild = GuildRepository.FetchGuild(guildId);
-            var cash = UserRepository.FetchUser(userId, guildId).Cash;
+            var dbGuild = await GuildRepository.FetchGuildAsync(guildId);
+            var cash = (await UserRepository.FetchUserAsync(userId, guildId)).Cash;
 
             IRole role = null;
             IGuild guild = DEABot.Client.GetGuild(guildId);

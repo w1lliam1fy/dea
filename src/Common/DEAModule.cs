@@ -1,6 +1,4 @@
-﻿using DEA.Database.Models;
-using DEA.Database.Repository;
-using DEA.Services;
+﻿using DEA.Services;
 using Discord;
 using Discord.Commands;
 using System;
@@ -8,39 +6,15 @@ using System.Threading.Tasks;
 
 namespace DEA.Common
 {
-    public class DEAModule : ModuleBase<SocketCommandContext>
+    public class DEAModule : ModuleBase<DEAContext>
     {
-
-        public User DbUser;
-        public decimal Cash;
-        
-        public Guild DbGuild;
-        public string Prefix;
-
-        public Gang Gang;
-
-        public void InitializeData()
-        {
-            var user = UserRepository.FetchUser(Context);
-            var guild = GuildRepository.FetchGuild(Context.Guild.Id);
-
-            DbUser = user;
-            Cash = DbUser.Cash;
-
-            DbGuild = guild;
-            Prefix = DbGuild.Prefix;
-
-            if (GangRepository.InGang(Context.User.Id, Context.Guild.Id))
-                Gang = GangRepository.FetchGang(Context);
-        }
 
         public async Task<IUserMessage> Reply( string description, string title = null, Color color = default(Color))
         {
             var rand = new Random();
-
             var builder = new EmbedBuilder()
             {
-                Description = $"{ResponseMethods.Name(Context.User as IGuildUser, DbUser)}, {description}",
+                Description = $"{ResponseMethods.Name(Context.User as IGuildUser, Context.DbUser)}, {description}",
                 Color = Config.COLORS[rand.Next(1, Config.COLORS.Length) - 1]
             };
             if (title != null) builder.Title = title;
@@ -66,19 +40,19 @@ namespace DEA.Common
         public string Name()
         {
             var user = Context.User as IGuildUser;
-            if (string.IsNullOrWhiteSpace(DbUser.Name))
+            if (string.IsNullOrWhiteSpace(Context.DbUser.Name))
                 return (string.IsNullOrWhiteSpace(user.Nickname)) ? $"**{user.Username}**" : $"**{user.Nickname}**";
             else
-                return $"**{DbUser.Name}**";
+                return $"**{Context.DbUser.Name}**";
         }
 
         public string TitleName()
         {
             var user = Context.User as IGuildUser;
-            if (string.IsNullOrWhiteSpace(DbUser.Name))
+            if (string.IsNullOrWhiteSpace(Context.DbUser.Name))
                 return (string.IsNullOrWhiteSpace(user.Nickname)) ? user.Username : user.Nickname;
             else
-                return DbUser.Name;
+                return Context.DbUser.Name;
         }
 
         public void Error(string message)

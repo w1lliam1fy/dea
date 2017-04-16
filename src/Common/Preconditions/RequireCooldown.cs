@@ -3,6 +3,8 @@ using DEA.Database.Repository;
 using System;
 using System.Threading.Tasks;
 using Discord.Commands;
+using DEA.Database.Models;
+using Discord;
 
 namespace DEA.Common.Preconditions
 {
@@ -13,33 +15,32 @@ namespace DEA.Common.Preconditions
         {
             TimeSpan cooldown;
             DateTime lastUse;
-            var user = UserRepository.FetchUser(context as SocketCommandContext);
+            var deaContext = context as DEAContext;
             switch (command.Name.ToLower())
             {
                 case "whore":
                     cooldown = Config.WHORE_COOLDOWN;
-                    lastUse = user.Whore;
+                    lastUse = deaContext.DbUser.Whore;
                     break;
                 case "jump":
                     cooldown = Config.JUMP_COOLDOWN;
-                    lastUse = user.Jump;
+                    lastUse = deaContext.DbUser.Jump;
                     break;
                 case "steal":
                     cooldown = Config.STEAL_COOLDOWN;
-                    lastUse = user.Steal;
+                    lastUse = deaContext.DbUser.Steal;
                     break;
                 case "rob":
                     cooldown = Config.ROB_COOLDOWN;
-                    lastUse = user.Rob;
+                    lastUse = deaContext.DbUser.Rob;
                     break;
                 case "withdraw":
                     cooldown = Config.WITHDRAW_COOLDOWN;
-                    lastUse = user.Withdraw;
+                    lastUse = deaContext.DbUser.Withdraw;
                     break;
                 case "raid":
-                    var gang = GangRepository.FetchGang(context as SocketCommandContext);
                     cooldown = Config.RAID_COOLDOWN;
-                    lastUse = gang.Raid;
+                    lastUse = deaContext.Gang.Raid;
                     break;
                 default:
                     return PreconditionResult.FromSuccess();
@@ -48,7 +49,7 @@ namespace DEA.Common.Preconditions
                 return PreconditionResult.FromSuccess();
             else
             {
-                await Logger.Cooldown(context as SocketCommandContext, command.Name, cooldown.Subtract(DateTime.UtcNow.Subtract(lastUse)));
+                await Logger.Cooldown(deaContext, command.Name, cooldown.Subtract(DateTime.UtcNow.Subtract(lastUse)));
                 return PreconditionResult.FromError(string.Empty);
             }
         }

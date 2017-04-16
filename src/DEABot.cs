@@ -1,5 +1,6 @@
 ﻿using DEA.Common;
 using DEA.Database.Models;
+using DEA.Database.Repository;
 using DEA.Events;
 using DEA.Services;
 using DEA.Services.Handlers;
@@ -10,6 +11,7 @@ using Discord.WebSocket;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -29,10 +31,6 @@ namespace DEA
         public static IMongoCollection<User> Users { get; private set; }
         public static IMongoCollection<Gang> Gangs { get; private set; }
         public static IMongoCollection<Mute> Mutes { get; private set; }
-
-        public static UpdateDefinitionBuilder<Guild> GuildUpdateBuilder { get; private set; }
-        public static UpdateDefinitionBuilder<User> UserUpdateBuilder { get; private set; }
-        public static UpdateDefinitionBuilder<Gang> GangUpdateBuilder { get; private set; }
 
         public static int Commands { get; set; }
         public static int Messages { get; set; }
@@ -62,9 +60,17 @@ namespace DEA
             Gangs = Database.GetCollection<Gang>("gangs");
             Mutes = Database.GetCollection<Mute>("mutes");
 
-            GuildUpdateBuilder = Builders<Guild>.Update;
-            UserUpdateBuilder = Builders<User>.Update;
-            GangUpdateBuilder = Builders<Gang>.Update;
+            var builder = Builders<Gang>.Filter;
+
+            var upbuilder = Builders<Gang>.Update;
+
+            IEnumerable<ulong> myenum = new ulong[] { 0 };
+
+            foreach (var gang in Gangs.Find(builder.Empty).ToList())
+            {
+                foreach (var member in gang.Members)
+                    Gangs.UpdateOne(y => y.Id == gang.Id, upbuilder.PullAll(y => y.Members, myenum));
+            }
         }
 
         public async Task RunAsync(params string[] args)

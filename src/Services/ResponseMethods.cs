@@ -1,4 +1,5 @@
-﻿using DEA.Database.Models;
+﻿using DEA.Common;
+using DEA.Database.Models;
 using DEA.Database.Repository;
 using Discord;
 using Discord.Commands;
@@ -9,13 +10,13 @@ namespace DEA.Services
 {
     public static class ResponseMethods
     {
-        public static async Task Reply(SocketCommandContext context, string description, string title = null, Color color = default(Color))
+        public static async Task Reply(DEAContext context, string description, string title = null, Color color = default(Color))
         {
             var rand = new Random();
 
             var builder = new EmbedBuilder()
             {
-                Description = $"{Name(context.User as IGuildUser)}, {description}",
+                Description = $"{await NameAsync(context.User as IGuildUser)}, {description}",
                 Color = Config.COLORS[rand.Next(1, Config.COLORS.Length) - 1]
             };
             if (title != null) builder.Title = title;
@@ -24,9 +25,9 @@ namespace DEA.Services
             await context.Channel.SendMessageAsync(string.Empty, embed: builder);
         }
 
-        public static string Name(IGuildUser user)
+        public static async Task<string> NameAsync(IGuildUser user)
         {
-            var dbUser = UserRepository.FetchUser(user.Id, user.GuildId);
+            var dbUser = await UserRepository.FetchUserAsync(user.Id, user.GuildId);
             if (string.IsNullOrWhiteSpace(dbUser.Name))
                 return (string.IsNullOrWhiteSpace(user.Nickname)) ? $"**{user.Username}**" : $"**{user.Nickname}**";
             else
@@ -41,16 +42,16 @@ namespace DEA.Services
                 return $"**{dbUser.Name}**";
         }
 
-        public static string TitleName(IGuildUser user)
+        public static async Task<string> TitleNameAsync(IGuildUser user)
         {
-            var dbUser = UserRepository.FetchUser(user.Id, user.GuildId);
+            var dbUser = await UserRepository.FetchUserAsync(user.Id, user.GuildId);
             if (string.IsNullOrWhiteSpace(dbUser.Name))
                 return (string.IsNullOrWhiteSpace(user.Nickname)) ? user.Username : user.Nickname;
             else
                 return dbUser.Name;
         }
 
-        public static async Task Send(SocketCommandContext context, string description, string title = null, Color color = default(Color))
+        public static async Task Send(DEAContext context, string description, string title = null, Color color = default(Color))
         {
             var rand = new Random();
             var builder = new EmbedBuilder()

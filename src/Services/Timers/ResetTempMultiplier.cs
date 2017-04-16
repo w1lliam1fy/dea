@@ -22,7 +22,8 @@ namespace DEA.Services.Timers
         private async void TimerTask(object stateObj)
         {
             var builder = Builders<User>.Filter;
-            await DEABot.Users.UpdateManyAsync(builder.Empty, DEABot.UserUpdateBuilder.Set(x => x.TemporaryMultiplier, 1));
+            var updateBuilder = Builders<User>.Update;
+            await DEABot.Users.UpdateManyAsync(builder.Empty, updateBuilder.Set(x => x.TemporaryMultiplier, 1));
         }
     }
 }

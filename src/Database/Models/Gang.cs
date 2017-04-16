@@ -18,7 +18,7 @@ namespace DEA.Database.Models
 
         public decimal Wealth { get; set; } = 0;
 
-        public ulong[] Members { get; set; } = new ulong[4] { 0, 0, 0, 0};
+        public ulong[] Members { get; set; } = new ulong[] { };
 
         public DateTime Raid { get; set; } = DateTime.UtcNow.AddYears(-1);
         

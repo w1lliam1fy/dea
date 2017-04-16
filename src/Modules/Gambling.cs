@@ -2,10 +2,11 @@
 using System.Threading.Tasks;
 using DEA.Services;
 using DEA.Common.Preconditions;
+using DEA.Common;
 
 namespace DEA.Modules
 {
-    public class Gambling : ModuleBase<SocketCommandContext>
+    public class Gambling : DEAModule
     {
 
         [Command("21+")]

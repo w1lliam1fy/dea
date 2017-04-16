@@ -20,8 +20,8 @@ namespace DEA.Common.Preconditions
         public override async Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IDependencyMap map)
         {
             var user = context.User as IGuildUser;
-            var dbUser = UserRepository.FetchUser(context as SocketCommandContext);
-            var guild = GuildRepository.FetchGuild(context.Guild.Id);
+            var dbUser = await UserRepository.FetchUserAsync(context as DEAContext);
+            var guild = await GuildRepository.FetchGuildAsync(context.Guild.Id);
             foreach (var attribute in attributes)
                 switch (attribute)
                 {
@@ -59,15 +59,15 @@ namespace DEA.Common.Preconditions
                             return PreconditionResult.FromError($"You do not have permission to use this command.\nRequired role: {nsfwRole.Mention}");
                         break;
                     case Attributes.InGang:
-                        if (!GangRepository.InGang(context.User.Id, context.Guild.Id))
+                        if (!await GangRepository.InGangAsync(context.User as IGuildUser))
                             return PreconditionResult.FromError("You must be in a gang to use this command.");
                         break;
                     case Attributes.NoGang:
-                        if (GangRepository.InGang(context.User.Id, context.Guild.Id))
+                        if (await GangRepository.InGangAsync(context.User as IGuildUser))
                             return PreconditionResult.FromError("You may not use this command while in a gang.");
                         break;
                     case Attributes.GangLeader:
-                        if (GangRepository.FetchGang(context.User.Id, context.Guild.Id).LeaderId != context.User.Id)
+                        if ((await GangRepository.FetchGangAsync(context.User as IGuildUser)).LeaderId != context.User.Id)
                             return PreconditionResult.FromError("You must be the leader of a gang to use this command.");
                         break;
                     case Attributes.Jump:

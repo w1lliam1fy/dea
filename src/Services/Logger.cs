@@ -1,4 +1,6 @@
-﻿using DEA.Database.Repository;
+﻿using DEA.Common;
+using DEA.Database.Models;
+using DEA.Database.Repository;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
@@ -11,7 +13,7 @@ namespace DEA.Services
     {
         public static async Task Log(LogSeverity severity, string source, string message)
         {
-            await NewLine($"{DateTime.UtcNow.ToString("hh:mm:ss")} ", ConsoleColor.DarkGray);
+            await NewLine($"{DateTime.Now.ToString("hh:mm:ss")} ", ConsoleColor.DarkGray);
             await Append($"[{severity}] ", ConsoleColor.Red);
             await Append($"{source}: ", ConsoleColor.DarkGreen);
             await Append(message, ConsoleColor.White);
@@ -43,13 +45,12 @@ namespace DEA.Services
             return Task.CompletedTask;
         }
 
-        public static async Task ModLog(SocketCommandContext context, string action, Color color, string reason, IUser subject = null, string extra = "")
+        public static async Task ModLog(DEAContext context, string action, Color color, string reason, IUser subject = null, string extra = "")
         {
-            var guild = GuildRepository.FetchGuild(context.Guild.Id);
             EmbedFooterBuilder footer = new EmbedFooterBuilder()
             {
                 IconUrl = "http://i.imgur.com/BQZJAqT.png",
-                Text = $"Case #{guild.CaseNumber}"
+                Text = $"Case #{context.DbGuild.CaseNumber}"
             };
             EmbedAuthorBuilder author = new EmbedAuthorBuilder()
             {
@@ -67,24 +68,24 @@ namespace DEA.Services
                 Footer = footer
             }.WithCurrentTimestamp();
 
-            if (context.Guild.GetTextChannel(guild.ModLogId) != null)
+            if (context.Guild.GetTextChannel(context.DbGuild.ModLogId) != null)
             {
-                await context.Guild.GetTextChannel(guild.ModLogId).SendMessageAsync(string.Empty, embed: builder);
-                GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.CaseNumber, ++guild.CaseNumber), context.Guild.Id);
+                await context.Guild.GetTextChannel(context.DbGuild.ModLogId).SendMessageAsync(string.Empty, embed: builder);
+                await GuildRepository.ModifyAsync(context.Guild.Id, x => x.CaseNumber, ++context.DbGuild.CaseNumber);
             }
         }
         
 
         public static async Task DetailedLog(SocketGuild guild, string actionType, string action, string objectType, string objectName, ulong id, Color color, bool incrementCaseNumber = true)
         {
-            var guildData = GuildRepository.FetchGuild(guild.Id);
-            if (guild.GetTextChannel(guildData.DetailedLogsId) != null)
+            var dbGuild = await GuildRepository.FetchGuildAsync(guild.Id);
+            if (guild.GetTextChannel(dbGuild.DetailedLogsId) != null)
             {
-                var channel = guild.GetTextChannel(guildData.DetailedLogsId);
+                var channel = guild.GetTextChannel(dbGuild.DetailedLogsId);
                 if (guild.CurrentUser.GuildPermissions.EmbedLinks && (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).SendMessages
                     && (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).EmbedLinks)
                 {
-                    string caseText = $"Case #{guildData.CaseNumber}";
+                    string caseText = $"Case #{dbGuild.CaseNumber}";
                     if (!incrementCaseNumber) caseText = id.ToString();
                     EmbedFooterBuilder footer = new EmbedFooterBuilder()
                     {
@@ -101,15 +102,15 @@ namespace DEA.Services
                         Footer = footer
                     }.WithCurrentTimestamp();
 
-                    await guild.GetTextChannel(guildData.DetailedLogsId).SendMessageAsync(string.Empty, embed: builder);
-                    if (incrementCaseNumber) GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.CaseNumber, ++guildData.CaseNumber), guild.Id);
+                    await guild.GetTextChannel(dbGuild.DetailedLogsId).SendMessageAsync(string.Empty, embed: builder);
+                    if (incrementCaseNumber) await GuildRepository.ModifyAsync(guild.Id, x => x.CaseNumber, ++dbGuild.CaseNumber);
                 }
             }
         }
 
-        public static async Task Cooldown(SocketCommandContext context, string command, TimeSpan timeSpan)
+        public static async Task Cooldown(DEAContext context, string command, TimeSpan timeSpan)
         {
-            var user = command.ToLower() == "raid" ? GangRepository.FetchGang(context).Name : ResponseMethods.TitleName(context.User as IGuildUser);
+            var user = command.ToLower() == "raid" ? context.Gang.Name : await ResponseMethods.TitleNameAsync(context.User as IGuildUser);
             await ResponseMethods.Send(context, 
                 $"Hours: {timeSpan.Hours}\nMinutes: {timeSpan.Minutes}\nSeconds: {timeSpan.Seconds}",
                 $"{command} cooldown for {user}");

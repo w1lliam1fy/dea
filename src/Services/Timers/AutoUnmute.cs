@@ -34,7 +34,7 @@ namespace DEA.Services.Timers
                     var guild = DEABot.Client.GetGuild(mute.GuildId);
                     if (guild != null && guild.GetUser(mute.UserId) != null)
                     {
-                        var guildData = GuildRepository.FetchGuild(guild.Id);
+                        var guildData = await GuildRepository.FetchGuildAsync(guild.Id);
                         var mutedRole = guild.GetRole(guildData.MutedRoleId);
                         if (mutedRole != null && guild.GetUser(mute.UserId).Roles.Any(x => x.Id == mutedRole.Id))
                         {
@@ -55,12 +55,12 @@ namespace DEA.Services.Timers
                                     Description = $"**Action:** Automatic Unmute\n**User:** {guild.GetUser(mute.UserId)} ({guild.GetUser(mute.UserId).Id})",
                                     Footer = footer
                                 }.WithCurrentTimestamp();
-                                GuildRepository.Modify(DEABot.GuildUpdateBuilder.Set(x => x.CaseNumber, ++guildData.CaseNumber), guild.Id);
+                                await GuildRepository.ModifyAsync(guild.Id, x => x.CaseNumber, ++guildData.CaseNumber);
                                 await channel.SendMessageAsync(string.Empty, embed: embedBuilder);
                             }
                         }
                     }
-                    MuteRepository.RemoveMute(mute.UserId, mute.GuildId);
+                    await MuteRepository.RemoveMuteAsync(mute.UserId, mute.GuildId);
                 }
             }
         }

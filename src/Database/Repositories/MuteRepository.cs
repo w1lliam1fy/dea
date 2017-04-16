@@ -1,30 +1,33 @@
 ﻿using DEA.Database.Models;
+using Discord;
 using MongoDB.Driver;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace DEA.Database.Repository
 {
     public static class MuteRepository 
     {
 
-        public static void AddMute(ulong userId, ulong guildId, TimeSpan muteLength)
+        public static async Task AddMuteAsync(IGuildUser user, TimeSpan muteLength)
         {
-            DEABot.Mutes.InsertOne(new Mute()
+            await DEABot.Mutes.InsertOneAsync(new Mute()
             {
-                UserId = userId,
-                GuildId = guildId,
+                UserId = user.Id,
+                GuildId = user.GuildId,
                 MuteLength = muteLength.TotalMilliseconds
-            });
+            }, null, default(CancellationToken));
         }
 
-        public static bool IsMuted(ulong userId, ulong guildId)
+        public static async Task<bool> IsMutedAsync(ulong userId, ulong guildId)
         {
-            return DEABot.Mutes.Find(y => y.UserId == userId && y.GuildId == guildId).Limit(1).Any();
+            return await (await DEABot.Mutes.FindAsync(y => y.UserId == userId && y.GuildId == guildId)).AnyAsync();
         }
 
-        public static void RemoveMute(ulong userId, ulong guildId)
+        public static async Task RemoveMuteAsync(ulong userId, ulong guildId)
         {
-            DEABot.Mutes.DeleteOne(y => y.UserId == userId && y.GuildId == guildId);
+            await DEABot.Mutes.DeleteOneAsync(y => y.UserId == userId && y.GuildId == guildId);
         }
 
     }

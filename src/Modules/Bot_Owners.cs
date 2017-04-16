@@ -11,10 +11,6 @@ namespace DEA.Modules
     [Require(Attributes.BotOwner)]
     public class Bot_Owners : DEAModule
     {
-        protected override void BeforeExecute()
-        {
-            InitializeData();
-        }
 
         [Command("SetGame")]
         [Summary("Sets the game of DEA.")]

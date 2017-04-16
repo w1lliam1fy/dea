@@ -26,7 +26,7 @@ namespace DEA.Services.Handlers
             if (logMessage.Exception is CommandException cmdEx)
             {
                 if (cmdEx.InnerException is DEAException)
-                    await ResponseMethods.Reply(cmdEx.Context as SocketCommandContext, cmdEx.InnerException.Message, null, new Color(255, 0, 0));
+                    await ResponseMethods.Reply(cmdEx.Context as DEAContext, cmdEx.InnerException.Message, null, new Color(255, 0, 0));
                 else if (cmdEx.InnerException is HttpException httpEx)
                 {
                     var message = string.Empty;
@@ -43,14 +43,14 @@ namespace DEA.Services.Handlers
                             message = httpEx.Message.Remove(0, 39) + ".";
                             break;
                     }
-                    await ResponseMethods.Reply(cmdEx.Context as SocketCommandContext, message, null, new Color(255, 0, 0));
+                    await ResponseMethods.Reply(cmdEx.Context as DEAContext, message, null, new Color(255, 0, 0));
                 }
                 else if (cmdEx.InnerException.GetType() != typeof(RateLimitedException))
                 {
                     var message = cmdEx.InnerException.Message;
                     if (cmdEx.InnerException.InnerException != null) message += $"\n**Inner Exception:** {cmdEx.InnerException.InnerException.Message}";
 
-                    await ResponseMethods.Reply(cmdEx.Context as SocketCommandContext, message, null, new Color(255, 0, 0));
+                    await ResponseMethods.Reply(cmdEx.Context as DEAContext, message, null, new Color(255, 0, 0));
 
                     if ((await cmdEx.Context.Guild.GetCurrentUserAsync() as IGuildUser).GetPermissions(cmdEx.Context.Channel as SocketTextChannel).AttachFiles)
                         using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(cmdEx.ToString() ?? string.Empty)))
@@ -61,10 +61,10 @@ namespace DEA.Services.Handlers
                 await Logger.Log(LogSeverity.Error, logMessage.Exception.Source, $"{logMessage.Exception.Message}: {logMessage.Exception.StackTrace}");
         }
 
-        public static async Task HandleCommandFailureAsync(SocketCommandContext context, IResult result, int argPos, Guild guild)
+        public static async Task HandleCommandFailureAsync(DEAContext context, IResult result, int argPos)
         {
             var args = context.Message.Content.Split(' ');
-            var commandName = args.First().StartsWith(guild.Prefix) ? args.First().Remove(0, guild.Prefix.Length) : args[1];
+            var commandName = args.First().StartsWith(context.DbGuild.Prefix) ? args.First().Remove(0, context.DbGuild.Prefix.Length) : args[1];
             var message = string.Empty;
             switch (result.Error)
             {
@@ -74,13 +74,13 @@ namespace DEA.Services.Handlers
                         foreach (var alias in command.Aliases)
                         {
                             if (LevenshteinDistance.Compute(commandName, alias) == 1)
-                                message = $"Did you mean `{guild.Prefix}{CommandHandler.UpperFirstChar(alias)}`?";
+                                message = $"Did you mean `{context.DbGuild.Prefix}{CommandHandler.UpperFirstChar(alias)}`?";
                         }
                     }
                     break;
                 case CommandError.BadArgCount:
                     var cmd = DEABot.CommandService.Search(context, argPos).Commands.First().Command;
-                    message = $"You are incorrectly using this command. Usage: `{guild.Prefix}{CommandHandler.GetUsage(cmd, commandName)}`";
+                    message = $"You are incorrectly using this command. Usage: `{context.DbGuild.Prefix}{CommandHandler.GetUsage(cmd, commandName)}`";
                     break;
                 case CommandError.ParseFailed:
                     message = $"Invalid number.";

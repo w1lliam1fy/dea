@@ -14,11 +14,6 @@ namespace System.Modules
     public class System : DEAModule
     {
 
-        protected override void BeforeExecute()
-        {
-            InitializeData();
-        }
-
         [Command("Invite")]
         [Summary("Invite DEA to your server!")]
         public async Task Invite()
@@ -31,11 +26,11 @@ namespace System.Modules
         [Summary("Information about the DEA Cash System.")]
         public async Task Info()
         {
-            string p = Prefix;
+            string p = Context.Prefix;
 
             var channel = await Context.User.CreateDMChannelAsync();
 
-            await ResponseMethods.DM(channel, $@"In order to gain money, you must send a message that is at least {Config.MIN_CHAR_LENGTH} characters in length. There is a 30 second cooldown between each message that will give you cash. However, these rates are not fixed. For every message you send, your chatting multiplier (which increases the amount of money you get per message) is increased by {DbGuild.TempMultiplierIncreaseRate}. This rate is reset every hour.
+            await ResponseMethods.DM(channel, $@"In order to gain money, you must send a message that is at least {Config.MIN_CHAR_LENGTH} characters in length. There is a 30 second cooldown between each message that will give you cash. However, these rates are not fixed. For every message you send, your chatting multiplier (which increases the amount of money you get per message) is increased by {Context.DbGuild.TempMultiplierIncreaseRate}. This rate is reset every hour.
 
 To view your steadily increasing chatting multiplier, you may use the `{p}rate` command, and the `{p}money` command to see your cash grow. This command shows you every single variable taken into consideration for every message you send. If you wish to improve these variables, you may use investments. With the `{p}investments` command, you may pay to have *permanent* changes to your message rates. These will stack with the chatting multiplier.");
 
@@ -68,7 +63,7 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
         [Summary("All command information.")]
         public async Task Help([Remainder] string commandOrModule = null)
         {
-            string prefix = GuildRepository.FetchGuild(Context.Guild.Id).Prefix;
+            string prefix = (await GuildRepository.FetchGuildAsync(Context.Guild.Id)).Prefix;
 
             if (commandOrModule != null)
             {
@@ -157,5 +152,6 @@ If you have any other questions, you may join the **Official DEA Discord Server:
             await channel.SendMessageAsync(string.Empty, embed: builder);
             await Reply($"You have been DMed with all the statistics!");
         }
+
     }
 }
