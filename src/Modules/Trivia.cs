@@ -74,7 +74,7 @@ namespace DEA.Modules
 
             foreach (var question in Context.DbGuild.Trivia.Names)
             {
-                if (messages[messageCount].Length > 2000)
+                if (messages[messageCount].Length > 1900)
                 {
                     messageCount++;
                     messages.Add(string.Empty);
