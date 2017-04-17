@@ -133,6 +133,7 @@
 <li><a href="#gambling">Gambling</a></li>
 <li><a href="#gangs">Gangs</a></li>
 <li><a href="#crime">Crime</a></li>
+<li>[Trivia] (#trivia)</li>
 <li><a href="#system">System</a></li>
 </ul>
 <p>These commands may only be used by the bot owners.</p>
@@ -542,6 +543,54 @@
 <td>Rob</td>
 <td>Lead a large scale operation on a local bank.</td>
 <td><code>$Rob &lt;Resources&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="trivia">Trivia</h3>
+<p>Example of the addition of a question: <code>$AddQuestion "How tall is Mount Everest?" "Tall enough"</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Description</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ChangeAutoTriviaSettings</td>
+<td>Enables/disables the auto trivia feature: Sends a trivia question in the default text channel every 2 minites.</td>
+<td><code>$ChangeAutoTriviaSettings</code></td>
+</tr>
+<tr>
+<td>AddQuestion</td>
+<td>Adds a trivia question.</td>
+<td><code>$AddQuestion &lt;Question&gt; &lt;Answer&gt;</code></td>
+</tr>
+<tr>
+<td>RemoveQuestion</td>
+<td>Removes a trivia question.</td>
+<td><code>$RemoveQuestion &lt;Question&gt;</code></td>
+</tr>
+<tr>
+<td>ModifyQuestion</td>
+<td>Modify a trivia question.</td>
+<td><code>$ModifyQuestion &lt;Question&gt; &lt;New Question&gt;</code></td>
+</tr>
+<tr>
+<td>ModifyAnswer</td>
+<td>Modify a trivia answer.</td>
+<td><code>$ModifyAnswer &lt;Question&gt; &lt;New Answer&gt;</code></td>
+</tr>
+<tr>
+<td>TriviaQuestions</td>
+<td>Sends you a list of all trivia questions.</td>
+<td><code>$TriviaQuestions</code></td>
+</tr>
+<tr>
+<td>TriviaAnswers</td>
+<td>Sends you a list of all trivia questions.</td>
+<td><code>$TriviaAnswers [Question]</code></td>
 </tr>
 </tbody>
 </table>

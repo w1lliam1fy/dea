@@ -14,6 +14,7 @@ The syntax of the command usage is:
 - [Gambling](#gambling)
 - [Gangs](#gangs)
 - [Crime](#crime)
+- [Trivia] (#trivia)
 - [System](#system)
 
 These commands may only be used by the bot owners.
@@ -121,6 +122,20 @@ Jump|Jump some random nigga in the hood.|`$Jump`
 Steal|Snipe some goodies from your local stores.|`$Steal`
 Bully|Bully anyone's nickname to whatever you please.|`$Bully`
 Rob|Lead a large scale operation on a local bank.|`$Rob <Resources>`
+
+### Trivia
+
+Example of the addition of a question: `$AddQuestion "How tall is Mount Everest?" "Tall enough"`.
+
+Command | Description | Usage
+----------------|--------------|-------
+ChangeAutoTriviaSettings|Enables/disables the auto trivia feature: Sends a trivia question in the default text channel every 2 minites.|`$ChangeAutoTriviaSettings`
+AddQuestion|Adds a trivia question.|`$AddQuestion <Question> <Answer>`
+RemoveQuestion|Removes a trivia question.|`$RemoveQuestion <Question>`
+ModifyQuestion|Modify a trivia question.|`$ModifyQuestion <Question> <New Question>`
+ModifyAnswer|Modify a trivia answer.|`$ModifyAnswer <Question> <New Answer>`
+TriviaQuestions|Sends you a list of all trivia questions.|`$TriviaQuestions`
+TriviaAnswers|Sends you a list of all trivia questions.|`$TriviaAnswers [Question]`
 
 ### System
 Command | Description | Usage

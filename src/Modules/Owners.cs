@@ -166,10 +166,10 @@ namespace DEA.Modules
         
         [Command("SetRate")]
         [Summary("Sets the global temporary multiplier increase rate.")]
-        public async Task SetMultiplierIncrease(decimal intrestRate){
-            if (intrestRate < 0) await ErrorAsync("The temporary multiplier increase rate may not be negative.");
-            await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.TempMultiplierIncreaseRate, intrestRate);
-            await Reply($"You have successfully set the global temporary multiplier increase rate to {intrestRate.ToString("N2")}.");
+        public async Task SetMultiplierIncrease(decimal interestRate){
+            if (interestRate < 0) await ErrorAsync("The temporary multiplier increase rate may not be negative.");
+            await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.TempMultiplierIncreaseRate, interestRate);
+            await Reply($"You have successfully set the global temporary multiplier increase rate to {interestRate.ToString("N2")}.");
         }
 
     }
