@@ -70,7 +70,6 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
         {
             if (commandOrModule != null)
             {
-                commandOrModule = commandOrModule.Replace(" ", "_");
                 if (commandOrModule.StartsWith(Context.Prefix)) commandOrModule = commandOrModule.Remove(0, Context.Prefix.Length);
                 foreach (var module in _commandService.Modules)
                 {
