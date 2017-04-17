@@ -98,14 +98,16 @@ namespace DEA.Modules
         [Summary("Sends you a list of all trivia questions.")]
         public async Task TriviaQuestions()
         {
-            if (Context.DbGuild.Trivia.ElementCount == 0) await ErrorAsync("There are no trivia questions yet!");
+            if (Context.DbGuild.Trivia.ElementCount == 0)
+                await ErrorAsync("There are no trivia questions yet!");
+
             List<string> messages = new List<string>() { "```" };
             int questionCount = 1;
             int messageCount = 0;
 
             foreach (var question in Context.DbGuild.Trivia.Names)
             {
-                if (messages[messageCount].Length > 1800)
+                if (messages[messageCount].Length > 1850)
                 {
                     messageCount++;
                     messages.Add("```");
@@ -138,7 +140,7 @@ namespace DEA.Modules
 
                 foreach (var element in Context.DbGuild.Trivia.Elements)
                 {
-                    if (messages[messageCount].Length > 1800)
+                    if (messages[messageCount].Length > 1850)
                     {
                         messageCount++;
                         messages.Add("```");
