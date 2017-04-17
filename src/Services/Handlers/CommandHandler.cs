@@ -60,7 +60,7 @@ namespace DEA.Services.Handlers
                     DEABot.Commands++;
             }
             else if (msg.Content.Length >= Config.MIN_CHAR_LENGTH)
-                await CashPerMsg.Apply(_userRepo, context.DbGuild, context.DbUser);
+                await CashPerMsg.Apply(_userRepo, context);
         }
 
         public static string GetUsage(CommandInfo cmd, string name)

@@ -50,7 +50,7 @@ namespace DEA.Services.Timers
                     {
                         int roll = new Random().Next(0, dbGuild.Trivia.ElementCount);
                         var element = dbGuild.Trivia.GetElement(roll);
-                        await _responseService.Send(defaultChannel, "__**TRIVIA:**__ " + element.Name);
+                        await _responseService.Send(defaultChannel, "__**TRIVIA:**__ " + element.Name + ".");
                         var answer = await _interactiveService.WaitForMessage(defaultChannel, y => y.Content.ToLower() == element.Value.AsString.ToLower());
                         if (answer != null)
                         {
