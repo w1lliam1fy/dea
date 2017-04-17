@@ -8,40 +8,46 @@ using System.Threading.Tasks;
 
 namespace DEA.Database.Repository
 {
-    public static class GuildRepository
+    public class GuildRepository
     {
+        private IMongoCollection<Guild> _guilds;
 
-        public static async Task<Guild> FetchGuildAsync(ulong guildId)
+        public GuildRepository(IMongoCollection<Guild> guilds)
         {
-            var dbGuild = await (await DEABot.Guilds.FindAsync(x => x.Id == guildId)).SingleOrDefaultAsync();
+            _guilds = guilds;
+        }
+
+        public async Task<Guild> FetchGuildAsync(ulong guildId)
+        {
+            var dbGuild = await (await _guilds.FindAsync(x => x.Id == guildId)).SingleOrDefaultAsync();
             if (dbGuild == default(Guild))
             {
                 var createdGuild = new Guild()
                 {
                     Id = guildId
                 };
-                await DEABot.Guilds.InsertOneAsync(createdGuild, null, default(CancellationToken));
+                await _guilds.InsertOneAsync(createdGuild, null, default(CancellationToken));
                 return createdGuild;
             }
             return dbGuild;
         }
 
-        public static async Task ModifyAsync(ulong guildId, Expression<Func<Guild, BsonValue>> field, BsonValue value)
+        public async Task ModifyAsync(ulong guildId, Expression<Func<Guild, BsonValue>> field, BsonValue value)
         {
             var builder = Builders<Guild>.Update;
-            await DEABot.Guilds.UpdateOneAsync(y => y.Id == guildId, builder.Set(field, value));
+            await _guilds.UpdateOneAsync(y => y.Id == guildId, builder.Set(field, value));
         }
 
-        public static async Task ModifyAsync(ulong guildId, Expression<Func<Guild, ulong>> field, ulong value)
+        public async Task ModifyAsync(ulong guildId, Expression<Func<Guild, ulong>> field, ulong value)
         {
             var builder = Builders<Guild>.Update;
-            await DEABot.Guilds.UpdateOneAsync(y => y.Id == guildId, builder.Set(field, value));
+            await _guilds.UpdateOneAsync(y => y.Id == guildId, builder.Set(field, value));
         }
 
-        public static async Task ModifyAsync(ulong guildId, Expression<Func<Guild, BsonDocument>> field, BsonDocument value)
+        public async Task ModifyAsync(ulong guildId, Expression<Func<Guild, BsonDocument>> field, BsonDocument value)
         {
             var builder = Builders<Guild>.Update;
-            await DEABot.Guilds.UpdateOneAsync(y => y.Id == guildId, builder.Set(field, value));
+            await _guilds.UpdateOneAsync(y => y.Id == guildId, builder.Set(field, value));
         }
 
     }

@@ -1,18 +1,21 @@
-﻿using DEA.Services;
-using DEA.Database.Repository;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using Discord.Commands;
-using DEA.Database.Models;
-using Discord;
+using DEA.Services;
 
 namespace DEA.Common.Preconditions
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
     public class RequireCooldownAttribute : PreconditionAttribute
     {
+        private IDependencyMap _map;
+        private LoggingService _loggingService;
+
         public override async Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IDependencyMap map)
         {
+            _map = map;
+            _loggingService = _map.Get<LoggingService>();
+
             TimeSpan cooldown;
             DateTime lastUse;
             var deaContext = context as DEAContext;
@@ -49,7 +52,7 @@ namespace DEA.Common.Preconditions
                 return PreconditionResult.FromSuccess();
             else
             {
-                await Logger.CooldownAsync(deaContext, command.Name, cooldown.Subtract(DateTime.UtcNow.Subtract(lastUse)));
+                await _loggingService.CooldownAsync(deaContext, command.Name, cooldown.Subtract(DateTime.UtcNow.Subtract(lastUse)));
                 return PreconditionResult.FromError(string.Empty);
             }
         }

@@ -7,43 +7,18 @@ using System.Threading.Tasks;
 
 namespace DEA.Services
 {
-    public static class Logger
+    public class LoggingService
     {
-        public static async Task LogAsync(LogSeverity severity, string source, string message)
+        private GuildRepository _guildRepo;
+        private ResponseService _responseService;
+
+        public LoggingService(GuildRepository guildRepo, ResponseService responseService)
         {
-            await NewLine($"{DateTime.Now.ToString("hh:mm:ss")} ", ConsoleColor.DarkGray);
-            await Append($"[{severity}] ", ConsoleColor.Red);
-            await Append($"{source}: ", ConsoleColor.DarkGreen);
-            await Append(message, ConsoleColor.White);
+            _guildRepo = guildRepo;
+            _responseService = responseService;
         }
 
-        public static Task NewLine(string text = "", ConsoleColor? foreground = null, ConsoleColor? background = null)
-        {
-            if (foreground == null)
-                foreground = ConsoleColor.White;
-            if (background == null)
-                background = ConsoleColor.Black;
-
-            Console.ForegroundColor = (ConsoleColor)foreground;
-            Console.BackgroundColor = (ConsoleColor)background;
-            Console.Write(Environment.NewLine + text);
-            return Task.CompletedTask;
-        }
-
-        private static Task Append(string text, ConsoleColor? foreground = null, ConsoleColor? background = null)
-        {
-            if (foreground == null)
-                foreground = ConsoleColor.White;
-            if (background == null)
-                background = ConsoleColor.Black;
-
-            Console.ForegroundColor = (ConsoleColor)foreground;
-            Console.BackgroundColor = (ConsoleColor)background;
-            Console.Write(text);
-            return Task.CompletedTask;
-        }
-
-        public static async Task ModLogAsync(DEAContext context, string action, Color color, string reason, IUser subject = null, string extra = "")
+        public async Task ModLogAsync(DEAContext context, string action, Color color, string reason, IUser subject = null, string extra = "")
         {
             EmbedFooterBuilder footer = new EmbedFooterBuilder()
             {
@@ -69,14 +44,14 @@ namespace DEA.Services
             if (context.Guild.GetTextChannel(context.DbGuild.ModLogId) != null)
             {
                 await context.Guild.GetTextChannel(context.DbGuild.ModLogId).SendMessageAsync(string.Empty, embed: builder);
-                await GuildRepository.ModifyAsync(context.Guild.Id, x => x.CaseNumber, ++context.DbGuild.CaseNumber);
+                await _guildRepo.ModifyAsync(context.Guild.Id, x => x.CaseNumber, ++context.DbGuild.CaseNumber);
             }
         }
         
 
-        public static async Task DetailedLogAsync(SocketGuild guild, string actionType, string action, string objectType, string objectName, ulong id, Color color, bool incrementCaseNumber = true)
+        public async Task DetailedLogAsync(SocketGuild guild, string actionType, string action, string objectType, string objectName, ulong id, Color color, bool incrementCaseNumber = true)
         {
-            var dbGuild = await GuildRepository.FetchGuildAsync(guild.Id);
+            var dbGuild = await _guildRepo.FetchGuildAsync(guild.Id);
             if (guild.GetTextChannel(dbGuild.DetailedLogsId) != null)
             {
                 var channel = guild.GetTextChannel(dbGuild.DetailedLogsId);
@@ -101,15 +76,15 @@ namespace DEA.Services
                     }.WithCurrentTimestamp();
 
                     await guild.GetTextChannel(dbGuild.DetailedLogsId).SendMessageAsync(string.Empty, embed: builder);
-                    if (incrementCaseNumber) await GuildRepository.ModifyAsync(guild.Id, x => x.CaseNumber, ++dbGuild.CaseNumber);
+                    if (incrementCaseNumber) await _guildRepo.ModifyAsync(guild.Id, x => x.CaseNumber, ++dbGuild.CaseNumber);
                 }
             }
         }
 
-        public static async Task CooldownAsync(DEAContext context, string command, TimeSpan timeSpan)
+        public async Task CooldownAsync(DEAContext context, string command, TimeSpan timeSpan)
         {
-            var user = command.ToLower() == "raid" ? context.Gang.Name : await ResponseMethods.TitleNameAsync(context.User as IGuildUser);
-            await ResponseMethods.Send(context, 
+            var user = command.ToLower() == "raid" ? context.Gang.Name : await _responseService.TitleNameAsync(context.User as IGuildUser, context.DbUser);
+            await _responseService.Send(context, 
                 $"Hours: {timeSpan.Hours}\nMinutes: {timeSpan.Minutes}\nSeconds: {timeSpan.Seconds}",
                 $"{command} cooldown for {user}");
         }

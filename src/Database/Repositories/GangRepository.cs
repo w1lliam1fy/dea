@@ -1,7 +1,6 @@
 ﻿using DEA.Common;
 using DEA.Database.Models;
 using Discord;
-using Discord.Commands;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
@@ -12,61 +11,67 @@ using System.Threading.Tasks;
 
 namespace DEA.Database.Repository
 {
-    public static class GangRepository
+    public class GangRepository
     {
+        private IMongoCollection<Gang> _gangs;
 
-        public static async Task ModifyAsync(DEAContext context, Expression<Func<Gang, BsonValue>> field, BsonValue value)
+        public GangRepository(IMongoCollection<Gang> gangs)
+        {
+            _gangs = gangs;
+        }
+
+        public Task ModifyAsync(DEAContext context, Expression<Func<Gang, BsonValue>> field, BsonValue value)
         {
             var builder = Builders<Gang>.Update;
-            await DEABot.Gangs.UpdateOneAsync(c => (c.LeaderId == context.User.Id || c.Members.Any(x => x == context.User.Id)) && 
+            return _gangs.UpdateOneAsync(c => (c.LeaderId == context.User.Id || c.Members.Any(x => x == context.User.Id)) && 
                                               c.GuildId == context.Guild.Id, builder.Set(field, value));
         }
 
-        public static async Task ModifyAsync(IGuildUser member, Expression<Func<Gang, BsonValue>> field, BsonValue value)
+        public Task ModifyAsync(IGuildUser member, Expression<Func<Gang, BsonValue>> field, BsonValue value)
         {
             var builder = Builders<Gang>.Update;
-            await DEABot.Gangs.UpdateOneAsync(c => (c.LeaderId == member.Id || c.Members.Any(x => x == member.Id)) && 
+            return _gangs.UpdateOneAsync(c => (c.LeaderId == member.Id || c.Members.Any(x => x == member.Id)) && 
                                               c.GuildId == member.GuildId, builder.Set(field, value));
         }
 
-        public static async Task ModifyAsync(IGuildUser member, Expression<Func<Gang, ulong>> field, ulong value)
+        public Task ModifyAsync(IGuildUser member, Expression<Func<Gang, ulong>> field, ulong value)
         {
             var builder = Builders<Gang>.Update;
-            await DEABot.Gangs.UpdateOneAsync(c => (c.LeaderId == member.Id || c.Members.Any(x => x == member.Id)) &&
+            return _gangs.UpdateOneAsync(c => (c.LeaderId == member.Id || c.Members.Any(x => x == member.Id)) &&
                                               c.GuildId == member.GuildId, builder.Set(field, value));
         }
 
-        public static async Task ModifyAsync(string gangName, ulong guildId, Expression<Func<Gang, BsonValue>> field, BsonValue value)
+        public Task ModifyAsync(string gangName, ulong guildId, Expression<Func<Gang, BsonValue>> field, BsonValue value)
         {
             var builder = Builders<Gang>.Update;
-            await DEABot.Gangs.UpdateOneAsync(c => c.Name.ToLower() == gangName.ToLower() && c.GuildId == guildId, builder.Set(field, value));
+            return _gangs.UpdateOneAsync(c => c.Name.ToLower() == gangName.ToLower() && c.GuildId == guildId, builder.Set(field, value));
         }
 
-        public static async Task<Gang> FetchGangAsync(DEAContext context)
+        public async Task<Gang> FetchGangAsync(DEAContext context)
         {
-            var gang = await (await DEABot.Gangs.FindAsync(c => (c.LeaderId == context.User.Id || c.Members.Any(x => x == context.User.Id)) && c.GuildId == context.Guild.Id)).SingleOrDefaultAsync();
+            var gang = await (await _gangs.FindAsync(c => (c.LeaderId == context.User.Id || c.Members.Any(x => x == context.User.Id)) && c.GuildId == context.Guild.Id)).SingleOrDefaultAsync();
             if (gang == default(Gang)) throw new DEAException("You are not in a gang.");
             return gang;
         }
 
-        public static async Task<Gang> FetchGangAsync(IGuildUser user)
+        public async Task<Gang> FetchGangAsync(IGuildUser user)
         {
-            var gang = await (await DEABot.Gangs.FindAsync(c => (c.LeaderId == user.Id || c.Members.Any(x => x == user.Id)) && c.GuildId == user.GuildId)).SingleOrDefaultAsync();
+            var gang = await (await _gangs.FindAsync(c => (c.LeaderId == user.Id || c.Members.Any(x => x == user.Id)) && c.GuildId == user.GuildId)).SingleOrDefaultAsync();
             if (gang == default(Gang)) throw new DEAException("This user is not in a gang.");
             return gang;
         }
 
-        public static async Task<Gang> FetchGangAsync(string gangName, ulong guildId)
+        public async Task<Gang> FetchGangAsync(string gangName, ulong guildId)
         {
-            var gang = await (await DEABot.Gangs.FindAsync(c => c.Name.ToLower() == gangName.ToLower() && c.GuildId == guildId)).SingleOrDefaultAsync();
+            var gang = await (await _gangs.FindAsync(c => c.Name.ToLower() == gangName.ToLower() && c.GuildId == guildId)).SingleOrDefaultAsync();
             if (gang == default(Gang)) throw new DEAException("This gang does not exist.");
             return gang;
         }
 
-        public static async Task<Gang> CreateGangAsync(DEAContext context, string name)
+        public async Task<Gang> CreateGangAsync(DEAContext context, string name)
         {
             Expression<Func<Gang, bool>> expression = x => x.Name.ToLower() == name.ToLower() && x.GuildId == context.Guild.Id;
-            if (await (await DEABot.Gangs.FindAsync(expression)).AnyAsync()) throw new DEAException($"There is already a gang by the name {name}.");
+            if (await (await _gangs.FindAsync(expression)).AnyAsync()) throw new DEAException($"There is already a gang by the name {name}.");
             if (name.Length > Config.GANG_NAME_CHAR_LIMIT) throw new DEAException($"The length of a gang name may not be longer than {Config.GANG_NAME_CHAR_LIMIT} characters.");
             var createdGang = new Gang()
             {
@@ -74,38 +79,38 @@ namespace DEA.Database.Repository
                 LeaderId = context.User.Id,
                 Name = name 
             };
-            await DEABot.Gangs.InsertOneAsync(createdGang, null, default(CancellationToken));
+            await _gangs.InsertOneAsync(createdGang, null, default(CancellationToken));
             return createdGang;
         }
 
-        public static async Task DestroyGangAsync(IGuildUser user)
+        public Task DestroyGangAsync(IGuildUser user)
         {
-            await DEABot.Gangs.DeleteOneAsync(c => (c.LeaderId == user.Id || c.Members.Any(x => x == user.Id)) && c.GuildId == user.GuildId);
+            return _gangs.DeleteOneAsync(c => (c.LeaderId == user.Id || c.Members.Any(x => x == user.Id)) && c.GuildId == user.GuildId);
         }
 
-        public static async Task<bool> InGangAsync(IGuildUser user)
+        public async Task<bool> InGangAsync(IGuildUser user)
         {
-            return await (await DEABot.Gangs.FindAsync(c => (c.LeaderId == user.Id || c.Members.Any(x => x == user.Id)) && c.GuildId == user.GuildId)).AnyAsync();
+            return await (await _gangs.FindAsync(c => (c.LeaderId == user.Id || c.Members.Any(x => x == user.Id)) && c.GuildId == user.GuildId)).AnyAsync();
         }
 
-        public static bool IsMemberOf(Gang gang, ulong userId)
+        public Task<bool> IsMemberOfAsync(Gang gang, ulong userId)
         {
             if (gang.LeaderId == userId || gang.Members.Any(x => x == userId))
-                return true;
+                return Task.FromResult(true);
             else
-                return false;
+                return Task.FromResult(false);
         }
 
-        public static async Task RemoveMemberAsync(Gang gang, ulong memberId)
+        public Task RemoveMemberAsync(Gang gang, ulong memberId)
         {
             var builder = Builders<Gang>.Update;
-            await DEABot.Gangs.UpdateOneAsync(c => c.Id == gang.Id, builder.Pull(x => x.Members, memberId));
+            return _gangs.UpdateOneAsync(c => c.Id == gang.Id, builder.Pull(x => x.Members, memberId));
         }
 
-        public static async Task AddMemberAsync(Gang gang, ulong newMemberId)
+        public Task AddMemberAsync(Gang gang, ulong newMemberId)
         {
             var builder = Builders<Gang>.Update;
-            await DEABot.Gangs.UpdateOneAsync(c => c.Id == gang.Id, builder.Push(x => x.Members, newMemberId));
+            return _gangs.UpdateOneAsync(c => c.Id == gang.Id, builder.Push(x => x.Members, newMemberId));
         }
 
     }

@@ -9,36 +9,58 @@ using MongoDB.Driver;
 using DEA.Services;
 using DEA.Common;
 using DEA.Common.Preconditions;
+using DEA.Services.Static;
 
 namespace DEA.Modules
 {
     public class Gangs : DEAModule
     {
+        private GangRepository _gangRepo;
+        private UserRepository _userRepo;
+        private ResponseService _responseService;
+        private InteractiveService _interactiveService;
+        private IMongoCollection<Gang> _gangs;
+
+        public Gangs(GangRepository gangRepo, UserRepository userRepo, ResponseService responseService, InteractiveService interactiveService, IMongoCollection<Gang> gangs)
+        {
+            _gangRepo = gangRepo;
+            _userRepo = userRepo;
+            _responseService = responseService;
+            _interactiveService = interactiveService;
+            _gangs = gangs;
+        }
 
         [Command("CreateGang")]
         [Require(Attributes.NoGang)]
         [Summary("Allows you to create a gang at a hefty price.")]
-        public async Task ResetCooldowns([Remainder] string name)
+        public async Task CreateGang([Remainder] string name)
         {
             if (Context.Cash < Config.GANG_CREATION_COST)
                 await ErrorAsync($"You do not have {Config.GANG_CREATION_COST.ToString("C", Config.CI)}. Balance: {Context.Cash.ToString("C", Config.CI)}.");
             if (!Config.ALPHANUMERICAL.IsMatch(name)) await ErrorAsync("Gang names may not contain any non alphanumeric characters.");
-            var gang = await GangRepository.CreateGangAsync(Context, name);
-            await UserRepository.EditCashAsync(Context, -Config.GANG_CREATION_COST);
+            var gang = await _gangRepo.CreateGangAsync(Context, name);
+            await _userRepo.EditCashAsync(Context, -Config.GANG_CREATION_COST);
             await Reply($"You have successfully created the {gang.Name} gang!");
         }
 
-        [Command("AddGangMember")]
-        [Require(Attributes.InGang, Attributes.GangLeader)]
-        [Summary("Allows you to add a member to your gang.")]
-        public async Task AddToGang([Remainder] IGuildUser newMember)
+        [Command("JoinGang")]
+        [Require(Attributes.NoGang)]
+        [Summary("Sends a request to join a gang.")]
+        public async Task AddToGang([Remainder] string gangName)
         {
-            if (await GangRepository.InGangAsync(newMember)) await ErrorAsync("This user is already in a gang.");
-            if (Context.Gang.Members.Length == 4) await ErrorAsync("Your gang is already full!");
-            await GangRepository.AddMemberAsync(Context.Gang, newMember.Id);
-            await Reply($"{newMember} is now a new member of your gang!");
-            var channel = await newMember.CreateDMChannelAsync();
-            await ResponseMethods.DM(channel, $"Congrats! You are now a member of {Context.Gang.Name}!");
+            var gang = await _gangRepo.FetchGangAsync(gangName, Context.Guild.Id);
+            if (gang.Members.Length == 4) await ErrorAsync("This gang is already full!");
+            var leader = Context.Guild.GetUser(gang.LeaderId);
+            var leaderDM = await leader.CreateDMChannelAsync();
+            await leaderDM.SendMessageAsync($"{Context.User} has requested to join your gang. Please respond with \"accept\" within 5 minutes to add this user to your gang.");
+            var answer = await _interactiveService.WaitForMessage(leaderDM, x => x.Content.ToLower() == "accept", TimeSpan.FromMinutes(5));
+            if (answer != null)
+            {
+                await _gangRepo.AddMemberAsync(gang, Context.User.Id);
+                await _responseService.Reply(leaderDM, leader, await _userRepo.FetchUserAsync(leader), $"You have successfully added {Context.User} as a member of your gang.");
+                var channel = await Context.User.CreateDMChannelAsync();
+                await DM(channel, $"Congrats! {leader} has accepted your request to join {gang.Name}!");
+            }
         }
 
         [Command("Gang")]
@@ -47,14 +69,14 @@ namespace DEA.Modules
         {
             Gang gang;
             if (gangName == null) gang = Context.Gang;
-            else gang = await GangRepository.FetchGangAsync(gangName, Context.Guild.Id);
+            else gang = await _gangRepo.FetchGangAsync(gangName, Context.Guild.Id);
             if (gang == null && gangName == null) await ErrorAsync("You are not in a gang.");
             var members = string.Empty;
             foreach (var member in gang.Members)
                 members += $"<@{member}>, ";
             if (members.Length != 0) members = $"__**Members:**__ {members.Substring(0, members.Length - 2)}\n";
             var description = $"__**Leader:**__ <@{gang.LeaderId}>\n" + members + $"__**Wealth:**__ {gang.Wealth.ToString("C", Config.CI)}\n" +
-                              $"__**Interest rate:**__ {Services.Math.CalculateIntrestRate(gang.Wealth).ToString("P")}";
+                              $"__**Interest rate:**__ {InterestRate.Calculate(gang.Wealth).ToString("P")}";
             await Send(description, gang.Name);
         }
 
@@ -63,7 +85,7 @@ namespace DEA.Modules
         [Summary("Shows the wealthiest gangs.")]
         public async Task Ganglb()
         {
-            var gangs = DEABot.Gangs.Find(y => y.GuildId == Context.Guild.Id).ToList();
+            var gangs = _gangs.Find(y => y.GuildId == Context.Guild.Id).ToList();
 
             if (gangs.Count == 0) await ErrorAsync("There aren't any gangs yet.");
 
@@ -87,14 +109,9 @@ namespace DEA.Modules
             if (Context.Gang.LeaderId == Context.User.Id)
                 await ErrorAsync($"You may not leave a gang if you are the owner. Either destroy the gang with the `{Context.Prefix}DestroyGang` command, or " +
                                     $"transfer the ownership of the gang to another member with the `{Context.Prefix}TransferLeadership` command.");
-            await GangRepository.RemoveMemberAsync(Context.Gang, Context.User.Id);
+            await _gangRepo.RemoveMemberAsync(Context.Gang, Context.User.Id);
             await Reply($"You have successfully left {Context.Gang.Name}.");
-            var userToDM = Context.Guild.GetUser(Context.Gang.LeaderId);
-            if (userToDM != null)
-            {
-                var channel = await userToDM.CreateDMChannelAsync();
-                await ResponseMethods.DM(channel, $"{Context.User.Mention} has left {Context.Gang.Name}.");
-            }
+            await DM(Context.Gang.LeaderId, $"{Context.User.Mention} has left {Context.Gang.Name}.");
         }
 
         [Command("KickGangMember")]
@@ -104,12 +121,11 @@ namespace DEA.Modules
         {
             if (gangMember.Id == Context.User.Id)
                 await ErrorAsync("You may not kick yourself!");
-            if (!GangRepository.IsMemberOf(Context.Gang, gangMember.Id))
+            if (!await _gangRepo.IsMemberOfAsync(Context.Gang, gangMember.Id))
                 await ErrorAsync("This user is not a member of your gang!");
-            await GangRepository.RemoveMemberAsync(Context.Gang, gangMember.Id);
+            await _gangRepo.RemoveMemberAsync(Context.Gang, gangMember.Id);
             await Reply($"You have successfully kicked {gangMember} from {Context.Gang.Name}.");
-            var channel = await gangMember.CreateDMChannelAsync();
-            await ResponseMethods.DM(channel, $"You have been kicked from {Context.Gang.Name}.");
+            await DM(gangMember.Id, $"You have been kicked from {Context.Gang.Name}.");
         }
 
         [Command("DestroyGang")]
@@ -117,7 +133,7 @@ namespace DEA.Modules
         [Summary("Destroys a gang entirely taking down all funds with it.")]
         public async Task DestroyGang()
         {
-            await GangRepository.DestroyGangAsync(Context.User as IGuildUser);
+            await _gangRepo.DestroyGangAsync(Context.User as IGuildUser);
             await Reply($"You have successfully destroyed your gang.");
         }
 
@@ -129,11 +145,11 @@ namespace DEA.Modules
         {
             if (Context.Cash < Config.GANG_NAME_CHANGE_COST)
                 await ErrorAsync($"You do not have {Config.GANG_NAME_CHANGE_COST.ToString("C", Config.CI)}. Balance: {Context.Cash.ToString("C", Config.CI)}.");
-            var gangs = DEABot.Gangs.Find(y => y.GuildId == Context.Guild.Id).ToList();
+            var gangs = _gangs.Find(y => y.GuildId == Context.Guild.Id).ToList();
             if (gangs.Any(x => x.Name.ToLower() == newName.ToLower())) await ErrorAsync($"There is already a gang by the name {newName}.");
             if (!Config.ALPHANUMERICAL.IsMatch(newName)) await ErrorAsync("Gang names may not contain any non alphanumeric characters.");
-            await UserRepository.EditCashAsync(Context, -Config.GANG_NAME_CHANGE_COST);
-            await GangRepository.ModifyAsync(Context, x => x.Name, newName);
+            await _userRepo.EditCashAsync(Context, -Config.GANG_NAME_CHANGE_COST);
+            await _gangRepo.ModifyAsync(Context, x => x.Name, newName);
             await Reply($"You have successfully changed your gang name to {newName} at the cost of {Config.GANG_NAME_CHANGE_COST.ToString("C", Config.CI)}.");
         }
 
@@ -143,11 +159,12 @@ namespace DEA.Modules
         public async Task TransferLeadership([Remainder] IGuildUser gangMember)
         {
             if (gangMember.Id == Context.User.Id) await ErrorAsync("You are already the leader of this gang!");
-            if (!GangRepository.IsMemberOf(Context.Gang, gangMember.Id)) await ErrorAsync("This user is not a member of your gang!");
-            await GangRepository.RemoveMemberAsync(Context.Gang, gangMember.Id);
-            await GangRepository.ModifyAsync(Context.User as IGuildUser, x => x.LeaderId, gangMember.Id);
-            await GangRepository.AddMemberAsync(Context.Gang, Context.User.Id);
-            await Reply($"You have successfully transferred the leadership of {Context.Gang.Name} to {ResponseMethods.Name(gangMember, await UserRepository.FetchUserAsync(gangMember))}.");
+            if (!await _gangRepo.IsMemberOfAsync(Context.Gang, gangMember.Id)) await ErrorAsync("This user is not a member of your gang!");
+            await _gangRepo.RemoveMemberAsync(Context.Gang, gangMember.Id);
+            await _gangRepo.ModifyAsync(Context.User as IGuildUser, x => x.LeaderId, gangMember.Id);
+            await _gangRepo.AddMemberAsync(Context.Gang, Context.User.Id);
+            await Reply($"You have successfully transferred the leadership of {Context.Gang.Name} to {await NameAsync(gangMember, await _userRepo.FetchUserAsync(gangMember))}.");
+            await DM(gangMember.Id, $"{Context.User} has trasnferred the ownership of {Context.Gang.Name} to you!");
         }
 
         [Command("Deposit")]
@@ -157,16 +174,11 @@ namespace DEA.Modules
         {
             if (cash < Config.MIN_DEPOSIT) await ErrorAsync($"The lowest deposit is {Config.MIN_DEPOSIT.ToString("C", Config.CI)}.");
             if (Context.Cash < cash) await ErrorAsync($"You do not have enough money. Balance: {Context.Cash.ToString("C", Config.CI)}.");
-            await UserRepository.EditCashAsync(Context, -cash);
-            await GangRepository.ModifyAsync(Context, x => x.Wealth, Context.Gang.Wealth + cash);
+            await _userRepo.EditCashAsync(Context, -cash);
+            await _gangRepo.ModifyAsync(Context, x => x.Wealth, Context.Gang.Wealth + cash);
             await Reply($"You have successfully deposited {cash.ToString("C", Config.CI)}. " +
                         $"{Context.Gang.Name}'s Wealth: {(Context.Gang.Wealth + cash).ToString("C", Config.CI)}");
-            var userToDM = Context.Guild.GetUser(Context.Gang.LeaderId);
-            if (userToDM != null)
-            {
-                var channel = await userToDM.CreateDMChannelAsync();
-                await ResponseMethods.DM(channel, $"{Context.User} deposited {cash.ToString("C", Config.CI)} into your gang's wealth.");
-            }
+            await DM(Context.Gang.LeaderId, $"{Context.User} deposited {cash.ToString("C", Config.CI)} into your gang's wealth.");
         }
 
         [Command("Withdraw")]
@@ -179,17 +191,12 @@ namespace DEA.Modules
             if (cash > Context.Gang.Wealth * Config.WITHDRAW_CAP)
                 await ErrorAsync($"You may only withdraw {Config.WITHDRAW_CAP.ToString("P")} of your gang's wealth, " +
                                     $"that is {(Context.Gang.Wealth * Config.WITHDRAW_CAP).ToString("C", Config.CI)}.");
-            await UserRepository.ModifyAsync(Context, x => x.Withdraw, DateTime.UtcNow);
-            await GangRepository.ModifyAsync(Context, x => x.Wealth, Context.Gang.Wealth - cash);
-            await UserRepository.EditCashAsync(Context, +cash);
+            await _userRepo.ModifyAsync(Context, x => x.Withdraw, DateTime.UtcNow);
+            await _gangRepo.ModifyAsync(Context, x => x.Wealth, Context.Gang.Wealth - cash);
+            await _userRepo.EditCashAsync(Context, +cash);
             await Reply($"You have successfully withdrawn {cash.ToString("C", Config.CI)}. " +
                         $"{Context.Gang.Name}'s Wealth: {(Context.Gang.Wealth - cash).ToString("C", Config.CI)}.");
-            var userToDM = Context.Guild.GetUser(Context.Gang.LeaderId);
-            if (userToDM != null)
-            {
-                var channel = await userToDM.CreateDMChannelAsync();
-                await ResponseMethods.DM(channel, $"{Context.User} has withdrawn {cash.ToString("C", Config.CI)} from your gang's wealth.");
-            }
+            await DM(Context.Gang.LeaderId, $"{Context.User} has withdrawn {cash.ToString("C", Config.CI)} from your gang's wealth.");
         }
 
         [Command("Raid")]
@@ -201,8 +208,8 @@ namespace DEA.Modules
             if (resources < Config.MIN_RESOURCES) await ErrorAsync($"The minimum amount of money to spend on resources for a raid is {Config.MIN_RESOURCES.ToString("C", Config.CI)}.");
             if (Context.Gang.Wealth < resources) await ErrorAsync($"Your gang does not have enough money. {Context.Gang.Name}'s Wealth {Context.Gang.Wealth.ToString("C", Config.CI)}.");
 
-            var raidedGang = await GangRepository.FetchGangAsync(gangName, Context.Guild.Id);
-            if (System.Math.Round(resources, 2) > System.Math.Round(raidedGang.Wealth / 20m, 2))
+            var raidedGang = await _gangRepo.FetchGangAsync(gangName, Context.Guild.Id);
+            if (Math.Round(resources, 2) > Math.Round(raidedGang.Wealth / 20m, 2))
                 await ErrorAsync($"You are overkilling it. You only need {(raidedGang.Wealth / 20).ToString("C", Config.CI)} " +
                       $"to steal 10% of their cash, that is {(raidedGang.Wealth / 10).ToString("C", Config.CI)}.");
             var stolen = resources * 2;
@@ -210,32 +217,22 @@ namespace DEA.Modules
             int roll = new Random().Next(1, 101);
             if (Config.RAID_SUCCESS_ODDS > roll)
             {
-                await GangRepository.ModifyAsync(gangName, Context.Guild.Id, x => x.Wealth, raidedGang.Wealth - stolen);
-                await GangRepository.ModifyAsync(Context, x => x.Wealth, Context.Gang.Wealth + stolen);
-                await GangRepository.ModifyAsync(Context, x => x.Raid, DateTime.UtcNow);
+                await _gangRepo.ModifyAsync(gangName, Context.Guild.Id, x => x.Wealth, raidedGang.Wealth - stolen);
+                await _gangRepo.ModifyAsync(Context, x => x.Wealth, Context.Gang.Wealth + stolen);
+                await _gangRepo.ModifyAsync(Context, x => x.Raid, DateTime.UtcNow);
 
-                var userToDM = Context.Guild.GetUser(raidedGang.LeaderId);
-                if (userToDM != null)
-                {
-                    var channel = await userToDM.CreateDMChannelAsync();
-                    await ResponseMethods.DM(channel, $"{Context.Gang.Name} just raided your gang's wealth and managed to walk away with {stolen.ToString("C", Config.CI)}.");
-                }
+                await DM(raidedGang.LeaderId, $"{Context.Gang.Name} just raided your gang's wealth and managed to walk away with {stolen.ToString("C", Config.CI)}.");
 
                 await Reply($"With a {Config.RAID_SUCCESS_ODDS}.00% chance of success, you successfully stole {stolen.ToString("C", Config.CI)}. " +
                             $"{Context.Gang.Name}'s Wealth {(Context.Gang.Wealth + stolen).ToString("C", Config.CI)}.");
             }
             else
             {
-                await GangRepository.ModifyAsync(Context, x => x.Wealth, Context.Gang.Wealth - resources);
-                await GangRepository.ModifyAsync(Context, x => x.Raid, DateTime.UtcNow);
+                await _gangRepo.ModifyAsync(Context, x => x.Wealth, Context.Gang.Wealth - resources);
+                await _gangRepo.ModifyAsync(Context, x => x.Raid, DateTime.UtcNow);
 
-                var userToDM = Context.Guild.GetUser(raidedGang.LeaderId);
-                if (userToDM != null)
-                {
-                    var channel = await userToDM.CreateDMChannelAsync();
-                    await ResponseMethods.DM(channel, $"{Context.Gang.Name} tried to raid your gang's stash, but one of your loyal sicarios gunned them out.");
-                }
-                
+                await DM(raidedGang.LeaderId, $"{Context.Gang.Name} tried to raid your gang's stash, but one of your loyal sicarios gunned them out.");
+
                 await Reply($"With a {Config.RAID_SUCCESS_ODDS}.00% chance of success, you failed to steal {stolen.ToString("C", Config.CI)} " +
                             $"and lost all resources in the process.");
             }

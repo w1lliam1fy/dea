@@ -3,7 +3,6 @@ using Discord.Commands;
 using System.Linq;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using DEA.Services;
 using DEA;
 using DEA.Common;
 using DEA.Services.Handlers;
@@ -12,6 +11,14 @@ namespace System.Modules
 {
     public class System : DEAModule
     {
+        private CommandService _commandService;
+        private Credentials _credentials;
+
+        public System(CommandService commandService, Credentials credentials)
+        {
+            _commandService = commandService;
+            _credentials = credentials;
+        }
 
         [Command("Invite")]
         [Summary("Invite DEA to your server!")]
@@ -29,11 +36,11 @@ namespace System.Modules
 
             var channel = await Context.User.CreateDMChannelAsync();
 
-            await ResponseMethods.DM(channel, $@"In order to gain money, you must send a message that is at least {Config.MIN_CHAR_LENGTH} characters in length. There is a 30 second cooldown between each message that will give you cash. However, these rates are not fixed. For every message you send, your chatting multiplier (which increases the amount of money you get per message) is increased by {Context.DbGuild.TempMultiplierIncreaseRate}. This rate is reset every hour.
+            await DM(channel, $@"In order to gain money, you must send a message that is at least {Config.MIN_CHAR_LENGTH} characters in length. There is a 30 second cooldown between each message that will give you cash. However, these rates are not fixed. For every message you send, your chatting multiplier (which increases the amount of money you get per message) is increased by {Context.DbGuild.TempMultiplierIncreaseRate}. This rate is reset every hour.
 
 To view your steadily increasing chatting multiplier, you may use the `{p}rate` command, and the `{p}money` command to see your cash grow. This command shows you every single variable taken into consideration for every message you send. If you wish to improve these variables, you may use investments. With the `{p}investments` command, you may pay to have *permanent* changes to your message rates. These will stack with the chatting multiplier.");
 
-            await ResponseMethods.DM(channel, $@"Another common way of gaining money is by gambling, there are loads of different gambling commands, which can all be viewed with the `{p}help` command. You might be wondering what is the point of all these commands. This is where ranks come in. The full list of ranks may be viewed with the `{p}rank` command. Depending on how much money you have, you will get a certain rank, and mainly, gain access to more commands. As your cash stack grows, so do the quantity commands you can use:
+            await DM(channel, $@"Another common way of gaining money is by gambling, there are loads of different gambling commands, which can all be viewed with the `{p}help` command. You might be wondering what is the point of all these commands. This is where ranks come in. The full list of ranks may be viewed with the `{p}rank` command. Depending on how much money you have, you will get a certain rank, and mainly, gain access to more commands. As your cash stack grows, so do the quantity commands you can use:
 
 **{Config.JUMP_REQUIREMENT.ToString("C", Config.CI)}:** `{p}jump`
 **{Config.STEAL_REQUIREMENT.ToString("C", Config.CI)}:** `{p}steal`
@@ -50,7 +57,7 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
         public async Task Modules()
         {
             string modules = string.Empty;
-            foreach (var module in DEABot.CommandService.Modules)
+            foreach (var module in _commandService.Modules)
                 modules += $"{module.Name}, ";
             await Reply("Current command modules: " + modules.Substring(0, modules.Length - 2) + ".");
             
@@ -65,7 +72,7 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
             {
                 commandOrModule = commandOrModule.Replace(" ", "_");
                 if (commandOrModule.StartsWith(Context.Prefix)) commandOrModule = commandOrModule.Remove(0, Context.Prefix.Length);
-                foreach (var module in DEABot.CommandService.Modules)
+                foreach (var module in _commandService.Modules)
                 {
                     if (module.Name.ToLower() == commandOrModule.ToLower())
                     {
@@ -83,7 +90,7 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
                     }
                 }
 
-                foreach (var module in DEABot.CommandService.Modules)
+                foreach (var module in _commandService.Modules)
                 {
                     foreach (var cmd in module.Commands)
                     {
@@ -103,11 +110,11 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
                 var channel = await Context.User.CreateDMChannelAsync();
 
                 string modules = string.Empty;
-                foreach (var module in DEABot.CommandService.Modules)
+                foreach (var module in _commandService.Modules)
                     modules += $"{module.Name}, ";
                 modules = modules.Replace("DEAModule, ", string.Empty);
 
-                await ResponseMethods.DM(channel,
+                await DM(channel,
                     $@"DEA is a multi-purpose Discord Bot mainly known for it's infamous Cash System with multiple subtleties referencing to the show Narcos, which inspired the creation of this masterpiece.
 
 For all information about command usage and setup on your Discord Sever, view the documentation: <https://realblazeit.github.io/DEA/>
@@ -133,10 +140,10 @@ If you have any other questions, you may join the **Official DEA Discord Server:
             {
                 var uptime = (DateTime.Now - process.StartTime);
                 builder.AddInlineField("Author", "John#0969")
-                .AddInlineField("Shard", $"#{DEABot.Client.ShardId}/{DEABot.Credentials.ShardCount}")
+                .AddInlineField("Shard", $"#{Context.Client.ShardId}/{_credentials.ShardCount}")
                 .AddInlineField("Library", $"Discord.Net {DiscordConfig.Version}")
-                .AddInlineField("Servers", $"{DEABot.Client.Guilds.Count}")
-                .AddInlineField("Channels", $"{DEABot.Client.Guilds.Sum(g => g.Channels.Count) + DEABot.Client.DMChannels.Count}")
+                .AddInlineField("Servers", $"{Context.Client.Guilds.Count}")
+                .AddInlineField("Channels", $"{Context.Client.Guilds.Sum(g => g.Channels.Count) + Context.Client.DMChannels.Count}")
                 .AddInlineField("Memory", $"{(process.PrivateMemorySize64 / 1000000d).ToString("N2")} MB")
                 .AddInlineField("Uptime", $"Days: {uptime.Days}\nHours: {uptime.Hours}\nMinutes: {uptime.Minutes}")
                 .AddInlineField("Messages", $"{DEABot.Messages} ({(DEABot.Messages / uptime.TotalSeconds).ToString("N2")}/sec)")

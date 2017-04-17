@@ -1,26 +1,32 @@
-﻿using DEA.Services.Handlers;
-using DEA.Services.Timers;
+﻿using DEA.Services.Timers;
+using Discord.Commands;
+using Discord.WebSocket;
 using System.Threading.Tasks;
 
 namespace DEA.Events
 {
     class Ready
     {
-        public Ready()
+        private IDependencyMap _map;
+        private DiscordSocketClient _client;
+
+        public Ready(IDependencyMap map)
         {
-            DEABot.Client.Ready += HandleReady;
+            _map = map;
+            _client = _map.Get<DiscordSocketClient>();
+            _client.Ready += HandleReady;
         }
 
         private async Task HandleReady()
         {
-            await DEABot.Client.SetGameAsync("USE $help");
-            new UserEvents();
-            new RoleEvents();
-            new ChannelEvents();
-            new ErrorHandler();
-            new ApplyIntrestRate();
-            new AutoUnmute();
-            new ResetTempMultiplier();
+            await _client.SetGameAsync("USE $help");
+            new UserEvents(_map);
+            new RoleEvents(_map);
+            new ChannelEvents(_map);
+            new ApplyIntrestRate(_map);
+            new AutoTrivia(_map);
+            new AutoUnmute(_map);
+            new ResetTempMultiplier(_map);
         }
 
     }

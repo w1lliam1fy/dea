@@ -9,20 +9,35 @@ using DEA.Services.Handlers;
 using DEA.Services;
 using DEA.Common;
 using DEA.Common.Preconditions;
+using DEA.Database.Models;
 
 namespace DEA.Modules
 {
     [Require(Attributes.ServerOwner)]
     public class Owners : DEAModule
     {
+        private GuildRepository _guildRepo;
+        private UserRepository _userRepo;
+        private RankingService _rankingService;
+        private IMongoCollection<User> _users;
+        private IMongoCollection<Gang> _gangs;
+
+        public Owners(GuildRepository guildRepo, UserRepository userRepo, RankingService rankingService, IMongoCollection<User> users, IMongoCollection<Gang> gangs)
+        {
+            _guildRepo = guildRepo;
+            _userRepo = userRepo;
+            _rankingService = rankingService;
+            _users = users;
+            _gangs = gangs;
+        }
 
         [Command("ResetUser")]
         [Summary("Resets all data for a specific user.")]
         public async Task ResetUser([Remainder] IGuildUser user = null)
         {
             user = user ?? Context.User as IGuildUser;
-            await DEABot.Users.DeleteOneAsync(y => y.UserId == user.Id && y.GuildId == user.GuildId);
-            await Reply($"Successfully reset {ResponseMethods.Name(user, await UserRepository.FetchUserAsync(user))}'s data.");
+            await _users.DeleteOneAsync(y => y.UserId == user.Id && y.GuildId == user.GuildId);
+            await Reply($"Successfully reset {await NameAsync(user, await _userRepo.FetchUserAsync(user))}'s data.");
         }
 
         [Command("100k")]
@@ -30,9 +45,10 @@ namespace DEA.Modules
         public async Task HundredK([Remainder] IGuildUser user = null)
         {
             user = user ?? Context.User as IGuildUser;
-            await UserRepository.ModifyAsync(user, x => x.Cash, 100000);
-            await RankHandler.HandleAsync(Context.Guild, user.Id);
-            await Reply($"Successfully set {ResponseMethods.Name(user, await UserRepository.FetchUserAsync(user))}'s balance to $100,000.00.");
+            await _userRepo.ModifyAsync(user, x => x.Cash, 100000);
+            var dbUser = user.Id == Context.User.Id ? Context.DbUser : await _userRepo.FetchUserAsync(user);
+            await _rankingService.HandleAsync(Context.Guild, user, Context.DbGuild, dbUser);
+            await Reply($"Successfully set {await NameAsync(user, await _userRepo.FetchUserAsync(user))}'s balance to $100,000.00.");
         }
 
         [Command("Add")]
@@ -40,8 +56,9 @@ namespace DEA.Modules
         public async Task Add(IGuildUser user, decimal money)
         {
             if (money < 0) await ErrorAsync("You may not add negative money to a user's balance.");
-            await UserRepository.EditCashAsync(user, money);
-            await Reply($"Successfully added {money.ToString("C", Config.CI)} to {ResponseMethods.Name(user, await UserRepository.FetchUserAsync(user))}'s balance.");
+            var dbUser = user.Id == Context.User.Id ? Context.DbUser : await _userRepo.FetchUserAsync(user);
+            await _userRepo.EditCashAsync(user, Context.DbGuild, dbUser, money);
+            await Reply($"Successfully added {money.ToString("C", Config.CI)} to {await NameAsync(user, await _userRepo.FetchUserAsync(user))}'s balance.");
         }
 
         [Command("AddTo")]
@@ -51,7 +68,7 @@ namespace DEA.Modules
             if (money < 0) await ErrorAsync("You may not add negative money to these users's balances.");
             await Reply("The addition of cash has commenced...");
             foreach (var user in Context.Guild.Users.Where(x => x.Roles.Any(y => y.Id == role.Id)))
-                await UserRepository.EditCashAsync(user, money);
+                await _userRepo.EditCashAsync(user, Context.DbGuild, await _userRepo.FetchUserAsync(user), money);
             await Reply($"Successfully added {money.ToString("C", Config.CI)} to the balance of every user in the {role.Mention} role.");
         }
 
@@ -60,8 +77,9 @@ namespace DEA.Modules
         public async Task Remove(IGuildUser user, decimal money)
         {
             if (money < 0) await ErrorAsync("You may not remove a negative amount of money from a user's balance.");
-            await UserRepository.EditCashAsync(user, -money);
-            await Reply($"Successfully removed {money.ToString("C", Config.CI)} from {ResponseMethods.Name(user, await UserRepository.FetchUserAsync(user))}'s balance.");
+            var dbUser = user.Id == Context.User.Id ? Context.DbUser : await _userRepo.FetchUserAsync(user);
+            await _userRepo.EditCashAsync(user, Context.DbGuild, dbUser, -money);
+            await Reply($"Successfully removed {money.ToString("C", Config.CI)} from {await NameAsync(user, await _userRepo.FetchUserAsync(user))}'s balance.");
         }
 
         [Command("RemoveFrom")]
@@ -71,7 +89,7 @@ namespace DEA.Modules
             if (money < 0) await ErrorAsync("You may not remove negative money from these users's balances.");
             await Reply("The cash removal has commenced...");
             foreach (var user in Context.Guild.Users.Where(x => x.Roles.Any(y => y.Id == role.Id)))
-                await UserRepository.EditCashAsync(user, -money);
+                await _userRepo.EditCashAsync(user, Context.DbGuild, await _userRepo.FetchUserAsync(user), -money);
             await Reply($"Successfully removed {money.ToString("C", Config.CI)} from the balance of every user in the {role.Mention} role.");
         }
 
@@ -81,14 +99,14 @@ namespace DEA.Modules
         {
             if (role == null)
             {
-                DEABot.Users.DeleteMany(x => x.GuildId == Context.Guild.Id);
-                DEABot.Gangs.DeleteMany(y => y.GuildId == Context.Guild.Id);
+                _users.DeleteMany(x => x.GuildId == Context.Guild.Id);
+                _gangs.DeleteMany(y => y.GuildId == Context.Guild.Id);
                 await Reply("Successfully reset all data in your server!");
             }
             else
             {
                 foreach (var user in Context.Guild.Users.Where(x => x.Roles.Any(y => y.Id == role.Id)))
-                    DEABot.Users.DeleteOne(y => y.UserId == user.Id && y.GuildId == user.Guild.Id);
+                    _users.DeleteOne(y => y.UserId == user.Id && y.GuildId == user.Guild.Id);
                 await Reply($"Successfully reset all users with the {role.Mention} role!");
             }
         }
@@ -99,7 +117,7 @@ namespace DEA.Modules
         {
             if (permissionLevel < 1 || permissionLevel > 3) await ErrorAsync("Permission levels:\nModeration: 1\nAdministration: 2\nServer Owner: 3");
             if (Context.DbGuild.ModRoles.ElementCount == 0)
-                await GuildRepository.ModifyAsync(Context.Guild.Id, x => x.ModRoles, new BsonDocument()
+                await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.ModRoles, new BsonDocument()
                 {
                     { modRole.Id.ToString(), permissionLevel }
                 });
@@ -107,7 +125,7 @@ namespace DEA.Modules
             {
                 if (Context.DbGuild.ModRoles.Any(x => x.Name == modRole.Id.ToString())) await ErrorAsync("You have already set this mod role.");
                 Context.DbGuild.ModRoles.Add(modRole.Id.ToString(), permissionLevel);
-                await GuildRepository.ModifyAsync(Context.Guild.Id, x => x.ModRoles, Context.DbGuild.ModRoles);
+                await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.ModRoles, Context.DbGuild.ModRoles);
             }
             await Reply($"You have successfully added {modRole.Mention} as a moderation role with a permission level of {permissionLevel}.");
         }
@@ -120,7 +138,7 @@ namespace DEA.Modules
             if (!Context.DbGuild.ModRoles.Any(x => x.Name == modRole.Id.ToString()))
                 await ErrorAsync("This role is not a moderator role!");
             Context.DbGuild.ModRoles.Remove(modRole.Id.ToString());
-            await GuildRepository.ModifyAsync(Context.Guild.Id, x => x.ModRoles, Context.DbGuild.ModRoles);
+            await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.ModRoles, Context.DbGuild.ModRoles);
             await Reply($"You have successfully removed the {modRole.Mention} moderator role.");
         }
 
@@ -134,7 +152,7 @@ namespace DEA.Modules
             if (Context.DbGuild.ModRoles.First(x => x.Name == modRole.Id.ToString()).Value == permissionLevel)
                 await ErrorAsync($"This mod role already has a permission level of {permissionLevel}");
             Context.DbGuild.ModRoles[Context.DbGuild.ModRoles.IndexOfName(modRole.Id.ToString())] = permissionLevel;
-            await GuildRepository.ModifyAsync(Context.Guild.Id, x => x.ModRoles, Context.DbGuild.ModRoles);
+            await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.ModRoles, Context.DbGuild.ModRoles);
             await Reply($"You have successfully set the permission level of the {modRole.Mention} moderator role to {permissionLevel}.");
         }
 
@@ -142,7 +160,7 @@ namespace DEA.Modules
         [Summary("Sets the global chatting multiplier.")]
         public async Task SetGlobalMultiplier(decimal globalMultiplier){
             if (globalMultiplier < 0) await ErrorAsync("The global multiplier may not be negative.");
-            await GuildRepository.ModifyAsync(Context.Guild.Id, x => x.GlobalChattingMultiplier, globalMultiplier);
+            await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.GlobalChattingMultiplier, globalMultiplier);
             await Reply($"You have successfully set the global chatting multiplier to {globalMultiplier.ToString("N2")}.");
         }
         
@@ -150,7 +168,7 @@ namespace DEA.Modules
         [Summary("Sets the global temporary multiplier increase rate.")]
         public async Task SetMultiplierIncrease(decimal intrestRate){
             if (intrestRate < 0) await ErrorAsync("The temporary multiplier increase rate may not be negative.");
-            await GuildRepository.ModifyAsync(Context.Guild.Id, x => x.TempMultiplierIncreaseRate, intrestRate);
+            await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.TempMultiplierIncreaseRate, intrestRate);
             await Reply($"You have successfully set the global temporary multiplier increase rate to {intrestRate.ToString("N2")}.");
         }
 

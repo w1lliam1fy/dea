@@ -7,12 +7,18 @@ using System.Threading.Tasks;
 
 namespace DEA.Database.Repository
 {
-    public static class MuteRepository 
+    public class MuteRepository 
     {
+        private IMongoCollection<Mute> _mutes;
 
-        public static async Task AddMuteAsync(IGuildUser user, TimeSpan muteLength)
+        public MuteRepository(IMongoCollection<Mute> mutes)
         {
-            await DEABot.Mutes.InsertOneAsync(new Mute()
+            _mutes = mutes;
+        }
+
+        public async Task AddMuteAsync(IGuildUser user, TimeSpan muteLength)
+        {
+            await _mutes.InsertOneAsync(new Mute()
             {
                 UserId = user.Id,
                 GuildId = user.GuildId,
@@ -20,14 +26,14 @@ namespace DEA.Database.Repository
             }, null, default(CancellationToken));
         }
 
-        public static async Task<bool> IsMutedAsync(ulong userId, ulong guildId)
+        public async Task<bool> IsMutedAsync(ulong userId, ulong guildId)
         {
-            return await (await DEABot.Mutes.FindAsync(y => y.UserId == userId && y.GuildId == guildId)).AnyAsync();
+            return await (await _mutes.FindAsync(y => y.UserId == userId && y.GuildId == guildId)).AnyAsync();
         }
 
-        public static async Task RemoveMuteAsync(ulong userId, ulong guildId)
+        public async Task RemoveMuteAsync(ulong userId, ulong guildId)
         {
-            await DEABot.Mutes.DeleteOneAsync(y => y.UserId == userId && y.GuildId == guildId);
+            await _mutes.DeleteOneAsync(y => y.UserId == userId && y.GuildId == guildId);
         }
 
     }

@@ -11,24 +11,29 @@ using System.Threading.Tasks;
 
 namespace DEA.Services.Handlers
 {
-    public static class RankHandler
+    public class RankingService
     {
-        public static async Task HandleAsync(IGuild guild, ulong userId)
-        {
-            if (!((await guild.GetCurrentUserAsync()).GuildPermissions.ManageRoles)) return;
-            decimal cash = (await UserRepository.FetchUserAsync(userId, guild.Id)).Cash;
-            var guildData = await GuildRepository.FetchGuildAsync(guild.Id);
+        private GuildRepository _guildRepo;
 
-            var user = await guild.GetUserAsync(userId); //FETCHES THE USER
-            var currentUser = await guild.GetCurrentUserAsync() as SocketGuildUser; //FETCHES THE BOT'S USER
+        public RankingService(GuildRepository guildRepo)
+        {
+            _guildRepo = guildRepo;
+        }
+
+        public async Task HandleAsync(IGuild guild, IGuildUser user, Guild dbGuild, User dbUser)
+        {
+            var currentUser = await guild.GetCurrentUserAsync() as SocketGuildUser;
+            if (!currentUser.GuildPermissions.ManageRoles) return;
+
+            decimal cash = dbUser.Cash;
 
             List<IRole> rolesToAdd = new List<IRole>();
             List<IRole> rolesToRemove = new List<IRole>();
 
-            if (user != null && guildData.RankRoles.ElementCount != 0)
+            if (user != null && dbGuild.RankRoles.ElementCount != 0)
             {
                 //CHECKS IF THE ROLE EXISTS AND IF IT IS LOWER THAN THE BOT'S HIGHEST ROLE
-                foreach (var rankRole in guildData.RankRoles)
+                foreach (var rankRole in dbGuild.RankRoles)
                 {
                     var role = guild.GetRole(Convert.ToUInt64(rankRole.Name));
                     if (role != null && role.Position < currentUser.Roles.OrderByDescending(x => x.Position).First().Position)
@@ -38,9 +43,8 @@ namespace DEA.Services.Handlers
                     }
                     else
                     {
-                        guildData.RankRoles.Remove(rankRole.Name);
-                        var builder = Builders<Guild>.Update;
-                        await DEABot.Guilds.UpdateOneAsync(x => x.Id == guild.Id, builder.Set(x => x.RankRoles, guildData.RankRoles));
+                        dbGuild.RankRoles.Remove(rankRole.Name);
+                        await _guildRepo.ModifyAsync(guild.Id, x => x.RankRoles, dbGuild.RankRoles);
                     }
                 }
 
@@ -51,7 +55,7 @@ namespace DEA.Services.Handlers
             }
         }
 
-        public static Task<IRole> FetchRankAsync(DEAContext context, User dbUser)
+        public Task<IRole> FetchRankAsync(DEAContext context, User dbUser)
         {
             IRole role = null;
 

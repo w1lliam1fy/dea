@@ -14,6 +14,12 @@ namespace DEA.Modules
 {
     public class NSFW : DEAModule
     {
+        private GuildRepository _guildRepo;
+
+        public NSFW(GuildRepository guildRepo)
+        {
+            _guildRepo = guildRepo;
+        }
 
         [Command("ChangeNSFWSettings")]
         [Require(Attributes.Admin)]
@@ -23,11 +29,11 @@ namespace DEA.Modules
             switch (Context.DbGuild.Nsfw)
             {
                 case true:
-                    await GuildRepository.ModifyAsync(Context.Guild.Id, x => x.Nsfw, false);
+                    await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.Nsfw, false);
                     await Reply($"You have successfully disabled NSFW commands!");
                     break;
                 case false:
-                    await GuildRepository.ModifyAsync(Context.Guild.Id, x => x.Nsfw, true);
+                    await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.Nsfw, true);
                     await Reply($"You have successfully enabled NSFW commands!");
                     break;
             }
@@ -38,7 +44,7 @@ namespace DEA.Modules
         [Summary("Sets a specific channel for all NSFW commands.")]
         public async Task SetNSFWChannel([Remainder] ITextChannel nsfwChannel)
         {
-            await GuildRepository.ModifyAsync(Context.Guild.Id, x => x.NsfwId, nsfwChannel.Id);
+            await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.NsfwId, nsfwChannel.Id);
             var nsfwRole = Context.Guild.GetRole(Context.DbGuild.NsfwRoleId);
             if (nsfwRole != null && Context.Guild.CurrentUser.GuildPermissions.Administrator)
             {
@@ -55,7 +61,7 @@ namespace DEA.Modules
         {
             if (nsfwRole.Position > Context.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
                 await ErrorAsync("You may not set the NSFW role to a role that is higher in hierarchy than DEA's highest role.");
-            await GuildRepository.ModifyAsync(Context.Guild.Id, x => x.NsfwRoleId, nsfwRole.Id);
+            await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.NsfwRoleId, nsfwRole.Id);
             var nsfwChannel = Context.Guild.GetChannel(Context.DbGuild.NsfwId);
             if (nsfwChannel != null && Context.Guild.CurrentUser.GuildPermissions.Administrator)
             {

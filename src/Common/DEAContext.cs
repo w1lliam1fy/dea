@@ -15,16 +15,25 @@ namespace DEA.Common
         public string Prefix { get; private set; }
         public decimal Cash { get; private set; }
 
-        public DEAContext(DiscordSocketClient client, SocketUserMessage msg) : base(client, msg)
-        { 
+        private IDependencyMap _map;
+        private UserRepository _userRepo;
+        private GuildRepository _guildRepo;
+        private GangRepository _gangRepo;
+
+        public DEAContext(DiscordSocketClient client, SocketUserMessage msg, IDependencyMap map) : base(client, msg)
+        {
+            _map = map;
+            _userRepo = map.Get<UserRepository>();
+            _guildRepo = map.Get<GuildRepository>();
+            _gangRepo = map.Get<GangRepository>();
         }
 
         public async Task InitializeAsync()
         {
-            DbUser = await UserRepository.FetchUserAsync(User as IGuildUser);
-            DbGuild = await GuildRepository.FetchGuildAsync(Guild.Id);
-            if (await GangRepository.InGangAsync(User as IGuildUser))
-                Gang = await GangRepository.FetchGangAsync(User as IGuildUser);
+            DbUser = await _userRepo.FetchUserAsync(User as IGuildUser);
+            DbGuild = await _guildRepo.FetchGuildAsync(Guild.Id);
+            if (await _gangRepo.InGangAsync(User as IGuildUser))
+                Gang = await _gangRepo.FetchGangAsync(User as IGuildUser);
             Prefix = DbGuild.Prefix;
             Cash = DbUser.Cash;
         }

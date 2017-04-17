@@ -1,4 +1,6 @@
 ﻿using DEA.Common;
+using DEA.Database.Repository;
+using DEA.Services.Static;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
@@ -9,11 +11,25 @@ namespace DEA.Services.Handlers
 {
     public class CommandHandler
     {
+        private IDependencyMap _map;
+        private DiscordSocketClient _client;
+        private CommandService _commandService;
+        private ErrorHandler _errorHandler;
+        private UserRepository _userRepo;
+
+        public CommandHandler(CommandService commandService, IDependencyMap map)
+        {
+            _map = map;
+            _commandService = commandService;
+            _errorHandler = map.Get<ErrorHandler>();
+            _userRepo = map.Get<UserRepository>();
+            _client = map.Get<DiscordSocketClient>();
+            _client.MessageReceived += HandleCommandAsync;
+        }
+
         public async Task InitializeAsync()
         {
-            await DEABot.CommandService.AddModulesAsync(Assembly.GetEntryAssembly());
-
-            DEABot.Client.MessageReceived += HandleCommandAsync;
+            await _commandService.AddModulesAsync(Assembly.GetEntryAssembly());
         }
 
         public async Task HandleCommandAsync(SocketMessage s)
@@ -22,7 +38,7 @@ namespace DEA.Services.Handlers
             var msg = s as SocketUserMessage;
             if (msg == null) return;
 
-            var context = new DEAContext(DEABot.Client, msg);
+            var context = new DEAContext(_client, msg, _map);
             if (context.Guild == null) return;
             if (context.User.IsBot) return;
 
@@ -35,16 +51,16 @@ namespace DEA.Services.Handlers
             await context.InitializeAsync();
 
             if (msg.HasStringPrefix(context.DbGuild.Prefix, ref argPos) ||
-                msg.HasMentionPrefix(DEABot.Client.CurrentUser, ref argPos))
+                msg.HasMentionPrefix(_client.CurrentUser, ref argPos))
             {
-                var result = await DEABot.CommandService.ExecuteAsync(context, argPos);
+                var result = await _commandService.ExecuteAsync(context, argPos, _map);
                 if (!result.IsSuccess)
-                    await ErrorHandler.HandleCommandFailureAsync(context, result, argPos);
+                    await _errorHandler.HandleCommandFailureAsync(context, result, argPos);
                 else
                     DEABot.Commands++;
             }
             else if (msg.Content.Length >= Config.MIN_CHAR_LENGTH)
-                await CashPerMsg.Apply(context.DbGuild, context.DbUser);
+                await CashPerMsg.Apply(_userRepo, context.DbGuild, context.DbUser);
         }
 
         public static string GetUsage(CommandInfo cmd, string name)

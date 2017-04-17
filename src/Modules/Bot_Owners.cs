@@ -11,12 +11,18 @@ namespace DEA.Modules
     [Require(Attributes.BotOwner)]
     public class Bot_Owners : DEAModule
     {
+        private ResponseService _responseService;
+
+        public Bot_Owners(ResponseService responseService)
+        {
+            _responseService = responseService;
+        }
 
         [Command("SetGame")]
         [Summary("Sets the game of DEA.")]
         public async Task SetGame([Remainder] string game)
         {
-            await DEABot.Client.SetGameAsync(game);
+            await Context.Client.SetGameAsync(game);
             await Reply($"Successfully set the game to {game}.");
         }
 
@@ -25,11 +31,11 @@ namespace DEA.Modules
         public async Task GlobalAnnouncement([Remainder] string announcement)
         {
             await Reply("Global announcement process has commenced...");
-            foreach (var guild in DEABot.Client.Guilds)
+            foreach (var guild in Context.Client.Guilds)
             {
                 if (guild.Id == Context.Guild.Id) continue;
                 var perms = (guild.CurrentUser as IGuildUser).GetPermissions(guild.DefaultChannel);
-                if (perms.SendMessages && perms.EmbedLinks) await ResponseMethods.Send(guild.DefaultChannel,"__**Announcement:**__ " + announcement);
+                if (perms.SendMessages && perms.EmbedLinks) await _responseService.Send(guild.DefaultChannel,"__**Announcement:**__ " + announcement);
             }
             await Reply("All announcements have been delivered!");
         }

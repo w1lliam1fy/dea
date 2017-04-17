@@ -1,8 +1,8 @@
-﻿namespace DEA.Services
+﻿namespace DEA.Services.Static
 {
-    public static class Math
+    public static class InterestRate
     {
-        public static decimal CalculateIntrestRate(decimal wealth)
+        public static decimal Calculate (decimal wealth)
         {
             var InterestRate = 0.01m + ((wealth / 100) * .00008m);
             if (InterestRate > 0.05m) InterestRate = 0.05m;

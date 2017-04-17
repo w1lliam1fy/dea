@@ -1,5 +1,6 @@
 ﻿using DEA.Services;
 using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
 using System.Threading.Tasks;
 
@@ -7,12 +8,18 @@ namespace DEA.Events
 {
     class ChannelEvents
     {
+        private IDependencyMap _map;
+        private DiscordSocketClient _client;
+        private LoggingService _loggingService;
 
-        public ChannelEvents()
+        public ChannelEvents(IDependencyMap map)
         {
-            DEABot.Client.ChannelCreated += HandleChannelCreated;
-            DEABot.Client.ChannelDestroyed += HandleChannelDestroyed;
-            DEABot.Client.ChannelUpdated += HandleChannelUpdated;
+            _map = map;
+            _client = _map.Get<DiscordSocketClient>();
+            _loggingService = _map.Get<LoggingService>();
+            _client.ChannelCreated += HandleChannelCreated;
+            _client.ChannelDestroyed += HandleChannelDestroyed;
+            _client.ChannelUpdated += HandleChannelUpdated;
         }
 
         private async Task HandleChannelCreated(SocketChannel socketChannel)
@@ -49,7 +56,7 @@ namespace DEA.Events
                 guild = (socketChannel as SocketVoiceChannel).Guild;
             }
             SocketChannel channel = socketChannel as SocketTextChannel;
-            await Logger.DetailedLogAsync(guild, "Action", action, channelType, channelName, socketChannel.Id, color);
+            await _loggingService.DetailedLogAsync(guild, "Action", action, channelType, channelName, socketChannel.Id, color);
         }
     }
 }

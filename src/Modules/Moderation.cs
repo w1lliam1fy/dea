@@ -14,6 +14,14 @@ namespace DEA.Modules
     [Require(Attributes.Moderator)]
     public class Moderation : DEAModule
     {
+        private MuteRepository _muteRepo;
+        private LoggingService _loggingService;
+
+        public Moderation(MuteRepository muteRepo, LoggingService loggingService)
+        {
+            _muteRepo = muteRepo;
+            _loggingService = loggingService;
+        }
 
         [Command("Ban")]
         [RequireBotPermission(GuildPermission.BanMembers)]
@@ -23,7 +31,7 @@ namespace DEA.Modules
             if (!await IsHigherModAsync(Context, Context.User as IGuildUser, userToBan)) await ErrorAsync("You cannot ban another mod with a permission level higher or equal to your own!");
             await InformSubjectAsync(Context.User, "Ban", userToBan, reason);
             await Context.Guild.AddBanAsync(userToBan);
-            await Logger.ModLogAsync(Context, "Ban", new Color(255, 0, 0), reason, userToBan);
+            await _loggingService.ModLogAsync(Context, "Ban", new Color(255, 0, 0), reason, userToBan);
             await Send($"{await NameAsync()} has successfully banned {userToBan.Mention}!");
         }
 
@@ -35,7 +43,7 @@ namespace DEA.Modules
             if (await IsModAsync(Context, userToKick)) await ErrorAsync("You cannot kick another mod!");
             await InformSubjectAsync(Context.User, "Kick", userToKick, reason);
             await userToKick.KickAsync();
-            await Logger.ModLogAsync(Context, "Kick", new Color(255, 114, 14), reason, userToKick);
+            await _loggingService.ModLogAsync(Context, "Kick", new Color(255, 114, 14), reason, userToKick);
             await Send($"{await NameAsync()} has successfully kicked {userToKick.Mention}!");
         }
 
@@ -50,8 +58,8 @@ namespace DEA.Modules
             if (await IsModAsync(Context, userToMute)) await ErrorAsync("You cannot mute another mod!");
             await InformSubjectAsync(Context.User, "Mute", userToMute, reason);
             await userToMute.AddRoleAsync(mutedRole);
-            await MuteRepository.AddMuteAsync(userToMute, TimeSpan.FromDays(365));
-            await Logger.ModLogAsync(Context, "Mute", new Color(255, 114, 14), reason, userToMute, null);
+            await _muteRepo.AddMuteAsync(userToMute, TimeSpan.FromDays(365));
+            await _loggingService.ModLogAsync(Context, "Mute", new Color(255, 114, 14), reason, userToMute, null);
             await Send($"{await NameAsync()} has successfully muted {userToMute.Mention}!");
         }
 
@@ -70,8 +78,8 @@ namespace DEA.Modules
             if (await IsModAsync(Context, userToMute)) await ErrorAsync("You cannot mute another mod!");
             await InformSubjectAsync(Context.User, "Mute", userToMute, reason);
             await userToMute.AddRoleAsync(mutedRole);
-            await MuteRepository.AddMuteAsync(userToMute, TimeSpan.FromHours(hours));
-            await Logger.ModLogAsync(Context, "Mute", new Color(255, 114, 14), reason, userToMute, $"\n**Length:** {hours} {time}");
+            await _muteRepo.AddMuteAsync(userToMute, TimeSpan.FromHours(hours));
+            await _loggingService.ModLogAsync(Context, "Mute", new Color(255, 114, 14), reason, userToMute, $"\n**Length:** {hours} {time}");
             await Send($"{await NameAsync()} has successfully muted {userToMute.Mention} for {hours} {time}!");
         }
 
@@ -83,8 +91,8 @@ namespace DEA.Modules
             if (userToUnmute.RoleIds.All(x => x != Context.DbGuild.MutedRoleId)) await ErrorAsync("You cannot unmute a user who isn't muted.");
             await InformSubjectAsync(Context.User, "Unmute", userToUnmute, reason);
             await userToUnmute.RemoveRoleAsync(Context.Guild.GetRole(Context.DbGuild.MutedRoleId));
-            await MuteRepository.RemoveMuteAsync(userToUnmute.Id, userToUnmute.GuildId);
-            await Logger.ModLogAsync(Context, "Unmute", new Color(12, 255, 129), reason, userToUnmute);
+            await _muteRepo.RemoveMuteAsync(userToUnmute.Id, userToUnmute.GuildId);
+            await _loggingService.ModLogAsync(Context, "Unmute", new Color(12, 255, 129), reason, userToUnmute);
             await Send($"{await NameAsync()} has successfully unmuted {userToUnmute.Mention}!");
         }
 
@@ -99,7 +107,7 @@ namespace DEA.Modules
                 await ErrorAsync("For security reasons, you may not use this command in a log channel.");
             var messages = await Context.Channel.GetMessagesAsync(quantity).Flatten();
             await Context.Channel.DeleteMessagesAsync(messages);
-            await Logger.ModLogAsync(Context, "Clear", new Color(34, 59, 255), reason, null, $"\n**Quantity:** {quantity}");
+            await _loggingService.ModLogAsync(Context, "Clear", new Color(34, 59, 255), reason, null, $"\n**Quantity:** {quantity}");
             var msg = await Reply($"Messages deleted: **{quantity}**.");
             await Task.Delay(2500);
             await msg.DeleteAsync();
@@ -119,7 +127,7 @@ namespace DEA.Modules
             await Reply($"Chat just got cooled down. Won't heat up until at least {seconds} seconds have passed.");
             await Task.Delay(seconds * 1000);
             await channel.AddPermissionOverwriteAsync(Context.Guild.EveryoneRole, new OverwritePermissions().Modify(perms.CreateInstantInvite, perms.ManageChannel, perms.AddReactions, perms.ReadMessages, perms.SendMessages));
-            await Logger.ModLogAsync(Context, "Chill", new Color(34, 59, 255), reason, null, $"\n**Length:** {seconds} seconds");
+            await _loggingService.ModLogAsync(Context, "Chill", new Color(34, 59, 255), reason, null, $"\n**Length:** {seconds} seconds");
         }
 
     }

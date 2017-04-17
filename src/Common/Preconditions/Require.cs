@@ -10,23 +10,36 @@ namespace DEA.Common.Preconditions
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
     public class RequireAttribute : PreconditionAttribute
     {
-        private Attributes[] attributes;
+        private IDependencyMap _map;
+        
+        private Credentials _credentials;
+        private UserRepository _userRepo;
+        private GuildRepository _guildRepo;
+        private GangRepository _gangRepo;
+
+        private Attributes[] _attributes;
 
         public RequireAttribute(params Attributes[] attributes)
         {
-            this.attributes = attributes;
+            _attributes = attributes;
         }
         
         public override async Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IDependencyMap map)
         {
+            _map = map;
+            _credentials = _map.Get<Credentials>();
+            _userRepo = _map.Get<UserRepository>();
+            _guildRepo = _map.Get<GuildRepository>();
+            _gangRepo = _map.Get<GangRepository>();
+
             var guildUser = context.User as IGuildUser;
-            var DbUser = await UserRepository.FetchUserAsync(guildUser);
-            var DbGuild = await GuildRepository.FetchGuildAsync(context.Guild.Id);
-            foreach (var attribute in attributes)
+            var DbUser = await _userRepo.FetchUserAsync(guildUser);
+            var DbGuild = await _guildRepo.FetchGuildAsync(context.Guild.Id);
+            foreach (var attribute in _attributes)
                 switch (attribute)
                 {
                     case Attributes.BotOwner:
-                        if (!DEABot.Credentials.OwnerIds.Any(x => x == context.User.Id))
+                        if (!_credentials.OwnerIds.Any(x => x == context.User.Id))
                             return PreconditionResult.FromError("Only an owner of this bot may use this command.");
                         break;
                     case Attributes.ServerOwner:
@@ -59,15 +72,15 @@ namespace DEA.Common.Preconditions
                             return PreconditionResult.FromError($"You do not have permission to use this command.\nRequired role: {nsfwRole.Mention}");
                         break;
                     case Attributes.InGang:
-                        if (!await GangRepository.InGangAsync(guildUser))
+                        if (!await _gangRepo.InGangAsync(guildUser))
                             return PreconditionResult.FromError("You must be in a gang to use this command.");
                         break;
                     case Attributes.NoGang:
-                        if (await GangRepository.InGangAsync(guildUser))
+                        if (await _gangRepo.InGangAsync(guildUser))
                             return PreconditionResult.FromError("You may not use this command while in a gang.");
                         break;
                     case Attributes.GangLeader:
-                        if ((await GangRepository.FetchGangAsync(guildUser)).LeaderId != context.User.Id)
+                        if ((await _gangRepo.FetchGangAsync(guildUser)).LeaderId != context.User.Id)
                             return PreconditionResult.FromError("You must be the leader of a gang to use this command.");
                         break;
                     case Attributes.Jump:
