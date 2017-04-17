@@ -215,9 +215,9 @@ namespace DEA.Modules
         {
             if (Context.DbGuild.RankRoles.ElementCount == 0) await ErrorAsync("There are no ranks yet!");
             var description = string.Empty;
-            foreach (var rank in Context.DbGuild.RankRoles.OrderBy(x => x.Value))
+            foreach (var rank in Context.DbGuild.RankRoles.OrderBy(x => x.Value.AsDouble))
             {
-                var role = Context.Guild.GetRole(Convert.ToUInt64(rank.Name));
+                var role = Context.Guild.GetRole(ulong.Parse(rank.Name));
                 if (role == null)
                 {
                     Context.DbGuild.RankRoles.Remove(rank.Name);
@@ -239,7 +239,7 @@ namespace DEA.Modules
             var description = "**Moderation Roles:**\n";
             foreach (var modRole in Context.DbGuild.ModRoles.OrderBy(x => x.Value))
             {
-                var role = Context.Guild.GetRole(Convert.ToUInt64(modRole.Name));
+                var role = Context.Guild.GetRole(ulong.Parse(modRole.Name));
                 if (role == null)
                 {
                     Context.DbGuild.ModRoles.Remove(modRole.Name);

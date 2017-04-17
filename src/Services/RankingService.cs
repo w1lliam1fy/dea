@@ -30,21 +30,20 @@ namespace DEA.Services.Handlers
             List<IRole> rolesToAdd = new List<IRole>();
             List<IRole> rolesToRemove = new List<IRole>();
 
+            var highestRolePosition = currentUser.Roles.OrderByDescending(x => x.Position).First().Position;
+
             if (dbGuild.RankRoles.ElementCount != 0)
             {
                 //CHECKS IF THE ROLE EXISTS AND IF IT IS LOWER THAN THE BOT'S HIGHEST ROLE
                 foreach (var rankRole in dbGuild.RankRoles)
                 {
-                    var role = guild.GetRole(Convert.ToUInt64(rankRole.Name));
-                    if (role != null && role.Position < currentUser.Roles.OrderByDescending(x => x.Position).First().Position)
+                    var cashRequired = (decimal)rankRole.Value.AsDouble;
+                    var role = guild.GetRole(ulong.Parse(rankRole.Name));
+                    if (role != null && role.Position < highestRolePosition)
                     {
-                        if (cash >= (decimal)rankRole.Value.AsDouble && !user.RoleIds.Any(x => x.ToString() == rankRole.Name)) rolesToAdd.Add(role);
-                        if (cash < (decimal)rankRole.Value.AsDouble && user.RoleIds.Any(x => x.ToString() == rankRole.Name)) rolesToRemove.Add(role);
-                    }
-                    else
-                    {
-                        dbGuild.RankRoles.Remove(rankRole.Name);
-                        await _guildRepo.ModifyAsync(guild.Id, x => x.RankRoles, dbGuild.RankRoles);
+                        bool hasRole = user.RoleIds.Any(x => x == role.Id);
+                        if (cash >= cashRequired && !hasRole) rolesToAdd.Add(role);
+                        if (cash < cashRequired && hasRole) rolesToRemove.Add(role);
                     }
                 }
 
@@ -62,7 +61,7 @@ namespace DEA.Services.Handlers
             if (context.DbGuild.RankRoles.ElementCount != 0 && context.Guild != null)
                 foreach (var rankRole in context.DbGuild.RankRoles.OrderBy(x => x.Value))
                     if (dbUser.Cash >= (decimal)rankRole.Value.AsDouble)
-                        role = context.Guild.GetRole(Convert.ToUInt64(rankRole.Name));
+                        role = context.Guild.GetRole(ulong.Parse(rankRole.Name));
             return Task.FromResult(role);
         }
     }

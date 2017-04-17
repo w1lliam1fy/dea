@@ -51,16 +51,22 @@ namespace DEA.Modules
             var gang = await _gangRepo.FetchGangAsync(gangName, Context.Guild.Id);
             if (gang.Members.Length == 4) await ErrorAsync("This gang is already full!");
             var leader = Context.Guild.GetUser(gang.LeaderId);
-            var leaderDM = await leader.CreateDMChannelAsync();
-            await leaderDM.SendMessageAsync($"{Context.User} has requested to join your gang. Please respond with \"accept\" within 5 minutes to add this user to your gang.");
-            var answer = await _interactiveService.WaitForMessage(leaderDM, x => x.Content.ToLower() == "accept", TimeSpan.FromMinutes(5));
-            if (answer != null)
+            await Reply($"The leader of {gang} has been informed of your request to join their gang.");
+            if (leader != null)
             {
-                await _gangRepo.AddMemberAsync(gang, Context.User.Id);
-                await _responseService.Reply(leaderDM, leader, await _userRepo.FetchUserAsync(leader), $"You have successfully added {Context.User} as a member of your gang.");
-                var channel = await Context.User.CreateDMChannelAsync();
-                await DM(channel, $"Congrats! {leader} has accepted your request to join {gang.Name}!");
+                var leaderDM = await leader.CreateDMChannelAsync();
+                await leaderDM.SendMessageAsync($"{Context.User} has requested to join your gang. Please respond with \"accept\" within 5 minutes to add this user to your gang.");
+                var answer = await _interactiveService.WaitForMessage(leaderDM, x => x.Content.ToLower() == "accept", TimeSpan.FromMinutes(5));
+                if (answer != null)
+                {
+                    await _gangRepo.AddMemberAsync(gang, Context.User.Id);
+                    await _responseService.Reply(leaderDM, leader, await _userRepo.FetchUserAsync(leader), $"You have successfully added {Context.User} as a member of your gang.");
+                    await DM(Context.User.Id, $"Congrats! {leader} has accepted your request to join {gang.Name}!");
+                }
             }
+            else
+                await Reply("The leader of that gang is no longer in this server. ***RIP GANG ROFL***");
+            
         }
 
         [Command("Gang")]

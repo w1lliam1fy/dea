@@ -13,11 +13,13 @@ namespace System.Modules
     {
         private CommandService _commandService;
         private Credentials _credentials;
+        private Stats _stats;
 
-        public System(CommandService commandService, Credentials credentials)
+        public System(CommandService commandService, Credentials credentials, Stats stats)
         {
             _commandService = commandService;
             _credentials = credentials;
+            _stats = stats;
         }
 
         [Command("Invite")]
@@ -139,14 +141,14 @@ If you have any other questions, you may join the **Official DEA Discord Server:
             {
                 var uptime = (DateTime.Now - process.StartTime);
                 builder.AddInlineField("Author", "John#0969")
-                .AddInlineField("Shard", $"#{Context.Client.ShardId}/{_credentials.ShardCount}")
+                .AddInlineField("DB Documents", $"{await _stats.DbDocuments()}")
                 .AddInlineField("Library", $"Discord.Net {DiscordConfig.Version}")
                 .AddInlineField("Servers", $"{Context.Client.Guilds.Count}")
                 .AddInlineField("Channels", $"{Context.Client.Guilds.Sum(g => g.Channels.Count) + Context.Client.DMChannels.Count}")
                 .AddInlineField("Memory", $"{(process.PrivateMemorySize64 / 1000000d).ToString("N2")} MB")
                 .AddInlineField("Uptime", $"Days: {uptime.Days}\nHours: {uptime.Hours}\nMinutes: {uptime.Minutes}")
-                .AddInlineField("Messages", $"{DEABot.Messages} ({(DEABot.Messages / uptime.TotalSeconds).ToString("N2")}/sec)")
-                .AddInlineField("Commands Used", $"{DEABot.Commands}")
+                .AddInlineField("Messages", $"{_stats.MessagesRecieved} ({(_stats.MessagesRecieved / uptime.TotalSeconds).ToString("N2")}/sec)")
+                .AddInlineField("Commands Run", $"{_stats.CommandsRun}")
                 .WithColor(Config.COLORS[new Random().Next(1, Config.COLORS.Length) - 1]);
             }
             

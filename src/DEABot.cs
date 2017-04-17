@@ -24,30 +24,11 @@ namespace DEA
         private CommandService _commandService;
 
         private Credentials _credentials;
-        private IDependencyMap _map;
-
-        private GamblingService _gamblingService;
-        private InteractiveService _interactiveService;
-        private ErrorHandler _errorHandler;
-        private ResponseService _responseService;
-        private LoggingService _loggingService;
-        private RankingService _rankingService;
-
-        private MongoClient _dbClient;
-        private IMongoDatabase _database;
 
         private IMongoCollection<Guild> _guilds;
         private IMongoCollection<User> _users;
         private IMongoCollection<Gang> _gangs;
         private IMongoCollection<Mute> _mutes;
-
-        private GuildRepository _guildRepo;
-        private UserRepository _userRepo;
-        private GangRepository _gangRepo;
-        private MuteRepository _muteRepo;
-
-        public static int Commands { get; set; }
-        public static int Messages { get; set; }
 
         public DEABot()
         {
@@ -79,25 +60,13 @@ namespace DEA
                 DefaultRunMode = RunMode.Async,
             });
 
-            _dbClient = new MongoClient(_credentials.MongoDBConnectionString);
-            _database = _dbClient.GetDatabase(_credentials.DatabaseName);
+             var dbClient = new MongoClient(_credentials.MongoDBConnectionString);
+             var database = dbClient.GetDatabase(_credentials.DatabaseName);
 
-            _guilds = _database.GetCollection<Guild>("guilds");
-            _users = _database.GetCollection<User>("users");
-            _gangs = _database.GetCollection<Gang>("gangs");
-            _mutes = _database.GetCollection<Mute>("mutes");
-
-            _guildRepo = new GuildRepository(_guilds);
-            _rankingService = new RankingService(_guildRepo);
-            _userRepo = new UserRepository(_users, _rankingService);
-            _gangRepo = new GangRepository(_gangs);
-            _muteRepo = new MuteRepository(_mutes);
-
-            _interactiveService = new InteractiveService(_client);
-            _responseService = new ResponseService();
-            _errorHandler = new ErrorHandler(_commandService, _responseService);
-            _gamblingService = new GamblingService(_userRepo, _responseService);
-            _loggingService = new LoggingService(_guildRepo, _responseService);
+            _guilds = database.GetCollection<Guild>("guilds");
+            _users = database.GetCollection<User>("users");
+            _gangs = database.GetCollection<Gang>("gangs");
+            _mutes = database.GetCollection<Mute>("mutes");
         }
 
         private async Task RunAsync(params string[] args)
@@ -121,13 +90,13 @@ namespace DEA
             sw.Stop();
             await Logger.LogAsync(LogSeverity.Info, "Successfully connected", $"Elapsed time: {sw.Elapsed.TotalSeconds.ToString()} seconds.");
 
-            _map = new DependencyMap();
-            ConfigureServices(_map);
+            var map = new DependencyMap();
+            ConfigureServices(map);
             
             await Logger.LogAsync(LogSeverity.Info, "Mapping successfully configured", $"Services ready.");
 
-            new Ready(_map);
-            await new CommandHandler(_commandService, _map).InitializeAsync();
+            new Ready(map);
+            await new CommandHandler(_commandService, map).InitializeAsync();
             await Logger.LogAsync(LogSeverity.Info, "Events and command handler successfully initialized", $"Client ready.");
         }
 
@@ -137,26 +106,25 @@ namespace DEA
             await Task.Delay(-1).ConfigureAwait(false);
         }
 
-        public void ConfigureServices(IDependencyMap map)
+        private void ConfigureServices(IDependencyMap map)
         {
             map.Add(_client);
             map.Add(_credentials);
-            map.Add(_dbClient);
-            map.Add(_database);
             map.Add(_guilds);
             map.Add(_users);
             map.Add(_gangs);
             map.Add(_mutes);
-            map.Add(_guildRepo);
-            map.Add(_userRepo);
-            map.Add(_gangRepo);
-            map.Add(_muteRepo);
-            map.Add(_gamblingService);
-            map.Add(_interactiveService);
-            map.Add(_responseService);
-            map.Add(_errorHandler);
-            map.Add(_loggingService);
-            map.Add(_rankingService);
+            map.Add(new Stats(_users, _guilds, _gangs, _mutes));
+            map.Add(new GuildRepository(_guilds));
+            map.Add(new RankingService(map.Get<GuildRepository>()));
+            map.Add(new UserRepository(_users, map.Get<RankingService>()));
+            map.Add(new ResponseService());
+            map.Add(new GamblingService(map.Get<UserRepository>(), map.Get<ResponseService>()));
+            map.Add(new InteractiveService(_client));
+            map.Add(new ErrorHandler(_commandService, map.Get<ResponseService>()));
+            map.Add(new LoggingService(map.Get<GuildRepository>(), map.Get<ResponseService>()));
+            map.Add(new GangRepository(_gangs));
+            map.Add(new MuteRepository(_mutes));
         }
 
     }

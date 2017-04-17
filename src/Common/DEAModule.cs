@@ -77,7 +77,7 @@ namespace DEA.Common
             if (user.GuildPermissions.Administrator) return Task.FromResult(true);
             if (context.DbGuild.ModRoles.ElementCount != 0)
                 foreach (var role in context.DbGuild.ModRoles)
-                    if (user.Guild.GetRole(Convert.ToUInt64(role.Name)) != null)
+                    if (user.Guild.GetRole(ulong.Parse(role.Name)) != null)
                         if (user.RoleIds.Any(x => x.ToString() == role.Name)) return Task.FromResult(true);
             return Task.FromResult(false);
         }
@@ -89,11 +89,11 @@ namespace DEA.Common
             if (context.DbGuild.ModRoles.ElementCount == 0) return Task.FromResult(highest > highestForUser);
 
             foreach (var role in context.DbGuild.ModRoles.OrderBy(x => x.Value))
-                if (mod.Guild.GetRole(Convert.ToUInt64(role.Name)) != null)
+                if (mod.Guild.GetRole(ulong.Parse(role.Name)) != null)
                     if (mod.RoleIds.Any(x => x.ToString() == role.Name)) highest = role.Value.AsInt32;
 
             foreach (var role in context.DbGuild.ModRoles.OrderBy(x => x.Value))
-                if (user.Guild.GetRole(Convert.ToUInt64(role.Name)) != null)
+                if (user.Guild.GetRole(ulong.Parse(role.Name)) != null)
                     if (user.RoleIds.Any(x => x.ToString() == role.Name)) highestForUser = role.Value.AsInt32;
 
             return Task.FromResult(highest > highestForUser);

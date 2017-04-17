@@ -171,7 +171,7 @@ namespace DEA.Modules
             if (Context.DbGuild.Trivia.ElementCount == 0) await ErrorAsync("There are no trivia questions yet!");
             int roll = new Random().Next(0, Context.DbGuild.Trivia.ElementCount);
             var element = Context.DbGuild.Trivia.GetElement(roll);
-            await Send("__**TRIVIA:**__ " + element.Name + ".");
+            await Send("__**TRIVIA:**__ " + element.Name);
             var answer = await _interactiveService.WaitForMessage(Context.Channel, y => y.Content.ToLower() == element.Value.AsString.ToLower() && y.Author.Id != Context.User.Id);
             if (answer != null)
             {

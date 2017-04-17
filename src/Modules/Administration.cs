@@ -98,7 +98,7 @@ namespace DEA.Modules
                 await ErrorAsync("This role is not a rank role.");
             if (Context.DbGuild.RankRoles.Any(x => (int)x.Value.AsDouble == (int)newCashRequired))
                 await ErrorAsync("There is already a role set to that amount of cash required.");
-            Context.DbGuild.RankRoles[Context.DbGuild.RankRoles.IndexOfName(rankRole.Id.ToString())] = newCashRequired;
+            Context.DbGuild.RankRoles[rankRole.Id.ToString()] = newCashRequired;
             await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.RankRoles, Context.DbGuild.RankRoles);
             await Reply($"You have successfully set the cash required for the {rankRole.Mention} rank to {newCashRequired.ToString("C", Config.CI)}.");
         }
