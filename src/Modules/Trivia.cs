@@ -27,7 +27,7 @@ namespace DEA.Modules
         [Command("ChangeAutoTriviaSettings")]
         [Alias("EnableAutoTrivia", "DisableAutoTrivia")]
         [Require(Attributes.Admin)]
-        [Summary("Automatically sends a trivia question in the default text channel every 2 minites.")]
+        [Summary("Enables/disables the auto trivia feature: Sends a trivia question in the default text channel every 2 minites.")]
         public async Task ChangeAutoTriviaSettings()
         {
             switch (Context.DbGuild.AutoTrivia)
@@ -70,7 +70,7 @@ namespace DEA.Modules
 
         [Command("AddQuestion")]
         [Require(Attributes.Moderator)]
-        [Summary("Add a trivia question.")]
+        [Summary("Adds a trivia question.")]
         public async Task AddTrivia(string question, [Remainder] string answer)
         {
             if (Context.DbGuild.Trivia.Contains(question)) await ErrorAsync("That question already exists.");
@@ -84,7 +84,7 @@ namespace DEA.Modules
 
         [Command("RemoveQuestion")]
         [Require(Attributes.Moderator)]
-        [Summary("Remove a trivia question.")]
+        [Summary("Removes a trivia question.")]
         public async Task RemoveTrivia([Remainder] string question)
         {
             if (!Context.DbGuild.Trivia.Contains(question)) await ErrorAsync($"That quesiton does not exist.");
