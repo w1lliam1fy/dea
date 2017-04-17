@@ -14,7 +14,7 @@ The syntax of the command usage is:
 - [Gambling](#gambling)
 - [Gangs](#gangs)
 - [Crime](#crime)
-- [Trivia] (#trivia)
+- [Trivia](#trivia)
 - [System](#system)
 
 These commands may only be used by the bot owners.
