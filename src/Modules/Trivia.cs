@@ -124,7 +124,7 @@ namespace DEA.Modules
         [Command("TriviaAnswers")]
         [Require(Attributes.Moderator)]
         [Alias("Answers", "Answer", "TriviaAnswer")]
-        [Summary("Sends you a list of all trivia questions.")]
+        [Summary("Sends you a list of all trivia answers.")]
         public async Task TriviaAnswers([Remainder] string question = null)
         {
             if (Context.DbGuild.Trivia.ElementCount == 0)

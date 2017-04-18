@@ -3,7 +3,6 @@ using Discord.Commands;
 using System.Linq;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using DEA;
 using DEA.Common;
 using DEA.Services.Handlers;
 
@@ -13,21 +12,17 @@ namespace System.Modules
     {
         private CommandService _commandService;
         private Credentials _credentials;
-        private Stats _stats;
 
-        public System(CommandService commandService, Credentials credentials, Stats stats)
+        public System(CommandService commandService, Credentials credentials)
         {
             _commandService = commandService;
             _credentials = credentials;
-            _stats = stats;
         }
 
         [Command("Invite")]
         [Summary("Invite DEA to your server!")]
-        public async Task Invite()
-        {
-            await Reply($"Click on the following link to add DEA to your server: <https://discordapp.com/oauth2/authorize?client_id={Context.Guild.CurrentUser.Id}&scope=bot&permissions=410119182>");
-        }
+        public Task Invite()
+            => Reply($"Click on the following link to add DEA to your server: <https://discordapp.com/oauth2/authorize?client_id={Context.Guild.CurrentUser.Id}&scope=bot&permissions=410119182>");
 
         [Command("Information")]
         [Alias("info")]
@@ -56,13 +51,12 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
         [Command("Modules")]
         [Alias("module")]
         [Summary("All command modules.")]
-        public async Task Modules()
+        public Task Modules()
         {
             string modules = string.Empty;
             foreach (var module in _commandService.Modules)
                 modules += $"{module.Name}, ";
-            await Reply("Current command modules: " + modules.Substring(0, modules.Length - 2) + ".");
-            
+            return Reply("Current command modules: " + modules.Substring(0, modules.Length - 2) + ".");
         }
 
         [Command("Help")]
@@ -141,14 +135,14 @@ If you have any other questions, you may join the **Official DEA Discord Server:
             {
                 var uptime = (DateTime.Now - process.StartTime);
                 builder.AddInlineField("Author", "John#0969")
-                .AddInlineField("DB Documents", $"{await _stats.DbDocuments()}")
                 .AddInlineField("Library", $"Discord.Net {DiscordConfig.Version}")
+                .AddInlineField("Shard", "#0/1")
                 .AddInlineField("Servers", $"{Context.Client.Guilds.Count}")
                 .AddInlineField("Channels", $"{Context.Client.Guilds.Sum(g => g.Channels.Count) + Context.Client.DMChannels.Count}")
                 .AddInlineField("Memory", $"{(process.PrivateMemorySize64 / 1000000d).ToString("N2")} MB")
                 .AddInlineField("Uptime", $"Days: {uptime.Days}\nHours: {uptime.Hours}\nMinutes: {uptime.Minutes}")
-                .AddInlineField("Messages", $"{_stats.MessagesRecieved} ({(_stats.MessagesRecieved / uptime.TotalSeconds).ToString("N2")}/sec)")
-                .AddInlineField("Commands Run", $"{_stats.CommandsRun}")
+                .AddInlineField("Messages", $"{Config.MESSAGES} ({(Config.MESSAGES / uptime.TotalSeconds).ToString("N2")}/sec)")
+                .AddInlineField("Commands Run", Config.COMMANDS_RUN)
                 .WithColor(Config.COLORS[new Random().Next(1, Config.COLORS.Length) - 1]);
             }
             

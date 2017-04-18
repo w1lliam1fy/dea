@@ -12,6 +12,7 @@ using Discord.WebSocket;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using System;
+using System.Linq;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -114,7 +115,6 @@ namespace DEA
             map.Add(_users);
             map.Add(_gangs);
             map.Add(_mutes);
-            map.Add(new Stats(_users, _guilds, _gangs, _mutes));
             map.Add(new GuildRepository(_guilds));
             map.Add(new RankingService(map.Get<GuildRepository>()));
             map.Add(new UserRepository(_users, map.Get<RankingService>()));

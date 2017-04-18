@@ -16,7 +16,6 @@ namespace DEA.Services.Handlers
         private CommandService _commandService;
         private ErrorHandler _errorHandler;
         private UserRepository _userRepo;
-        private Stats _stats;
 
         public CommandHandler(CommandService commandService, IDependencyMap map)
         {
@@ -24,7 +23,6 @@ namespace DEA.Services.Handlers
             _commandService = commandService;
             _errorHandler = map.Get<ErrorHandler>();
             _userRepo = map.Get<UserRepository>();
-            _stats = map.Get<Stats>();
             _client = map.Get<DiscordSocketClient>();
             _client.MessageReceived += HandleCommandAsync;
         }
@@ -36,7 +34,7 @@ namespace DEA.Services.Handlers
 
         public async Task HandleCommandAsync(SocketMessage s)
         {
-            _stats.MessagesRecieved++;
+            Config.MESSAGES++;
             var msg = s as SocketUserMessage;
             if (msg == null) return;
 
@@ -59,7 +57,7 @@ namespace DEA.Services.Handlers
                 if (!result.IsSuccess)
                     await _errorHandler.HandleCommandFailureAsync(context, result, argPos);
                 else
-                    _stats.CommandsRun++;
+                    Config.COMMANDS_RUN++;
             }
             else if (msg.Content.Length >= Config.MIN_CHAR_LENGTH)
                 await CashPerMsg.Apply(_userRepo, context);

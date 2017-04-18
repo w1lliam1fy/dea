@@ -3,7 +3,6 @@ using Discord.Commands;
 using System;
 using System.Threading.Tasks;
 using DEA.Database.Repository;
-using DEA.Services;
 using DEA.Common;
 using DEA.Common.Preconditions;
 
@@ -13,10 +12,12 @@ namespace DEA.Modules
     public class Crime : DEAModule
     {
         private UserRepository _userRepo;
+        private GangRepository _gangRepo;
 
-        public Crime(UserRepository userRepo)
+        public Crime(UserRepository userRepo, GangRepository gangRepo)
         {
             _userRepo = userRepo;
+            _gangRepo = gangRepo;
         }
 
         [Command("Whore")]
@@ -103,27 +104,42 @@ namespace DEA.Modules
         [Command("Rob")]
         [Require(Attributes.Rob)]
         [Summary("Lead a large scale operation on a local bank.")]
-        public async Task Rob(decimal resources)
+        public async Task Rob(decimal resources, [Remainder] IGuildUser user)
         {
-            if (Context.Cash < resources) await ErrorAsync($"You do not have enough money. Balance: {Context.Cash.ToString("C", Config.CI)}");
+            if (await _gangRepo.InGangAsync(user))
+                await ErrorAsync("You can't rob this nigga! He in a ***gang***. If you try to rob him, his crew would fuck you up till your dick " +
+                                 "poppin out of your left cheek, ***nigga!*** Why don't you try and `$raid` his gang instead?");
+
             if (resources < Config.MIN_RESOURCES) await ErrorAsync($"The minimum amount of money to spend on resources for a robbery is {Config.MIN_RESOURCES.ToString("C", Config.CI)}.");
-            if (resources > Config.MAX_RESOURCES) await ErrorAsync($"The maximum amount of money to spend on resources for a robbery is {Config.MAX_RESOURCES.ToString("C", Config.CI)}.");
-            await _userRepo.ModifyAsync(Context, x => x.Rob, DateTime.UtcNow);
-            Random rand = new Random();
-            decimal succesRate = rand.Next(Config.MIN_ROB_ODDS * 100, Config.MAX_ROB_ODDS * 100) / 10000m;
-            decimal moneyStolen = resources / (succesRate / 1.50m); 
-            string randomBank = Config.BANKS[rand.Next(1, Config.BANKS.Length) - 1];
-            if (rand.Next(10000) / 10000m >= succesRate)
+            if (Context.Cash < resources) await ErrorAsync($"You don't have enough money. Balance: {Context.Cash.ToString("C", Config.CI)}.");
+
+            var raidedDbUser = await _userRepo.FetchUserAsync(user);
+            if (Math.Round(resources, 2) > Math.Round(raidedDbUser.Cash / 20m, 2))
+                await ErrorAsync($"You are overkilling it. You only need {(raidedDbUser.Cash / 20).ToString("C", Config.CI)} " +
+                      $"to rob 10% of their cash, that is {(raidedDbUser.Cash / 10).ToString("C", Config.CI)}.");
+            var stolen = resources * 2;
+
+            int roll = new Random().Next(1, 101);
+            if (Config.ROB_SUCCESS_ODDS > roll)
             {
-                await _userRepo.EditCashAsync(Context, moneyStolen);
-                await Reply($"With a {succesRate.ToString("P")} chance of success, you successfully stole " +
-                            $"{moneyStolen.ToString("C", Config.CI)} from the {randomBank}. Balance: {(Context.Cash + moneyStolen).ToString("C", Config.CI)}$.");
+                await _userRepo.EditCashAsync(user, Context.DbGuild, raidedDbUser, -stolen);
+                await _userRepo.EditCashAsync(Context, stolen);
+                await _userRepo.ModifyAsync(Context, x => x.Rob, DateTime.UtcNow);
+
+                await DM(user.Id, $"{Context.User} just robbed you and managed to walk away with {stolen.ToString("C", Config.CI)}.");
+
+                await Reply($"With a {Config.ROB_SUCCESS_ODDS}.00% chance of success, you successfully stole {stolen.ToString("C", Config.CI)}. " +
+                            $"Balance: {(Context.Cash + stolen).ToString("C", Config.CI)}.");
             }
             else
             {
-                await _userRepo.EditCashAsync(Context, -resources);
-                await Reply($"With a {succesRate.ToString("P")} chance of success, you failed to steal " +
-                            $"{moneyStolen.ToString("C", Config.CI)} from the {randomBank}, losing all resources in the process. Balance: {(Context.Cash - resources).ToString("C", Config.CI)}.");
+                await _userRepo.EditCashAsync(Context, stolen);
+                await _userRepo.ModifyAsync(Context, x => x.Rob, DateTime.UtcNow);
+
+                await DM(user.Id, $"{Context.User} tried to rob your sweet cash, but the nigga slipped on a banana peel and got arrested :joy: :joy: :joy:.");
+
+                await Reply($"With a {Config.ROB_SUCCESS_ODDS}.00% chance of success, you failed to steal {stolen.ToString("C", Config.CI)} " +
+                            $"and lost all resources in the process.");
             }
         }
 
