@@ -23,9 +23,10 @@ public static class Config
 
     public static readonly int MIN_CHAR_LENGTH = 7, LEADERBOARD_CAP = 10, RATELB_CAP = 10, WHORE_ODDS = 90, JUMP_ODDS = 85, STEAL_ODDS = 80,
         MIN_CHILL = 5, MAX_CHILL = (int)TimeSpan.FromHours(1).TotalSeconds, MIN_CLEAR = 2, MAX_CLEAR = 1000, GANG_NAME_CHAR_LIMIT = 24,
-        GANGSLB_CAP = 10, DEA_CUT = 10, TEMP_MULTIPLIER_RESET_COOLDOWN = (int)TimeSpan.FromHours(1).TotalMilliseconds, 
+        GANGSLB_CAP = 10, DEA_CUT = 10, TEMP_MULTIPLIER_RESET_COOLDOWN = (int)TimeSpan.FromHours(1).TotalMilliseconds,
         INTEREST_RATE_COOLDOWN = (int)TimeSpan.FromHours(1).TotalMilliseconds, AUTO_UNMUTE_COOLDOWN = (int)TimeSpan.FromMinutes(5).
-        TotalMilliseconds, RAID_SUCCESS_ODDS = 65, ROB_SUCCESS_ODDS = 65, AUTO_TRIVIA_COOLDOWN = (int) TimeSpan.FromMinutes(2).TotalMilliseconds;
+        TotalMilliseconds, RAID_SUCCESS_ODDS = 65, ROB_SUCCESS_ODDS = 65, AUTO_TRIVIA_COOLDOWN = (int)TimeSpan.FromMinutes(2).TotalMilliseconds,
+        AUTO_INVITE_COOLDOWN = (int)TimeSpan.FromHours(1).TotalMilliseconds;
 
     public static readonly double DEFAULT_MESSAGE_COOLDOWN = TimeSpan.FromSeconds(30).TotalMilliseconds;
 

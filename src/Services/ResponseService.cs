@@ -1,6 +1,7 @@
 ﻿using DEA.Common;
 using DEA.Database.Models;
 using Discord;
+using Discord.Rest;
 using System;
 using System.Threading.Tasks;
 
@@ -37,7 +38,7 @@ namespace DEA.Services
             await channel.SendMessageAsync(string.Empty, embed: builder);
         }
 
-        public async Task Send(DEAContext context, string description, string title = null, Color color = default(Color))
+        public Task<RestUserMessage> Send(DEAContext context, string description, string title = null, Color color = default(Color))
         {
             var rand = new Random();
             var builder = new EmbedBuilder()
@@ -48,10 +49,10 @@ namespace DEA.Services
             if (title != null) builder.Title = title;
             if (color.RawValue != default(Color).RawValue) builder.Color = color;
 
-            await context.Channel.SendMessageAsync(string.Empty, embed: builder);
+            return context.Channel.SendMessageAsync(string.Empty, embed: builder);
         }
 
-        public async Task Send(IMessageChannel channel, string description, string title = null, Color color = default(Color))
+        public Task<IUserMessage> Send(IMessageChannel channel, string description, string title = null, Color color = default(Color))
         {
             var rand = new Random();
             var builder = new EmbedBuilder()
@@ -62,7 +63,7 @@ namespace DEA.Services
             if (title != null) builder.Title = title;
             if (color.RawValue != default(Color).RawValue) builder.Color = color;
 
-            await channel.SendMessageAsync(string.Empty, embed: builder);
+            return channel.SendMessageAsync(string.Empty, embed: builder);
         }
 
         public Task<string> NameAsync(IGuildUser user, User dbUser)

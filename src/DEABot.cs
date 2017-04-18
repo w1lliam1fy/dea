@@ -12,7 +12,6 @@ using Discord.WebSocket;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using System;
-using System.Linq;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;

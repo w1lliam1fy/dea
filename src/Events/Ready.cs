@@ -25,6 +25,7 @@ namespace DEA.Events
             new ChannelEvents(_map);
             new ApplyIntrestRate(_map);
             new AutoTrivia(_map);
+            new AutoInvite(_map);
             new AutoUnmute(_map);
             new ResetTempMultiplier(_map);
         }
