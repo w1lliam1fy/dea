@@ -39,8 +39,8 @@ namespace DEA.Services.Timers
                 if (perms.SendMessages && perms.EmbedLinks)
                 {
                     var msg = await _responseService.Send(guild.DefaultChannel,
-                       "DEA is a public Discord Bot known for its infamous Nacro's references and spicy memes.\n" +
-                       "To be able to use all owner commands such as `$reset` and `$add`, you may add DEA to your own server.\n" +
+                       "DEA is a public Discord Bot known for its very *spicy* memes.\n\n" +
+                       "To be able to use all **owner commands** such as `$reset` and `$add`, you may add DEA to your own server.\n\n" +
                        $"Click the following link to do so: https://discordapp.com/oauth2/authorize?client_id={guild.CurrentUser.Id}&scope=bot&permissions=410119182");
                     msgsToDelete.Add(msg);
                 }
