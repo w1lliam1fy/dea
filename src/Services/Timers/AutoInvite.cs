@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -31,6 +32,7 @@ namespace DEA.Services.Timers
 
         private async void TimerTask(object stateObj)
         {
+            var msgsToDelete = new List<IUserMessage>();
             foreach (var guild in _client.Guilds)
             {
                 var perms = (guild.CurrentUser as IGuildUser).GetPermissions(guild.DefaultChannel);
@@ -40,10 +42,12 @@ namespace DEA.Services.Timers
                        "DEA is a public Discord Bot known for its infamous Nacro's references and spicy memes.\n" +
                        "To be able to use all owner commands such as `$reset` and `$add`, you may add DEA to your own server.\n" +
                        $"Click the following link to do so: https://discordapp.com/oauth2/authorize?client_id={guild.CurrentUser.Id}&scope=bot&permissions=410119182");
-                    await Task.Delay(120000);
-                    await msg.DeleteAsync();
+                    msgsToDelete.Add(msg);
                 }
             }
+            await Task.Delay(90000);
+            foreach (var msg in msgsToDelete)
+                await msg.DeleteAsync();
         }
     }
 }
