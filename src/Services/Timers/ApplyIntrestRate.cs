@@ -3,6 +3,7 @@ using DEA.Services.Static;
 using Discord.Commands;
 using MongoDB.Driver;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace DEA.Services.Timers
 {
@@ -20,21 +21,24 @@ namespace DEA.Services.Timers
 
             ObjectState StateObj = new ObjectState();
 
-            TimerCallback TimerDelegate = new TimerCallback(TimerTask);
+            TimerCallback TimerDelegate = new TimerCallback(InterestRate);
 
             _timer = new Timer(TimerDelegate, StateObj, 0, Config.INTEREST_RATE_COOLDOWN);
 
             StateObj.TimerReference = _timer;
         }
 
-        private async void TimerTask(object stateObj)
+        private void InterestRate(object stateObj)
         {
-            var builder = Builders<Gang>.Filter;
-            var updateBuilder = Builders<Gang>.Update;
-            foreach (var gang in await(await _gangs.FindAsync(builder.Empty)).ToListAsync())
-                if (gang.Wealth < 10000000000000000000000m)
-                    await _gangs.UpdateOneAsync(y => y.Id == gang.Id,
-                        updateBuilder.Set(x => x.Wealth, InterestRate.Calculate(gang.Wealth) * gang.Wealth + gang.Wealth));
+            Task.Run(async () =>
+            {
+                var builder = Builders<Gang>.Filter;
+                var updateBuilder = Builders<Gang>.Update;
+                foreach (var gang in await (await _gangs.FindAsync(builder.Empty)).ToListAsync())
+                    if (gang.Wealth < 10000000000000000000000m)
+                        await _gangs.UpdateOneAsync(y => y.Id == gang.Id,
+                            updateBuilder.Set(x => x.Wealth, Static.InterestRate.Calculate(gang.Wealth) * gang.Wealth + gang.Wealth));
+            });
         }
     }
 }

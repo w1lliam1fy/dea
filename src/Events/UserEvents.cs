@@ -34,32 +34,29 @@ namespace DEA.Events
             _client.UserUnbanned += HandleUserUnbanned;
         }
 
-        private async Task HandleUserJoin(SocketGuildUser u)
+        private  Task HandleUserJoin(SocketGuildUser u)
         {
-            await _loggingService.DetailedLogAsync(u.Guild, "Event", "User Joined", "User", $"{u}", u.Id, new Color(12, 255, 129), false);
-            var user = u as IGuildUser;
-            var mutedRole = user.Guild.GetRole(((await _guildRepo.FetchGuildAsync(user.Guild.Id)).MutedRoleId));
-            if (mutedRole != null && u.Guild.CurrentUser.GuildPermissions.ManageRoles &&
-                mutedRole.Position < u.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
+            return Task.Run(async () =>
             {
-                await _rankingService.HandleAsync(u.Guild, user, await _guildRepo.FetchGuildAsync(u.Guild.Id), await _userRepo.FetchUserAsync(user));
-                if (await _muteRepo.IsMutedAsync(user.Id, user.Guild.Id) && mutedRole != null && user != null) await user.AddRoleAsync(mutedRole);
-            }
+                await _loggingService.DetailedLogAsync(u.Guild, "Event", "User Joined", "User", $"{u}", u.Id, new Color(12, 255, 129), false);
+                var user = u as IGuildUser;
+                var mutedRole = user.Guild.GetRole(((await _guildRepo.FetchGuildAsync(user.Guild.Id)).MutedRoleId));
+                if (mutedRole != null && u.Guild.CurrentUser.GuildPermissions.ManageRoles &&
+                    mutedRole.Position < u.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
+                {
+                    await _rankingService.HandleAsync(u.Guild, user, await _guildRepo.FetchGuildAsync(u.Guild.Id), await _userRepo.FetchUserAsync(user));
+                    if (await _muteRepo.IsMutedAsync(user.Id, user.Guild.Id) && mutedRole != null && user != null) await user.AddRoleAsync(mutedRole);
+                }
+            });
         }
 
-        private async Task HandleUserBanned(SocketUser u, SocketGuild guild)
-        {
-            await _loggingService.DetailedLogAsync(guild, "Action", "Ban", "User", $"{u}", u.Id, new Color(255, 0, 0));
-        }
+        private Task HandleUserBanned(SocketUser u, SocketGuild guild)
+            => Task.Run(async () => await _loggingService.DetailedLogAsync(guild, "Action", "Ban", "User", $"{u}", u.Id, new Color(255, 0, 0)));
 
-        private async Task HandleUserLeft(SocketGuildUser u)
-        {
-            await _loggingService.DetailedLogAsync(u.Guild, "Event", "User Left", "User", $"{u}", u.Id, new Color(255, 114, 14));
-        }
+        private Task HandleUserLeft(SocketGuildUser u)
+            => Task.Run(async () => await _loggingService.DetailedLogAsync(u.Guild, "Event", "User Left", "User", $"{u}", u.Id, new Color(255, 114, 14)));
 
-        private async Task HandleUserUnbanned(SocketUser u, SocketGuild guild)
-        {
-            await _loggingService.DetailedLogAsync(guild, "Action", "Unban", "User", $"<@{u.Id}>", u.Id, new Color(12, 255, 129));
-        }
+        private Task HandleUserUnbanned(SocketUser u, SocketGuild guild)
+            => Task.Run(async () => await _loggingService.DetailedLogAsync(guild, "Action", "Unban", "User", $"<@{u.Id}>", u.Id, new Color(12, 255, 129)));
     }
 }

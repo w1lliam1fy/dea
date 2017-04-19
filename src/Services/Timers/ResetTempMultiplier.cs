@@ -2,6 +2,7 @@
 using Discord.Commands;
 using MongoDB.Driver;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace DEA.Services.Timers
 {
@@ -19,18 +20,21 @@ namespace DEA.Services.Timers
 
             ObjectState StateObj = new ObjectState();
 
-            TimerCallback TimerDelegate = new TimerCallback(TimerTask);
+            TimerCallback TimerDelegate = new TimerCallback(ResetTempMult);
 
             _timer = new Timer(TimerDelegate, StateObj, 0, Config.TEMP_MULTIPLIER_RESET_COOLDOWN);
 
             StateObj.TimerReference = _timer;
         }
 
-        private async void TimerTask(object stateObj)
+        private void ResetTempMult(object stateObj)
         {
-            var builder = Builders<User>.Filter;
-            var updateBuilder = Builders<User>.Update;
-            await _users.UpdateManyAsync(builder.Empty, updateBuilder.Set(x => x.TemporaryMultiplier, 1));
+            Task.Run(async () =>
+            {
+                var builder = Builders<User>.Filter;
+                var updateBuilder = Builders<User>.Update;
+                await _users.UpdateManyAsync(builder.Empty, updateBuilder.Set(x => x.TemporaryMultiplier, 1));
+            });
         }
     }
 }

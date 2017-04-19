@@ -22,19 +22,13 @@ namespace DEA.Events
             _client.RoleDeleted += HandleRoleDeleted;
         }
 
-        private async Task HandleRoleCreated(SocketRole role)
-        {
-            await _loggingService.DetailedLogAsync(role.Guild, "Action", "Role Creation", "Role", role.Name, role.Id, new Color(12, 255, 129));
-        }
+        private Task HandleRoleCreated(SocketRole role)
+            => Task.Run(async () => await _loggingService.DetailedLogAsync(role.Guild, "Action", "Role Creation", "Role", role.Name, role.Id, new Color(12, 255, 129)));
 
-        private async Task HandleRoleUpdated(SocketRole roleBefore, SocketRole roleAfter)
-        {
-            await _loggingService.DetailedLogAsync(roleAfter.Guild, "Action", "Role Modification", "Role", roleAfter.Name, roleAfter.Id, new Color(12, 255, 129));
-        }
+        private Task HandleRoleUpdated(SocketRole roleBefore, SocketRole roleAfter)
+            => Task.Run(async () => await _loggingService.DetailedLogAsync(roleAfter.Guild, "Action", "Role Modification", "Role", roleAfter.Name, roleAfter.Id, new Color(12, 255, 129)));
 
-        private async Task HandleRoleDeleted(SocketRole role)
-        {
-            await _loggingService.DetailedLogAsync(role.Guild, "Action", "Role Deletion", "Role", role.Name, role.Id, new Color(255, 0, 0));
-        }
+        private Task HandleRoleDeleted(SocketRole role)
+            => Task.Run(async () => await _loggingService.DetailedLogAsync(role.Guild, "Action", "Role Deletion", "Role", role.Name, role.Id, new Color(255, 0, 0)));
     }
 }

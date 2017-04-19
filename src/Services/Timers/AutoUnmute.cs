@@ -7,6 +7,7 @@ using MongoDB.Driver;
 using System;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace DEA.Services.Timers
 {
@@ -30,52 +31,55 @@ namespace DEA.Services.Timers
 
             ObjectState StateObj = new ObjectState();
 
-            TimerCallback TimerDelegate = new TimerCallback(TimerTask);
+            TimerCallback TimerDelegate = new TimerCallback(Unmute);
 
             _timer = new Timer(TimerDelegate, StateObj, 0, Config.AUTO_UNMUTE_COOLDOWN);
 
             StateObj.TimerReference = _timer;
         }
 
-        private async void TimerTask(object stateObj)
+        private void Unmute(object stateObj)
         {
-            var builder = Builders<Mute>.Filter;
-            foreach (var mute in await (await _mutes.FindAsync(builder.Empty)).ToListAsync())
+            Task.Run(async () =>
             {
-                if (DateTime.UtcNow.Subtract(mute.MutedAt).TotalMilliseconds > mute.MuteLength)
+                var builder = Builders<Mute>.Filter;
+                foreach (var mute in await (await _mutes.FindAsync(builder.Empty)).ToListAsync())
                 {
-                    var guild = _client.GetGuild(mute.GuildId);
-                    if (guild != null && guild.GetUser(mute.UserId) != null)
+                    if (DateTime.UtcNow.Subtract(mute.MutedAt).TotalMilliseconds > mute.MuteLength)
                     {
-                        var guildData = await _guildRepo.FetchGuildAsync(guild.Id);
-                        var mutedRole = guild.GetRole(guildData.MutedRoleId);
-                        if (mutedRole != null && guild.GetUser(mute.UserId).Roles.Any(x => x.Id == mutedRole.Id))
+                        var guild = _client.GetGuild(mute.GuildId);
+                        if (guild != null && guild.GetUser(mute.UserId) != null)
                         {
-                            var channel = guild.GetTextChannel(guildData.ModLogId);
-                            if (channel != null && guild.CurrentUser.GuildPermissions.EmbedLinks &&
-                                (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).SendMessages
-                                && (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).EmbedLinks)
+                            var guildData = await _guildRepo.FetchGuildAsync(guild.Id);
+                            var mutedRole = guild.GetRole(guildData.MutedRoleId);
+                            if (mutedRole != null && guild.GetUser(mute.UserId).Roles.Any(x => x.Id == mutedRole.Id))
                             {
-                                await guild.GetUser(mute.UserId).RemoveRoleAsync(mutedRole);
-                                var footer = new EmbedFooterBuilder()
+                                var channel = guild.GetTextChannel(guildData.ModLogId);
+                                if (channel != null && guild.CurrentUser.GuildPermissions.EmbedLinks &&
+                                    (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).SendMessages
+                                    && (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).EmbedLinks)
                                 {
-                                    IconUrl = "http://i.imgur.com/BQZJAqT.png",
-                                    Text = $"Case #{guildData.CaseNumber}"
-                                };
-                                var embedBuilder = new EmbedBuilder()
-                                {
-                                    Color = new Color(12, 255, 129),
-                                    Description = $"**Action:** Automatic Unmute\n**User:** {guild.GetUser(mute.UserId)} ({guild.GetUser(mute.UserId).Id})",
-                                    Footer = footer
-                                }.WithCurrentTimestamp();
-                                await _guildRepo.ModifyAsync(guild.Id, x => x.CaseNumber, ++guildData.CaseNumber);
-                                await channel.SendMessageAsync(string.Empty, embed: embedBuilder);
+                                    await guild.GetUser(mute.UserId).RemoveRoleAsync(mutedRole);
+                                    var footer = new EmbedFooterBuilder()
+                                    {
+                                        IconUrl = "http://i.imgur.com/BQZJAqT.png",
+                                        Text = $"Case #{guildData.CaseNumber}"
+                                    };
+                                    var embedBuilder = new EmbedBuilder()
+                                    {
+                                        Color = new Color(12, 255, 129),
+                                        Description = $"**Action:** Automatic Unmute\n**User:** {guild.GetUser(mute.UserId)} ({guild.GetUser(mute.UserId).Id})",
+                                        Footer = footer
+                                    }.WithCurrentTimestamp();
+                                    await _guildRepo.ModifyAsync(guild.Id, x => x.CaseNumber, ++guildData.CaseNumber);
+                                    await channel.SendMessageAsync(string.Empty, embed: embedBuilder);
+                                }
                             }
                         }
+                        await _muteRepo.RemoveMuteAsync(mute.UserId, mute.GuildId);
                     }
-                    await _muteRepo.RemoveMuteAsync(mute.UserId, mute.GuildId);
                 }
-            }
+            });
         }
     }
 }

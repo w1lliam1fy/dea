@@ -133,7 +133,7 @@ namespace DEA.Modules
             }
             else
             {
-                await _userRepo.EditCashAsync(Context, stolen);
+                await _userRepo.EditCashAsync(Context, -resources);
                 await _userRepo.ModifyAsync(Context, x => x.Rob, DateTime.UtcNow);
 
                 await DM(user.Id, $"{Context.User} tried to rob your sweet cash, but the nigga slipped on a banana peel and got arrested :joy: :joy: :joy:.");

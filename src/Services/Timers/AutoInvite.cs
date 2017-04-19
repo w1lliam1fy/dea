@@ -23,31 +23,34 @@ namespace DEA.Services.Timers
 
             ObjectState StateObj = new ObjectState();
 
-            TimerCallback TimerDelegate = new TimerCallback(TimerTask);
+            TimerCallback TimerDelegate = new TimerCallback(Invite);
 
             _timer = new Timer(TimerDelegate, StateObj, 0, Config.AUTO_INVITE_COOLDOWN);
 
             StateObj.TimerReference = _timer;
         }
 
-        private async void TimerTask(object stateObj)
+        private void Invite(object stateObj)
         {
-            var msgsToDelete = new List<IUserMessage>();
-            foreach (var guild in _client.Guilds)
+            Task.Run(async () =>
             {
-                var perms = (guild.CurrentUser as IGuildUser).GetPermissions(guild.DefaultChannel);
-                if (perms.SendMessages && perms.EmbedLinks)
+                try
                 {
-                    var msg = await _responseService.Send(guild.DefaultChannel,
-                       "DEA is a public Discord Bot known for its very *spicy* memes.\n\n" +
-                       "To be able to use all **owner commands** such as `$reset` and `$add`, you may add DEA to your own server.\n\n" +
-                       $"Click the following link to do so: https://discordapp.com/oauth2/authorize?client_id={guild.CurrentUser.Id}&scope=bot&permissions=410119182");
-                    msgsToDelete.Add(msg);
+                    var msgsToDelete = new List<IUserMessage>();
+                    foreach (var guild in _client.Guilds)
+                    {
+                        var msg = await _responseService.Send(guild.DefaultChannel,
+                               "DEA is a public Discord Bot known for its very *spicy* memes.\n\n" +
+                               "To be able to use all **owner commands** such as `$reset` and `$add`, you may add DEA to your own server.\n\n" +
+                               $"Click the following link to do so: https://discordapp.com/oauth2/authorize?client_id={guild.CurrentUser.Id}&scope=bot&permissions=410119182");
+                        msgsToDelete.Add(msg);
+                    }
+                    await Task.Delay(90000);
+                    foreach (var msg in msgsToDelete)
+                        await msg.DeleteAsync();
                 }
-            }
-            await Task.Delay(90000);
-            foreach (var msg in msgsToDelete)
-                await msg.DeleteAsync();
+                catch { }
+            });
         }
     }
 }
