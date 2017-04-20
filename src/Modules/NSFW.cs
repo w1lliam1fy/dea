@@ -30,11 +30,11 @@ namespace DEA.Modules
             {
                 case true:
                     await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.Nsfw, false);
-                    await Reply($"You have successfully disabled NSFW commands!");
+                    await ReplyAsync($"You have successfully disabled NSFW commands!");
                     break;
                 case false:
                     await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.Nsfw, true);
-                    await Reply($"You have successfully enabled NSFW commands!");
+                    await ReplyAsync($"You have successfully enabled NSFW commands!");
                     break;
             }
         }
@@ -51,7 +51,7 @@ namespace DEA.Modules
                 await nsfwChannel.AddPermissionOverwriteAsync(Context.Guild.EveryoneRole, new OverwritePermissions().Modify(null, null, null, PermValue.Deny));
                 await nsfwChannel.AddPermissionOverwriteAsync(nsfwRole, new OverwritePermissions().Modify(null, null, null, PermValue.Allow));
             }
-            await Reply($"You have successfully set the NSFW channel to {nsfwChannel.Mention}.");
+            await ReplyAsync($"You have successfully set the NSFW channel to {nsfwChannel.Mention}.");
         }
 
         [Command("SetNSFWRole")]
@@ -68,7 +68,7 @@ namespace DEA.Modules
                 await nsfwChannel.AddPermissionOverwriteAsync(Context.Guild.EveryoneRole, new OverwritePermissions().Modify(null, null, null, PermValue.Deny));
                 await nsfwChannel.AddPermissionOverwriteAsync(nsfwRole, new OverwritePermissions().Modify(null, null, null, PermValue.Allow));
             }
-            await Reply($"You have successfully set the NSFW role to {nsfwRole.Mention}.");
+            await ReplyAsync($"You have successfully set the NSFW role to {nsfwRole.Mention}.");
         }
 
         [Command("NSFW")]
@@ -83,12 +83,12 @@ namespace DEA.Modules
             if ((Context.User as IGuildUser).RoleIds.Any(x => x == Context.DbGuild.NsfwRoleId))
             {
                 await (Context.User as IGuildUser).RemoveRoleAsync(NsfwRole);
-                await Reply($"You have successfully disabled your ability to use NSFW commands.");
+                await ReplyAsync($"You have successfully disabled your ability to use NSFW commands.");
             }
             else
             {
                 await (Context.User as IGuildUser).AddRoleAsync(NsfwRole);
-                await Reply($"You have successfully enabled your ability to use NSFW commands.");
+                await ReplyAsync($"You have successfully enabled your ability to use NSFW commands.");
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using DEA.Database.Repository;
+﻿using DEA.Common.Extensions;
+using DEA.Database.Repository;
 using Discord;
 using Discord.Commands;
 using System;
@@ -85,24 +86,24 @@ namespace DEA.Common.Preconditions
                         break;
                     case Attributes.Jump:
                         if (DbUser.Cash < Config.JUMP_REQUIREMENT)
-                            return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.JUMP_REQUIREMENT.ToString("C", Config.CI)}.");
+                            return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.JUMP_REQUIREMENT.USD()}.");
                         break;
                     case Attributes.Steal:
                         if (DbUser.Cash < Config.STEAL_REQUIREMENT)
-                            return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.STEAL_REQUIREMENT.ToString("C", Config.CI)}.");
+                            return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.STEAL_REQUIREMENT.USD()}.");
                         break;
                     
                     case Attributes.Rob:
                         if (DbUser.Cash < Config.ROB_REQUIREMENT)
-                            return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.ROB_REQUIREMENT.ToString("C", Config.CI)}.");
+                            return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.ROB_REQUIREMENT.USD()}.");
                         break;
                     case Attributes.Bully:
                         if (DbUser.Cash < Config.BULLY_REQUIREMENT)
-                            return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.BULLY_REQUIREMENT.ToString("C", Config.CI)}.");
+                            return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.BULLY_REQUIREMENT.USD()}.");
                         break;
                     case Attributes.FiftyX2:
                         if (DbUser.Cash < Config.FIFTYX2_REQUIREMENT)
-                            return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.FIFTYX2_REQUIREMENT.ToString("C", Config.CI)}.");
+                            return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.FIFTYX2_REQUIREMENT.USD()}.");
                         break;
                     default:
                         return PreconditionResult.FromError($"ERROR: The {attribute} attribute is not being handled!");

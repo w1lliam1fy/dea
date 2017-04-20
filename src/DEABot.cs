@@ -71,8 +71,8 @@ namespace DEA
 
         private async Task RunAsync(params string[] args)
         {
-            await Logger.NewLine("===   DEA   ===");
-            await Logger.NewLine();
+            await Logger.NewLineAsync("===   DEA   ===");
+            await Logger.NewLineAsync();
 
             var sw = Stopwatch.StartNew();
             try
@@ -117,11 +117,11 @@ namespace DEA
             map.Add(new GuildRepository(_guilds));
             map.Add(new RankingService(map.Get<GuildRepository>()));
             map.Add(new UserRepository(_users, map.Get<RankingService>()));
-            map.Add(new ResponseService());
-            map.Add(new GamblingService(map.Get<UserRepository>(), map.Get<ResponseService>()));
+            map.Add(new GamblingService(map.Get<UserRepository>()));
             map.Add(new InteractiveService(_client));
-            map.Add(new ErrorHandler(_commandService, map.Get<ResponseService>()));
-            map.Add(new LoggingService(map.Get<GuildRepository>(), map.Get<ResponseService>()));
+            map.Add(new GameService(map.Get<InteractiveService>(), map.Get<UserRepository>()));
+            map.Add(new ErrorHandler(_commandService));
+            map.Add(new LoggingService(map.Get<GuildRepository>()));
             map.Add(new GangRepository(_gangs));
             map.Add(new MuteRepository(_mutes));
         }

@@ -23,17 +23,17 @@ namespace DEA.Common
         public DEAContext(DiscordSocketClient client, SocketUserMessage msg, IDependencyMap map) : base(client, msg)
         {
             _map = map;
-            _userRepo = map.Get<UserRepository>();
-            _guildRepo = map.Get<GuildRepository>();
-            _gangRepo = map.Get<GangRepository>();
+            _userRepo = _map.Get<UserRepository>();
+            _guildRepo = _map.Get<GuildRepository>();
+            _gangRepo = _map.Get<GangRepository>();
         }
 
         public async Task InitializeAsync()
         {
-            DbUser = await _userRepo.FetchUserAsync(User as IGuildUser);
+            DbUser = await _userRepo.FetchUserAsync(this);
             DbGuild = await _guildRepo.FetchGuildAsync(Guild.Id);
             if (await _gangRepo.InGangAsync(User as IGuildUser))
-                Gang = await _gangRepo.FetchGangAsync(User as IGuildUser);
+                Gang = await _gangRepo.FetchGangAsync(this);
             Prefix = DbGuild.Prefix;
             Cash = DbUser.Cash;
         }

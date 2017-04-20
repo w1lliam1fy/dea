@@ -16,11 +16,13 @@ namespace DEA.Modules
     {
         private MuteRepository _muteRepo;
         private LoggingService _loggingService;
+        private ModerationService _moderationService;
 
-        public Moderation(MuteRepository muteRepo, LoggingService loggingService)
+        public Moderation(MuteRepository muteRepo, LoggingService loggingService, ModerationService moderationService)
         {
             _muteRepo = muteRepo;
             _loggingService = loggingService;
+            _moderationService = moderationService;
         }
 
         [Command("Ban")]
@@ -28,11 +30,11 @@ namespace DEA.Modules
         [Summary("Bans a user from the server.")]
         public async Task Ban(IGuildUser userToBan, [Remainder] string reason = "No reason.")
         {
-            if (!await IsHigherModAsync(Context, Context.User as IGuildUser, userToBan)) await ErrorAsync("You cannot ban another mod with a permission level higher or equal to your own!");
-            await InformSubjectAsync(Context.User, "Ban", userToBan, reason);
+            if (!await _moderationService.IsHigherModAsync(Context, Context.User as IGuildUser, userToBan)) await ErrorAsync("You cannot ban another mod with a permission level higher or equal to your own!");
+            await _moderationService.InformSubjectAsync(Context.User, "Ban", userToBan, reason);
             await Context.Guild.AddBanAsync(userToBan);
             await _loggingService.ModLogAsync(Context, "Ban", new Color(255, 0, 0), reason, userToBan);
-            await Send($"{await NameAsync()} has successfully banned {userToBan.Mention}!");
+            await SendAsync($"{Context.User} has successfully banned {userToBan}!");
         }
 
         [Command("Kick")]
@@ -40,11 +42,11 @@ namespace DEA.Modules
         [Summary("Kicks a user from the server.")]
         public async Task Kick(IGuildUser userToKick, [Remainder] string reason = "No reason.")
         {
-            if (await IsModAsync(Context, userToKick)) await ErrorAsync("You cannot kick another mod!");
-            await InformSubjectAsync(Context.User, "Kick", userToKick, reason);
+            if (await _moderationService.IsModAsync(Context, userToKick)) await ErrorAsync("You cannot kick another mod!");
+            await _moderationService.InformSubjectAsync(Context.User, "Kick", userToKick, reason);
             await userToKick.KickAsync();
             await _loggingService.ModLogAsync(Context, "Kick", new Color(255, 114, 14), reason, userToKick);
-            await Send($"{await NameAsync()} has successfully kicked {userToKick.Mention}!");
+            await SendAsync($"{Context.User} has successfully kicked {userToKick}!");
         }
 
         [Command("Mute")]
@@ -55,12 +57,12 @@ namespace DEA.Modules
             var mutedRole = Context.Guild.GetRole(Context.DbGuild.MutedRoleId);
             if (mutedRole == null) await ErrorAsync($"You may not mute users if the muted role is not valid.\nPlease use the " +
                                                        $"`{Context.Prefix}SetMutedRole` command to change that.");
-            if (await IsModAsync(Context, userToMute)) await ErrorAsync("You cannot mute another mod!");
-            await InformSubjectAsync(Context.User, "Mute", userToMute, reason);
+            if (await _moderationService.IsModAsync(Context, userToMute)) await ErrorAsync("You cannot mute another mod!");
+            await _moderationService.InformSubjectAsync(Context.User, "Mute", userToMute, reason);
             await userToMute.AddRoleAsync(mutedRole);
             await _muteRepo.AddMuteAsync(userToMute, TimeSpan.FromDays(365));
             await _loggingService.ModLogAsync(Context, "Mute", new Color(255, 114, 14), reason, userToMute, null);
-            await Send($"{await NameAsync()} has successfully muted {userToMute.Mention}!");
+            await SendAsync($"{Context.User} has successfully muted {userToMute}!");
         }
 
         [Command("CustomMute")]
@@ -75,12 +77,12 @@ namespace DEA.Modules
             var mutedRole = Context.Guild.GetRole(Context.DbGuild.MutedRoleId);
             if (mutedRole == null) await ErrorAsync($"You may not mute users if the muted role is not valid.\nPlease use the " +
                                                        $"{Context.DbGuild.Prefix}SetMutedRole command to change that.");
-            if (await IsModAsync(Context, userToMute)) await ErrorAsync("You cannot mute another mod!");
-            await InformSubjectAsync(Context.User, "Mute", userToMute, reason);
+            if (await _moderationService.IsModAsync(Context, userToMute)) await ErrorAsync("You cannot mute another mod!");
+            await _moderationService.InformSubjectAsync(Context.User, "Mute", userToMute, reason);
             await userToMute.AddRoleAsync(mutedRole);
             await _muteRepo.AddMuteAsync(userToMute, TimeSpan.FromHours(hours));
             await _loggingService.ModLogAsync(Context, "Mute", new Color(255, 114, 14), reason, userToMute, $"\n**Length:** {hours} {time}");
-            await Send($"{await NameAsync()} has successfully muted {userToMute.Mention} for {hours} {time}!");
+            await SendAsync($"{Context.User} has successfully muted {userToMute} for {hours} {time}!");
         }
 
         [Command("Unmute")]
@@ -89,11 +91,11 @@ namespace DEA.Modules
         public async Task Unmute(IGuildUser userToUnmute, [Remainder] string reason = "No reason.")
         {
             if (userToUnmute.RoleIds.All(x => x != Context.DbGuild.MutedRoleId)) await ErrorAsync("You cannot unmute a user who isn't muted.");
-            await InformSubjectAsync(Context.User, "Unmute", userToUnmute, reason);
+            await _moderationService.InformSubjectAsync(Context.User, "Unmute", userToUnmute, reason);
             await userToUnmute.RemoveRoleAsync(Context.Guild.GetRole(Context.DbGuild.MutedRoleId));
             await _muteRepo.RemoveMuteAsync(userToUnmute.Id, userToUnmute.GuildId);
             await _loggingService.ModLogAsync(Context, "Unmute", new Color(12, 255, 129), reason, userToUnmute);
-            await Send($"{await NameAsync()} has successfully unmuted {userToUnmute.Mention}!");
+            await SendAsync($"{Context.User} has successfully unmuted {userToUnmute}!");
         }
 
         [Command("Clear")]
@@ -108,12 +110,13 @@ namespace DEA.Modules
             var messages = await Context.Channel.GetMessagesAsync(quantity).Flatten();
             await Context.Channel.DeleteMessagesAsync(messages);
             await _loggingService.ModLogAsync(Context, "Clear", new Color(34, 59, 255), reason, null, $"\n**Quantity:** {quantity}");
-            var msg = await Reply($"Messages deleted: **{quantity}**.");
+            var msg = await ReplyAsync($"Messages deleted: **{quantity}**.");
             await Task.Delay(2500);
             await msg.DeleteAsync();
         }
 
         [Command("Chill")]
+        [RequireContext(ContextType.Guild)]
         [RequireBotPermission(GuildPermission.Administrator)]
         [Summary("Prevents users from talking in a specific channel for x amount of seconds.")]
         public async Task Chill(int seconds = 30, [Remainder] string reason = "No reason.")
@@ -124,7 +127,7 @@ namespace DEA.Modules
             var perms = channel.GetPermissionOverwrite(Context.Guild.EveryoneRole).Value;
             if (perms.SendMessages == PermValue.Deny) await ErrorAsync("This chat is already chilled.");
             await channel.AddPermissionOverwriteAsync(Context.Guild.EveryoneRole, new OverwritePermissions().Modify(perms.CreateInstantInvite, perms.ManageChannel, perms.AddReactions, perms.ReadMessages, PermValue.Deny));
-            await Reply($"Chat just got cooled down. Won't heat up until at least {seconds} seconds have passed.");
+            await ReplyAsync($"Chat just got cooled down. Won't heat up until at least {seconds} seconds have passed.");
             await Task.Delay(seconds * 1000);
             await channel.AddPermissionOverwriteAsync(Context.Guild.EveryoneRole, new OverwritePermissions().Modify(perms.CreateInstantInvite, perms.ManageChannel, perms.AddReactions, perms.ReadMessages, perms.SendMessages));
             await _loggingService.ModLogAsync(Context, "Chill", new Color(34, 59, 255), reason, null, $"\n**Length:** {seconds} seconds");

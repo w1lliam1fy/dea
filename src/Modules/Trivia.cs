@@ -1,4 +1,5 @@
 ﻿using DEA.Common;
+using DEA.Common.Extensions;
 using DEA.Common.Preconditions;
 using DEA.Database.Repository;
 using DEA.Services;
@@ -34,11 +35,11 @@ namespace DEA.Modules
             {
                 case true:
                     await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.AutoTrivia, false);
-                    await Reply($"You have successfully disabled auto trivia!");
+                    await ReplyAsync($"You have successfully disabled auto trivia!");
                     break;
                 case false:
                     await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.AutoTrivia, true);
-                    await Reply($"You have successfully enabled auto trivia!");
+                    await ReplyAsync($"You have successfully enabled auto trivia!");
                     break;
             }
         }
@@ -53,7 +54,7 @@ namespace DEA.Modules
             var answer = Context.DbGuild.Trivia[question];
             Context.DbGuild.Trivia.SetElement(Context.DbGuild.Trivia.IndexOfName(question), new BsonElement(newQuestion, answer));
             await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.Trivia, Context.DbGuild.Trivia);
-            await Reply($"You have successfully modified the \"{question}\" trivia question.");
+            await ReplyAsync($"You have successfully modified the \"{question}\" trivia question.");
         }
 
         [Command("ModifyAnswer")]
@@ -65,7 +66,7 @@ namespace DEA.Modules
             if (!Config.ALPHANUMERICAL.IsMatch(answer)) await ErrorAsync("Trivia answers may only contain alphanumerical characters.");
             Context.DbGuild.Trivia[question] = answer;
             await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.Trivia, Context.DbGuild.Trivia);
-            await Reply($"You have successfully modified the \"{question}\" trivia question.");
+            await ReplyAsync($"You have successfully modified the \"{question}\" trivia question.");
         }
 
         [Command("AddQuestion")]
@@ -118,7 +119,7 @@ namespace DEA.Modules
             var channel = await Context.User.CreateDMChannelAsync();
             foreach (var message in messages)
                 await channel.SendMessageAsync(message + "```");
-            await Reply("You have been DMed with a list of all the trivia questions!");
+            await ReplyAsync("You have been DMed with a list of all the trivia questions!");
         }
 
         [Command("TriviaAnswers")]
@@ -151,15 +152,15 @@ namespace DEA.Modules
                 foreach (var message in messages)
                     await channel.SendMessageAsync(message + "```");
 
-                await Reply("You have been DMed with a list of all the trivia answers!");
+                await ReplyAsync("You have been DMed with a list of all the trivia answers!");
             }
             else
             {
                 if (!Context.DbGuild.Trivia.Contains(question))
                     await ErrorAsync($"That quesiton does not exist.");
 
-                await DM(channel, $"The answer to that question is: {Context.DbGuild.Trivia[question]}");
-                await Reply("You have been DMed with the answer to that question!");
+                await channel.SendAsync($"The answer to that question is: {Context.DbGuild.Trivia[question]}");
+                await ReplyAsync("You have been DMed with the answer to that question!");
             }
         }
 
@@ -171,18 +172,18 @@ namespace DEA.Modules
             if (Context.DbGuild.Trivia.ElementCount == 0) await ErrorAsync("There are no trivia questions yet!");
             int roll = new Random().Next(0, Context.DbGuild.Trivia.ElementCount);
             var element = Context.DbGuild.Trivia.GetElement(roll);
-            await Send("__**TRIVIA:**__ " + element.Name);
+            await SendAsync("__**TRIVIA:**__ " + element.Name);
             var answer = await _interactiveService.WaitForMessage(Context.Channel, y => y.Content.ToLower() == element.Value.AsString.ToLower() && y.Author.Id != Context.User.Id);
             if (answer != null)
             {
                 var user = answer.Author as IGuildUser;
                 await _userRepo.EditCashAsync(user, Context.DbGuild, await _userRepo.FetchUserAsync(user), Config.TRIVIA_PAYOUT);
-                await Send($"{await NameAsync(user, await _userRepo.FetchUserAsync(user))}, Congrats! You just " +
-                           $"won {Config.TRIVIA_PAYOUT.ToString("C", Config.CI)} for correctly answering \"{element.Value.AsString}\"");
+                await SendAsync($"{user}, Congrats! You just " +
+                           $"won {Config.TRIVIA_PAYOUT.USD()} for correctly answering \"{element.Value.AsString}\"");
             }
             else
             {
-                await Send($"NOBODY got the right answer for the trivia question! Alright, I'll sauce it to you guys, but next time " +
+                await SendAsync($"NOBODY got the right answer for the trivia question! Alright, I'll sauce it to you guys, but next time " +
                            $"you are on your own. The right answer is: \"{element.Value.AsString}\"");
             }
         }

@@ -23,37 +23,14 @@ namespace DEA.Events
         }
 
         private Task HandleChannelCreated(SocketChannel socketChannel)
-            => Task.Run(async () => await DetailedLogsForChannel(socketChannel, "Channel Creation", new Color(12, 255, 129)));
+            => _loggingService.DetailedLogsForChannel(socketChannel, "Channel Creation", new Color(12, 255, 129));
 
         private Task HandleChannelUpdated(SocketChannel socketChannelBefore, SocketChannel socketChannelAfter)
-            => Task.Run(async () => await DetailedLogsForChannel(socketChannelAfter, "Channel Modification", new Color(12, 255, 129)));
+            => _loggingService.DetailedLogsForChannel(socketChannelAfter, "Channel Modification", new Color(12, 255, 129));
 
         private Task HandleChannelDestroyed(SocketChannel socketChannel)
-            => Task.Run(async () => await DetailedLogsForChannel(socketChannel, "Channel Deletion", new Color(255, 0, 0)));
+            => _loggingService.DetailedLogsForChannel(socketChannel, "Channel Deletion", new Color(255, 0, 0));
 
-        private  Task DetailedLogsForChannel(SocketChannel socketChannel, string action, Color color)
-        {
-            return Task.Run(async () =>
-            {
-                if (!(socketChannel is SocketTextChannel) && !(socketChannel is SocketVoiceChannel)) return;
-                string channelType;
-                string channelName;
-                SocketGuild guild;
-                if (socketChannel is SocketTextChannel)
-                {
-                    channelType = "Text Channel";
-                    channelName = (socketChannel as SocketTextChannel).Name;
-                    guild = (socketChannel as SocketTextChannel).Guild;
-                }
-                else
-                {
-                    channelType = "Voice Channel";
-                    channelName = (socketChannel as SocketVoiceChannel).Name;
-                    guild = (socketChannel as SocketVoiceChannel).Guild;
-                }
-                SocketChannel channel = socketChannel as SocketTextChannel;
-                await _loggingService.DetailedLogAsync(guild, "Action", action, channelType, channelName, socketChannel.Id, color);
-            });
-        }
+
     }
 }

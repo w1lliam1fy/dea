@@ -9,6 +9,7 @@ using MongoDB.Driver;
 using System.Collections.Generic;
 using DEA.Services.Handlers;
 using DEA.Common;
+using DEA.Common.Extensions;
 
 namespace DEA.Modules
 {
@@ -36,58 +37,58 @@ namespace DEA.Modules
                 case "line":
                     if (Config.LINE_COST > Context.Cash)
                     {
-                        await Reply($"You do not have enough money. Balance: {Context.Cash.ToString("C", Config.CI)}.");
+                        await ReplyAsync($"You do not have enough money. Balance: {Context.Cash.USD()}.");
                         break;
                     }
                     if (Context.DbUser.MessageCooldown == Config.LINE_COOLDOWN.TotalMilliseconds)
                     {
-                        await Reply($"You have already purchased this investment.");
+                        await ReplyAsync($"You have already purchased this investment.");
                         break;
                     }
                     await _userRepo.EditCashAsync(Context, -Config.LINE_COST);
                     await _userRepo.ModifyAsync(Context, x => x.MessageCooldown, Config.LINE_COOLDOWN.TotalMilliseconds);
-                    await Reply("Don't forget to wipe your nose when you are done with that line.");
+                    await ReplyAsync("Don't forget to wipe your nose when you are done with that line.");
                     break;
                 case "pound":
                 case "lb":
                     if (Config.POUND_COST > Context.Cash)
                     {
-                        await Reply($"You do not have enough money. Balance: {Context.Cash.ToString("C", Config.CI)}.");
+                        await ReplyAsync($"You do not have enough money. Balance: {Context.Cash.USD()}.");
                         break;
                     }
                     if (Context.DbUser.InvestmentMultiplier >= Config.POUND_MULTIPLIER)
                     {
-                        await Reply("You already purchased this investment.");
+                        await ReplyAsync("You already purchased this investment.");
                         break;
                     }
                     await _userRepo.EditCashAsync(Context, -Config.POUND_COST);
                     await _userRepo.ModifyAsync(Context, x => x.InvestmentMultiplier, Config.POUND_MULTIPLIER);
-                    await Reply("***DOUBLE CASH SMACK DAB CENTER NIGGA!***");
+                    await ReplyAsync("***DOUBLE CASH SMACK DAB CENTER NIGGA!***");
                     break;
                 case "kg":
                 case "kilo":
                 case "kilogram":
                     if (Config.KILO_COST > Context.Cash)
                     {
-                        await Reply($"You do not have enough money. Balance: {Context.Cash.ToString("C", Config.CI)}.");
+                        await ReplyAsync($"You do not have enough money. Balance: {Context.Cash.USD()}.");
                         break;
                     }
                     if (Context.DbUser.InvestmentMultiplier != Config.POUND_MULTIPLIER)
                     {
-                        await Reply("You must purchase the pound of cocaine investment before buying this one.");
+                        await ReplyAsync("You must purchase the pound of cocaine investment before buying this one.");
                         break;
                     }
                     if (Context.DbUser.InvestmentMultiplier >= Config.KILO_MULTIPLIER)
                     {
-                        await Reply("You already purchased this investment.");
+                        await ReplyAsync("You already purchased this investment.");
                         break;
                     }
                     await _userRepo.EditCashAsync(Context, -Config.KILO_COST);
                     await _userRepo.ModifyAsync(Context, x => x.InvestmentMultiplier, Config.KILO_MULTIPLIER);
-                    await Reply("Only the black jews would actually enjoy 4$/msg.");
+                    await ReplyAsync("Only the black jews would actually enjoy 4$/msg.");
                     break;
                 default:
-                    await Send($"\n**Cost: {Config.LINE_COST}$** | Command: `{Context.Prefix}investments line` | Description: " +
+                    await SendAsync($"\n**Cost: {Config.LINE_COST}$** | Command: `{Context.Prefix}investments line` | Description: " +
                         $"One line of blow. Seems like nothing, yet it's enough to lower the message cooldown from 30 to 25 seconds." +
                         $"\n**Cost: {Config.POUND_COST}$** | Command: `{Context.Prefix}investments pound` | Description: " +
                         $"This one pound of coke will double the amount of cash you get per message\n**Cost: {Config.KILO_COST}$** | Command: " +
@@ -113,14 +114,14 @@ namespace DEA.Modules
                 if (Context.Guild.GetUser(user.UserId) == null)
                     continue;
 
-                description += $"{position}. <@{user.UserId}>: {user.Cash.ToString("C", Config.CI)}\n";
+                description += $"{position}. <@{user.UserId}>: {user.Cash.USD()}\n";
                 if (position >= Config.LEADERBOARD_CAP) break;
                 position++;
             }
 
             if (description.Length == 0) await ErrorAsync("There is nobody on the leaderboards yet!");
 
-            await Send(description, "The Richest Traffickers");
+            await SendAsync(description, "The Richest Traffickers");
         }
 
         [Command("Rates")]
@@ -152,7 +153,7 @@ namespace DEA.Modules
                 Description = description
             };
 
-            await Send(description, "The Best Chatters");
+            await SendAsync(description, "The Best Chatters");
         }
 
         [Command("Donate")]
@@ -162,12 +163,12 @@ namespace DEA.Modules
         {
             if (user.Id == Context.User.Id) await ErrorAsync("Hey kids! Look at that retard, he is trying to give money to himself!");
             if (money < Config.DONATE_MIN) await ErrorAsync($"Lowest donation is {Config.DONATE_MIN}$.");
-            if (Context.Cash < money) await ErrorAsync($"You do not have enough money. Balance: {Context.Cash.ToString("C", Config.CI)}.");
+            if (Context.Cash < money) await ErrorAsync($"You do not have enough money. Balance: {Context.Cash.USD()}.");
             await _userRepo.EditCashAsync(Context, -money);
             decimal deaMoney = money * Config.DEA_CUT / 100;
             var otherDbUser = await _userRepo.FetchUserAsync(user);
             await _userRepo.EditCashAsync(user, Context.DbGuild, otherDbUser,  money - deaMoney);
-            await Reply($"Successfully donated {(money - deaMoney).ToString("C", Config.CI)} to {await NameAsync(user, otherDbUser)}.\nDEA has taken a {deaMoney.ToString("C", Config.CI)} cut out of this donation. Balance: {(Context.Cash - money).ToString("C", Config.CI)}.");
+            await ReplyAsync($"Successfully donated {(money - deaMoney).USD()} to {user}.\nDEA has taken a {deaMoney.USD()} cut out of this donation. Balance: {(Context.Cash - money).USD()}.");
         }
 
         [Command("Rank")]
@@ -179,11 +180,11 @@ namespace DEA.Modules
             var users = await (await _users.FindAsync(y => y.GuildId == Context.Guild.Id)).ToListAsync();
             var sorted = users.OrderByDescending(x => x.Cash).ToList();
             IRole rank = await _rankingService.FetchRankAsync(Context, dbUser);
-            var description = $"Balance: {dbUser.Cash.ToString("C", Config.CI)}\n" +
+            var description = $"Balance: {dbUser.Cash.USD()}\n" +
                               $"Position: #{sorted.FindIndex(x => x.UserId == user.Id) + 1}\n";
             if (rank != null)
                 description += $"Rank: {rank.Mention}";
-            await Send(description, $"Ranking of {await TitleNameAsync(user, dbUser)}");
+            await SendAsync(description, $"Ranking of {user}");
         }
 
         [Command("Rate")]
@@ -192,11 +193,11 @@ namespace DEA.Modules
         {
             user = user ?? Context.User as IGuildUser;
             var dbUser = await _userRepo.FetchUserAsync(user);
-            await Send($"Cash/msg: {(dbUser.TemporaryMultiplier * dbUser.InvestmentMultiplier).ToString("C", Config.CI)}\n" +
+            await SendAsync($"Cash/msg: {(dbUser.TemporaryMultiplier * dbUser.InvestmentMultiplier).USD()}\n" +
                        $"Chatting multiplier: {dbUser.TemporaryMultiplier.ToString("N2")}\n" +
                        $"Investment multiplier: {dbUser.InvestmentMultiplier.ToString("N2")}\n" +
                        $"Message cooldown: {dbUser.MessageCooldown / 1000} seconds",
-                       $"Rate of {await TitleNameAsync(user, dbUser)}");
+                       $"Rate of {user}");
         }
 
         [Command("Money")]
@@ -206,7 +207,7 @@ namespace DEA.Modules
         {
             user = user ?? Context.User as IGuildUser;
             var dbUser = await _userRepo.FetchUserAsync(user);
-            await Send($"{await NameAsync(user, dbUser)}'s balance: {dbUser.Cash.ToString("C", Config.CI)}.");
+            await SendAsync($"{user}'s balance: {dbUser.Cash.USD()}.");
         }
 
         [Command("Ranks")]
@@ -224,10 +225,10 @@ namespace DEA.Modules
                     await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.RankRoles, Context.DbGuild.RankRoles);
                     continue;
                 }
-                description += $"{rank.Value.AsDouble.ToString("C", Config.CI)}: {role.Mention}\n";
+                description += $"{((decimal)rank.Value.AsDouble).USD()}: {role.Mention}\n";
             }
             if (description.Length > 2048) await ErrorAsync("You have too many ranks to be able to use this command.");
-            await Send(description, "Ranks");
+            await SendAsync(description, "Ranks");
         }
 
         [Command("ModRoles")]
@@ -249,7 +250,7 @@ namespace DEA.Modules
                 description += $"{role.Mention}: {modRole.Value}\n";
             }
             if (description.Length > 2000) await ErrorAsync("You have too many mod roles to be able to use this command.");
-            await Send(description + "\n**Permission Levels:**\n1: Moderator\n2: Administrator\n3: Owner");
+            await SendAsync(description + "\n**Permission Levels:**\n1: Moderator\n2: Administrator\n3: Owner");
         }
 
         [Command("Cooldowns")]
@@ -272,17 +273,7 @@ namespace DEA.Modules
                     description += $"{cooldown.Key}: {cooldown.Value.Hours}:{cooldown.Value.Minutes.ToString("D2")}:{cooldown.Value.Seconds.ToString("D2")}\n";
             if (description.Length == 0) await ErrorAsync("All your commands are available for use!");
 
-            await Send(description, $"All cooldowns for {await TitleNameAsync()}");
-        }
-
-        [Command("Callme")]
-        [Summary("Tell the bot what you want it to call you.")]
-        public async Task Callme([Remainder] string name)
-        {
-            if (name.Length > 32) await ErrorAsync("Your DEA nickname may not be longer than 32 characters.");
-            name = name.Replace("\n", string.Empty).Replace("`", string.Empty);
-            await _userRepo.ModifyAsync(Context, x => x.Name, name);
-            await Send($"How's it going, *{name}*?");
+            await SendAsync(description, $"All cooldowns for {Context.User}");
         }
 
     }

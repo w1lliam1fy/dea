@@ -1,10 +1,10 @@
-﻿using DEA.Database.Models;
+﻿using DEA.Common.Extensions;
+using DEA.Database.Models;
 using DEA.Database.Repository;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using MongoDB.Driver;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,7 +17,7 @@ namespace DEA.Services.Timers
         IMongoCollection<Guild> _guilds;
         DiscordSocketClient _client;
         UserRepository _userRepo;
-        ResponseService _responseService;
+        GameService _gameService;
         InteractiveService _interactiveService;
 
         public AutoTrivia(IDependencyMap map)
@@ -26,8 +26,8 @@ namespace DEA.Services.Timers
             _guilds = _map.Get<IMongoCollection<Guild>>();
             _userRepo = map.Get<UserRepository>();
             _client = map.Get<DiscordSocketClient>();
+            _gameService = map.Get<GameService>();
             _interactiveService = map.Get<InteractiveService>();
-            _responseService = map.Get<ResponseService>();
 
             ObjectState StateObj = new ObjectState();
 
@@ -51,22 +51,11 @@ namespace DEA.Services.Timers
                         var defaultChannel = guild.DefaultChannel;
                         if (guild != null)
                         {
-                            int roll = new Random().Next(0, dbGuild.Trivia.ElementCount);
-                            var element = dbGuild.Trivia.GetElement(roll);
-                            await _responseService.Send(defaultChannel, "__**TRIVIA:**__ " + element.Name);
-                            var answer = await _interactiveService.WaitForMessage(defaultChannel, y => y.Content.ToLower() == element.Value.AsString.ToLower());
-                            if (answer != null)
+                            try
                             {
-                                var user = answer.Author as IGuildUser;
-                                await _userRepo.EditCashAsync(user, dbGuild, await _userRepo.FetchUserAsync(user), Config.TRIVIA_PAYOUT);
-                                await _responseService.Send(defaultChannel, $"{await _responseService.NameAsync(user, await _userRepo.FetchUserAsync(user))}, Congrats! You just " +
-                                           $"won {Config.TRIVIA_PAYOUT.ToString("C", Config.CI)} for correctly answering \"{element.Value.AsString}\"");
+                                await _gameService.Trivia(defaultChannel, dbGuild);
                             }
-                            else
-                            {
-                                await _responseService.Send(defaultChannel, $"NOBODY got the right answer for the trivia question! Alright, I'll sauce it to you guys, but next time " +
-                                           $"you are on your own. The right answer is: \"{element.Value.AsString}\"");
-                            }
+                            catch { }
                         }
                     }
                 }

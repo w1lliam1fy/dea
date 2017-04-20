@@ -8,13 +8,13 @@ namespace DEA.Services.Static
     {
         public static async Task LogAsync(LogSeverity severity, string source, string message)
         {
-            await NewLine($"{DateTime.Now.ToString("hh:mm:ss")} ", ConsoleColor.DarkGray);
-            await Append($"[{severity}] ", ConsoleColor.Red);
-            await Append($"{source}: ", ConsoleColor.DarkGreen);
-            await Append(message, ConsoleColor.White);
+            await NewLineAsync($"{DateTime.Now.ToString("hh:mm:ss")} ", ConsoleColor.DarkGray);
+            await AppendAsync($"[{severity}] ", ConsoleColor.Red);
+            await AppendAsync($"{source}: ", ConsoleColor.DarkGreen);
+            await AppendAsync(message, ConsoleColor.White);
         }
 
-        public static Task NewLine(string text = "", ConsoleColor? foreground = null, ConsoleColor? background = null)
+        public static Task NewLineAsync(string text = "", ConsoleColor? foreground = null, ConsoleColor? background = null)
         {
             if (foreground == null)
                 foreground = ConsoleColor.White;
@@ -27,7 +27,7 @@ namespace DEA.Services.Static
             return Task.CompletedTask;
         }
 
-        private static Task Append(string text, ConsoleColor? foreground = null, ConsoleColor? background = null)
+        private static Task AppendAsync(string text, ConsoleColor? foreground = null, ConsoleColor? background = null)
         {
             if (foreground == null)
                 foreground = ConsoleColor.White;

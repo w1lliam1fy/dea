@@ -1,6 +1,5 @@
 ﻿using Discord;
 using System;
-using System.Globalization;
 using System.Text.RegularExpressions;
 
 public static class Config
@@ -11,11 +10,11 @@ public static class Config
 
     public static readonly Regex ALPHANUMERICAL = new Regex(@"^[a-zA-Z0-9\s]*$"), ANWITHQUESTIONMARK = new Regex(@"^[a-zA-Z0-9\s\?]*$");
 
-    public static readonly CultureInfo CI = new CultureInfo("en-CA");
-
-    public static readonly Color[] COLORS = { new Color(255, 38, 154), new Color(0, 255, 0), new Color(0, 232, 40), new Color(8, 248, 255),
+    private static readonly Color[] COLORS = { new Color(255, 38, 154), new Color(0, 255, 0), new Color(0, 232, 40), new Color(8, 248, 255),
         new Color(242, 38, 255), new Color(255, 28, 142), new Color(104, 255, 34), new Color(255, 190, 17), new Color(41, 84, 255),
         new Color(150, 36, 237), new Color(168, 237, 0)};
+
+    public static Color Color() { return COLORS[new Random().Next(1, COLORS.Length) - 1]; }
 
     public static readonly TimeSpan WHORE_COOLDOWN = TimeSpan.FromHours(2), JUMP_COOLDOWN = TimeSpan.FromHours(4),
         STEAL_COOLDOWN = TimeSpan.FromHours(6), ROB_COOLDOWN = TimeSpan.FromHours(8), WITHDRAW_COOLDOWN = TimeSpan.FromHours(4),

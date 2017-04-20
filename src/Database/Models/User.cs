@@ -15,8 +15,6 @@ namespace DEA.Database.Models
 
         public decimal Cash { get; set; } = 0;
 
-        public string Name { get; set; } = string.Empty;
-
         public decimal InvestmentMultiplier { get; set; } = 1;
 
         public decimal TemporaryMultiplier { get; set; } = 1;

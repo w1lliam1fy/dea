@@ -1,4 +1,5 @@
 ﻿using DEA.Common;
+using DEA.Common.Extensions;
 using DEA.Services.Static;
 using Discord;
 using Discord.Commands;
@@ -15,11 +16,9 @@ namespace DEA.Services.Handlers
     class ErrorHandler
     {
         private CommandService _commandService;
-        private ResponseService _responseService;
 
-        public ErrorHandler(CommandService commandService, ResponseService responseService)
+        public ErrorHandler(CommandService commandService)
         {
-            _responseService = responseService;
             _commandService = commandService;
             _commandService.Log += HandleLog;
         }
@@ -29,13 +28,15 @@ namespace DEA.Services.Handlers
             if (logMessage.Exception is CommandException cmdEx)
             {
                 if (cmdEx.InnerException is DEAException)
-                    await _responseService.Reply(cmdEx.Context as DEAContext, cmdEx.InnerException.Message, null, new Color(255, 0, 0));
+                    await cmdEx.Context.Channel.ReplyAsync(cmdEx.Context.User, cmdEx.InnerException.Message, null, new Color(255, 0, 0));
                 else if (cmdEx.InnerException is HttpException httpEx)
                 {
                     var message = string.Empty;
                     switch (httpEx.DiscordCode)
                     {
                         case null:
+                            message = httpEx.Message;
+                            break;
                         case 50013:
                             message = "DEA does not have permission to do that.";
                             break;
@@ -46,14 +47,14 @@ namespace DEA.Services.Handlers
                             message = httpEx.Message.Remove(0, 39) + ".";
                             break;
                     }
-                    await _responseService.Reply(cmdEx.Context as DEAContext, message, null, new Color(255, 0, 0));
+                    await cmdEx.Context.Channel.ReplyAsync(cmdEx.Context.User, message, null, new Color(255, 0, 0));
                 }
                 else if (cmdEx.InnerException.GetType() != typeof(RateLimitedException))
                 {
                     var message = cmdEx.InnerException.Message;
                     if (cmdEx.InnerException.InnerException != null) message += $"\n**Inner Exception:** {cmdEx.InnerException.InnerException.Message}";
 
-                    await _responseService.Reply(cmdEx.Context as DEAContext, message, null, new Color(255, 0, 0));
+                    await cmdEx.Context.Channel.ReplyAsync(cmdEx.Context.User, message, null, new Color(255, 0, 0));
 
                     if ((await cmdEx.Context.Guild.GetCurrentUserAsync() as IGuildUser).GetPermissions(cmdEx.Context.Channel as SocketTextChannel).AttachFiles)
                         using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(cmdEx.ToString() ?? string.Empty)))
@@ -104,7 +105,7 @@ namespace DEA.Services.Handlers
             }
 
             if (!string.IsNullOrWhiteSpace(message))
-                await _responseService.Reply(context, message, null, new Color(255, 0, 0));
+                await context.Channel.ReplyAsync(context.User, message, null, new Color(255, 0, 0));
         }
 
     }

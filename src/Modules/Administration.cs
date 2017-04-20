@@ -7,6 +7,7 @@ using MongoDB.Bson;
 using DEA.Services;
 using DEA.Common;
 using DEA.Common.Preconditions;
+using DEA.Common.Extensions;
 
 namespace DEA.Modules
 {
@@ -28,8 +29,8 @@ namespace DEA.Modules
             foreach (var role in Context.Guild.Roles)
                 message += $"{role.Name}: {role.Id}\n";
             var channel = await Context.User.CreateDMChannelAsync();
-            await DM(channel, message);
-            await Reply("All Role IDs have been DMed to you!");
+            await channel.SendAsync(message);
+            await ReplyAsync("All Role IDs have been DMed to you!");
         }
 
         [Command("SetPrefix")]
@@ -38,7 +39,7 @@ namespace DEA.Modules
         {
             if (prefix.Length > 3) await ErrorAsync("The maximum character length of a prefix is 3.");
             await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.Prefix, prefix);
-            await Reply($"You have successfully set the prefix to {prefix}!");
+            await ReplyAsync($"You have successfully set the prefix to {prefix}!");
         }
 
         [Command("SetMutedRole")]
@@ -49,7 +50,7 @@ namespace DEA.Modules
             if (mutedRole.Position > Context.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
                 await ErrorAsync($"DEA must be higher in the heigharhy than {mutedRole.Mention}.");
             await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.MutedRoleId, mutedRole.Id);
-            await Reply($"You have successfully set the muted role to {mutedRole.Mention}!");
+            await ReplyAsync($"You have successfully set the muted role to {mutedRole.Mention}!");
         }
 
         [Command("AddRank")]
@@ -74,7 +75,7 @@ namespace DEA.Modules
                 await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.RankRoles, Context.DbGuild.RankRoles);
             }
             
-            await Reply($"You have successfully added the {rankRole.Mention} rank!");
+            await ReplyAsync($"You have successfully added the {rankRole.Mention} rank!");
         }
 
         [Command("RemoveRank")]
@@ -86,7 +87,7 @@ namespace DEA.Modules
                 await ErrorAsync("This role is not a rank role.");
             Context.DbGuild.RankRoles.Remove(rankRole.Id.ToString());
             await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.RankRoles, Context.DbGuild.RankRoles);
-            await Reply($"You have successfully removed the {rankRole.Mention} rank!");
+            await ReplyAsync($"You have successfully removed the {rankRole.Mention} rank!");
         }
 
         [Command("ModifyRank")]
@@ -100,7 +101,7 @@ namespace DEA.Modules
                 await ErrorAsync("There is already a role set to that amount of cash required.");
             Context.DbGuild.RankRoles[rankRole.Id.ToString()] = newCashRequired;
             await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.RankRoles, Context.DbGuild.RankRoles);
-            await Reply($"You have successfully set the cash required for the {rankRole.Mention} rank to {newCashRequired.ToString("C", Config.CI)}.");
+            await ReplyAsync($"You have successfully set the cash required for the {rankRole.Mention} rank to {((decimal)newCashRequired).USD()}.");
         }
 
         [Command("SetModLog")]
@@ -108,7 +109,7 @@ namespace DEA.Modules
         public async Task SetModLogChannel([Remainder] ITextChannel modLogChannel)
         {
             await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.ModLogId, modLogChannel.Id);
-            await Reply($"You have successfully set the moderator log channel to {modLogChannel.Mention}!");
+            await ReplyAsync($"You have successfully set the moderator log channel to {modLogChannel.Mention}!");
         }
 
         [Command("SetDetailedLogs")]
@@ -116,7 +117,7 @@ namespace DEA.Modules
         public async Task SetDetailedLogsChannel([Remainder] ITextChannel detailedLogsChannel)
         {
             await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.DetailedLogsId, detailedLogsChannel.Id);
-            await Reply($"You have successfully set the detailed logs channel to {detailedLogsChannel.Mention}!");
+            await ReplyAsync($"You have successfully set the detailed logs channel to {detailedLogsChannel.Mention}!");
         }
 
         [Command("SetGambleChannel")]
@@ -125,7 +126,7 @@ namespace DEA.Modules
         public async Task SetGambleChannel([Remainder] ITextChannel gambleChannel)
         {
             await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.GambleId, gambleChannel.Id);
-            await Reply($"You have successfully set the gamble channel to {gambleChannel.Mention}!");
+            await ReplyAsync($"You have successfully set the gamble channel to {gambleChannel.Mention}!");
         }
 
     }

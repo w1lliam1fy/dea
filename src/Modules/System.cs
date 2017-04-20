@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using DEA.Common;
 using DEA.Services.Handlers;
+using DEA.Common.Extensions;
 
 namespace System.Modules
 {
@@ -22,7 +23,7 @@ namespace System.Modules
         [Command("Invite")]
         [Summary("Invite DEA to your server!")]
         public Task Invite()
-            => Reply($"Click on the following link to add DEA to your server: https://discordapp.com/oauth2/authorize?client_id={Context.Guild.CurrentUser.Id}&scope=bot&permissions=410119182");
+            => ReplyAsync($"Click on the following link to add DEA to your server: https://discordapp.com/oauth2/authorize?client_id={Context.Guild.CurrentUser.Id}&scope=bot&permissions=410119182");
 
         [Command("Information")]
         [Alias("info")]
@@ -33,19 +34,19 @@ namespace System.Modules
 
             var channel = await Context.User.CreateDMChannelAsync();
 
-            await DM(channel, $@"In order to gain money, you must send a message that is at least {Config.MIN_CHAR_LENGTH} characters in length. There is a 30 second cooldown between each message that will give you cash. However, these rates are not fixed. For every message you send, your chatting multiplier (which increases the amount of money you get per message) is increased by {Context.DbGuild.TempMultiplierIncreaseRate}. This rate is reset every hour.
+            await channel.SendAsync($@"In order to gain money, you must send a message that is at least {Config.MIN_CHAR_LENGTH} characters in length. There is a 30 second cooldown between each message that will give you cash. However, these rates are not fixed. For every message you send, your chatting multiplier (which increases the amount of money you get per message) is increased by {Context.DbGuild.TempMultiplierIncreaseRate}. This rate is reset every hour.
 
 To view your steadily increasing chatting multiplier, you may use the `{p}rate` command, and the `{p}money` command to see your cash grow. This command shows you every single variable taken into consideration for every message you send. If you wish to improve these variables, you may use investments. With the `{p}investments` command, you may pay to have *permanent* changes to your message rates. These will stack with the chatting multiplier.");
 
-            await DM(channel, $@"Another common way of gaining money is by gambling, there are loads of different gambling commands, which can all be viewed with the `{p}help` command. You might be wondering what is the point of all these commands. This is where ranks come in. The full list of ranks may be viewed with the `{p}rank` command. Depending on how much money you have, you will get a certain rank, and mainly, gain access to more commands. As your cash stack grows, so do the quantity commands you can use:
+            await channel.SendAsync($@"Another common way of gaining money is by gambling, there are loads of different gambling commands, which can all be viewed with the `{p}help` command. You might be wondering what is the point of all these commands. This is where ranks come in. The full list of ranks may be viewed with the `{p}rank` command. Depending on how much money you have, you will get a certain rank, and mainly, gain access to more commands. As your cash stack grows, so do the quantity commands you can use:
 
-**{Config.JUMP_REQUIREMENT.ToString("C", Config.CI)}:** `{p}jump`
-**{Config.STEAL_REQUIREMENT.ToString("C", Config.CI)}:** `{p}steal`
-**{Config.ROB_REQUIREMENT.ToString("C", Config.CI)}:** `{p}rob <Resources>`
-**{Config.BULLY_REQUIREMENT.ToString("C", Config.CI)}:** `{p}bully`
-**{Config.FIFTYX2_REQUIREMENT.ToString("C", Config.CI)}:** `{p}50x2 <Bet>`");
+**{Config.JUMP_REQUIREMENT.USD()}:** `{p}jump`
+**{Config.STEAL_REQUIREMENT.USD()}:** `{p}steal`
+**{Config.ROB_REQUIREMENT.USD()}:** `{p}rob <Resources>`
+**{Config.BULLY_REQUIREMENT.USD()}:** `{p}bully`
+**{Config.FIFTYX2_REQUIREMENT.USD()}:** `{p}50x2 <Bet>`");
 
-            await Reply($"Information about the DEA Cash System has been DMed to you!");
+            await ReplyAsync($"Information about the DEA Cash System has been DMed to you!");
         }
 
         [Command("Modules")]
@@ -56,7 +57,7 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
             string modules = string.Empty;
             foreach (var module in _commandService.Modules)
                 modules += $"{module.Name}, ";
-            return Reply("Current command modules: " + modules.Substring(0, modules.Length - 2) + ".");
+            return ReplyAsync("Current command modules: " + modules.Substring(0, modules.Length - 2) + ".");
         }
 
         [Command("Help")]
@@ -92,13 +93,13 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
                         foreach (var alias in cmd.Aliases)
                             if (alias.ToLower() == commandOrModule.ToLower())
                             {
-                                await Send($"**Description:** {cmd.Summary}\n**Usage:** `{Context.Prefix}{CommandHandler.GetUsage(cmd, commandOrModule)}`", CommandHandler.UpperFirstChar(commandOrModule));
+                                await SendAsync($"**Description:** {cmd.Summary}\n**Usage:** `{Context.Prefix}{CommandHandler.GetUsage(cmd, commandOrModule)}`", CommandHandler.UpperFirstChar(commandOrModule));
                                 return;
                             }
                     }
                 }
 
-                await Reply($"This command/module does not exist.");
+                await ReplyAsync($"This command/module does not exist.");
             }
             else
             {
@@ -109,7 +110,7 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
                     modules += $"{module.Name}, ";
                 modules = modules.Replace("DEAModule, ", string.Empty);
 
-                await DM(channel,
+                await channel.SendAsync(
                     $@"DEA is a multi-purpose Discord Bot mainly known for it's infamous Cash System with multiple subtleties referencing to the show Narcos, which inspired the creation of this masterpiece.
 
 For all information about command usage and setup on your Discord Sever, view the documentation: <https://realblazeit.github.io/DEA/>
@@ -121,7 +122,7 @@ In order to **add DEA to your Discord Server**, click the following link: <https
 If you have any other questions, you may join the **Official DEA Discord Server:** <https://discord.gg/Tuptja9>, a server home to infamous meme events such as insanity.",
                     "Welcome to DEA");
 
-                await Reply($"You have been DMed with all the command information!");
+                await ReplyAsync($"You have been DMed with all the command information!");
             }        
         }
 
@@ -143,12 +144,12 @@ If you have any other questions, you may join the **Official DEA Discord Server:
                 .AddInlineField("Uptime", $"Days: {uptime.Days}\nHours: {uptime.Hours}\nMinutes: {uptime.Minutes}")
                 .AddInlineField("Messages", $"{Config.MESSAGES} ({(Config.MESSAGES / uptime.TotalSeconds).ToString("N2")}/sec)")
                 .AddInlineField("Commands Run", Config.COMMANDS_RUN)
-                .WithColor(Config.COLORS[new Random().Next(1, Config.COLORS.Length) - 1]);
+                .WithColor(Config.Color());
             }
             
             var channel = await Context.User.CreateDMChannelAsync();
             await channel.SendMessageAsync(string.Empty, embed: builder);
-            await Reply($"You have been DMed with all the statistics!");
+            await ReplyAsync($"You have been DMed with all the statistics!");
         }
 
     }
