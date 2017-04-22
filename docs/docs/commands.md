@@ -28,7 +28,7 @@ Global|Send a global announcement in the default channel of all servers.|`$Globa
 
 ### Owners
 
-These commands may only be used by a user with the set mod role with a permission leve of 3, or the ownership of the server.
+These commands may only be used by a user with the set mod role with a permission level of 3, or the ownership of the server.
 
 Command | Description | Usage
 ----------------|--------------|-------
@@ -47,7 +47,7 @@ SetRate|Sets the global temporary multiplier increase rate.|`$SetRate <Increase 
 
 ### Administration  
 
-These commands may only be used by a user with the set mod role with a permission leve of 2, the Administrator permission.
+These commands may only be used by a user with the set mod role with a permission level of 2, the Administrator permission.
 
 Command | Description | Usage
 ----------------|--------------|-------
@@ -63,7 +63,7 @@ SetGambleChannel|Sets the gambling channel.|`$SetGambleChannel <#GambleChannel>`
 
 ### Moderation 
 
-These commands may only be used by a user with the set mod role with a permission leve of 1, or the Administrator permission.
+These commands may only be used by a user with the set mod role with a permission level of 1, or the Administrator permission.
 
 Command | Description | Usage
 ----------------|--------------|-------
@@ -135,7 +135,7 @@ RemoveQuestion|Removes a trivia question.|`$RemoveQuestion <Question>`
 ModifyQuestion|Modify a trivia question.|`$ModifyQuestion <Question> <New Question>`
 ModifyAnswer|Modify a trivia answer.|`$ModifyAnswer <Question> <New Answer>`
 TriviaQuestions|Sends you a list of all trivia questions.|`$TriviaQuestions`
-TriviaAnswers|Sends you a list of all trivia questions.|`$TriviaAnswers [Question]`
+TriviaAnswers|Sends you a list of all trivia answers.|`$TriviaAnswers [Question]`
 
 ### System
 Command | Description | Usage

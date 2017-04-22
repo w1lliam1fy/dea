@@ -14,7 +14,7 @@ namespace DEA.Modules
     [Require(Attributes.Admin)]
     public class Administration : DEAModule
     {
-        private GuildRepository _guildRepo;
+        private readonly GuildRepository _guildRepo;
 
         public Administration(GuildRepository guildRepo)
         {

@@ -9,7 +9,7 @@ namespace DEA.Database.Repository
 {
     public class MuteRepository 
     {
-        private IMongoCollection<Mute> _mutes;
+        private readonly IMongoCollection<Mute> _mutes;
 
         public MuteRepository(IMongoCollection<Mute> mutes)
         {

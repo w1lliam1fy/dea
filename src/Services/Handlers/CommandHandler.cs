@@ -11,11 +11,11 @@ namespace DEA.Services.Handlers
 {
     public class CommandHandler
     {
-        private IDependencyMap _map;
-        private DiscordSocketClient _client;
-        private CommandService _commandService;
-        private ErrorHandler _errorHandler;
-        private UserRepository _userRepo;
+        private readonly IDependencyMap _map;
+        private readonly DiscordSocketClient _client;
+        private readonly CommandService _commandService;
+        private readonly ErrorHandler _errorHandler;
+        private readonly UserRepository _userRepo;
 
         public CommandHandler(CommandService commandService, IDependencyMap map)
         {
@@ -53,6 +53,8 @@ namespace DEA.Services.Handlers
             if (msg.HasStringPrefix(context.DbGuild.Prefix, ref argPos) ||
                 msg.HasMentionPrefix(_client.CurrentUser, ref argPos))
             {
+                await Logger.LogAsync(LogSeverity.Debug, $"Guild: {context.Guild}, User: {context.User}", msg.Content);
+
                 var result = await _commandService.ExecuteAsync(context, argPos, _map);
                 if (!result.IsSuccess)
                     await _errorHandler.HandleCommandFailureAsync(context, result, argPos);

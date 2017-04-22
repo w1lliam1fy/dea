@@ -8,7 +8,7 @@ namespace DEA.Modules
 {
     public class Gambling : DEAModule
     {
-        private GamblingService _gamblingService;
+        private readonly GamblingService _gamblingService;
 
         public Gambling(GamblingService gamblingService)
         {

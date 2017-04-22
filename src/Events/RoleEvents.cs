@@ -8,9 +8,9 @@ namespace DEA.Events
 {
     class RoleEvents
     {
-        private IDependencyMap _map;
-        private DiscordSocketClient _client;
-        private LoggingService _loggingService;
+        private readonly IDependencyMap _map;
+        private readonly DiscordSocketClient _client;
+        private readonly LoggingService _loggingService;
 
         public RoleEvents(IDependencyMap map)
         {

@@ -17,17 +17,17 @@ namespace DEA.Modules
     [Require(Attributes.ServerOwner)]
     public class Owners : DEAModule
     {
-        private GuildRepository _guildRepo;
-        private UserRepository _userRepo;
-        private RankingService _rankingService;
-        private IMongoCollection<User> _users;
-        private IMongoCollection<Gang> _gangs;
+        private readonly GuildRepository _guildRepo;
+        private readonly UserRepository _userRepo;
+        private readonly RankHandler _rankHandler;
+        private readonly IMongoCollection<User> _users;
+        private readonly IMongoCollection<Gang> _gangs;
 
-        public Owners(GuildRepository guildRepo, UserRepository userRepo, RankingService rankingService, IMongoCollection<User> users, IMongoCollection<Gang> gangs)
+        public Owners(GuildRepository guildRepo, UserRepository userRepo, RankHandler rankHandler, IMongoCollection<User> users, IMongoCollection<Gang> gangs)
         {
             _guildRepo = guildRepo;
             _userRepo = userRepo;
-            _rankingService = rankingService;
+            _rankHandler = rankHandler;
             _users = users;
             _gangs = gangs;
         }
@@ -38,6 +38,7 @@ namespace DEA.Modules
         {
             user = user ?? Context.User as IGuildUser;
             await _users.DeleteOneAsync(y => y.UserId == user.Id && y.GuildId == user.GuildId);
+            await _rankHandler.HandleAsync(Context.Guild, user, Context.DbGuild, await _userRepo.FetchUserAsync(user));
             await ReplyAsync($"Successfully reset {user}'s data.");
         }
 
@@ -47,8 +48,7 @@ namespace DEA.Modules
         {
             user = user ?? Context.User as IGuildUser;
             await _userRepo.ModifyAsync(user, x => x.Cash, 100000);
-            var dbUser = user.Id == Context.User.Id ? Context.DbUser : await _userRepo.FetchUserAsync(user);
-            await _rankingService.HandleAsync(Context.Guild, user, Context.DbGuild, dbUser);
+            await _rankHandler.HandleAsync(Context.Guild, user, Context.DbGuild, await _userRepo.FetchUserAsync(user));
             await ReplyAsync($"Successfully set {user}'s balance to $100,000.00.");
         }
 

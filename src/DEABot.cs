@@ -20,15 +20,15 @@ namespace DEA
 {
     public class DEABot
     {
-        private DiscordSocketClient _client;
-        private CommandService _commandService;
+        private readonly DiscordSocketClient _client;
+        private readonly CommandService _commandService;
 
-        private Credentials _credentials;
+        private readonly Credentials _credentials;
 
-        private IMongoCollection<Guild> _guilds;
-        private IMongoCollection<User> _users;
-        private IMongoCollection<Gang> _gangs;
-        private IMongoCollection<Mute> _mutes;
+        private readonly IMongoCollection<Guild> _guilds;
+        private readonly IMongoCollection<User> _users;
+        private readonly IMongoCollection<Gang> _gangs;
+        private readonly IMongoCollection<Mute> _mutes;
 
         public DEABot()
         {
@@ -117,8 +117,8 @@ namespace DEA
             map.Add(_gangs);
             map.Add(_mutes);
             map.Add(new GuildRepository(_guilds));
-            map.Add(new RankingService(map.Get<GuildRepository>()));
-            map.Add(new UserRepository(_users, map.Get<RankingService>()));
+            map.Add(new RankHandler(map.Get<GuildRepository>()));
+            map.Add(new UserRepository(_users, map.Get<RankHandler>()));
             map.Add(new GamblingService(map.Get<UserRepository>()));
             map.Add(new InteractiveService(_client));
             map.Add(new GameService(map.Get<InteractiveService>(), map.Get<UserRepository>()));

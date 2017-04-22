@@ -13,13 +13,13 @@ namespace DEA.Database.Repository
 {
     public class UserRepository
     {
-        private IMongoCollection<User> _users;
-        private RankingService _rankingService;
+        private readonly IMongoCollection<User> _users;
+        private readonly RankHandler _rankHandler;
 
-        public UserRepository(IMongoCollection<User> users, RankingService rankingService)
+        public UserRepository(IMongoCollection<User> users, RankHandler rankHandler)
         {
             _users = users;
-            _rankingService = rankingService;
+            _rankHandler = rankHandler;
         }
 
         public async Task<User> FetchUserAsync(DEAContext context)
@@ -91,14 +91,14 @@ namespace DEA.Database.Repository
         public async Task EditCashAsync(DEAContext context, decimal change)
         {
             await ModifyAsync(context, x => x.Cash, Math.Round(context.Cash + change, 2));
-            await _rankingService.HandleAsync(context.Guild, context.User as IGuildUser, context.DbGuild, context.DbUser);
+            await _rankHandler.HandleAsync(context.Guild, context.User as IGuildUser, context.DbGuild, context.DbUser);
         }
 
         public async Task EditCashAsync(IGuildUser user, Guild dbGuild, User dbUser, decimal change)
         {
             var cash = (await FetchUserAsync(user)).Cash;
             await ModifyAsync(user, x => x.Cash, Math.Round(cash + change, 2));
-            await _rankingService.HandleAsync(user.Guild, user, dbGuild, dbUser);
+            await _rankHandler.HandleAsync(user.Guild, user, dbGuild, dbUser);
         }
 
     }

@@ -9,10 +9,10 @@ namespace DEA.Services.Timers
 {
     class ApplyIntrestRate
     {
-        private IDependencyMap _map;
-        private IMongoCollection<Gang> _gangs;
+        private readonly IDependencyMap _map;
+        private readonly IMongoCollection<Gang> _gangs;
 
-        private Timer _timer;
+        private readonly Timer _timer;
 
         public ApplyIntrestRate(IDependencyMap map)
         {

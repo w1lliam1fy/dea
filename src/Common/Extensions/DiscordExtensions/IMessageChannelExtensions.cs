@@ -32,9 +32,9 @@ namespace DEA.Common.Extensions.DiscordExtensions
             return channel.SendMessageAsync(string.Empty, embed: builder);
         }
 
-        public static async Task SendCode(this IMessageChannel channel, IEnumerable<string> elements)
+        public static async Task SendCodeAsync(this IMessageChannel channel, IReadOnlyCollection<string> elements, string title = "")
         {
-            List<string> messages = new List<string>() { "```" };
+            List<string> messages = new List<string>() { $"```{title}\n\n" };
             int messageCount = 0;
 
             foreach (var element in elements)
@@ -49,7 +49,6 @@ namespace DEA.Common.Extensions.DiscordExtensions
 
             foreach (var message in messages)
                 await channel.SendMessageAsync(message + "```");
-
         }
 
     }

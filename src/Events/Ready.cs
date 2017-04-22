@@ -7,8 +7,8 @@ namespace DEA.Events
 {
     class Ready
     {
-        private IDependencyMap _map;
-        private DiscordSocketClient _client;
+        private readonly IDependencyMap _map;
+        private readonly DiscordSocketClient _client;
 
         public Ready(IDependencyMap map)
         {

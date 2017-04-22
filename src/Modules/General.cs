@@ -15,16 +15,16 @@ namespace DEA.Modules
 {
     public class General : DEAModule
     {
-        private UserRepository _userRepo;
-        private GuildRepository _guildRepo;
-        private RankingService _rankingService;
-        private IMongoCollection<User> _users;
+        private readonly UserRepository _userRepo;
+        private readonly GuildRepository _guildRepo;
+        private readonly RankHandler _rankHandler;
+        private readonly IMongoCollection<User> _users;
 
-        public General(UserRepository userRepo, GuildRepository guildRepo, RankingService rankingService, IMongoCollection<User> users)
+        public General(UserRepository userRepo, GuildRepository guildRepo, RankHandler rankHandler, IMongoCollection<User> users)
         {
             _userRepo = userRepo;
             _guildRepo = guildRepo;
-            _rankingService = rankingService;
+            _rankHandler = rankHandler;
             _users = users;
         }
 
@@ -179,7 +179,7 @@ namespace DEA.Modules
             var dbUser = await _userRepo.FetchUserAsync(user);
             var users = await (await _users.FindAsync(y => y.GuildId == Context.Guild.Id)).ToListAsync();
             var sorted = users.OrderByDescending(x => x.Cash).ToList();
-            IRole rank = await _rankingService.FetchRankAsync(Context, dbUser);
+            IRole rank = await _rankHandler.FetchRankAsync(Context, dbUser);
             var description = $"Balance: {dbUser.Cash.USD()}\n" +
                               $"Position: #{sorted.FindIndex(x => x.UserId == user.Id) + 1}\n";
             if (rank != null)

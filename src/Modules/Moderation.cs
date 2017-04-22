@@ -14,9 +14,9 @@ namespace DEA.Modules
     [Require(Attributes.Moderator)]
     public class Moderation : DEAModule
     {
-        private MuteRepository _muteRepo;
-        private LoggingService _loggingService;
-        private ModerationService _moderationService;
+        private readonly MuteRepository _muteRepo;
+        private readonly LoggingService _loggingService;
+        private readonly ModerationService _moderationService;
 
         public Moderation(MuteRepository muteRepo, LoggingService loggingService, ModerationService moderationService)
         {
@@ -116,7 +116,6 @@ namespace DEA.Modules
         }
 
         [Command("Chill")]
-        [RequireContext(ContextType.Guild)]
         [RequireBotPermission(GuildPermission.Administrator)]
         [Summary("Prevents users from talking in a specific channel for x amount of seconds.")]
         public async Task Chill(int seconds = 30, [Remainder] string reason = "No reason.")
@@ -124,7 +123,12 @@ namespace DEA.Modules
             if (seconds < Config.MIN_CHILL) await ErrorAsync($"You may not chill for less than {Config.MIN_CHILL} seconds.");
             if (seconds > Config.MAX_CHILL) await ErrorAsync("You may not chill for more than one hour.");
             var channel = Context.Channel as SocketTextChannel;
-            var perms = channel.GetPermissionOverwrite(Context.Guild.EveryoneRole).Value;
+            var nullablePermOverwrites = channel.GetPermissionOverwrite(Context.Guild.EveryoneRole);
+            OverwritePermissions perms;
+            if (nullablePermOverwrites == null)
+                perms = new OverwritePermissions(PermValue.Inherit, PermValue.Inherit, PermValue.Inherit, PermValue.Inherit, PermValue.Inherit);
+            else
+                perms = nullablePermOverwrites.Value;
             if (perms.SendMessages == PermValue.Deny) await ErrorAsync("This chat is already chilled.");
             await channel.AddPermissionOverwriteAsync(Context.Guild.EveryoneRole, new OverwritePermissions().Modify(perms.CreateInstantInvite, perms.ManageChannel, perms.AddReactions, perms.ReadMessages, PermValue.Deny));
             await ReplyAsync($"Chat just got cooled down. Won't heat up until at least {seconds} seconds have passed.");

@@ -8,10 +8,10 @@ namespace DEA.Services.Timers
 {
     class ResetTempMultiplier
     {
-        private IDependencyMap _map;
-        private IMongoCollection<User> _users;
+        private readonly IDependencyMap _map;
+        private readonly IMongoCollection<User> _users;
 
-        private Timer _timer;
+        private readonly Timer _timer;
 
         public ResetTempMultiplier(IDependencyMap map)
         {

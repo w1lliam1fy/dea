@@ -14,7 +14,7 @@ namespace DEA.Modules
 {
     public class NSFW : DEAModule
     {
-        private GuildRepository _guildRepo;
+        private readonly GuildRepository _guildRepo;
 
         public NSFW(GuildRepository guildRepo)
         {

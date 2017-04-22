@@ -10,7 +10,7 @@ namespace DEA.Services
 {
     public class LoggingService
     {
-        private GuildRepository _guildRepo;
+        private readonly GuildRepository _guildRepo;
 
         public LoggingService(GuildRepository guildRepo)
         {

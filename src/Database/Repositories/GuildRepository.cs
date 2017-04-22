@@ -10,7 +10,7 @@ namespace DEA.Database.Repository
 {
     public class GuildRepository
     {
-        private IMongoCollection<Guild> _guilds;
+        private readonly IMongoCollection<Guild> _guilds;
 
         public GuildRepository(IMongoCollection<Guild> guilds)
         {

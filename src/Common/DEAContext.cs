@@ -15,10 +15,10 @@ namespace DEA.Common
         public string Prefix { get; private set; }
         public decimal Cash { get; private set; }
 
-        private IDependencyMap _map;
-        private UserRepository _userRepo;
-        private GuildRepository _guildRepo;
-        private GangRepository _gangRepo;
+        private readonly IDependencyMap _map;
+        private readonly UserRepository _userRepo;
+        private readonly GuildRepository _guildRepo;
+        private readonly GangRepository _gangRepo;
 
         public DEAContext(DiscordSocketClient client, SocketUserMessage msg, IDependencyMap map) : base(client, msg)
         {

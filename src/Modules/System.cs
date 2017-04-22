@@ -4,7 +4,6 @@ using System.Linq;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using DEA.Common;
-using DEA.Services.Handlers;
 using DEA.Common.Extensions;
 using DEA.Common.Extensions.DiscordExtensions;
 
@@ -12,8 +11,8 @@ namespace System.Modules
 {
     public class System : DEAModule
     {
-        private CommandService _commandService;
-        private Credentials _credentials;
+        private readonly CommandService _commandService;
+        private readonly Credentials _credentials;
 
         public System(CommandService commandService, Credentials credentials)
         {

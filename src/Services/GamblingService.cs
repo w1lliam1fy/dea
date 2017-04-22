@@ -9,7 +9,7 @@ namespace DEA.Services
 {
     public class GamblingService
     {
-        private UserRepository _userRepo;
+        private readonly UserRepository _userRepo;
 
         public GamblingService(UserRepository userRepo)
         {

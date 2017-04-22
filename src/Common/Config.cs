@@ -25,7 +25,7 @@ public static class Config
         GANGSLB_CAP = 10, DEA_CUT = 10, TEMP_MULTIPLIER_RESET_COOLDOWN = (int)TimeSpan.FromHours(1).TotalMilliseconds,
         INTEREST_RATE_COOLDOWN = (int)TimeSpan.FromHours(1).TotalMilliseconds, AUTO_UNMUTE_COOLDOWN = (int)TimeSpan.FromMinutes(5).
         TotalMilliseconds, RAID_SUCCESS_ODDS = 65, ROB_SUCCESS_ODDS = 65, AUTO_TRIVIA_COOLDOWN = (int)TimeSpan.FromMinutes(2).TotalMilliseconds,
-        AUTO_INVITE_COOLDOWN = (int)TimeSpan.FromHours(1).TotalMilliseconds;
+        AUTO_INVITE_COOLDOWN = (int)TimeSpan.FromHours(1).TotalMilliseconds, TRIVIA_PAYOUT_MIN = 25, TRIVIA_PAYOUT_MAX = 150;
 
     public static readonly double DEFAULT_MESSAGE_COOLDOWN = TimeSpan.FromSeconds(30).TotalMilliseconds;
 
@@ -33,8 +33,7 @@ public static class Config
         RESET_REWARD = 10000, MAX_WHORE = 100, MIN_WHORE = 50, WHORE_FINE = 200, MAX_JUMP = 250, JUMP_FINE = 500, MIN_JUMP = 100,
         MAX_STEAL = 500, MIN_STEAL = 250, STEAL_FINE = 1000, MAX_RESOURCES = 1000, MIN_RESOURCES = 25, DONATE_MIN = 5, BET_MIN = 5,
         GANG_CREATION_COST = 1000, GANG_NAME_CHANGE_COST = 250, WITHDRAW_CAP = 0.20m, MIN_WITHDRAW = 50, MIN_DEPOSIT = 50,
-        JUMP_REQUIREMENT = 500, STEAL_REQUIREMENT = 2500, ROB_REQUIREMENT = 5000, BULLY_REQUIREMENT = 10000, FIFTYX2_REQUIREMENT = 25000,
-        TRIVIA_PAYOUT = 100;
+        JUMP_REQUIREMENT = 500, STEAL_REQUIREMENT = 2500, ROB_REQUIREMENT = 5000, BULLY_REQUIREMENT = 10000, FIFTYX2_REQUIREMENT = 25000;
 
     public static readonly string[] BANKS = { "Bank of America", "Wells Fargo Bank", "JPMorgan Chase Bank", "Capital One Bank",
         "RBC Bank", "USAA Bank", "Union Bank", "Morgan Stanley Bank" }, STORES = { "7-Eleven", "Speedway", "Couche-Tard", "QuikTrip",

@@ -13,13 +13,13 @@ namespace DEA.Services.Timers
 {
     class AutoUnmute
     {
-        private IDependencyMap _map;
-        private DiscordSocketClient _client;
-        private IMongoCollection<Mute> _mutes;
-        private GuildRepository _guildRepo;
-        private MuteRepository _muteRepo;
+        private readonly IDependencyMap _map;
+        private readonly DiscordSocketClient _client;
+        private readonly IMongoCollection<Mute> _mutes;
+        private readonly GuildRepository _guildRepo;
+        private readonly MuteRepository _muteRepo;
 
-        private Timer _timer;
+        private readonly Timer _timer;
 
         public AutoUnmute(IDependencyMap map)
         {

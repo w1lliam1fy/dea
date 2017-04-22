@@ -16,15 +16,17 @@ namespace DEA.Modules
 {
     public class Trivia : DEAModule
     {
-        private GuildRepository _guildRepo;
-        private UserRepository _userRepo;
-        private InteractiveService _interactiveService;
+        private readonly GuildRepository _guildRepo;
+        private readonly UserRepository _userRepo;
+        private readonly InteractiveService _interactiveService;
+        private readonly GameService _gameService;
 
-        public Trivia(GuildRepository guildRepo, UserRepository userRepo, InteractiveService interactiveService)
+        public Trivia(GuildRepository guildRepo, UserRepository userRepo, InteractiveService interactiveService, GameService gameService)
         {
             _guildRepo = guildRepo;
             _userRepo = userRepo;
             _interactiveService = interactiveService;
+            _gameService = gameService;
         }
 
         [Command("ChangeAutoTriviaSettings")]
@@ -112,7 +114,7 @@ namespace DEA.Modules
 
             var channel = await Context.User.CreateDMChannelAsync();
 
-            await channel.SendCode(elements);
+            await channel.SendCodeAsync(elements, "Trivia Questions");
 
             await ReplyAsync("You have been DMed with a list of all the trivia questions!");
         }
@@ -138,7 +140,7 @@ namespace DEA.Modules
 
                 var dmChannel = await Context.User.CreateDMChannelAsync();
 
-                await dmChannel.SendCode(elements);
+                await dmChannel.SendCodeAsync(elements, "Trivia Answers");
 
                 await ReplyAsync("You have been DMed with a list of all the trivia answers!");
             }
@@ -155,26 +157,8 @@ namespace DEA.Modules
         [Command("Trivia")]
         [Require(Attributes.Moderator)]
         [Summary("Randomly select a trivia question to be asked, and reward whoever answers it correctly.")]
-        public async Task TriviaCmd()
-        {
-            if (Context.DbGuild.Trivia.ElementCount == 0) await ErrorAsync("There are no trivia questions yet!");
-            int roll = new Random().Next(0, Context.DbGuild.Trivia.ElementCount);
-            var element = Context.DbGuild.Trivia.GetElement(roll);
-            await SendAsync("__**TRIVIA:**__ " + element.Name);
-            var answer = await _interactiveService.WaitForMessage(Context.Channel, y => y.Content.ToLower() == element.Value.AsString.ToLower() && y.Author.Id != Context.User.Id);
-            if (answer != null)
-            {
-                var user = answer.Author as IGuildUser;
-                await _userRepo.EditCashAsync(user, Context.DbGuild, await _userRepo.FetchUserAsync(user), Config.TRIVIA_PAYOUT);
-                await SendAsync($"{user}, Congrats! You just " +
-                           $"won {Config.TRIVIA_PAYOUT.USD()} for correctly answering \"{element.Value.AsString}\"");
-            }
-            else
-            {
-                await SendAsync($"NOBODY got the right answer for the trivia question! Alright, I'll sauce it to you guys, but next time " +
-                           $"you are on your own. The right answer is: \"{element.Value.AsString}\"");
-            }
-        }
+        public Task TriviaCmd()
+            => _gameService.Trivia(Context.Channel, Context.DbGuild);
         
     }
 }

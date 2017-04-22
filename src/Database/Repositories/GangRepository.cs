@@ -13,7 +13,7 @@ namespace DEA.Database.Repository
 {
     public class GangRepository
     {
-        private IMongoCollection<Gang> _gangs;
+        private readonly IMongoCollection<Gang> _gangs;
 
         public GangRepository(IMongoCollection<Gang> gangs)
         {

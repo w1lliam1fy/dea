@@ -16,7 +16,7 @@ namespace DEA.Services.Handlers
 {
     class ErrorHandler
     {
-        private CommandService _commandService;
+        private readonly CommandService _commandService;
 
         public ErrorHandler(CommandService commandService)
         {

@@ -9,7 +9,7 @@ namespace DEA.Services
 {
     public class InteractiveService
     {
-        private DiscordSocketClient _client;
+        private readonly DiscordSocketClient _client;
 
         public InteractiveService(DiscordSocketClient client)
         {

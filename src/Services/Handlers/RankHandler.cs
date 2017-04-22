@@ -4,36 +4,35 @@ using DEA.Database.Repository;
 using Discord;
 using Discord.WebSocket;
 using MongoDB.Driver;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace DEA.Services.Handlers
 {
-    public class RankingService
+    public class RankHandler
     {
-        private GuildRepository _guildRepo;
+        private readonly GuildRepository _guildRepo;
 
-        public RankingService(GuildRepository guildRepo)
+        public RankHandler(GuildRepository guildRepo)
         {
             _guildRepo = guildRepo;
         }
 
         public async Task HandleAsync(IGuild guild, IGuildUser user, Guild dbGuild, User dbUser)
         {
-            var currentUser = await guild.GetCurrentUserAsync() as SocketGuildUser;
-            if (!currentUser.GuildPermissions.ManageRoles) return;
-
-            decimal cash = dbUser.Cash;
-
-            List<IRole> rolesToAdd = new List<IRole>();
-            List<IRole> rolesToRemove = new List<IRole>();
-
-            var highestRolePosition = currentUser.Roles.OrderByDescending(x => x.Position).First().Position;
-
             if (dbGuild.RankRoles.ElementCount != 0)
             {
+                var currentUser = await guild.GetCurrentUserAsync() as SocketGuildUser;
+                if (!currentUser.GuildPermissions.ManageRoles) return;
+
+                decimal cash = dbUser.Cash;
+
+                List<IRole> rolesToAdd = new List<IRole>();
+                List<IRole> rolesToRemove = new List<IRole>();
+
+                var highestRolePosition = currentUser.Roles.OrderByDescending(x => x.Position).First().Position;
+
                 //CHECKS IF THE ROLE EXISTS AND IF IT IS LOWER THAN THE BOT'S HIGHEST ROLE
                 foreach (var rankRole in dbGuild.RankRoles)
                 {
@@ -47,10 +46,10 @@ namespace DEA.Services.Handlers
                     }
                 }
 
-                if (rolesToAdd.Count >= 1)
-                    await user.AddRolesAsync(rolesToAdd);
-                else if (rolesToRemove.Count >= 1)
-                    await user.RemoveRolesAsync(rolesToRemove);
+                foreach (var role in rolesToAdd)
+                    await user.AddRoleAsync(role);
+                foreach (var role in rolesToRemove)
+                    await user.RemoveRoleAsync(role);
             }
         }
 

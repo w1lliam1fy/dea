@@ -17,10 +17,10 @@ namespace DEA.Modules
 {
     public class Gangs : DEAModule
     {
-        private GangRepository _gangRepo;
-        private UserRepository _userRepo;
-        private InteractiveService _interactiveService;
-        private IMongoCollection<Gang> _gangs;
+        private readonly GangRepository _gangRepo;
+        private readonly UserRepository _userRepo;
+        private readonly InteractiveService _interactiveService;
+        private readonly IMongoCollection<Gang> _gangs;
 
         public Gangs(GangRepository gangRepo, UserRepository userRepo, InteractiveService interactiveService, IMongoCollection<Gang> gangs)
         {
@@ -56,7 +56,7 @@ namespace DEA.Modules
             {
                 var leaderDM = await leader.CreateDMChannelAsync();
                 var key = new Random().Next();
-                await leaderDM.SendMessageAsync($"{Context.User} has requested to join your gang. Please respond with \"{key}\" within 5 minutes to add this user to your gang.");
+                await leaderDM.SendAsync($"{Context.User} has requested to join your gang. Please respond with \"{key}\" within 5 minutes to add this user to your gang.");
                 var answer = await _interactiveService.WaitForMessage(leaderDM, x => x.Content == key.ToString(), TimeSpan.FromMinutes(5));
                 if (answer != null)
                 {

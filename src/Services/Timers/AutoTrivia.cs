@@ -1,7 +1,5 @@
-﻿using DEA.Common.Extensions;
-using DEA.Database.Models;
+﻿using DEA.Database.Models;
 using DEA.Database.Repository;
-using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using MongoDB.Driver;
@@ -11,14 +9,15 @@ using System.Threading.Tasks;
 namespace DEA.Services.Timers
 {
     class AutoTrivia
-    {
-        private Timer _timer;
-        IDependencyMap _map;
-        IMongoCollection<Guild> _guilds;
-        DiscordSocketClient _client;
-        UserRepository _userRepo;
-        GameService _gameService;
-        InteractiveService _interactiveService;
+    { 
+        private readonly IDependencyMap _map;
+        private readonly IMongoCollection<Guild> _guilds;
+        private readonly DiscordSocketClient _client;
+        private readonly UserRepository _userRepo;
+        private readonly GameService _gameService;
+        private readonly InteractiveService _interactiveService;
+
+        private readonly Timer _timer;
 
         public AutoTrivia(IDependencyMap map)
         {

@@ -11,13 +11,13 @@ namespace DEA.Events
 {
     class UserEvents
     {
-        private IDependencyMap _map;
-        private DiscordSocketClient _client;
-        private LoggingService _loggingService;
-        private UserRepository _userRepo;
-        private GuildRepository _guildRepo;
-        private MuteRepository _muteRepo;
-        private RankingService _rankingService;
+        private readonly IDependencyMap _map;
+        private readonly DiscordSocketClient _client;
+        private readonly LoggingService _loggingService;
+        private readonly UserRepository _userRepo;
+        private readonly GuildRepository _guildRepo;
+        private readonly MuteRepository _muteRepo;
+        private readonly RankHandler _rankHandler;
 
         public UserEvents(IDependencyMap map)
         {
@@ -26,7 +26,7 @@ namespace DEA.Events
             _userRepo = _map.Get<UserRepository>();
             _guildRepo = map.Get<GuildRepository>();
             _muteRepo = map.Get<MuteRepository>();
-            _rankingService = map.Get<RankingService>();
+            _rankHandler = map.Get<RankHandler>();
             _client = _map.Get<DiscordSocketClient>();
             _client.UserJoined += HandleUserJoin;
             _client.UserBanned += HandleUserBanned;
@@ -43,7 +43,7 @@ namespace DEA.Events
                 if (mutedRole != null && u.Guild.CurrentUser.GuildPermissions.ManageRoles &&
                     mutedRole.Position < u.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
                 {
-                    await _rankingService.HandleAsync(u.Guild, user, await _guildRepo.FetchGuildAsync(u.Guild.Id), await _userRepo.FetchUserAsync(user));
+                    await _rankHandler.HandleAsync(u.Guild, user, await _guildRepo.FetchGuildAsync(u.Guild.Id), await _userRepo.FetchUserAsync(user));
                     if (await _muteRepo.IsMutedAsync(user.Id, user.Guild.Id) && mutedRole != null && user != null) await user.AddRoleAsync(mutedRole);
                 }
             });

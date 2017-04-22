@@ -13,9 +13,9 @@ namespace DEA.Modules
     [RequireCooldown]
     public class Crime : DEAModule
     {
-        private UserRepository _userRepo;
-        private GangRepository _gangRepo;
-        private ModerationService _moderationService;
+        private readonly UserRepository _userRepo;
+        private readonly GangRepository _gangRepo;
+        private readonly ModerationService _moderationService;
 
         public Crime(UserRepository userRepo, GangRepository gangRepo, ModerationService moderationService)
         {
