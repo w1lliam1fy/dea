@@ -34,5 +34,6 @@ namespace DEA.Database.Models
         public DateTime Rob { get; set; } = DateTime.UtcNow.AddYears(-1);
 
         public DateTime Steal { get; set; } = DateTime.UtcNow.AddYears(-1);
+
     }
 }

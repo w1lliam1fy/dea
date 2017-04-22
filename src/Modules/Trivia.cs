@@ -1,5 +1,6 @@
 ﻿using DEA.Common;
 using DEA.Common.Extensions;
+using DEA.Common.Extensions.DiscordExtensions;
 using DEA.Common.Preconditions;
 using DEA.Database.Repository;
 using DEA.Services;
@@ -7,6 +8,7 @@ using Discord;
 using Discord.Commands;
 using MongoDB.Bson;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -102,23 +104,16 @@ namespace DEA.Modules
             if (Context.DbGuild.Trivia.ElementCount == 0)
                 await ErrorAsync("There are no trivia questions yet!");
 
-            List<string> messages = new List<string>() { "```" };
-            int questionCount = 1;
-            int messageCount = 0;
+            List<string> elements = new List<string>();
+            var triviaElements = Context.DbGuild.Trivia.Elements.ToList();
 
-            foreach (var question in Context.DbGuild.Trivia.Names)
-            {
-                if (messages[messageCount].Length > 1850)
-                {
-                    messageCount++;
-                    messages.Add("```");
-                }
-                messages[messageCount] += $"{questionCount++}. {question}\n";
-            }
+            for (int i = 1; i < triviaElements.Count -1; i++)
+                elements.Add($"{i}. {triviaElements[i].Name}\n");
 
             var channel = await Context.User.CreateDMChannelAsync();
-            foreach (var message in messages)
-                await channel.SendMessageAsync(message + "```");
+
+            await channel.SendCode(elements);
+
             await ReplyAsync("You have been DMed with a list of all the trivia questions!");
         }
 
@@ -135,22 +130,15 @@ namespace DEA.Modules
 
             if (question == null)
             {
-                List<string> messages = new List<string>() { "```" };
-                int questionCount = 1;
-                int messageCount = 0;
+                List<string> elements = new List<string>();
+                var triviaElements = Context.DbGuild.Trivia.Elements.ToList();
 
-                foreach (var element in Context.DbGuild.Trivia.Elements)
-                {
-                    if (messages[messageCount].Length > 1850)
-                    {
-                        messageCount++;
-                        messages.Add("```");
-                    }
-                    messages[messageCount] += $"{questionCount++}. {element.Name} | {element.Value}\n";
-                }
+                for (int i = 1; i < triviaElements.Count -1; i++)
+                    elements.Add($"{i}. {triviaElements[i].Name} | {triviaElements[i].Value}\n");
 
-                foreach (var message in messages)
-                    await channel.SendMessageAsync(message + "```");
+                var dmChannel = await Context.User.CreateDMChannelAsync();
+
+                await dmChannel.SendCode(elements);
 
                 await ReplyAsync("You have been DMed with a list of all the trivia answers!");
             }

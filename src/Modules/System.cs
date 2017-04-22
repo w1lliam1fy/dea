@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using DEA.Common;
 using DEA.Services.Handlers;
 using DEA.Common.Extensions;
+using DEA.Common.Extensions.DiscordExtensions;
 
 namespace System.Modules
 {
@@ -93,7 +94,7 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
                         foreach (var alias in cmd.Aliases)
                             if (alias.ToLower() == commandOrModule.ToLower())
                             {
-                                await SendAsync($"**Description:** {cmd.Summary}\n**Usage:** `{Context.Prefix}{CommandHandler.GetUsage(cmd, commandOrModule)}`", CommandHandler.UpperFirstChar(commandOrModule));
+                                await SendAsync($"**Description:** {cmd.Summary}\n**Usage:** `{Context.Prefix}{commandOrModule.UpperFirstChar()}{cmd.GetUsage()}`", commandOrModule.UpperFirstChar());
                                 return;
                             }
                     }

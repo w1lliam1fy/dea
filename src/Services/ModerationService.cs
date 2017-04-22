@@ -1,6 +1,5 @@
 ﻿using DEA.Common;
-using DEA.Common.Extensions;
-using DEA.Services.Static;
+using DEA.Common.Extensions.DiscordExtensions;
 using Discord;
 using System.Linq;
 using System.Threading.Tasks;

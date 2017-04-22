@@ -1,7 +1,6 @@
 ﻿using DEA.Common;
-using DEA.Common.Extensions;
+using DEA.Common.Extensions.DiscordExtensions;
 using DEA.Database.Repository;
-using DEA.Services.Static;
 using Discord;
 using Discord.WebSocket;
 using System;

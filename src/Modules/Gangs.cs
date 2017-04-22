@@ -11,6 +11,7 @@ using DEA.Common;
 using DEA.Common.Preconditions;
 using DEA.Services.Static;
 using DEA.Common.Extensions;
+using DEA.Common.Extensions.DiscordExtensions;
 
 namespace DEA.Modules
 {

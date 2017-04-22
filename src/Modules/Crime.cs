@@ -6,7 +6,6 @@ using DEA.Database.Repository;
 using DEA.Common;
 using DEA.Common.Preconditions;
 using DEA.Services;
-using DEA.Services.Static;
 using DEA.Common.Extensions;
 
 namespace DEA.Modules

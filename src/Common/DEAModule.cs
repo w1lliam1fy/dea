@@ -1,4 +1,4 @@
-﻿using DEA.Common.Extensions;
+﻿using DEA.Common.Extensions.DiscordExtensions;
 using Discord;
 using Discord.Commands;
 using System.Threading.Tasks;

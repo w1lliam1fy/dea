@@ -1,5 +1,6 @@
 ﻿using DEA.Common;
 using DEA.Common.Extensions;
+using DEA.Common.Extensions.DiscordExtensions;
 using DEA.Database.Repository;
 using System;
 using System.Threading.Tasks;

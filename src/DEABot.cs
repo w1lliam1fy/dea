@@ -67,6 +67,8 @@ namespace DEA
             _users = database.GetCollection<User>("users");
             _gangs = database.GetCollection<Gang>("gangs");
             _mutes = database.GetCollection<Mute>("mutes");
+
+            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Unset("Name"));
         }
 
         private async Task RunAsync(params string[] args)

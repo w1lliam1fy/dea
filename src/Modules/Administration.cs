@@ -4,10 +4,10 @@ using System.Threading.Tasks;
 using DEA.Database.Repository;
 using System.Linq;
 using MongoDB.Bson;
-using DEA.Services;
 using DEA.Common;
 using DEA.Common.Preconditions;
 using DEA.Common.Extensions;
+using DEA.Common.Extensions.DiscordExtensions;
 
 namespace DEA.Modules
 {

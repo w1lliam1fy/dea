@@ -1,5 +1,6 @@
 ﻿using DEA.Common;
 using DEA.Common.Extensions;
+using DEA.Common.Extensions.DiscordExtensions;
 using DEA.Services.Static;
 using Discord;
 using Discord.Commands;
@@ -35,7 +36,7 @@ namespace DEA.Services.Handlers
                     switch (httpEx.DiscordCode)
                     {
                         case null:
-                            message = httpEx.Message;
+                            message = "Something went wrong.";
                             break;
                         case 50013:
                             message = "DEA does not have permission to do that.";
@@ -78,13 +79,13 @@ namespace DEA.Services.Handlers
                         foreach (var alias in command.Aliases)
                         {
                             if (LevenshteinDistance.Compute(commandName, alias) == 1)
-                                message = $"Did you mean `{context.DbGuild.Prefix}{CommandHandler.UpperFirstChar(alias)}`?";
+                                message = $"Did you mean `{context.DbGuild.Prefix}{alias.UpperFirstChar()}`?";
                         }
                     }
                     break;
                 case CommandError.BadArgCount:
                     var cmd = _commandService.Search(context, argPos).Commands.First().Command;
-                    message = $"You are incorrectly using this command. Usage: `{context.DbGuild.Prefix}{CommandHandler.GetUsage(cmd, commandName)}`";
+                    message = $"You are incorrectly using this command. Usage: `{context.DbGuild.Prefix}{commandName.UpperFirstChar()}{cmd.GetUsage()}`";
                     break;
                 case CommandError.ParseFailed:
                     message = $"Invalid number.";
