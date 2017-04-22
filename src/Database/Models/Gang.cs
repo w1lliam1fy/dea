@@ -5,8 +5,15 @@ using System;
 namespace DEA.Database.Models
 {
 
-    public class Gang
+    public partial class Gang
     {
+        public Gang(ulong leaderId, ulong guildId, string name)
+        {
+            LeaderId = leaderId;
+            GuildId = guildId;
+            Name = name;
+        }
+
         [BsonId]
         public ObjectId Id { get; set; }
 

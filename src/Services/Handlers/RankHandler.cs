@@ -1,6 +1,7 @@
 ﻿using DEA.Common;
 using DEA.Database.Models;
-using DEA.Database.Repository;
+using DEA.Database.Repositories;
+using DEA.Services.Static;
 using Discord;
 using Discord.WebSocket;
 using MongoDB.Driver;
@@ -21,6 +22,7 @@ namespace DEA.Services.Handlers
 
         public async Task HandleAsync(IGuild guild, IGuildUser user, Guild dbGuild, User dbUser)
         {
+            await Logger.LogAsync(LogSeverity.Debug, $"Guild: {guild}, User: {user}", "Rank Handling");
             if (dbGuild.RankRoles.ElementCount != 0)
             {
                 var currentUser = await guild.GetCurrentUserAsync() as SocketGuildUser;

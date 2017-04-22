@@ -6,6 +6,11 @@ namespace DEA.Database.Models
     
     public partial class Guild
     {
+        public Guild(ulong id)
+        {
+            Id = id;
+        }
+
         [BsonId]
         public ulong Id { get; set; }
 

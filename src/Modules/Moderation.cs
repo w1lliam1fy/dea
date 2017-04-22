@@ -1,4 +1,4 @@
-﻿using DEA.Database.Repository;
+﻿using DEA.Database.Repositories;
 using Discord;
 using System;
 using Discord.Commands;

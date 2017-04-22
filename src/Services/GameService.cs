@@ -2,7 +2,7 @@
 using DEA.Common.Extensions;
 using DEA.Common.Extensions.DiscordExtensions;
 using DEA.Database.Models;
-using DEA.Database.Repository;
+using DEA.Database.Repositories;
 using Discord;
 using System;
 using System.Linq;
@@ -36,7 +36,9 @@ namespace DEA.Services
             Expression<Func<IUserMessage, bool>> correctResponse = y => y.Content.ToLower() == answer;
             if (!answer.Any(char.IsDigit))
             {
-                if (answer.Length >= 5 && answer.Length < 10)
+                if (answer.Length < 5)
+                    correctResponse = y => y.Content.ToLower() == answer;
+                else if (answer.Length >= 5 && answer.Length < 10)
                     correctResponse = y => LevenshteinDistance.Compute(y.Content, element.Value.AsString) <= 1;
                 else if (answer.Length < 20)
                     correctResponse = y => LevenshteinDistance.Compute(y.Content, element.Value.AsString) <= 2;

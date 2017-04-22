@@ -1,5 +1,5 @@
 ﻿using DEA.Database.Models;
-using DEA.Database.Repository;
+using DEA.Database.Repositories;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;

@@ -1,5 +1,6 @@
 ﻿using DEA.Database.Models;
-using DEA.Database.Repository;
+using DEA.Database.Repositories;
+using DEA.Services.Static;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
@@ -33,7 +34,7 @@ namespace DEA.Services.Timers
 
             TimerCallback TimerDelegate = new TimerCallback(Unmute);
 
-            _timer = new Timer(TimerDelegate, StateObj, 0, Config.AUTO_UNMUTE_COOLDOWN);
+            _timer = new Timer(TimerDelegate, StateObj, 400, Config.AUTO_UNMUTE_COOLDOWN);
 
             StateObj.TimerReference = _timer;
         }
@@ -42,6 +43,7 @@ namespace DEA.Services.Timers
         {
             Task.Run(async () =>
             {
+                await Logger.LogAsync(LogSeverity.Debug, $"Timers", "Auto Unmute");
                 var builder = Builders<Mute>.Filter;
                 foreach (var mute in await (await _mutes.FindAsync(builder.Empty)).ToListAsync())
                 {

@@ -1,11 +1,12 @@
 ﻿using DEA.Services;
-using DEA.Database.Repository;
+using DEA.Database.Repositories;
 using Discord;
 using Discord.WebSocket;
 using System.Linq;
 using System.Threading.Tasks;
 using DEA.Services.Handlers;
 using Discord.Commands;
+using DEA.Services.Static;
 
 namespace DEA.Events
 {
@@ -37,6 +38,7 @@ namespace DEA.Events
         private Task HandleUserJoin(SocketGuildUser u)
             => Task.Run(async () =>
             {
+                await Logger.LogAsync(LogSeverity.Debug, $"Guild: {u.Guild}, User: {u}", "Event - User Joined");
                 await _loggingService.DetailedLogAsync(u.Guild, "Event", "User Joined", "User", $"{u}", u.Id, new Color(12, 255, 129), false);
                 var user = u as IGuildUser;
                 var dbGuild = await _guildRepo.FetchGuildAsync(user.Guild.Id);

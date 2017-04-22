@@ -1,4 +1,6 @@
 ﻿using DEA.Database.Models;
+using DEA.Services.Static;
+using Discord;
 using Discord.Commands;
 using MongoDB.Driver;
 using System.Threading;
@@ -22,7 +24,7 @@ namespace DEA.Services.Timers
 
             TimerCallback TimerDelegate = new TimerCallback(ResetTempMult);
 
-            _timer = new Timer(TimerDelegate, StateObj, 0, Config.TEMP_MULTIPLIER_RESET_COOLDOWN);
+            _timer = new Timer(TimerDelegate, StateObj, 600, Config.TEMP_MULTIPLIER_RESET_COOLDOWN);
 
             StateObj.TimerReference = _timer;
         }
@@ -31,6 +33,7 @@ namespace DEA.Services.Timers
         {
             Task.Run(async () =>
             {
+                await Logger.LogAsync(LogSeverity.Debug, $"Timers", "Reset Temporary Multiplier");
                 var builder = Builders<User>.Filter;
                 var updateBuilder = Builders<User>.Update;
                 await _users.UpdateManyAsync(builder.Empty, updateBuilder.Set(x => x.TemporaryMultiplier, 1));

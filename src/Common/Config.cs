@@ -25,9 +25,11 @@ public static class Config
         GANGSLB_CAP = 10, DEA_CUT = 10, TEMP_MULTIPLIER_RESET_COOLDOWN = (int)TimeSpan.FromHours(1).TotalMilliseconds,
         INTEREST_RATE_COOLDOWN = (int)TimeSpan.FromHours(1).TotalMilliseconds, AUTO_UNMUTE_COOLDOWN = (int)TimeSpan.FromMinutes(5).
         TotalMilliseconds, RAID_SUCCESS_ODDS = 65, ROB_SUCCESS_ODDS = 65, AUTO_TRIVIA_COOLDOWN = (int)TimeSpan.FromMinutes(2).TotalMilliseconds,
-        AUTO_INVITE_COOLDOWN = (int)TimeSpan.FromHours(1).TotalMilliseconds, TRIVIA_PAYOUT_MIN = 25, TRIVIA_PAYOUT_MAX = 150;
+        AUTO_INVITE_COOLDOWN = (int)TimeSpan.FromHours(1).TotalMilliseconds, TRIVIA_PAYOUT_MIN = 25, TRIVIA_PAYOUT_MAX = 150,
+        MAX_POLL_SIZE = 100;
 
-    public static readonly double DEFAULT_MESSAGE_COOLDOWN = TimeSpan.FromSeconds(30).TotalMilliseconds;
+    public static readonly double DEFAULT_MESSAGE_COOLDOWN = TimeSpan.FromSeconds(30).TotalMilliseconds, DEFAULT_POLL_LENGTH = TimeSpan.
+        FromDays(1).TotalMilliseconds, MAX_POLL_LENGTH = TimeSpan.FromDays(7).TotalMilliseconds;
 
     public static readonly decimal LINE_COST = 250, POUND_COST = 1000, KILO_COST = 2500, POUND_MULTIPLIER = 2, KILO_MULTIPLIER = 4,
         RESET_REWARD = 10000, MAX_WHORE = 100, MIN_WHORE = 50, WHORE_FINE = 200, MAX_JUMP = 250, JUMP_FINE = 500, MIN_JUMP = 100,

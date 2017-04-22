@@ -4,8 +4,15 @@ using System;
 
 namespace DEA.Database.Models
 {
-    public class Mute
+    public partial class Mute
     {
+        public Mute(ulong userId, ulong guildId, double muteLength)
+        {
+            UserId = userId;
+            GuildId = guildId;
+            MuteLength = muteLength;
+        }
+
         [BsonId]
         public ObjectId Id { get; set; }
 

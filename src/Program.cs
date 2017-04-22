@@ -1,6 +1,6 @@
 ﻿using DEA.Common;
 using DEA.Database.Models;
-using DEA.Database.Repository;
+using DEA.Database.Repositories;
 using DEA.Events;
 using DEA.Services;
 using DEA.Services.Handlers;
@@ -20,8 +20,8 @@ namespace DEA
 {
     internal class Program
     {
-        private static void Main() =>
-            new Program().RunAsync().GetAwaiter().GetResult();
+        private static void Main()
+            => new Program().RunAsync().GetAwaiter().GetResult();
 
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commandService;
@@ -31,6 +31,7 @@ namespace DEA
         private readonly IMongoCollection<Guild> _guilds;
         private readonly IMongoCollection<User> _users;
         private readonly IMongoCollection<Gang> _gangs;
+        private readonly IMongoCollection<Poll> _polls;
         private readonly IMongoCollection<Mute> _mutes;
 
         public Program()
@@ -69,6 +70,7 @@ namespace DEA
             _guilds = database.GetCollection<Guild>("guilds");
             _users = database.GetCollection<User>("users");
             _gangs = database.GetCollection<Gang>("gangs");
+            _polls = database.GetCollection<Poll>("polls");
             _mutes = database.GetCollection<Mute>("mutes");
         }
 
@@ -112,7 +114,9 @@ namespace DEA
             map.Add(_guilds);
             map.Add(_users);
             map.Add(_gangs);
+            map.Add(_polls);
             map.Add(_mutes);
+            map.Add(new PollRepository(_polls));
             map.Add(new GuildRepository(_guilds));
             map.Add(new RankHandler(map.Get<GuildRepository>()));
             map.Add(new UserRepository(_users, map.Get<RankHandler>()));

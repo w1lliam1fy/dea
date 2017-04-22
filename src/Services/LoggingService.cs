@@ -1,6 +1,7 @@
 ﻿using DEA.Common;
 using DEA.Common.Extensions.DiscordExtensions;
-using DEA.Database.Repository;
+using DEA.Database.Repositories;
+using DEA.Services.Static;
 using Discord;
 using Discord.WebSocket;
 using System;
@@ -52,6 +53,7 @@ namespace DEA.Services
         public Task DetailedLogAsync(SocketGuild guild, string actionType, string action, string objectType, string objectName, ulong id, Color color, bool incrementCaseNumber = true)
             => Task.Run(async () =>
             {
+                await Logger.LogAsync(LogSeverity.Debug, $"Guild: {guild}", action);
                 var dbGuild = await _guildRepo.FetchGuildAsync(guild.Id);
                 var channel = guild.GetTextChannel(dbGuild.DetailedLogsId);
                 if (channel != null)

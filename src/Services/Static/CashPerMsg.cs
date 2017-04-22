@@ -1,5 +1,5 @@
 ﻿using DEA.Common;
-using DEA.Database.Repository;
+using DEA.Database.Repositories;
 using System;
 using System.Threading.Tasks;
 

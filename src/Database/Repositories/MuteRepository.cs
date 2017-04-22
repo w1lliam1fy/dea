@@ -5,7 +5,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DEA.Database.Repository
+namespace DEA.Database.Repositories
 {
     public class MuteRepository 
     {
@@ -17,24 +17,13 @@ namespace DEA.Database.Repository
         }
 
         public Task AddMuteAsync(IGuildUser user, TimeSpan muteLength)
-        {
-            return _mutes.InsertOneAsync(new Mute()
-            {
-                UserId = user.Id,
-                GuildId = user.GuildId,
-                MuteLength = muteLength.TotalMilliseconds
-            }, null, default(CancellationToken));
-        }
+            => _mutes.InsertOneAsync(new Mute(user.Id, user.GuildId, muteLength.TotalMilliseconds), null, default(CancellationToken));
 
         public async Task<bool> IsMutedAsync(ulong userId, ulong guildId)
-        {
-            return await (await _mutes.FindAsync(y => y.UserId == userId && y.GuildId == guildId)).AnyAsync();
-        }
+            => await (await _mutes.FindAsync(y => y.UserId == userId && y.GuildId == guildId)).AnyAsync();
 
         public Task RemoveMuteAsync(ulong userId, ulong guildId)
-        {
-            return _mutes.DeleteOneAsync(y => y.UserId == userId && y.GuildId == guildId);
-        }
+            => _mutes.DeleteOneAsync(y => y.UserId == userId && y.GuildId == guildId);
 
     }
 }

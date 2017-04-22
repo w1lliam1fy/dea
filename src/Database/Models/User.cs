@@ -6,6 +6,12 @@ namespace DEA.Database.Models
 {
     public partial class User
     {
+        public User(ulong userId, ulong guildId)
+        {
+            UserId = userId;
+            GuildId = guildId;
+        }
+
         [BsonId]
         public ObjectId Id { get; set; }
 

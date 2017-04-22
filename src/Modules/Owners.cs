@@ -2,7 +2,7 @@
 using Discord.Commands;
 using System.Linq;
 using System.Threading.Tasks;
-using DEA.Database.Repository;
+using DEA.Database.Repositories;
 using MongoDB.Driver;
 using MongoDB.Bson;
 using DEA.Services.Handlers;

@@ -1,5 +1,7 @@
 ﻿using DEA.Database.Models;
-using DEA.Database.Repository;
+using DEA.Database.Repositories;
+using DEA.Services.Static;
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using MongoDB.Driver;
@@ -32,7 +34,7 @@ namespace DEA.Services.Timers
 
             TimerCallback TimerDelegate = new TimerCallback(Trivia);
 
-            _timer = new Timer(TimerDelegate, StateObj, 0, Config.AUTO_TRIVIA_COOLDOWN);
+            _timer = new Timer(TimerDelegate, StateObj, 200, Config.AUTO_TRIVIA_COOLDOWN);
 
             StateObj.TimerReference = _timer;
         }
@@ -41,15 +43,16 @@ namespace DEA.Services.Timers
         {
             Task.Run(async () =>
             {
+                await Logger.LogAsync(LogSeverity.Debug, $"Timers", "Auto Trivia");
                 var builder = Builders<Guild>.Filter;
                 foreach (var dbGuild in await (await _guilds.FindAsync(builder.Empty)).ToListAsync())
                 {
                     if (dbGuild.AutoTrivia)
                     {
                         var guild = _client.GetGuild(dbGuild.Id);
-                        var defaultChannel = guild.DefaultChannel;
                         if (guild != null)
                         {
+                            var defaultChannel = guild.DefaultChannel;
                             try
                             {
                                 await _gameService.Trivia(defaultChannel, dbGuild);

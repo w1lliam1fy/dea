@@ -9,7 +9,7 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DEA.Database.Repository
+namespace DEA.Database.Repositories
 {
     public class UserRepository
     {
@@ -25,13 +25,10 @@ namespace DEA.Database.Repository
         public async Task<User> FetchUserAsync(DEAContext context)
         {
             var dbUser = await (await _users.FindAsync(x => x.UserId == context.User.Id && x.GuildId == context.Guild.Id)).SingleOrDefaultAsync();
+
             if (dbUser == default(User))
             {
-                var createdUser = new User()
-                {
-                    GuildId = context.Guild.Id,
-                    UserId = context.User.Id
-                };
+                var createdUser = new User(context.User.Id, context.Guild.Id);
                 await _users.InsertOneAsync(createdUser, null, default(CancellationToken));
                 return createdUser;
             }
@@ -41,13 +38,10 @@ namespace DEA.Database.Repository
         public async Task<User> FetchUserAsync(IGuildUser user)
         {
             var dbUser = await (await _users.FindAsync(x => x.UserId == user.Id && x.GuildId == user.GuildId)).SingleOrDefaultAsync();
+
             if (dbUser == default(User))
             {
-                var createdUser = new User()
-                {
-                    GuildId = user.GuildId,
-                    UserId = user.Id
-                };
+                var createdUser = new User(user.Id, user.GuildId);
                 await _users.InsertOneAsync(createdUser, null, default(CancellationToken));
                 return createdUser;
             }
@@ -57,13 +51,10 @@ namespace DEA.Database.Repository
         public async Task<User> FetchUserAsync(ulong userId, ulong guildId)
         {
             var dbUser = await (await _users.FindAsync(x => x.UserId == userId && x.GuildId == guildId)).SingleOrDefaultAsync();
+
             if (dbUser == default(User))
             {
-                var createdUser = new User()
-                {
-                    GuildId = guildId,
-                    UserId = userId
-                };
+                var createdUser = new User(userId, guildId);
                 await _users.InsertOneAsync(createdUser, null, default(CancellationToken));
                 return createdUser;
             }

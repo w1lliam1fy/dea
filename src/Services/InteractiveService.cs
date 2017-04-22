@@ -1,4 +1,5 @@
-﻿using Discord;
+﻿using DEA.Services.Static;
+using Discord;
 using Discord.WebSocket;
 using System;
 using System.Linq.Expressions;

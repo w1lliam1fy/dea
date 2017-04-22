@@ -9,7 +9,7 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DEA.Database.Repository
+namespace DEA.Database.Repositories
 {
     public class GangRepository
     {
@@ -78,12 +78,8 @@ namespace DEA.Database.Repository
                 throw new DEAException($"There is already a gang by the name {name}.");
             if (name.Length > Config.GANG_NAME_CHAR_LIMIT)
                 throw new DEAException($"The length of a gang name may not be longer than {Config.GANG_NAME_CHAR_LIMIT} characters.");
-            var createdGang = new Gang()
-            {
-                GuildId = context.Guild.Id,
-                LeaderId = context.User.Id,
-                Name = name 
-            };
+
+            var createdGang = new Gang(context.User.Id, context.Guild.Id, name);
             await _gangs.InsertOneAsync(createdGang, null, default(CancellationToken));
             return createdGang;
         }

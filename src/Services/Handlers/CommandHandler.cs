@@ -1,5 +1,5 @@
 ﻿using DEA.Common;
-using DEA.Database.Repository;
+using DEA.Database.Repositories;
 using DEA.Services.Static;
 using Discord;
 using Discord.Commands;

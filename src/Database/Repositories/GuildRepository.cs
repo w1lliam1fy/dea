@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DEA.Database.Repository
+namespace DEA.Database.Repositories
 {
     public class GuildRepository
     {
@@ -22,10 +22,7 @@ namespace DEA.Database.Repository
             var dbGuild = await (await _guilds.FindAsync(x => x.Id == guildId)).SingleOrDefaultAsync();
             if (dbGuild == default(Guild))
             {
-                var createdGuild = new Guild()
-                {
-                    Id = guildId
-                };
+                var createdGuild = new Guild(guildId);
                 await _guilds.InsertOneAsync(createdGuild, null, default(CancellationToken));
                 return createdGuild;
             }

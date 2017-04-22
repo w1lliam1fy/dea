@@ -1,7 +1,7 @@
 ﻿using DEA.Common;
 using DEA.Common.Extensions;
 using DEA.Common.Extensions.DiscordExtensions;
-using DEA.Database.Repository;
+using DEA.Database.Repositories;
 using System;
 using System.Threading.Tasks;
 

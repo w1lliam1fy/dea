@@ -1,7 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using System.Threading.Tasks;
-using DEA.Database.Repository;
+using DEA.Database.Repositories;
 using System;
 using System.Linq;
 using Newtonsoft.Json.Linq;

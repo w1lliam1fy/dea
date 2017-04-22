@@ -2,7 +2,7 @@
 using Discord.Commands;
 using System;
 using System.Threading.Tasks;
-using DEA.Database.Repository;
+using DEA.Database.Repositories;
 using DEA.Common;
 using DEA.Common.Preconditions;
 using DEA.Services;
