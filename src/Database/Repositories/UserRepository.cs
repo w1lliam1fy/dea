@@ -70,22 +70,22 @@ namespace DEA.Database.Repository
             return dbUser;
         }
 
-        public async Task ModifyAsync(DEAContext context, Expression<Func<User, BsonValue>> field, BsonValue value)
+        public Task ModifyAsync(DEAContext context, Expression<Func<User, BsonValue>> field, BsonValue value)
         {
             var builder = Builders<User>.Update;
-            await _users.UpdateOneAsync(y => y.UserId == context.User.Id && y.GuildId == context.Guild.Id, builder.Set(field, value));
+            return _users.UpdateOneAsync(y => y.UserId == context.User.Id && y.GuildId == context.Guild.Id, builder.Set(field, value));
         }
 
-        public async Task ModifyAsync(IGuildUser user, Expression<Func<User, BsonValue>> field, BsonValue value)
+        public Task ModifyAsync(IGuildUser user, Expression<Func<User, BsonValue>> field, BsonValue value)
         {
             var builder = Builders<User>.Update;
-            await _users.UpdateOneAsync(y => y.UserId == user.Id && y.GuildId == user.GuildId, builder.Set(field, value));
+            return _users.UpdateOneAsync(y => y.UserId == user.Id && y.GuildId == user.GuildId, builder.Set(field, value));
         }
 
-        public async Task ModifyAsync(ulong userId, ulong guildId, Expression<Func<User, BsonValue>> field, BsonValue value)
+        public Task ModifyAsync(ulong userId, ulong guildId, Expression<Func<User, BsonValue>> field, BsonValue value)
         {
             var builder = Builders<User>.Update;
-            await _users.UpdateOneAsync(y => y.UserId == userId && y.GuildId == guildId, builder.Set(field, value));
+            return _users.UpdateOneAsync(y => y.UserId == userId && y.GuildId == guildId, builder.Set(field, value));
         }
 
         public async Task EditCashAsync(DEAContext context, decimal change)

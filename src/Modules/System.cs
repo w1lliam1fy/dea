@@ -57,6 +57,7 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
             string modules = string.Empty;
             foreach (var module in _commandService.Modules)
                 modules += $"{module.Name}, ";
+
             return ReplyAsync("Current command modules: " + modules.Substring(0, modules.Length - 2) + ".");
         }
 
@@ -149,6 +150,7 @@ If you have any other questions, you may join the **Official DEA Discord Server:
             
             var channel = await Context.User.CreateDMChannelAsync();
             await channel.SendMessageAsync(string.Empty, embed: builder);
+
             await ReplyAsync($"You have been DMed with all the statistics!");
         }
 

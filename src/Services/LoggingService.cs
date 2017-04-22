@@ -87,7 +87,9 @@ namespace DEA.Services
             {
                 var textChannel = socketChannel as SocketTextChannel;
                 var voiceChannel = socketChannel as SocketVoiceChannel;
+
                 if (textChannel == null && voiceChannel == null) return;
+
                 string channelType;
                 string channelName;
                 SocketGuild guild;
@@ -103,6 +105,7 @@ namespace DEA.Services
                     channelName = (socketChannel as SocketVoiceChannel).Name;
                     guild = (socketChannel as SocketVoiceChannel).Guild;
                 }
+
                 await DetailedLogAsync(guild, "Action", action, channelType, channelName, socketChannel.Id, color);
             });
 

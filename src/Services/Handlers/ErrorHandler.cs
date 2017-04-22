@@ -66,11 +66,12 @@ namespace DEA.Services.Handlers
                 await Logger.LogAsync(LogSeverity.Error, logMessage.Exception.Source, $"{logMessage.Exception.Message}: {logMessage.Exception.StackTrace}");
         }
 
-        public async Task HandleCommandFailureAsync(DEAContext context, IResult result, int argPos)
+        public Task HandleCommandFailureAsync(DEAContext context, IResult result, int argPos)
         {
             var args = context.Message.Content.Split(' ');
             var commandName = args.First().StartsWith(context.DbGuild.Prefix) ? args.First().Remove(0, context.DbGuild.Prefix.Length) : args[1];
             var message = string.Empty;
+
             switch (result.Error)
             {
                 case CommandError.UnknownCommand:
@@ -106,7 +107,9 @@ namespace DEA.Services.Handlers
             }
 
             if (!string.IsNullOrWhiteSpace(message))
-                await context.Channel.ReplyAsync(context.User, message, null, new Color(255, 0, 0));
+                return context.Channel.ReplyAsync(context.User, message, null, new Color(255, 0, 0));
+            else
+                return null;
         }
 
     }

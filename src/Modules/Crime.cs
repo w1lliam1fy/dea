@@ -34,6 +34,7 @@ namespace DEA.Modules
             if (roll > Config.WHORE_ODDS)
             {
                 await _userRepo.EditCashAsync(Context, -Config.WHORE_FINE);
+
                 await ReplyAsync($"What are the fucking odds that one of your main clients was a cop... " +
                             $"You are lucky you only got a {Config.WHORE_FINE.USD()} fine. Balance: {(Context.Cash - Config.WHORE_FINE).USD()}.");
             }
@@ -41,6 +42,7 @@ namespace DEA.Modules
             {
                 decimal moneyWhored = (new Random().Next((int)(Config.MIN_WHORE) * 100, (int)(Config.MAX_WHORE) * 100)) / 100m;
                 await _userRepo.EditCashAsync(Context, moneyWhored);
+
                 await ReplyAsync($"You whip it out and manage to rake in {moneyWhored.USD()}. Balance: {(Context.Cash + moneyWhored).USD()}.");
             }
         }
@@ -56,6 +58,7 @@ namespace DEA.Modules
             if (roll > Config.JUMP_ODDS)
             {
                 await _userRepo.EditCashAsync(Context, -Config.JUMP_FINE);
+
                 await ReplyAsync($"Turns out the nigga was a black belt, whooped your ass, and brought you in. " +
                             $"Court's final ruling was a {Config.JUMP_FINE.USD()} fine. Balance: {(Context.Cash - Config.JUMP_FINE).USD()}.");
             }
@@ -63,6 +66,7 @@ namespace DEA.Modules
             {
                 decimal moneyJumped = (new Random().Next((int)(Config.MIN_JUMP) * 100, (int)(Config.MAX_JUMP) * 100)) / 100m;
                 await _userRepo.EditCashAsync(Context, moneyJumped);
+
                 await ReplyAsync($"You jump some random nigga on the streets and manage to get {moneyJumped.USD()}. Balance: {(Context.Cash + moneyJumped).USD()}.");
             }
         }
@@ -120,8 +124,10 @@ namespace DEA.Modules
                 await ErrorAsync("You can't rob this nigga! He in a ***gang***. If you try to rob him, his crew would fuck you up till your dick " +
                                  "poppin out of your left cheek, ***nigga!*** Why don't you try and `$raid` his gang instead?");
 
-            if (resources < Config.MIN_RESOURCES) await ErrorAsync($"The minimum amount of money to spend on resources for a robbery is {Config.MIN_RESOURCES.USD()}.");
-            if (Context.Cash < resources) await ErrorAsync($"You don't have enough money. Balance: {Context.Cash.USD()}.");
+            if (resources < Config.MIN_RESOURCES)
+                await ErrorAsync($"The minimum amount of money to spend on resources for a robbery is {Config.MIN_RESOURCES.USD()}.");
+            if (Context.Cash < resources)
+                await ErrorAsync($"You don't have enough money. Balance: {Context.Cash.USD()}.");
 
             var raidedDbUser = await _userRepo.FetchUserAsync(user);
             if (Math.Round(resources, 2) > Math.Round(raidedDbUser.Cash / 20m, 2))

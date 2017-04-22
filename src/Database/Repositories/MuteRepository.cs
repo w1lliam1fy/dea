@@ -16,9 +16,9 @@ namespace DEA.Database.Repository
             _mutes = mutes;
         }
 
-        public async Task AddMuteAsync(IGuildUser user, TimeSpan muteLength)
+        public Task AddMuteAsync(IGuildUser user, TimeSpan muteLength)
         {
-            await _mutes.InsertOneAsync(new Mute()
+            return _mutes.InsertOneAsync(new Mute()
             {
                 UserId = user.Id,
                 GuildId = user.GuildId,
@@ -31,9 +31,9 @@ namespace DEA.Database.Repository
             return await (await _mutes.FindAsync(y => y.UserId == userId && y.GuildId == guildId)).AnyAsync();
         }
 
-        public async Task RemoveMuteAsync(ulong userId, ulong guildId)
+        public Task RemoveMuteAsync(ulong userId, ulong guildId)
         {
-            await _mutes.DeleteOneAsync(y => y.UserId == userId && y.GuildId == guildId);
+            return _mutes.DeleteOneAsync(y => y.UserId == userId && y.GuildId == guildId);
         }
 
     }

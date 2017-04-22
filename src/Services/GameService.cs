@@ -24,11 +24,15 @@ namespace DEA.Services
 
         public async Task Trivia(IMessageChannel channel, Guild dbGuild)
         {
-            if (dbGuild.Trivia.ElementCount == 0) throw new DEAException("There are no trivia questions yet!");
+            if (dbGuild.Trivia.ElementCount == 0)
+                throw new DEAException("There are no trivia questions yet!");
+
             var random = new Random();
             int roll = random.Next(0, dbGuild.Trivia.ElementCount);
+
             var element = dbGuild.Trivia.GetElement(roll);
             var answer = element.Value.AsString.ToLower();
+
             Expression<Func<IUserMessage, bool>> correctResponse = y => y.Content.ToLower() == answer;
             if (!answer.Any(char.IsDigit))
             {
@@ -41,6 +45,7 @@ namespace DEA.Services
             }
 
             await channel.SendAsync("__**TRIVIA:**__ " + element.Name);
+
             var response = await _interactiveService.WaitForMessage(channel, correctResponse);
             if (response != null)
             {

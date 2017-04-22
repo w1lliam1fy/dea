@@ -39,11 +39,12 @@ namespace DEA.Events
             {
                 await _loggingService.DetailedLogAsync(u.Guild, "Event", "User Joined", "User", $"{u}", u.Id, new Color(12, 255, 129), false);
                 var user = u as IGuildUser;
-                var mutedRole = user.Guild.GetRole(((await _guildRepo.FetchGuildAsync(user.Guild.Id)).MutedRoleId));
+                var dbGuild = await _guildRepo.FetchGuildAsync(user.Guild.Id);
+                var mutedRole = user.Guild.GetRole((dbGuild.MutedRoleId));
                 if (mutedRole != null && u.Guild.CurrentUser.GuildPermissions.ManageRoles &&
                     mutedRole.Position < u.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
                 {
-                    await _rankHandler.HandleAsync(u.Guild, user, await _guildRepo.FetchGuildAsync(u.Guild.Id), await _userRepo.FetchUserAsync(user));
+                    await _rankHandler.HandleAsync(u.Guild, user, dbGuild, await _userRepo.FetchUserAsync(user));
                     if (await _muteRepo.IsMutedAsync(user.Id, user.Guild.Id) && mutedRole != null && user != null) await user.AddRoleAsync(mutedRole);
                 }
             });

@@ -50,29 +50,34 @@ namespace DEA.Database.Repository
         public async Task<Gang> FetchGangAsync(DEAContext context)
         {
             var gang = await (await _gangs.FindAsync(c => (c.LeaderId == context.User.Id || c.Members.Any(x => x == context.User.Id)) && c.GuildId == context.Guild.Id)).SingleOrDefaultAsync();
-            if (gang == default(Gang)) throw new DEAException("You are not in a gang.");
+            if (gang == default(Gang))
+                throw new DEAException("You are not in a gang.");
             return gang;
         }
 
         public async Task<Gang> FetchGangAsync(IGuildUser user)
         {
             var gang = await (await _gangs.FindAsync(c => (c.LeaderId == user.Id || c.Members.Any(x => x == user.Id)) && c.GuildId == user.GuildId)).SingleOrDefaultAsync();
-            if (gang == default(Gang)) throw new DEAException("This user is not in a gang.");
+            if (gang == default(Gang))
+                throw new DEAException("This user is not in a gang.");
             return gang;
         }
 
         public async Task<Gang> FetchGangAsync(string gangName, ulong guildId)
         {
             var gang = await (await _gangs.FindAsync(c => c.Name.ToLower() == gangName.ToLower() && c.GuildId == guildId)).SingleOrDefaultAsync();
-            if (gang == default(Gang)) throw new DEAException("This gang does not exist.");
+            if (gang == default(Gang))
+                throw new DEAException("This gang does not exist.");
             return gang;
         }
 
         public async Task<Gang> CreateGangAsync(DEAContext context, string name)
         {
             Expression<Func<Gang, bool>> expression = x => x.Name.ToLower() == name.ToLower() && x.GuildId == context.Guild.Id;
-            if (await (await _gangs.FindAsync(expression)).AnyAsync()) throw new DEAException($"There is already a gang by the name {name}.");
-            if (name.Length > Config.GANG_NAME_CHAR_LIMIT) throw new DEAException($"The length of a gang name may not be longer than {Config.GANG_NAME_CHAR_LIMIT} characters.");
+            if (await (await _gangs.FindAsync(expression)).AnyAsync())
+                throw new DEAException($"There is already a gang by the name {name}.");
+            if (name.Length > Config.GANG_NAME_CHAR_LIMIT)
+                throw new DEAException($"The length of a gang name may not be longer than {Config.GANG_NAME_CHAR_LIMIT} characters.");
             var createdGang = new Gang()
             {
                 GuildId = context.Guild.Id,

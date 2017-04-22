@@ -32,22 +32,22 @@ namespace DEA.Database.Repository
             return dbGuild;
         }
 
-        public async Task ModifyAsync(ulong guildId, Expression<Func<Guild, BsonValue>> field, BsonValue value)
+        public Task ModifyAsync(ulong guildId, Expression<Func<Guild, BsonValue>> field, BsonValue value)
         {
             var builder = Builders<Guild>.Update;
-            await _guilds.UpdateOneAsync(y => y.Id == guildId, builder.Set(field, value));
+            return _guilds.UpdateOneAsync(y => y.Id == guildId, builder.Set(field, value));
         }
 
-        public async Task ModifyAsync(ulong guildId, Expression<Func<Guild, ulong>> field, ulong value)
+        public Task ModifyAsync(ulong guildId, Expression<Func<Guild, ulong>> field, ulong value)
         {
             var builder = Builders<Guild>.Update;
-            await _guilds.UpdateOneAsync(y => y.Id == guildId, builder.Set(field, value));
+            return _guilds.UpdateOneAsync(y => y.Id == guildId, builder.Set(field, value));
         }
 
-        public async Task ModifyAsync(ulong guildId, Expression<Func<Guild, BsonDocument>> field, BsonDocument value)
+        public Task ModifyAsync(ulong guildId, Expression<Func<Guild, BsonDocument>> field, BsonDocument value)
         {
             var builder = Builders<Guild>.Update;
-            await _guilds.UpdateOneAsync(y => y.Id == guildId, builder.Set(field, value));
+            return _guilds.UpdateOneAsync(y => y.Id == guildId, builder.Set(field, value));
         }
 
     }

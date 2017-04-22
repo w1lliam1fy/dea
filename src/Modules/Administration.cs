@@ -28,8 +28,10 @@ namespace DEA.Modules
             string message = null;
             foreach (var role in Context.Guild.Roles)
                 message += $"{role.Name}: {role.Id}\n";
+
             var channel = await Context.User.CreateDMChannelAsync();
             await channel.SendAsync(message);
+
             await ReplyAsync("All Role IDs have been DMed to you.");
         }
 
@@ -37,8 +39,11 @@ namespace DEA.Modules
         [Summary("Sets the guild specific prefix.")]
         public async Task SetPrefix(string prefix)
         {
-            if (prefix.Length > 3) await ErrorAsync("The maximum character length of a prefix is 3.");
+            if (prefix.Length > 3)
+                await ErrorAsync("The maximum character length of a prefix is 3.");
+
             await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.Prefix, prefix);
+
             await ReplyAsync($"You have successfully set the prefix to {prefix}.");
         }
 
@@ -49,7 +54,9 @@ namespace DEA.Modules
         {
             if (mutedRole.Position > Context.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
                 await ErrorAsync($"DEA must be higher in the heigharhy than {mutedRole.Mention}.");
+
             await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.MutedRoleId, mutedRole.Id);
+
             await ReplyAsync($"You have successfully set the muted role to {mutedRole.Mention}.");
         }
 
@@ -59,6 +66,7 @@ namespace DEA.Modules
         {
             if (rankRole.Position > Context.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
                 await ErrorAsync($"DEA must be higher in the heigharhy than {rankRole.Mention}.");
+
             if (Context.DbGuild.RankRoles.ElementCount == 0)
                 await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.RankRoles, new BsonDocument()
                 {
@@ -68,10 +76,13 @@ namespace DEA.Modules
             {
                 if (Context.DbGuild.RankRoles.Any(x => x.Name == rankRole.Id.ToString()))
                     await ErrorAsync("This role is already a rank role.");
-                if (cashRequired == 500) cashRequired = Context.DbGuild.RankRoles.OrderByDescending(x => x.Value).First().Value.AsDouble * 2;
+                if (cashRequired == 500)
+                    cashRequired = Context.DbGuild.RankRoles.OrderByDescending(x => x.Value).First().Value.AsDouble * 2;
                 if (Context.DbGuild.RankRoles.Any(x => (int)x.Value.AsDouble == (int)cashRequired))
                     await ErrorAsync("There is already a role set to that amount of cash required.");
+
                 Context.DbGuild.RankRoles.Add(rankRole.Id.ToString(), cashRequired);
+
                 await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.RankRoles, Context.DbGuild.RankRoles);
             }
             
@@ -82,11 +93,15 @@ namespace DEA.Modules
         [Summary("Removes a rank role for the DEA cash system.")]
         public async Task RemoveRank([Remainder] IRole rankRole)
         {
-            if (Context.DbGuild.RankRoles.ElementCount == 0) await ErrorAsync("There are no ranks yet.");
+            if (Context.DbGuild.RankRoles.ElementCount == 0)
+                await ErrorAsync("There are no ranks yet.");
             if (!Context.DbGuild.RankRoles.Any(x => x.Name == rankRole.Id.ToString()))
                 await ErrorAsync("This role is not a rank role.");
+
             Context.DbGuild.RankRoles.Remove(rankRole.Id.ToString());
+
             await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.RankRoles, Context.DbGuild.RankRoles);
+
             await ReplyAsync($"You have successfully removed the {rankRole.Mention} rank.");
         }
 
@@ -94,13 +109,16 @@ namespace DEA.Modules
         [Summary("Modfies a rank role for the DEA cash system.")]
         public async Task ModifyRank(IRole rankRole, double newCashRequired)
         {
-            if (Context.DbGuild.RankRoles.ElementCount == 0) await ErrorAsync("There are no ranks yet.");
+            if (Context.DbGuild.RankRoles.ElementCount == 0)
+                await ErrorAsync("There are no ranks yet.");
             if (!Context.DbGuild.RankRoles.Any(x => x.Name == rankRole.Id.ToString()))
                 await ErrorAsync("This role is not a rank role.");
             if (Context.DbGuild.RankRoles.Any(x => (int)x.Value.AsDouble == (int)newCashRequired))
                 await ErrorAsync("There is already a role set to that amount of cash required.");
+
             Context.DbGuild.RankRoles[rankRole.Id.ToString()] = newCashRequired;
             await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.RankRoles, Context.DbGuild.RankRoles);
+
             await ReplyAsync($"You have successfully set the cash required for the {rankRole.Mention} rank to {((decimal)newCashRequired).USD()}.");
         }
 
