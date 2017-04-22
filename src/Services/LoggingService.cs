@@ -21,7 +21,7 @@ namespace DEA.Services
         {
             var channel = context.Guild.GetTextChannel(context.DbGuild.ModLogId);
 
-            if (channel != null) return;
+            if (channel == null) return;
 
             EmbedFooterBuilder footer = new EmbedFooterBuilder()
             {

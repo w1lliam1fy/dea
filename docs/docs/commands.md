@@ -24,7 +24,6 @@ These commands may only be used by the bot owners.
 Command | Description | Usage
 ----------------|--------------|-------
 SetGame|Sets the game of DEA.|`$SetGame <Game name>`
-Global|Send a global announcement in the default channel of all servers.|`$Global <Announcement>`
 
 ### Owners
 
