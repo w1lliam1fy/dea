@@ -101,7 +101,7 @@ namespace DEA.Modules
             using (var http = new HttpClient())
             {
                 var obj = JArray.Parse(await http.GetStringAsync($"http://api.oboobs.ru/boobs/{new Random().Next(0, 10330)}").ConfigureAwait(false))[0];
-                await ReplyAsync($"http://media.oboobs.ru/{obj["preview"]}").ConfigureAwait(false);
+                await Context.Channel.SendMessageAsync($"http://media.oboobs.ru/{obj["preview"]}").ConfigureAwait(false);
             }
         }
 
@@ -114,7 +114,7 @@ namespace DEA.Modules
             using (var http = new HttpClient())
             {
                 var obj = JArray.Parse(await http.GetStringAsync($"http://api.obutts.ru/butts/{new Random().Next(0, 4335)}").ConfigureAwait(false))[0];
-                await ReplyAsync($"http://media.obutts.ru/{obj["preview"]}").ConfigureAwait(false);
+                await Context.Channel.SendMessageAsync($"http://media.obutts.ru/{obj["preview"]}").ConfigureAwait(false);
             }
         }
 
@@ -137,7 +137,7 @@ namespace DEA.Modules
 
                 if (!url.StartsWith("http"))
                     url = "https:" + url;
-                await ReplyAsync(url).ConfigureAwait(false);
+                await Context.Channel.SendMessageAsync(url).ConfigureAwait(false);
             }
         }
     }
