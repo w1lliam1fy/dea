@@ -17,13 +17,15 @@ namespace DEA.Modules
     {
         private readonly UserRepository _userRepo;
         private readonly GuildRepository _guildRepo;
+        private readonly GangRepository _gangRepo;
         private readonly RankHandler _rankHandler;
         private readonly IMongoCollection<User> _users;
 
-        public General(UserRepository userRepo, GuildRepository guildRepo, RankHandler rankHandler, IMongoCollection<User> users)
+        public General(UserRepository userRepo, GuildRepository guildRepo, GangRepository gangRepo, RankHandler rankHandler, IMongoCollection<User> users)
         {
             _userRepo = userRepo;
             _guildRepo = guildRepo;
+            _gangRepo = gangRepo;
             _rankHandler = rankHandler;
             _users = users;
         }
@@ -159,7 +161,7 @@ namespace DEA.Modules
         [Command("Donate")]
         [Alias("Sauce")]
         [Summary("Sauce some cash to one of your mates.")]
-        public async Task Donate(IGuildUser user, decimal money)
+        public async Task Donate(decimal money, [Remainder] IGuildUser user)
         {
             if (user.Id == Context.User.Id) await ErrorAsync("Hey kids! Look at that retard, he is trying to give money to himself!");
             if (money < Config.DONATE_MIN) await ErrorAsync($"Lowest donation is {Config.DONATE_MIN}$.");
@@ -232,7 +234,7 @@ namespace DEA.Modules
         }
 
         [Command("ModRoles")]
-        [Alias("ModeratorRoles", "ModRole")]
+        [Alias("ModeratorRoles", "ModRole", "PermLevels", "PermissionLevels")]
         [Summary("View all the moderator roles.")]
         public async Task ModRoles()
         {
@@ -255,23 +257,25 @@ namespace DEA.Modules
 
         [Command("Cooldowns")]
         [Summary("Check when you can sauce out more cash.")]
-        public async Task Cooldowns()
+        public async Task Cooldowns([Remainder] IGuildUser user = null)
         {
+            user = user ?? Context.User as IGuildUser;
+            var dbUser = Context.User.Id == user.Id ? Context.DbUser : await _userRepo.FetchUserAsync(user);
             var cooldowns = new Dictionary<String, TimeSpan>
             {
-                { "Whore", Config.WHORE_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(Context.DbUser.Whore)) },
-                { "Jump", Config.JUMP_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(Context.DbUser.Jump)) },
-                { "Steal", Config.STEAL_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(Context.DbUser.Steal)) },
-                { "Rob", Config.ROB_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(Context.DbUser.Rob)) },
-                { "Withdraw", Config.WITHDRAW_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(Context.DbUser.Withdraw)) }
+                { "Whore", Config.WHORE_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(dbUser.Whore)) },
+                { "Jump", Config.JUMP_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(dbUser.Jump)) },
+                { "Steal", Config.STEAL_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(dbUser.Steal)) },
+                { "Rob", Config.ROB_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(dbUser.Rob)) },
+                { "Withdraw", Config.WITHDRAW_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(dbUser.Withdraw)) }
             };
-            if (Context.Gang != null)
-                cooldowns.Add("Raid", Config.RAID_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(Context.Gang.Raid)));
+            if (await _gangRepo.InGangAsync(user))
+                cooldowns.Add("Raid", Config.RAID_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(Context.User.Id == user.Id ? Context.Gang.Raid : (await _gangRepo.FetchGangAsync(user)).Raid)));
             var description = string.Empty;
             foreach (var cooldown in cooldowns)
                 if (cooldown.Value.TotalMilliseconds > 0)
                     description += $"{cooldown.Key}: {cooldown.Value.Hours}:{cooldown.Value.Minutes.ToString("D2")}:{cooldown.Value.Seconds.ToString("D2")}\n";
-            if (description.Length == 0) await ErrorAsync("All your commands are available for use!");
+            if (description.Length == 0) await ErrorAsync("All commands are available for use!");
 
             await SendAsync(description, $"All cooldowns for {Context.User}");
         }

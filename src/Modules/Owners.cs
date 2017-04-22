@@ -54,7 +54,7 @@ namespace DEA.Modules
 
         [Command("Add")]
         [Summary("Add cash into a user's balance.")]
-        public async Task Add(IGuildUser user, decimal money)
+        public async Task Add(decimal money, [Remainder] IGuildUser user)
         {
             if (money < 0) await ErrorAsync("You may not add negative money to a user's balance.");
             var dbUser = user.Id == Context.User.Id ? Context.DbUser : await _userRepo.FetchUserAsync(user);
@@ -64,7 +64,7 @@ namespace DEA.Modules
 
         [Command("AddTo")]
         [Summary("Add cash to every users balance in a specific role.")]
-        public async Task Add(IRole role, decimal money)
+        public async Task AddTo(decimal money, [Remainder] IRole role)
         {
             if (money < 0) await ErrorAsync("You may not add negative money to these users's balances.");
             await ReplyAsync("The addition of cash has commenced...");
@@ -75,7 +75,7 @@ namespace DEA.Modules
 
         [Command("Remove")]
         [Summary("Remove cash from a user's balance.")]
-        public async Task Remove(IGuildUser user, decimal money)
+        public async Task Remove(decimal money, [Remainder] IGuildUser user)
         {
             if (money < 0) await ErrorAsync("You may not remove a negative amount of money from a user's balance.");
             var dbUser = user.Id == Context.User.Id ? Context.DbUser : await _userRepo.FetchUserAsync(user);
@@ -85,7 +85,7 @@ namespace DEA.Modules
 
         [Command("RemoveFrom")]
         [Summary("Remove cash to every users balance in a specific role.")]
-        public async Task Remove(IRole role, decimal money)
+        public async Task Remove(decimal money, [Remainder] IRole role)
         {
             if (money < 0) await ErrorAsync("You may not remove negative money from these users's balances.");
             await ReplyAsync("The cash removal has commenced...");
