@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Discord.Commands;
 using DEA.Services;
 using DEA.Common.Extensions.DiscordExtensions;
+using DEA.Common.Extensions;
 
 namespace DEA.Common.Preconditions
 {
@@ -55,7 +56,7 @@ namespace DEA.Common.Preconditions
             {
                 var user = command.Name.ToLower() == "raid" ? deaContext.Gang.Name : context.User.ToString();
                 var timeSpan = cooldown.Subtract(DateTime.UtcNow.Subtract(lastUse));
-                await deaContext.Channel.SendAsync($"Hours: {timeSpan.Hours}\nMinutes: {timeSpan.Minutes}\nSeconds: {timeSpan.Seconds}", $"{command} cooldown for {user}", Config.ERROR_COLOR);
+                await deaContext.Channel.SendAsync($"Hours: {timeSpan.Hours}\nMinutes: {timeSpan.Minutes}\nSeconds: {timeSpan.Seconds}", $"{command.Name.UpperFirstChar()} cooldown for {user}", Config.ERROR_COLOR);
                 return PreconditionResult.FromError(string.Empty);
             }
         }
