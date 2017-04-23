@@ -17,6 +17,19 @@ namespace DEA.Database.Repositories
             _polls = polls;
         }
 
+        public async Task<Poll> FetchePollAsync(int index, ulong guildId)
+        {
+            var polls = await (await _polls.FindAsync(y => y.GuildId == guildId)).ToListAsync();
+            try
+            {
+                return polls[index];
+            }
+            catch (IndexOutOfRangeException)
+            {
+                throw new DEAException("This poll index does not exist.");
+            }
+        }
+
         public async Task ModifyPollAsync(int index, ulong guildId, Action<Poll> action)
         {
             var polls = await (await _polls.FindAsync(y => y.GuildId == guildId)).ToListAsync();
