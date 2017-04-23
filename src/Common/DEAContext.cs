@@ -9,6 +9,7 @@ namespace DEA.Common
 {
     public class DEAContext : SocketCommandContext
     {
+        public IGuildUser GUser { get; }
         public User DbUser { get; private set; }
         public Guild DbGuild { get; private set; }
         public Gang Gang { get; private set; }
@@ -26,6 +27,7 @@ namespace DEA.Common
             _userRepo = _map.Get<UserRepository>();
             _guildRepo = _map.Get<GuildRepository>();
             _gangRepo = _map.Get<GangRepository>();
+            GUser = User as IGuildUser;
         }
 
         public async Task InitializeAsync()

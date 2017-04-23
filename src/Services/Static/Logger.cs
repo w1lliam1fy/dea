@@ -6,15 +6,15 @@ namespace DEA.Services.Static
 {
     public static class Logger
     {
-        public static async Task LogAsync(LogSeverity severity, string source, string message)
+        public static void Log(LogSeverity severity, string source, string message)
         {
-            await NewLineAsync($"{DateTime.Now.ToString("hh:mm:ss")} ", ConsoleColor.DarkGray);
-            await AppendAsync($"[{severity}] ", ConsoleColor.Red);
-            await AppendAsync($"{source}: ", ConsoleColor.DarkGreen);
-            await AppendAsync(message, ConsoleColor.White);
+            NewLine($"{DateTime.Now.ToString("hh:mm:ss")} ", ConsoleColor.DarkGray);
+            Append($"[{severity}] ", ConsoleColor.Red);
+            Append($"{source}: ", ConsoleColor.DarkGreen);
+            Append(message, ConsoleColor.White);
         }
 
-        public static Task NewLineAsync(string text = "", ConsoleColor? foreground = null, ConsoleColor? background = null)
+        public static void NewLine(string text = "", ConsoleColor? foreground = null, ConsoleColor? background = null)
         {
             if (foreground == null)
                 foreground = ConsoleColor.White;
@@ -24,10 +24,9 @@ namespace DEA.Services.Static
             Console.ForegroundColor = (ConsoleColor)foreground;
             Console.BackgroundColor = (ConsoleColor)background;
             Console.Write(Environment.NewLine + text);
-            return Task.CompletedTask;
         }
 
-        private static Task AppendAsync(string text, ConsoleColor? foreground = null, ConsoleColor? background = null)
+        private static void Append(string text, ConsoleColor? foreground = null, ConsoleColor? background = null)
         {
             if (foreground == null)
                 foreground = ConsoleColor.White;
@@ -37,7 +36,6 @@ namespace DEA.Services.Static
             Console.ForegroundColor = (ConsoleColor)foreground;
             Console.BackgroundColor = (ConsoleColor)background;
             Console.Write(text);
-            return Task.CompletedTask;
         }
     }
 }

@@ -22,7 +22,7 @@ namespace DEA.Services.Handlers
 
         public async Task HandleAsync(IGuild guild, IGuildUser user, Guild dbGuild, User dbUser)
         {
-            await Logger.LogAsync(LogSeverity.Debug, $"Guild: {guild}, User: {user}", "Rank Handling");
+            Logger.Log(LogSeverity.Debug, $"Guild: {guild}, User: {user}", "Rank Handling");
             if (dbGuild.RankRoles.ElementCount != 0)
             {
                 var currentUser = await guild.GetCurrentUserAsync() as SocketGuildUser;

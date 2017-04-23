@@ -16,9 +16,13 @@ public static class Config
 
     public static Color Color() { return COLORS[new Random().Next(1, COLORS.Length) - 1]; }
 
+    public static readonly Color ERROR_COLOR = new Color(255, 0, 0);
+
     public static readonly TimeSpan WHORE_COOLDOWN = TimeSpan.FromHours(2), JUMP_COOLDOWN = TimeSpan.FromHours(4),
         STEAL_COOLDOWN = TimeSpan.FromHours(6), ROB_COOLDOWN = TimeSpan.FromHours(8), WITHDRAW_COOLDOWN = TimeSpan.FromHours(4),
-        RAID_COOLDOWN = TimeSpan.FromHours(4), LINE_COOLDOWN = TimeSpan.FromSeconds(25), DEFAULT_WAITFORMESSAGE = TimeSpan.FromSeconds(30);
+        RAID_COOLDOWN = TimeSpan.FromHours(4), LINE_COOLDOWN = TimeSpan.FromSeconds(25), DEFAULT_WAITFORMESSAGE = TimeSpan.FromSeconds(30),
+        DEFAULT_POLL_LENGTH = TimeSpan.FromDays(1), MAX_POLL_LENGTH = TimeSpan.FromDays(7), DEFAULT_MESSAGE_COOLDOWN = TimeSpan.FromSeconds(30),
+        ELDER_TIME_REQUIRED = TimeSpan.FromDays(2);
 
     public static readonly int MIN_CHAR_LENGTH = 7, LEADERBOARD_CAP = 10, RATELB_CAP = 10, WHORE_ODDS = 90, JUMP_ODDS = 85, STEAL_ODDS = 80,
         MIN_CHILL = 5, MAX_CHILL = (int)TimeSpan.FromHours(1).TotalSeconds, MIN_CLEAR = 2, MAX_CLEAR = 1000, GANG_NAME_CHAR_LIMIT = 24,
@@ -26,10 +30,7 @@ public static class Config
         INTEREST_RATE_COOLDOWN = (int)TimeSpan.FromHours(1).TotalMilliseconds, AUTO_UNMUTE_COOLDOWN = (int)TimeSpan.FromMinutes(5).
         TotalMilliseconds, RAID_SUCCESS_ODDS = 65, ROB_SUCCESS_ODDS = 65, AUTO_TRIVIA_COOLDOWN = (int)TimeSpan.FromMinutes(2).TotalMilliseconds,
         AUTO_INVITE_COOLDOWN = (int)TimeSpan.FromHours(1).TotalMilliseconds, TRIVIA_PAYOUT_MIN = 25, TRIVIA_PAYOUT_MAX = 150,
-        MAX_POLL_SIZE = 100;
-
-    public static readonly double DEFAULT_MESSAGE_COOLDOWN = TimeSpan.FromSeconds(30).TotalMilliseconds, DEFAULT_POLL_LENGTH = TimeSpan.
-        FromDays(1).TotalMilliseconds, MAX_POLL_LENGTH = TimeSpan.FromDays(7).TotalMilliseconds;
+        MAX_POLL_SIZE = 100, AUTO_DELETE_POLLS_COOLDOWN = (int)TimeSpan.FromMinutes(1).TotalMilliseconds;
 
     public static readonly decimal LINE_COST = 250, POUND_COST = 1000, KILO_COST = 2500, POUND_MULTIPLIER = 2, KILO_MULTIPLIER = 4,
         RESET_REWARD = 10000, MAX_WHORE = 100, MIN_WHORE = 50, WHORE_FINE = 200, MAX_JUMP = 250, JUMP_FINE = 500, MIN_JUMP = 100,

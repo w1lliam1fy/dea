@@ -142,7 +142,7 @@ namespace DEA.Modules
                 await _userRepo.EditCashAsync(Context, stolen);
                 await _userRepo.ModifyAsync(Context, x => x.Rob, DateTime.UtcNow);
 
-                await user.Id.DMAsync(Context, $"{Context.User} just robbed you and managed to walk away with {stolen.USD()}.");
+                await user.Id.DMAsync(Context.Client, $"{Context.User} just robbed you and managed to walk away with {stolen.USD()}.");
 
                 await ReplyAsync($"With a {Config.ROB_SUCCESS_ODDS}.00% chance of success, you successfully stole {stolen.USD()}. " +
                             $"Balance: {(Context.Cash + stolen).USD()}.");
@@ -152,7 +152,7 @@ namespace DEA.Modules
                 await _userRepo.EditCashAsync(Context, -resources);
                 await _userRepo.ModifyAsync(Context, x => x.Rob, DateTime.UtcNow);
 
-                await user.Id.DMAsync(Context, $"{Context.User} tried to rob your sweet cash, but the nigga slipped on a banana peel and got arrested :joy: :joy: :joy:.");
+                await user.Id.DMAsync(Context.Client, $"{Context.User} tried to rob your sweet cash, but the nigga slipped on a banana peel and got arrested :joy: :joy: :joy:.");
 
                 await ReplyAsync($"With a {Config.ROB_SUCCESS_ODDS}.00% chance of success, you failed to steal {stolen.USD()} " +
                             $"and lost all resources in the process. Balance: {(Context.Cash - resources).USD()}.");

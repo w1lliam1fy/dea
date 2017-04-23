@@ -34,7 +34,7 @@ namespace DEA.Database.Repositories
                                               c.GuildId == member.GuildId, builder.Set(field, value));
         }
 
-        public Task ModifyAsync(IGuildUser member, Expression<Func<Gang, ulong>> field, ulong value)
+        private Task ModifyAsync(IGuildUser member, Expression<Func<Gang, ulong>> field, ulong value)
         {
             var builder = Builders<Gang>.Update;
             return _gangs.UpdateOneAsync(c => (c.LeaderId == member.Id || c.Members.Any(x => x == member.Id)) &&

@@ -33,7 +33,7 @@ namespace DEA.Services.Timers
         {
             Task.Run(async () =>
             {
-                await Logger.LogAsync(LogSeverity.Debug, $"Timers", "Reset Temporary Multiplier");
+                Logger.Log(LogSeverity.Debug, $"Timers", "Reset Temporary Multiplier");
                 var builder = Builders<User>.Filter;
                 var updateBuilder = Builders<User>.Update;
                 await _users.UpdateManyAsync(builder.Empty, updateBuilder.Set(x => x.TemporaryMultiplier, 1));

@@ -44,7 +44,7 @@ namespace DEA.Modules
         [Summary("Sets a specific channel for all NSFW commands.")]
         public async Task SetNSFWChannel([Remainder] ITextChannel nsfwChannel)
         {
-            await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.NsfwId, nsfwChannel.Id);
+            await _guildRepo.ModifyAsync(Context.Guild.Id, x => (decimal)x.NsfwId, (decimal)nsfwChannel.Id);
 
             var nsfwRole = Context.Guild.GetRole(Context.DbGuild.NsfwRoleId);
             if (nsfwRole != null && Context.Guild.CurrentUser.GuildPermissions.Administrator)
@@ -64,7 +64,7 @@ namespace DEA.Modules
             if (nsfwRole.Position > Context.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
                 await ErrorAsync("You may not set the NSFW role to a role that is higher in hierarchy than DEA's highest role.");
 
-            await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.NsfwRoleId, nsfwRole.Id);
+            await _guildRepo.ModifyAsync(Context.Guild.Id, x => (decimal)x.NsfwRoleId, (decimal)nsfwRole.Id);
 
             var nsfwChannel = Context.Guild.GetChannel(Context.DbGuild.NsfwId);
             if (nsfwChannel != null && Context.Guild.CurrentUser.GuildPermissions.Administrator)
@@ -87,14 +87,14 @@ namespace DEA.Modules
                 await ErrorAsync("Everyone will always be able to use NSFW commands since there has been no NSFW role that has been set.\n" +
                                  $"In order to change this, an administrator may use the `{Context.Prefix}SetNSFWRole` command.");
 
-            if ((Context.User as IGuildUser).RoleIds.Any(x => x == Context.DbGuild.NsfwRoleId))
+            if ((Context.GUser).RoleIds.Any(x => x == Context.DbGuild.NsfwRoleId))
             {
-                await (Context.User as IGuildUser).RemoveRoleAsync(NsfwRole);
+                await (Context.GUser).RemoveRoleAsync(NsfwRole);
                 await ReplyAsync($"You have successfully disabled your ability to use NSFW commands.");
             }
             else
             {
-                await (Context.User as IGuildUser).AddRoleAsync(NsfwRole);
+                await (Context.GUser).AddRoleAsync(NsfwRole);
                 await ReplyAsync($"You have successfully enabled your ability to use NSFW commands.");
             }
         }

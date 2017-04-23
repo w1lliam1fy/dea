@@ -29,7 +29,7 @@ namespace DEA.Services.Handlers
             if (logMessage.Exception is CommandException cmdEx)
             {
                 if (cmdEx.InnerException is DEAException)
-                    await cmdEx.Context.Channel.ReplyAsync(cmdEx.Context.User, cmdEx.InnerException.Message, null, new Color(255, 0, 0));
+                    await cmdEx.Context.Channel.ReplyAsync(cmdEx.Context.User, cmdEx.InnerException.Message, null, Config.ERROR_COLOR);
                 else if (cmdEx.InnerException is HttpException httpEx)
                 {
                     var message = string.Empty;
@@ -48,14 +48,14 @@ namespace DEA.Services.Handlers
                             message = httpEx.Message.Remove(0, 39) + ".";
                             break;
                     }
-                    await cmdEx.Context.Channel.ReplyAsync(cmdEx.Context.User, message, null, new Color(255, 0, 0));
+                    await cmdEx.Context.Channel.ReplyAsync(cmdEx.Context.User, message, null, Config.ERROR_COLOR);
                 }
                 else if (cmdEx.InnerException.GetType() != typeof(RateLimitedException))
                 {
                     var message = cmdEx.InnerException.Message;
                     if (cmdEx.InnerException.InnerException != null) message += $"\n**Inner Exception:** {cmdEx.InnerException.InnerException.Message}";
 
-                    await cmdEx.Context.Channel.ReplyAsync(cmdEx.Context.User, message, null, new Color(255, 0, 0));
+                    await cmdEx.Context.Channel.ReplyAsync(cmdEx.Context.User, message, null, Config.ERROR_COLOR);
 
                     if ((await cmdEx.Context.Guild.GetCurrentUserAsync() as IGuildUser).GetPermissions(cmdEx.Context.Channel as SocketTextChannel).AttachFiles)
                         using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(cmdEx.ToString() ?? string.Empty)))
@@ -63,7 +63,7 @@ namespace DEA.Services.Handlers
                 }
             }
             else if (logMessage.Exception != null)
-                await Logger.LogAsync(LogSeverity.Error, logMessage.Exception.Source, $"{logMessage.Exception.Message}: {logMessage.Exception.StackTrace}");
+                Logger.Log(LogSeverity.Error, logMessage.Exception.Source, $"{logMessage.Exception.Message}: {logMessage.Exception.StackTrace}");
         }
 
         public Task HandleCommandFailureAsync(DEAContext context, IResult result, int argPos)
@@ -107,7 +107,7 @@ namespace DEA.Services.Handlers
             }
 
             if (!string.IsNullOrWhiteSpace(message))
-                return context.Channel.ReplyAsync(context.User, message, null, new Color(255, 0, 0));
+                return context.Channel.ReplyAsync(context.User, message, null, Config.ERROR_COLOR);
             else
                 return null;
         }

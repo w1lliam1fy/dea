@@ -12,11 +12,13 @@ namespace DEA.Services
         {
             if (user.GuildPermissions.Administrator)
                 return Task.FromResult(true);
+
             if (context.DbGuild.ModRoles.ElementCount != 0)
                 foreach (var role in context.DbGuild.ModRoles)
                     if (user.Guild.GetRole(ulong.Parse(role.Name)) != null)
                         if (user.RoleIds.Any(x => x.ToString() == role.Name))
                             return Task.FromResult(true);
+
             return Task.FromResult(false);
         }
 

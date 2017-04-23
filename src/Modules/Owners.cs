@@ -36,7 +36,7 @@ namespace DEA.Modules
         [Summary("Resets all data for a specific user.")]
         public async Task ResetUser([Remainder] IGuildUser user = null)
         {
-            user = user ?? Context.User as IGuildUser;
+            user = user ?? Context.GUser;
 
             await _users.DeleteOneAsync(y => y.UserId == user.Id && y.GuildId == user.GuildId);
             await _rankHandler.HandleAsync(Context.Guild, user, Context.DbGuild, await _userRepo.FetchUserAsync(user));
@@ -48,7 +48,7 @@ namespace DEA.Modules
         [Summary("Sets the user's balance to $100,000.00.")]
         public async Task HundredK([Remainder] IGuildUser user = null)
         {
-            user = user ?? Context.User as IGuildUser;
+            user = user ?? Context.GUser;
 
             await _userRepo.ModifyAsync(user, x => x.Cash, 100000);
             await _rankHandler.HandleAsync(Context.Guild, user, Context.DbGuild, await _userRepo.FetchUserAsync(user));

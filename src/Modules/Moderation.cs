@@ -30,12 +30,12 @@ namespace DEA.Modules
         [Summary("Bans a user from the server.")]
         public async Task Ban(IGuildUser userToBan, [Remainder] string reason = "No reason.")
         {
-            if (!await _moderationService.IsHigherModAsync(Context, Context.User as IGuildUser, userToBan))
+            if (!await _moderationService.IsHigherModAsync(Context, Context.GUser, userToBan))
                 await ErrorAsync("You cannot ban another mod with a permission level higher or equal to your own!");
 
             await _moderationService.InformSubjectAsync(Context.User, "Ban", userToBan, reason);
             await Context.Guild.AddBanAsync(userToBan);
-            await _loggingService.ModLogAsync(Context, "Ban", new Color(255, 0, 0), reason, userToBan);
+            await _loggingService.ModLogAsync(Context, "Ban", Config.ERROR_COLOR, reason, userToBan);
 
             await SendAsync($"{Context.User} has successfully banned {userToBan}!");
         }

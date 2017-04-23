@@ -35,12 +35,6 @@ namespace DEA.Database.Repositories
             return _guilds.UpdateOneAsync(y => y.Id == guildId, builder.Set(field, value));
         }
 
-        public Task ModifyAsync(ulong guildId, Expression<Func<Guild, ulong>> field, ulong value)
-        {
-            var builder = Builders<Guild>.Update;
-            return _guilds.UpdateOneAsync(y => y.Id == guildId, builder.Set(field, value));
-        }
-
         public Task ModifyAsync(ulong guildId, Expression<Func<Guild, BsonDocument>> field, BsonDocument value)
         {
             var builder = Builders<Guild>.Update;

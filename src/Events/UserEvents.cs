@@ -38,7 +38,6 @@ namespace DEA.Events
         private Task HandleUserJoin(SocketGuildUser u)
             => Task.Run(async () =>
             {
-                await Logger.LogAsync(LogSeverity.Debug, $"Guild: {u.Guild}, User: {u}", "Event - User Joined");
                 await _loggingService.DetailedLogAsync(u.Guild, "Event", "User Joined", "User", $"{u}", u.Id, new Color(12, 255, 129), false);
                 var user = u as IGuildUser;
                 var dbGuild = await _guildRepo.FetchGuildAsync(user.Guild.Id);
@@ -52,12 +51,12 @@ namespace DEA.Events
             });
 
         private Task HandleUserBanned(SocketUser u, SocketGuild guild)
-            => _loggingService.DetailedLogAsync(guild, "Action", "Ban", "User", $"{u}", u.Id, new Color(255, 0, 0));
+            => Task.Run(() => _loggingService.DetailedLogAsync(guild, "Action", "Ban", "User", $"{u}", u.Id, Config.ERROR_COLOR));
 
         private Task HandleUserLeft(SocketGuildUser u)
-            => _loggingService.DetailedLogAsync(u.Guild, "Event", "User Left", "User", $"{u}", u.Id, new Color(255, 114, 14));
+            => Task.Run(() => _loggingService.DetailedLogAsync(u.Guild, "Event", "User Left", "User", $"{u}", u.Id, new Color(255, 114, 14)));
 
         private Task HandleUserUnbanned(SocketUser u, SocketGuild guild)
-            => _loggingService.DetailedLogAsync(guild, "Action", "Unban", "User", $"<@{u.Id}>", u.Id, new Color(12, 255, 129));
+            => Task.Run(() => _loggingService.DetailedLogAsync(guild, "Action", "Unban", "User", $"<@{u.Id}>", u.Id, new Color(12, 255, 129)));
     }
 }

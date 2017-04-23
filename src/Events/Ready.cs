@@ -24,6 +24,7 @@ namespace DEA.Events
             new RoleEvents(_map);
             new ChannelEvents(_map);
             new ApplyIntrestRate(_map);
+            new AutoDeletePolls(_map);
             new AutoTrivia(_map);
             new AutoUnmute(_map);
             new ResetTempMultiplier(_map);

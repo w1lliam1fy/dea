@@ -53,7 +53,7 @@ namespace DEA.Services.Handlers
             if (msg.HasStringPrefix(context.DbGuild.Prefix, ref argPos) ||
                 msg.HasMentionPrefix(_client.CurrentUser, ref argPos))
             {
-                await Logger.LogAsync(LogSeverity.Debug, $"Guild: {context.Guild}, User: {context.User}", msg.Content);
+                Logger.Log(LogSeverity.Debug, $"Guild: {context.Guild}, User: {context.User}", msg.Content);
 
                 var result = await _commandService.ExecuteAsync(context, argPos, _map);
                 if (!result.IsSuccess)

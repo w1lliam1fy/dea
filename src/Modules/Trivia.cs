@@ -123,8 +123,8 @@ namespace DEA.Modules
             List<string> elements = new List<string>();
             var triviaElements = Context.DbGuild.Trivia.Elements.ToList();
 
-            for (int i = 1; i < triviaElements.Count -1; i++)
-                elements.Add($"{i}. {triviaElements[i].Name}\n");
+            for (int i = 0; i < triviaElements.Count; i++)
+                elements.Add($"{i + 1}. {triviaElements[i].Name}\n");
 
             var channel = await Context.User.CreateDMChannelAsync();
             await channel.SendCodeAsync(elements, "Trivia Questions");
@@ -148,8 +148,8 @@ namespace DEA.Modules
                 List<string> elements = new List<string>();
                 var triviaElements = Context.DbGuild.Trivia.Elements.ToList();
 
-                for (int i = 1; i < triviaElements.Count -1; i++)
-                    elements.Add($"{i}. {triviaElements[i].Name} | {triviaElements[i].Value}\n");
+                for (int i = 0; i < triviaElements.Count; i++)
+                    elements.Add($"{i + 1}. {triviaElements[i].Name} | {triviaElements[i].Value}\n");
 
                 await channel.SendCodeAsync(elements, "Trivia Answers");
 

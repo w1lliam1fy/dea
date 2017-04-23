@@ -55,7 +55,7 @@ namespace DEA.Modules
             if (mutedRole.Position > Context.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
                 await ErrorAsync($"DEA must be higher in the heigharhy than {mutedRole.Mention}.");
 
-            await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.MutedRoleId, mutedRole.Id);
+            await _guildRepo.ModifyAsync(Context.Guild.Id, x => (decimal)x.MutedRoleId, (decimal)mutedRole.Id);
 
             await ReplyAsync($"You have successfully set the muted role to {mutedRole.Mention}.");
         }
@@ -126,7 +126,7 @@ namespace DEA.Modules
         [Summary("Sets the moderation log.")]
         public async Task SetModLogChannel([Remainder] ITextChannel modLogChannel)
         {
-            await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.ModLogId, modLogChannel.Id);
+            await _guildRepo.ModifyAsync(Context.Guild.Id, x => (decimal)x.ModLogId, (decimal)modLogChannel.Id);
             await ReplyAsync($"You have successfully set the moderator log channel to {modLogChannel.Mention}.");
         }
 
@@ -134,7 +134,7 @@ namespace DEA.Modules
         [Summary("Sets the detailed logs.")]
         public async Task SetDetailedLogsChannel([Remainder] ITextChannel detailedLogsChannel)
         {
-            await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.DetailedLogsId, detailedLogsChannel.Id);
+            await _guildRepo.ModifyAsync(Context.Guild.Id, x => (decimal)x.DetailedLogsId, (decimal)detailedLogsChannel.Id);
             await ReplyAsync($"You have successfully set the detailed logs channel to {detailedLogsChannel.Mention}.");
         }
 
@@ -143,7 +143,7 @@ namespace DEA.Modules
         [Summary("Sets the gambling channel.")]
         public async Task SetGambleChannel([Remainder] ITextChannel gambleChannel)
         {
-            await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.GambleId, gambleChannel.Id);
+            await _guildRepo.ModifyAsync(Context.Guild.Id, x => (decimal)x.GambleId, (decimal)gambleChannel.Id);
             await ReplyAsync($"You have successfully set the gamble channel to {gambleChannel.Mention}.");
         }
 

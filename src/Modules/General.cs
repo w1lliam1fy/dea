@@ -168,7 +168,7 @@ namespace DEA.Modules
         [Summary("View the detailed ranking information of any user.")]
         public async Task Rank([Remainder] IGuildUser user = null)
         {
-            user = user ?? Context.User as IGuildUser;
+            user = user ?? Context.GUser;
 
             var dbUser = await _userRepo.FetchUserAsync(user);
             var users = await (await _users.FindAsync(y => y.GuildId == Context.Guild.Id)).ToListAsync();
@@ -187,7 +187,7 @@ namespace DEA.Modules
         [Summary("View the money/message rate of anyone.")]
         public async Task Rate([Remainder] IGuildUser user = null)
         {
-            user = user ?? Context.User as IGuildUser;
+            user = user ?? Context.GUser;
             var dbUser = await _userRepo.FetchUserAsync(user);
 
             await SendAsync($"Cash/msg: {(dbUser.TemporaryMultiplier * dbUser.InvestmentMultiplier).USD()}\n" +
@@ -202,7 +202,7 @@ namespace DEA.Modules
         [Summary("View the wealth of anyone.")]
         public async Task Money([Remainder] IGuildUser user = null)
         {
-            user = user ?? Context.User as IGuildUser;
+            user = user ?? Context.GUser;
             var dbUser = await _userRepo.FetchUserAsync(user);
 
             await SendAsync($"{user}'s balance: {dbUser.Cash.USD()}.");
@@ -261,7 +261,7 @@ namespace DEA.Modules
         [Summary("Check when you can sauce out more cash.")]
         public async Task Cooldowns([Remainder] IGuildUser user = null)
         {
-            user = user ?? Context.User as IGuildUser;
+            user = user ?? Context.GUser;
             var dbUser = Context.User.Id == user.Id ? Context.DbUser : await _userRepo.FetchUserAsync(user);
 
             var cooldowns = new Dictionary<String, TimeSpan>

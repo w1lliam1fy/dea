@@ -46,7 +46,7 @@ namespace DEA
             }
             catch (IOException e)
             {
-                Logger.LogAsync(LogSeverity.Critical, "Error while loading up Credentials.json, please fix this issue and restart the bot", e.Message).RunSynchronously();
+                Logger.Log(LogSeverity.Critical, "Error while loading up Credentials.json, please fix this issue and restart the bot", e.Message);
                 Console.ReadLine();
                 Environment.Exit(0);
             }
@@ -55,6 +55,7 @@ namespace DEA
             {
                 MessageCacheSize = 10,
                 TotalShards = _credentials.ShardCount,
+                AlwaysDownloadUsers = true,
             });
 
             _commandService = new CommandService(new CommandServiceConfig()
@@ -76,8 +77,8 @@ namespace DEA
 
         private async Task RunAsync()
         {
-            await Logger.NewLineAsync("===   DEA   ===");
-            await Logger.NewLineAsync();
+            Logger.NewLine("===   DEA   ===");
+            Logger.NewLine();
 
             var sw = Stopwatch.StartNew();
             try
@@ -86,23 +87,29 @@ namespace DEA
             }
             catch (HttpException httpEx)
             {
-                await Logger.LogAsync(LogSeverity.Critical, $"Login failed", httpEx.Reason);
+                Logger.Log(LogSeverity.Critical, $"Login failed", httpEx.Reason);
                 Console.ReadLine();
                 Environment.Exit(0);
             }
                
             await _client.StartAsync();
             sw.Stop();
-            await Logger.LogAsync(LogSeverity.Info, "Successfully connected", $"Elapsed time: {sw.Elapsed.TotalSeconds.ToString()} seconds.");
+            Logger.Log(LogSeverity.Info, "Successfully connected", $"Elapsed time: {sw.Elapsed.TotalSeconds.ToString("N3")} seconds.");
 
             var map = new DependencyMap();
             ConfigureServices(map);
             
-            await Logger.LogAsync(LogSeverity.Info, "Mapping successfully configured", $"Services ready.");
+            Logger.Log(LogSeverity.Info, "Mapping successfully configured", $"Services ready.");
 
             new Ready(map);
             await new CommandHandler(_commandService, map).InitializeAsync();
-            await Logger.LogAsync(LogSeverity.Info, "Events and command handler successfully initialized", $"Client ready.");
+            Logger.Log(LogSeverity.Info, "Events and command handler successfully initialized", $"Client ready.");
+
+            Logger.Log(LogSeverity.Info, "MongoDb Connection Verification", "Test connection has commenced...");
+            sw.Restart();
+            await _users.CountAsync(y => y.Cash > 0);
+            sw.Stop();
+            Logger.Log(LogSeverity.Info, "Test connection has succeeded", $"Elapsed time: {sw.Elapsed.TotalSeconds.ToString("N3")} seconds.");
 
             await Task.Delay(-1);
         }

@@ -43,7 +43,7 @@ namespace DEA.Services.Timers
         {
             Task.Run(async () =>
             {
-                await Logger.LogAsync(LogSeverity.Debug, $"Timers", "Auto Trivia");
+                Logger.Log(LogSeverity.Debug, $"Timers", "Auto Trivia");
                 var builder = Builders<Guild>.Filter;
                 foreach (var dbGuild in await (await _guilds.FindAsync(builder.Empty)).ToListAsync())
                 {

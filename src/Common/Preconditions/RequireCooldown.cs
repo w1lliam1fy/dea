@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Discord.Commands;
 using DEA.Services;
+using DEA.Common.Extensions.DiscordExtensions;
 
 namespace DEA.Common.Preconditions
 {
@@ -52,7 +53,9 @@ namespace DEA.Common.Preconditions
                 return PreconditionResult.FromSuccess();
             else
             {
-                await _loggingService.CooldownAsync(deaContext, command.Name, cooldown.Subtract(DateTime.UtcNow.Subtract(lastUse)));
+                var user = command.Name.ToLower() == "raid" ? deaContext.Gang.Name : context.User.ToString();
+                var timeSpan = cooldown.Subtract(DateTime.UtcNow.Subtract(lastUse));
+                await deaContext.Channel.SendAsync($"Hours: {timeSpan.Hours}\nMinutes: {timeSpan.Minutes}\nSeconds: {timeSpan.Seconds}", $"{command} cooldown for {user}", Config.ERROR_COLOR);
                 return PreconditionResult.FromError(string.Empty);
             }
         }

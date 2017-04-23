@@ -23,13 +23,13 @@ namespace DEA.Events
         }
 
         private Task HandleChannelCreated(SocketChannel socketChannel)
-            => _loggingService.DetailedLogsForChannel(socketChannel, "Channel Creation", new Color(12, 255, 129));
+            => Task.Run(() => _loggingService.DetailedLogsForChannel(socketChannel, "Channel Creation", new Color(12, 255, 129)));
 
         private Task HandleChannelUpdated(SocketChannel socketChannelBefore, SocketChannel socketChannelAfter)
-            => _loggingService.DetailedLogsForChannel(socketChannelAfter, "Channel Modification", new Color(12, 255, 129));
+            => Task.Run(() => _loggingService.DetailedLogsForChannel(socketChannelAfter, "Channel Modification", new Color(12, 255, 129)));
 
         private Task HandleChannelDestroyed(SocketChannel socketChannel)
-            => _loggingService.DetailedLogsForChannel(socketChannel, "Channel Deletion", new Color(255, 0, 0));
+            => Task.Run(() => _loggingService.DetailedLogsForChannel(socketChannel, "Channel Deletion", Config.ERROR_COLOR));
 
 
     }

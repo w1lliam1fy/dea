@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using System;
 
 namespace DEA.Common.Extensions.DiscordExtensions
 {
@@ -17,8 +18,9 @@ namespace DEA.Common.Extensions.DiscordExtensions
                     before = "[";
                     after = "]";
                 }
-                if (param.Type == typeof(IRole) || param.Type == typeof(IGuildUser)) before = before + "@";
-                if (param.Type == typeof(ITextChannel)) before = before + "#";
+                if (param.Type == typeof(bool)) after = ": True/False" + after;
+                if (param.Type == typeof(IRole) || param.Type == typeof(IGuildUser)) before += "@";
+                if (param.Type == typeof(ITextChannel)) before += "#";
                 usage += $" {before}{param.Summary ?? param.Name}{after} ";
             }
             return usage;

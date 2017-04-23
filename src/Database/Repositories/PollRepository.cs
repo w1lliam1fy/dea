@@ -1,7 +1,9 @@
 ﻿using DEA.Common;
 using DEA.Database.Models;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,40 +24,38 @@ namespace DEA.Database.Repositories
             var polls = await (await _polls.FindAsync(y => y.GuildId == guildId)).ToListAsync();
             try
             {
-                return polls[index];
+                return polls[index - 1];
             }
-            catch (IndexOutOfRangeException)
+            catch (ArgumentOutOfRangeException)
             {
                 throw new DEAException("This poll index does not exist.");
             }
         }
 
-        public async Task ModifyPollAsync(int index, ulong guildId, Action<Poll> action)
+        public Task ModifyAsync(Poll poll, Expression<Func<Poll, BsonDocument>> field, BsonDocument value)
         {
-            var polls = await (await _polls.FindAsync(y => y.GuildId == guildId)).ToListAsync();
-            try
-            {
-                var poll = polls[index];
-                action(poll);
-                await _polls.ReplaceOneAsync(y => y.Id == poll.Id, poll);
-            }
-            catch (IndexOutOfRangeException)
-            {
-                throw new DEAException("This poll index does not exist.");
-            }
+            var builder = Builders<Poll>.Update;
+            return _polls.UpdateOneAsync(y => y.Id == poll.Id, builder.Set(field, value));
         }
 
-        public async Task<Poll> AddPollAsync(DEAContext context, string name, string[] choices, TimeSpan? length = null, bool elderOnly = false, bool modOnly = false)
+        public async Task<Poll> CreatePollAsync(DEAContext context, string name, string[] choices, TimeSpan? length = null, bool elderOnly = false, bool modOnly = false, bool createdByMod = false)
         {
             Expression<Func<Poll, bool>> expression = x => x.Name.ToLower() == name.ToLower() && x.GuildId == context.Guild.Id;
-            if (await(await _polls.FindAsync(expression)).AnyAsync())
-                throw new DEAException($"There is already a poll by the name {name}.");
+            if (await (await _polls.FindAsync(expression)).AnyAsync())
+                throw new DEAException($"There is already a poll by the name \"{name}\".");
             if (name.Length > Config.MAX_POLL_SIZE)
                 throw new DEAException($"The poll name may not be larger than {Config.MAX_POLL_SIZE} characters.");
-            if (length.HasValue && length.Value.TotalMilliseconds > Config.MAX_POLL_LENGTH)
+            if (length.HasValue && length.Value.TotalMilliseconds > Config.MAX_POLL_LENGTH.TotalMilliseconds)
                 throw new DEAException($"The poll length may not be longer than one week.");
 
-            var createdPoll = new Poll(context.User.Id, context.Guild.Id, name, choices);
+            var createdPoll = new Poll(context.User.Id, context.Guild.Id, name, choices)
+            {
+                ElderOnly = elderOnly,
+                ModOnly = modOnly,
+                CreatedByMod = createdByMod,
+            };
+
+            if (length.HasValue) createdPoll.Length = length.Value.TotalMilliseconds;
             await _polls.InsertOneAsync(createdPoll, null, default(CancellationToken));
             return createdPoll;
         }
@@ -65,16 +65,14 @@ namespace DEA.Database.Repositories
             var polls = await (await _polls.FindAsync(y => y.GuildId == guildId)).ToListAsync();
             try
             {
-                var poll = polls[index];
+                var poll = polls[index - 1];
                 await _polls.DeleteOneAsync(y => y.Id == poll.Id);
             }
-            catch (IndexOutOfRangeException)
+            catch (ArgumentOutOfRangeException)
             {
                 throw new DEAException("This poll index does not exist.");
             }
         }
 
-        public Task RemovePollAsync(string name, ulong guildId)
-            => _polls.DeleteOneAsync(y => y.Name == name && y.GuildId == guildId);
     }
 }

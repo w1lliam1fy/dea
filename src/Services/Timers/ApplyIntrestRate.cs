@@ -33,7 +33,7 @@ namespace DEA.Services.Timers
         {
             Task.Run(async () =>
             {
-                await Logger.LogAsync(LogSeverity.Debug, $"Timers", "Interest Rate");
+                Logger.Log(LogSeverity.Debug, $"Timers", "Interest Rate");
                 var builder = Builders<Gang>.Filter;
                 var updateBuilder = Builders<Gang>.Update;
 

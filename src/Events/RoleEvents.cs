@@ -23,12 +23,12 @@ namespace DEA.Events
         }
 
         private Task HandleRoleCreated(SocketRole role)
-            => _loggingService.DetailedLogAsync(role.Guild, "Action", "Role Creation", "Role", role.Name, role.Id, new Color(12, 255, 129));
+            => Task.Run(() => _loggingService.DetailedLogAsync(role.Guild, "Action", "Role Creation", "Role", role.Name, role.Id, new Color(12, 255, 129)));
 
         private Task HandleRoleUpdated(SocketRole roleBefore, SocketRole roleAfter)
-            => _loggingService.DetailedLogAsync(roleAfter.Guild, "Action", "Role Modification", "Role", roleAfter.Name, roleAfter.Id, new Color(12, 255, 129));
+            => Task.Run(() => _loggingService.DetailedLogAsync(roleAfter.Guild, "Action", "Role Modification", "Role", roleAfter.Name, roleAfter.Id, new Color(12, 255, 129)));
 
         private Task HandleRoleDeleted(SocketRole role)
-            => _loggingService.DetailedLogAsync(role.Guild, "Action", "Role Deletion", "Role", role.Name, role.Id, new Color(255, 0, 0));
+            => Task.Run(() => _loggingService.DetailedLogAsync(role.Guild, "Action", "Role Deletion", "Role", role.Name, role.Id, Config.ERROR_COLOR));
     }
 }

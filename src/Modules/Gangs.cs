@@ -68,7 +68,7 @@ namespace DEA.Modules
                 var answer = await _interactiveService.WaitForMessage(leaderDM, x => x.Content == key.ToString(), TimeSpan.FromMinutes(5));
                 if (answer != null)
                 {
-                    if (await _gangRepo.InGangAsync(Context.User as IGuildUser))
+                    if (await _gangRepo.InGangAsync(Context.GUser))
                         await leaderDM.SendAsync("This user has already joined a different gang.");
                     else if ((await _gangRepo.FetchGangAsync(leader)).Members.Length == 4)
                         await leaderDM.SendAsync("Your gang is already full.");
@@ -78,7 +78,7 @@ namespace DEA.Modules
 
                         await leaderDM.SendAsync($"You have successfully added {Context.User} as a member of your gang.");
 
-                        await Context.User.Id.DMAsync(Context, $"Congrats! {leader} has accepted your request to join {gang.Name}!");
+                        await Context.User.Id.DMAsync(Context.Client, $"Congrats! {leader} has accepted your request to join {gang.Name}!");
                     }
                 }
             }
@@ -144,7 +144,7 @@ namespace DEA.Modules
             await _gangRepo.RemoveMemberAsync(Context.Gang, Context.User.Id);
             await ReplyAsync($"You have successfully left {Context.Gang.Name}.");
 
-            await Context.Gang.LeaderId.DMAsync(Context, $"{Context.User} has left {Context.Gang.Name}.");
+            await Context.Gang.LeaderId.DMAsync(Context.Client, $"{Context.User} has left {Context.Gang.Name}.");
         }
 
         [Command("KickGangMember")]
@@ -160,7 +160,7 @@ namespace DEA.Modules
             await _gangRepo.RemoveMemberAsync(Context.Gang, gangMember.Id);
             await ReplyAsync($"You have successfully kicked {gangMember} from {Context.Gang.Name}.");
 
-            await gangMember.Id.DMAsync(Context, $"You have been kicked from {Context.Gang.Name}.");
+            await gangMember.Id.DMAsync(Context.Client, $"You have been kicked from {Context.Gang.Name}.");
         }
 
         [Command("DestroyGang")]
@@ -168,7 +168,7 @@ namespace DEA.Modules
         [Summary("Destroys a gang entirely taking down all funds with it.")]
         public async Task DestroyGang()
         {
-            await _gangRepo.DestroyGangAsync(Context.User as IGuildUser);
+            await _gangRepo.DestroyGangAsync(Context.GUser);
             await ReplyAsync($"You have successfully destroyed your gang.");
         }
 
@@ -205,11 +205,11 @@ namespace DEA.Modules
                 await ErrorAsync("This user is not a member of your gang!");
 
             await _gangRepo.RemoveMemberAsync(Context.Gang, gangMember.Id);
-            await _gangRepo.ModifyAsync(Context.User as IGuildUser, x => x.LeaderId, gangMember.Id);
+            await _gangRepo.ModifyAsync(Context.GUser, x => (decimal)x.LeaderId, (decimal)gangMember.Id);
             await _gangRepo.AddMemberAsync(Context.Gang, Context.User.Id);
 
             await ReplyAsync($"You have successfully transferred the leadership of {Context.Gang.Name} to {gangMember}.");
-            await gangMember.Id.DMAsync(Context, $"{Context.User} has trasnferred the ownership of {Context.Gang.Name} to you!");
+            await gangMember.Id.DMAsync(Context.Client, $"{Context.User} has trasnferred the ownership of {Context.Gang.Name} to you!");
         }
 
         [Command("Deposit")]
@@ -228,7 +228,7 @@ namespace DEA.Modules
             await ReplyAsync($"You have successfully deposited {cash.USD()}. " +
                         $"{Context.Gang.Name}'s Wealth: {(Context.Gang.Wealth + cash).USD()}");
 
-            await Context.Gang.LeaderId.DMAsync(Context, $"{Context.User} deposited {cash.USD()} into your gang's wealth.");
+            await Context.Gang.LeaderId.DMAsync(Context.Client, $"{Context.User} deposited {cash.USD()} into your gang's wealth.");
         }
 
         [Command("Withdraw")]
@@ -250,7 +250,7 @@ namespace DEA.Modules
             await ReplyAsync($"You have successfully withdrawn {cash.USD()}. " +
                              $"{Context.Gang.Name}'s Wealth: {(Context.Gang.Wealth - cash).USD()}.");
 
-            await Context.Gang.LeaderId.DMAsync(Context, $"{Context.User} has withdrawn {cash.USD()} from your gang's wealth.");
+            await Context.Gang.LeaderId.DMAsync(Context.Client, $"{Context.User} has withdrawn {cash.USD()} from your gang's wealth.");
         }
 
         [Command("Raid")]
@@ -277,7 +277,7 @@ namespace DEA.Modules
                 await _gangRepo.ModifyAsync(Context, x => x.Wealth, Context.Gang.Wealth + stolen);
                 await _gangRepo.ModifyAsync(Context, x => x.Raid, DateTime.UtcNow);
 
-                await raidedGang.LeaderId.DMAsync(Context, $"{Context.Gang.Name} just raided your gang's wealth and managed to walk away with {stolen.USD()}.");
+                await raidedGang.LeaderId.DMAsync(Context.Client, $"{Context.Gang.Name} just raided your gang's wealth and managed to walk away with {stolen.USD()}.");
 
                 await ReplyAsync($"With a {Config.RAID_SUCCESS_ODDS}.00% chance of success, you successfully stole {stolen.USD()}. " +
                             $"{Context.Gang.Name}'s Wealth {(Context.Gang.Wealth + stolen).USD()}.");
@@ -287,7 +287,7 @@ namespace DEA.Modules
                 await _gangRepo.ModifyAsync(Context, x => x.Wealth, Context.Gang.Wealth - resources);
                 await _gangRepo.ModifyAsync(Context, x => x.Raid, DateTime.UtcNow);
 
-                await raidedGang.LeaderId.DMAsync(Context, $"{Context.Gang.Name} tried to raid your gang's stash, but one of your loyal sicarios gunned them out.");
+                await raidedGang.LeaderId.DMAsync(Context.Client, $"{Context.Gang.Name} tried to raid your gang's stash, but one of your loyal sicarios gunned them out.");
 
                 await ReplyAsync($"With a {Config.RAID_SUCCESS_ODDS}.00% chance of success, you failed to steal {stolen.USD()} " +
                             $"and lost all resources in the process.");

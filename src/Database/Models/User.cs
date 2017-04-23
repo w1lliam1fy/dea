@@ -27,7 +27,7 @@ namespace DEA.Database.Models
 
         //Cooldowns
 
-        public double MessageCooldown { get; set; } = Config.DEFAULT_MESSAGE_COOLDOWN;
+        public double MessageCooldown { get; set; } = Config.DEFAULT_MESSAGE_COOLDOWN.TotalMilliseconds;
 
         public DateTime Whore { get; set; } = DateTime.UtcNow.AddYears(-1);
 

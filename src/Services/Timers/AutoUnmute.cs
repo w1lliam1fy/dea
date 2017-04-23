@@ -43,7 +43,7 @@ namespace DEA.Services.Timers
         {
             Task.Run(async () =>
             {
-                await Logger.LogAsync(LogSeverity.Debug, $"Timers", "Auto Unmute");
+                Logger.Log(LogSeverity.Debug, $"Timers", "Auto Unmute");
                 var builder = Builders<Mute>.Filter;
                 foreach (var mute in await (await _mutes.FindAsync(builder.Empty)).ToListAsync())
                 {
