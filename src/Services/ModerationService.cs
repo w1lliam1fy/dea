@@ -1,5 +1,6 @@
 ﻿using DEA.Common;
 using DEA.Common.Extensions.DiscordExtensions;
+using DEA.Database.Repositories;
 using Discord;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,6 +9,13 @@ namespace DEA.Services
 {
     public class ModerationService
     {
+        private readonly GuildRepository _guildRepo;
+
+        public ModerationService(GuildRepository guildRepo)
+        {
+            _guildRepo = guildRepo;
+        }
+
         public Task<bool> IsModAsync(DEAContext context, IGuildUser user)
         {
             if (user.GuildPermissions.Administrator)
@@ -48,11 +56,50 @@ namespace DEA.Services
 
             if (channel != null)
             {
-                var message = $"{moderator} has attempted to {action.ToLower()} you.";
-                if (!string.IsNullOrWhiteSpace(reason))
-                    message = message.Remove(message.Length - 1) + $"for the following reason: {reason}";
-                await channel.SendAsync(message);
+                try
+                {
+                    var message = $"{moderator} has attempted to {action.ToLower()} you.";
+                    if (!string.IsNullOrWhiteSpace(reason))
+                        message = message.Remove(message.Length - 1) + $"for the following reason: {reason}";
+                    await channel.SendAsync(message);
+                }
+                catch { }
             }
+        }
+
+        public async Task ModLogAsync(DEAContext context, string action, Color color, string reason, IUser subject = null, string extra = "")
+        {
+            var channel = context.Guild.GetTextChannel(context.DbGuild.ModLogId);
+
+            if (channel == null) return;
+
+            EmbedFooterBuilder footer = new EmbedFooterBuilder()
+            {
+                IconUrl = "http://i.imgur.com/BQZJAqT.png",
+                Text = $"Case #{context.DbGuild.CaseNumber}"
+            };
+            EmbedAuthorBuilder author = new EmbedAuthorBuilder()
+            {
+                IconUrl = context.User.GetAvatarUrl(),
+                Name = $"{context.User.Username}#{context.User.Discriminator}"
+            };
+
+            string userText = string.Empty;
+            if (subject != null) userText = $"\n** User:** { subject} ({ subject.Id})";
+            var builder = new EmbedBuilder()
+            {
+                Author = author,
+                Color = color,
+                Description = $"**Action:** {action}{extra}{userText}\n**Reason:** {reason}",
+                Footer = footer
+            }.WithCurrentTimestamp();
+
+            try
+            {
+                await channel.SendMessageAsync(string.Empty, embed: builder);
+                await _guildRepo.ModifyAsync(context.Guild.Id, x => x.CaseNumber, ++context.DbGuild.CaseNumber);
+            }
+            catch { }
         }
     }
 }

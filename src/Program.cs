@@ -73,6 +73,8 @@ namespace DEA
             _gangs = database.GetCollection<Gang>("gangs");
             _polls = database.GetCollection<Poll>("polls");
             _mutes = database.GetCollection<Mute>("mutes");
+
+            _guilds.UpdateMany(Builders<Guild>.Filter.Empty, Builders<Guild>.Update.Unset("DetailedLogsId"));
         }
 
         private async Task RunAsync()
@@ -130,9 +132,8 @@ namespace DEA
             map.Add(new GamblingService(map.Get<UserRepository>()));
             map.Add(new InteractiveService(_client));
             map.Add(new GameService(map.Get<InteractiveService>(), map.Get<UserRepository>()));
-            map.Add(new ModerationService());
+            map.Add(new ModerationService(map.Get<GuildRepository>()));
             map.Add(new ErrorHandler(_commandService));
-            map.Add(new LoggingService(map.Get<GuildRepository>()));
             map.Add(new GangRepository(_gangs));
             map.Add(new MuteRepository(_mutes));
         }

@@ -21,8 +21,6 @@ namespace DEA.Events
         {
             await _client.SetGameAsync("USE $help");
             new UserEvents(_map);
-            new RoleEvents(_map);
-            new ChannelEvents(_map);
             new ApplyIntrestRate(_map);
             new AutoDeletePolls(_map);
             new AutoTrivia(_map);

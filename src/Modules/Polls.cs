@@ -109,7 +109,7 @@ namespace DEA.Modules
             if (poll.ModOnly)
                 description += "\n\n**Only moderators may vote on this poll.**";
             else if (poll.ElderOnly)
-                description += "\n\n**Only users that have been in this server for at least 48 hours may vote on this poll.**";
+                description += $"\n\n**Only users that have been in this server for at least {Config.ELDER_TIME_REQUIRED.TotalHours} hours may vote on this poll.**";
 
             await SendAsync(description, poll.Name);
         }
@@ -124,7 +124,7 @@ namespace DEA.Modules
                 await ErrorAsync("You have already voted on this poll.");
             if (poll.ElderOnly && DateTime.UtcNow.Subtract((Context.GUser).JoinedAt.Value.UtcDateTime).TotalMilliseconds <
                 Config.ELDER_TIME_REQUIRED.TotalMilliseconds)
-                await ErrorAsync($"You must have been in this server for more than {Config.ELDER_TIME_REQUIRED.TotalDays} to vote on this poll.");
+                await ErrorAsync($"You must have been in this server for more than {Config.ELDER_TIME_REQUIRED.TotalDays} days to vote on this poll.");
             if (poll.ModOnly && !await _moderationService.IsModAsync(Context, Context.GUser))
                 await ErrorAsync("Only a moderator may vote on this poll.");
 

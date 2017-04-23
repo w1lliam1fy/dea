@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Discord.Commands;
-using DEA.Services;
 using DEA.Common.Extensions.DiscordExtensions;
 using DEA.Common.Extensions;
 
@@ -10,14 +9,8 @@ namespace DEA.Common.Preconditions
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
     public class RequireCooldownAttribute : PreconditionAttribute
     {
-        private IDependencyMap _map;
-        private LoggingService _loggingService;
-
         public override async Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IDependencyMap map)
         {
-            _map = map;
-            _loggingService = _map.Get<LoggingService>();
-
             TimeSpan cooldown;
             DateTime lastUse;
             var deaContext = context as DEAContext;

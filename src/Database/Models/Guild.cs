@@ -25,8 +25,6 @@ namespace DEA.Database.Models
 
         //Channels
 
-        public ulong DetailedLogsId { get; set; }
-
         public ulong NsfwId { get; set; }
 
         public ulong GambleId { get; set; }

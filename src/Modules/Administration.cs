@@ -130,14 +130,6 @@ namespace DEA.Modules
             await ReplyAsync($"You have successfully set the moderator log channel to {modLogChannel.Mention}.");
         }
 
-        [Command("SetDetailedLogs")]
-        [Summary("Sets the detailed logs.")]
-        public async Task SetDetailedLogsChannel([Remainder] ITextChannel detailedLogsChannel)
-        {
-            await _guildRepo.ModifyAsync(Context.Guild.Id, x => (decimal)x.DetailedLogsId, (decimal)detailedLogsChannel.Id);
-            await ReplyAsync($"You have successfully set the detailed logs channel to {detailedLogsChannel.Mention}.");
-        }
-
         [Command("SetGambleChannel")]
         [Alias("SetGamble")]
         [Summary("Sets the gambling channel.")]
