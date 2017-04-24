@@ -5,6 +5,7 @@ using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using MongoDB.Driver;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -34,7 +35,7 @@ namespace DEA.Services.Timers
 
             TimerCallback TimerDelegate = new TimerCallback(Trivia);
 
-            _timer = new Timer(TimerDelegate, StateObj, 200, Config.AUTO_TRIVIA_COOLDOWN);
+            _timer = new Timer(TimerDelegate, StateObj, TimeSpan.FromMilliseconds(750), Config.AUTO_TRIVIA_COOLDOWN);
 
             StateObj.TimerReference = _timer;
         }

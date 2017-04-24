@@ -145,19 +145,15 @@ namespace DEA.Modules
         [Summary("Prevents users from talking in a specific channel for x amount of seconds.")]
         public async Task Chill(int seconds = 30, [Remainder] string reason = "No reason.")
         {
-            if (seconds < Config.MIN_CHILL)
-                await ErrorAsync($"You may not chill for less than {Config.MIN_CHILL} seconds.");
-            if (seconds > Config.MAX_CHILL)
-                await ErrorAsync("You may not chill for more than one hour.");
+            if (seconds < Config.MIN_CHILL.TotalSeconds)
+                await ErrorAsync($"You may not chill for less than {Config.MIN_CHILL.TotalSeconds} seconds.");
+            if (seconds > Config.MAX_CHILL.TotalSeconds)
+                await ErrorAsync($"You may not chill for more than {Config.MAX_CHILL.TotalSeconds} seconds.");
 
             var channel = Context.Channel as SocketTextChannel;
             var nullablePermOverwrites = channel.GetPermissionOverwrite(Context.Guild.EveryoneRole);
 
-            OverwritePermissions perms;
-            if (nullablePermOverwrites == null)
-                perms = new OverwritePermissions(PermValue.Inherit, PermValue.Inherit, PermValue.Inherit, PermValue.Inherit, PermValue.Inherit);
-            else
-                perms = nullablePermOverwrites.Value;
+            var perms = nullablePermOverwrites ?? new OverwritePermissions(PermValue.Inherit, PermValue.Inherit, PermValue.Inherit, PermValue.Inherit, PermValue.Inherit);
 
             if (perms.SendMessages == PermValue.Deny)
                 await ErrorAsync("This chat is already chilled.");

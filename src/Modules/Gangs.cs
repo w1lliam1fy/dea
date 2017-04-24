@@ -265,9 +265,9 @@ namespace DEA.Modules
                 await ErrorAsync($"Your gang does not have enough money. {Context.Gang.Name}'s Wealth {Context.Gang.Wealth.USD()}.");
 
             var raidedGang = await _gangRepo.FetchGangAsync(gangName, Context.Guild.Id);
-            if (Math.Round(resources, 2) > Math.Round(raidedGang.Wealth / 20m, 2))
-                await ErrorAsync($"You are overkilling it. You only need {(raidedGang.Wealth / 20).USD()} " +
-                                 $"to steal 10% of their cash, that is {(raidedGang.Wealth / 10).USD()}.");
+            if (Math.Round(resources, 2) > Math.Round(raidedGang.Wealth * Config.MAX_RAID_PERCENTAGE / 2, 2))
+                await ErrorAsync($"You are overkilling it. You only need {(raidedGang.Wealth * Config.MAX_RAID_PERCENTAGE / 2).USD()} " +
+                                 $"to steal {Config.MAX_RAID_PERCENTAGE.ToString("P")} of their cash, that is {(raidedGang.Wealth * Config.MAX_RAID_PERCENTAGE).USD()}.");
             var stolen = resources * 2;
 
             int roll = new Random().Next(1, 101);

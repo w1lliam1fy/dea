@@ -130,9 +130,10 @@ namespace DEA.Modules
                 await ErrorAsync($"You don't have enough money. Balance: {Context.Cash.USD()}.");
 
             var raidedDbUser = await _userRepo.FetchUserAsync(user);
-            if (Math.Round(resources, 2) > Math.Round(raidedDbUser.Cash / 20m, 2))
-                await ErrorAsync($"You are overkilling it. You only need {(raidedDbUser.Cash / 20).USD()} " +
-                      $"to rob 10% of their cash, that is {(raidedDbUser.Cash / 10).USD()}.");
+            if (Math.Round(resources, 2) > Math.Round(raidedDbUser.Cash * Config.MAX_ROB_PERCENTAGE / 2, 2))
+                await ErrorAsync($"You are overkilling it. You only need {(raidedDbUser.Cash * Config.MAX_ROB_PERCENTAGE / 2).USD()} " +
+                      $"to rob {Config.MAX_ROB_PERCENTAGE.ToString("P")} of their cash, that is {(raidedDbUser.Cash * Config.MAX_ROB_PERCENTAGE).USD()}.");
+
             var stolen = resources * 2;
 
             int roll = new Random().Next(1, 101);

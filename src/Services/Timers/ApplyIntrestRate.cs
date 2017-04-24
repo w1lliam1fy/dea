@@ -3,6 +3,7 @@ using DEA.Services.Static;
 using Discord;
 using Discord.Commands;
 using MongoDB.Driver;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,7 +25,7 @@ namespace DEA.Services.Timers
 
             TimerCallback TimerDelegate = new TimerCallback(InterestRate);
 
-            _timer = new Timer(TimerDelegate, StateObj, 0, Config.INTEREST_RATE_COOLDOWN);
+            _timer = new Timer(TimerDelegate, StateObj, TimeSpan.FromMilliseconds(250), Config.INTEREST_RATE_COOLDOWN);
 
             StateObj.TimerReference = _timer;
         }
