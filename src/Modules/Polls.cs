@@ -63,6 +63,8 @@ namespace DEA.Modules
         {
             var polls = await (await _polls.FindAsync(y => y.GuildId == Context.Guild.Id)).ToListAsync();
 
+            polls = polls.OrderBy(x => x.CreatedAt).ToList();
+
             if (polls.Count == 0)
                 await ErrorAsync("There are no polls in progress.");
 

@@ -3,7 +3,7 @@ using DEA.Database.Models;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,6 +22,9 @@ namespace DEA.Database.Repositories
         public async Task<Poll> FetchePollAsync(int index, ulong guildId)
         {
             var polls = await (await _polls.FindAsync(y => y.GuildId == guildId)).ToListAsync();
+
+            polls = polls.OrderBy(y => y.CreatedAt).ToList();
+
             try
             {
                 return polls[index - 1];
@@ -63,6 +66,9 @@ namespace DEA.Database.Repositories
         public async Task RemovePollAsync(int index, ulong guildId)
         {
             var polls = await (await _polls.FindAsync(y => y.GuildId == guildId)).ToListAsync();
+
+            polls = polls.OrderBy(y => y.CreatedAt).ToList();
+
             try
             {
                 var poll = polls[index - 1];

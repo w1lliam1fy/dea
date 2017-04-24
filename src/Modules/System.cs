@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using DEA.Common;
 using DEA.Common.Extensions;
 using DEA.Common.Extensions.DiscordExtensions;
+using System.Runtime.InteropServices;
 
 namespace System.Modules
 {
@@ -137,11 +138,11 @@ If you have any other questions, you may join the **Official DEA Discord Server:
             {
                 var uptime = (DateTime.Now - process.StartTime);
                 builder.AddInlineField("Author", "John#0969")
-                .AddInlineField("Library", $"Discord.Net {DiscordConfig.Version}")
-                .AddInlineField("Shard", "#0/1")
+                .AddInlineField("Framework", $"{RuntimeInformation.FrameworkDescription}")
+                .AddInlineField("Memory", $"{(process.PrivateMemorySize64 / 1000000d).ToString("N2")} MB")
                 .AddInlineField("Servers", $"{Context.Client.Guilds.Count}")
                 .AddInlineField("Channels", $"{Context.Client.Guilds.Sum(g => g.Channels.Count) + Context.Client.DMChannels.Count}")
-                .AddInlineField("Memory", $"{(process.PrivateMemorySize64 / 1000000d).ToString("N2")} MB")
+                .AddInlineField("Users", $"{Context.Client.Guilds.Sum(g => g.MemberCount)}")
                 .AddInlineField("Uptime", $"Days: {uptime.Days}\nHours: {uptime.Hours}\nMinutes: {uptime.Minutes}")
                 .AddInlineField("Messages", $"{Config.MESSAGES} ({(Config.MESSAGES / uptime.TotalSeconds).ToString("N2")}/sec)")
                 .AddInlineField("Commands Run", Config.COMMANDS_RUN)
