@@ -9,6 +9,7 @@ using DEA.Common.Extensions.DiscordExtensions;
 using System;
 using System.Linq;
 using DEA.Services;
+using DEA.Database.Models;
 
 namespace DEA.Modules
 {
@@ -16,9 +17,9 @@ namespace DEA.Modules
     {
         private readonly ModerationService _moderationService;
         private readonly PollRepository _pollRepo;
-        private readonly IMongoCollection<Database.Models.Poll> _polls;
+        private readonly IMongoCollection<Poll> _polls;
 
-        public Polls(ModerationService moderationService, PollRepository pollRepo, IMongoCollection<Database.Models.Poll> polls)
+        public Polls(ModerationService moderationService, PollRepository pollRepo, IMongoCollection<Poll> polls)
         {
             _moderationService = moderationService;
             _pollRepo = pollRepo;
@@ -41,7 +42,7 @@ namespace DEA.Modules
 
             await _pollRepo.CreatePollAsync(Context, name, choicesArray, TimeSpan.FromDays(daysToLast), elderOnly, modOnly, isMod);
 
-            await ReplyAsync("Successfully created poll.");
+            await ReplyAsync($"You have successfully created poll #{await _polls.CountAsync(Builders<Poll>.Filter.Empty) + 1}.");
         }
 
         [Command("RemovePoll")]
@@ -92,7 +93,7 @@ namespace DEA.Modules
         public async Task PollInfo(int index)
         {
             var poll = await _pollRepo.FetchePollAsync(index, Context.Guild.Id);
-            string description = $"Creator: <@{poll.CreatorId}>\n\n";
+            string description = string.Empty;
 
             var votes = poll.Votes();
             for (int i = 0; i < poll.Choices.Length; i++)
@@ -100,7 +101,7 @@ namespace DEA.Modules
                 var choice = poll.Choices[i];
                 var percentage = (votes[choice] / (double)poll.VotesDocument.ElementCount);
                 if (double.IsNaN(percentage)) percentage = 0;
-                description += $"{i + 1}. {choice}: {votes[choice]} Votes ({percentage.ToString("P")})\n";
+                description += $"{i + 1}. **{choice}:** {votes[choice]} Vote(s) ({percentage.ToString("P")})\n";
             }
 
             var timeRemaining = TimeSpan.FromMilliseconds(poll.Length).Subtract(DateTime.UtcNow.Subtract(poll.CreatedAt));
@@ -110,6 +111,8 @@ namespace DEA.Modules
                 description += "\n\n**Only moderators may vote on this poll.**";
             else if (poll.ElderOnly)
                 description += $"\n\n**Only users that have been in this server for at least {Config.ELDER_TIME_REQUIRED.TotalHours} hours may vote on this poll.**";
+
+            description += $"\n\nCreator: <@{poll.CreatorId}>";
 
             await SendAsync(description, poll.Name);
         }
