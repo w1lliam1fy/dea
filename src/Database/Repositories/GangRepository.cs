@@ -84,15 +84,11 @@ namespace DEA.Database.Repositories
             return createdGang;
         }
 
-        public Task DestroyGangAsync(IGuildUser user)
-        {
-            return _gangs.DeleteOneAsync(c => (c.LeaderId == user.Id || c.Members.Any(x => x == user.Id)) && c.GuildId == user.GuildId);
-        }
+        public Task DestroyGangAsync(IGuildUser user) =>
+            _gangs.DeleteOneAsync(c => (c.LeaderId == user.Id || c.Members.Any(x => x == user.Id)) && c.GuildId == user.GuildId);
 
-        public async Task<bool> InGangAsync(IGuildUser user)
-        {
-            return await (await _gangs.FindAsync(c => (c.LeaderId == user.Id || c.Members.Any(x => x == user.Id)) && c.GuildId == user.GuildId)).AnyAsync();
-        }
+        public async Task<bool> InGangAsync(IGuildUser user) =>
+            await (await _gangs.FindAsync(c => (c.LeaderId == user.Id || c.Members.Any(x => x == user.Id)) && c.GuildId == user.GuildId)).AnyAsync();
 
         public Task<bool> IsMemberOfAsync(Gang gang, ulong userId)
         {

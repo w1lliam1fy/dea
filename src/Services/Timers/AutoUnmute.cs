@@ -39,8 +39,7 @@ namespace DEA.Services.Timers
             StateObj.TimerReference = _timer;
         }
 
-        private void Unmute(object stateObj)
-        {
+        private void Unmute(object stateObj) =>
             Task.Run(async () =>
             {
                 Logger.Log(LogSeverity.Debug, $"Timers", "Auto Unmute");
@@ -70,7 +69,7 @@ namespace DEA.Services.Timers
                                     var embedBuilder = new EmbedBuilder()
                                     {
                                         Color = new Color(12, 255, 129),
-                                        Description = $"**Action:** Automatic Unmute\n**User:** {guild.GetUser(mute.UserId)} ({guild.GetUser(mute.UserId).Id})",
+                                        Description = $"**Action:** Automatic Unmute\n**User:** {guild.GetUser(mute.UserId)} ({mute.UserId})",
                                         Footer = footer
                                     }.WithCurrentTimestamp();
                                     await _guildRepo.ModifyAsync(guild.Id, x => x.CaseNumber, ++guildData.CaseNumber);
@@ -82,6 +81,6 @@ namespace DEA.Services.Timers
                     }
                 }
             });
-        }
+
     }
 }

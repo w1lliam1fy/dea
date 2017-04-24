@@ -29,8 +29,7 @@ namespace DEA.Services.Timers
             StateObj.TimerReference = _timer;
         }
 
-        private void ResetTempMult(object stateObj)
-        {
+        private void ResetTempMult(object stateObj) =>
             Task.Run(async () =>
             {
                 Logger.Log(LogSeverity.Debug, $"Timers", "Reset Temporary Multiplier");
@@ -38,6 +37,6 @@ namespace DEA.Services.Timers
                 var updateBuilder = Builders<User>.Update;
                 await _users.UpdateManyAsync(builder.Empty, updateBuilder.Set(x => x.TemporaryMultiplier, 1));
             });
-        }
+
     }
 }

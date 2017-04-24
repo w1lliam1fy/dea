@@ -32,38 +32,38 @@ namespace DEA.Services.Handlers
             await _commandService.AddModulesAsync(Assembly.GetEntryAssembly());
         }
 
-        public async Task HandleCommandAsync(SocketMessage s)
-        {
-            Config.MESSAGES++;
-            var msg = s as SocketUserMessage;
-            if (msg == null) return;
-
-            var context = new DEAContext(_client, msg, _map);
-            if (context.Guild == null) return;
-            if (context.User.IsBot) return;
-
-            var perms = (context.Guild.CurrentUser as IGuildUser).GetPermissions(context.Channel as SocketTextChannel);
-
-            if (!perms.SendMessages || !perms.EmbedLinks) return;
-
-            int argPos = 0;
-
-            await context.InitializeAsync();
-
-            if (msg.HasStringPrefix(context.DbGuild.Prefix, ref argPos) ||
-                msg.HasMentionPrefix(_client.CurrentUser, ref argPos))
+        public Task HandleCommandAsync(SocketMessage s) =>
+            Task.Run(async () =>
             {
-                Logger.Log(LogSeverity.Debug, $"Guild: {context.Guild}, User: {context.User}", msg.Content);
+                Config.MESSAGES++;
+                var msg = s as SocketUserMessage;
+                if (msg == null) return;
 
-                var result = await _commandService.ExecuteAsync(context, argPos, _map);
-                if (!result.IsSuccess)
-                    await _errorHandler.HandleCommandFailureAsync(context, result, argPos);
-                else
-                    Config.COMMANDS_RUN++;
-            }
-            else if (msg.Content.Length >= Config.MIN_CHAR_LENGTH)
-                await CashPerMsg.Apply(_userRepo, context);
-        }
+                var context = new DEAContext(_client, msg, _map);
+                if (context.Guild == null) return;
+                if (context.User.IsBot) return;
 
+                var perms = (context.Guild.CurrentUser as IGuildUser).GetPermissions(context.Channel as SocketTextChannel);
+
+                if (!perms.SendMessages || !perms.EmbedLinks) return;
+
+                int argPos = 0;
+
+                await context.InitializeAsync();
+
+                if (msg.HasStringPrefix(context.DbGuild.Prefix, ref argPos) ||
+                    msg.HasMentionPrefix(_client.CurrentUser, ref argPos))
+                {
+                    Logger.Log(LogSeverity.Debug, $"Guild: {context.Guild}, User: {context.User}", msg.Content);
+
+                    var result = await _commandService.ExecuteAsync(context, argPos, _map);
+                    if (!result.IsSuccess)
+                        await _errorHandler.HandleCommandFailureAsync(context, result, argPos);
+                    else
+                        Config.COMMANDS_RUN++;
+                }
+                else if (msg.Content.Length >= Config.MIN_CHAR_LENGTH)
+                    await CashPerMsg.Apply(_userRepo, context);
+            });
     }
 }

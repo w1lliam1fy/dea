@@ -35,8 +35,7 @@ namespace DEA.Services.Timers
             StateObj.TimerReference = _timer;
         }
 
-        private void DeletePolls(object stateObj)
-        {
+        private void DeletePolls(object stateObj) =>
             Task.Run(async () =>
             {
                 Logger.Log(LogSeverity.Debug, $"Timers", "Auto Delete Polls");
@@ -60,8 +59,7 @@ namespace DEA.Services.Timers
 
                         await _polls.DeleteOneAsync(y => y.Id == poll.Id);
                     }
-
             });
-        }
+
     }
 }

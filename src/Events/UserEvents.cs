@@ -28,8 +28,8 @@ namespace DEA.Events
             _client.UserJoined += HandleUserJoin;
         }
 
-        private Task HandleUserJoin(SocketGuildUser u)
-            => Task.Run(async () =>
+        private Task HandleUserJoin(SocketGuildUser u) =>
+            Task.Run(async () =>
             {
                 var user = u as IGuildUser;
                 var dbGuild = await _guildRepo.FetchGuildAsync(user.Guild.Id);
