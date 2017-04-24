@@ -42,7 +42,7 @@ namespace DEA.Modules
 
             await _pollRepo.CreatePollAsync(Context, name, choicesArray, TimeSpan.FromDays(daysToLast), elderOnly, modOnly, isMod);
 
-            await ReplyAsync($"You have successfully created poll #{await _polls.CountAsync(y => y.GuildId == Context.Guild.Id) + 1}.");
+            await ReplyAsync($"You have successfully created poll #{await _polls.CountAsync(y => y.GuildId == Context.Guild.Id)}.");
         }
 
         [Command("RemovePoll")]
