@@ -25,7 +25,7 @@ namespace DEA.Services.Timers
 
             TimerCallback TimerDelegate = new TimerCallback(ResetTempMult);
 
-            _timer = new Timer(TimerDelegate, StateObj, TimeSpan.MinValue, Config.TEMP_MULTIPLIER_RESET_COOLDOWN);
+            _timer = new Timer(TimerDelegate, StateObj, TimeSpan.FromMilliseconds(1250), Config.TEMP_MULTIPLIER_RESET_COOLDOWN);
 
             StateObj.TimerReference = _timer;
         }

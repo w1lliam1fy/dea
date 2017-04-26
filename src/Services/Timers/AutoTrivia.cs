@@ -35,7 +35,7 @@ namespace DEA.Services.Timers
 
             TimerCallback TimerDelegate = new TimerCallback(Trivia);
 
-            _timer = new Timer(TimerDelegate, StateObj, TimeSpan.MinValue, Config.AUTO_TRIVIA_COOLDOWN);
+            _timer = new Timer(TimerDelegate, StateObj, TimeSpan.FromMilliseconds(750), Config.AUTO_TRIVIA_COOLDOWN);
 
             StateObj.TimerReference = _timer;
         }
