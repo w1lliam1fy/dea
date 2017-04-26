@@ -5,6 +5,7 @@ using DEA.Events;
 using DEA.Services;
 using DEA.Services.Handlers;
 using DEA.Services.Static;
+using DEA.Services.Timers;
 using Discord;
 using Discord.Commands;
 using Discord.Net;
@@ -104,6 +105,12 @@ namespace DEA
             Logger.Log(LogSeverity.Info, "Mapping successfully configured", $"Services ready.");
 
             new Ready(map);
+            new UserEvents(map);
+            new ApplyIntrestRate(map);
+            new AutoDeletePolls(map);
+            new AutoTrivia(map);
+            new AutoUnmute(map);
+            new ResetTempMultiplier(map);
             await new CommandHandler(_commandService, map).InitializeAsync();
             Logger.Log(LogSeverity.Info, "Events and command handler successfully initialized", $"Client ready.");
 

@@ -30,7 +30,7 @@ namespace DEA.Services.Timers
 
             TimerCallback TimerDelegate = new TimerCallback(DeletePolls);
 
-            _timer = new Timer(TimerDelegate, StateObj, TimeSpan.FromMilliseconds(500), Config.AUTO_DELETE_POLLS_COOLDOWN);
+            _timer = new Timer(TimerDelegate, StateObj, TimeSpan.MinValue, Config.AUTO_DELETE_POLLS_COOLDOWN);
 
             StateObj.TimerReference = _timer;
         }

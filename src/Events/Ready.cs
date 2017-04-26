@@ -1,5 +1,4 @@
-﻿using DEA.Services.Timers;
-using Discord.Commands;
+﻿using Discord.Commands;
 using Discord.WebSocket;
 using System.Threading.Tasks;
 
@@ -17,16 +16,8 @@ namespace DEA.Events
             _client.Ready += HandleReady;
         }
 
-        private async Task HandleReady()
-        {
-            await _client.SetGameAsync("USE $help");
-            new UserEvents(_map);
-            new ApplyIntrestRate(_map);
-            new AutoDeletePolls(_map);
-            new AutoTrivia(_map);
-            new AutoUnmute(_map);
-            new ResetTempMultiplier(_map);
-        }
+        private Task HandleReady() =>
+            _client.SetGameAsync("USE $help");
 
     }
 }

@@ -25,7 +25,7 @@ namespace DEA.Services.Timers
 
             TimerCallback TimerDelegate = new TimerCallback(InterestRate);
 
-            _timer = new Timer(TimerDelegate, StateObj, TimeSpan.FromMilliseconds(250), Config.INTEREST_RATE_COOLDOWN);
+            _timer = new Timer(TimerDelegate, StateObj, TimeSpan.MinValue, Config.INTEREST_RATE_COOLDOWN);
 
             StateObj.TimerReference = _timer;
         }

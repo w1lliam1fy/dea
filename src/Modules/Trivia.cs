@@ -29,7 +29,7 @@ namespace DEA.Modules
         [Command("ChangeAutoTriviaSettings")]
         [Alias("EnableAutoTrivia", "DisableAutoTrivia")]
         [Require(Attributes.Admin)]
-        [Summary("Enables/disables the auto trivia feature: Sends a trivia question in the default text channel every 2 minites.")]
+        [Summary("Enables/disables the auto trivia feature: Sends a trivia question in the default text channel every 2 minutes.")]
         public async Task ChangeAutoTriviaSettings()
         {
             switch (Context.DbGuild.AutoTrivia)
