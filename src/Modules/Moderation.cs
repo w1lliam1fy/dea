@@ -119,9 +119,8 @@ namespace DEA.Modules
         [Summary("Unmutes a muted user.")]
         public async Task Unmute(IGuildUser userToUnmute, [Remainder] string reason = "No reason.")
         {
-            if (userToUnmute.RoleIds.Any(x => x == Context.DbGuild.MutedRoleId))
+            if (!userToUnmute.RoleIds.Any(x => x == Context.DbGuild.MutedRoleId))
                 await ErrorAsync("You cannot unmute a user who isn't muted.");
-
             
             await userToUnmute.RemoveRoleAsync(Context.Guild.GetRole(Context.DbGuild.MutedRoleId));
             await _muteRepo.RemoveMuteAsync(userToUnmute.Id, userToUnmute.GuildId);
