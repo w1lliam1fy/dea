@@ -38,9 +38,12 @@ namespace DEA.Services.Timers
                 var updateBuilder = Builders<Gang>.Update;
 
                 foreach (var gang in await (await _gangs.FindAsync(builder.Empty)).ToListAsync())
-                    if (gang.Wealth < 10000000000000000000000m)
+                    try
+                    {
                         await _gangs.UpdateOneAsync(y => y.Id == gang.Id,
                             updateBuilder.Set(x => x.Wealth, Static.InterestRate.Calculate(gang.Wealth) * gang.Wealth + gang.Wealth));
+                    }
+                    catch { }  
             });
     }
 }

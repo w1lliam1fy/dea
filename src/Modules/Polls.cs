@@ -107,7 +107,10 @@ namespace DEA.Modules
             }
 
             var timeRemaining = TimeSpan.FromMilliseconds(poll.Length).Subtract(DateTime.UtcNow.Subtract(poll.CreatedAt));
-            description += $"\nEnding in: Days: {timeRemaining.Days}, Hours: {timeRemaining.Hours}, Minutes: {timeRemaining.Minutes}, Seconds: {timeRemaining.Seconds}";
+            if (timeRemaining.Ticks > 0)
+                description += $"\nEnding in: Days: {timeRemaining.Days}, Hours: {timeRemaining.Hours}, Minutes: {timeRemaining.Minutes}, Seconds: {timeRemaining.Seconds}";
+            else
+                description += $"This poll will end very soon!";
 
             if (poll.ModOnly)
                 description += "\n\n**Only moderators may vote on this poll.**";
