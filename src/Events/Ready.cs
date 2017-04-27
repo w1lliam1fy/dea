@@ -17,7 +17,7 @@ namespace DEA.Events
         }
 
         private Task HandleReady() =>
-            _client.SetGameAsync("USE $help");
+            Task.Run(async () => await _client.SetGameAsync("USE $help"));
 
     }
 }

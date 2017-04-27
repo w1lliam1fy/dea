@@ -21,8 +21,8 @@ namespace DEA
 {
     internal class Program
     {
-        private static void Main()
-            => new Program().RunAsync().GetAwaiter().GetResult();
+        private static void Main() =>
+            new Program().RunAsync().GetAwaiter().GetResult();
 
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commandService;
