@@ -52,19 +52,15 @@ namespace DEA.Services
 
         public async Task InformSubjectAsync(IUser moderator, string action, IUser subject, string reason = "")
         {
-            var channel = await subject.CreateDMChannelAsync();
-
-            if (channel != null)
+            try
             {
-                try
-                {
-                    var message = $"{moderator} has attempted to {action.ToLower()} you.";
-                    if (!string.IsNullOrWhiteSpace(reason))
-                        message = message.Remove(message.Length - 1) + $"for the following reason: {reason}";
-                    await channel.SendAsync(message);
-                }
-                catch { }
+                var channel = await subject.CreateDMChannelAsync();
+                var message = $"{moderator} has attempted to {action.ToLower()} you.";
+                if (!string.IsNullOrWhiteSpace(reason))
+                    message = message.Remove(message.Length - 1) + $" for the following reason: {reason}";
+                await channel.SendAsync(message);
             }
+            catch { }
         }
 
         public async Task ModLogAsync(DEAContext context, string action, Color color, string reason, IUser subject = null, string extra = "")

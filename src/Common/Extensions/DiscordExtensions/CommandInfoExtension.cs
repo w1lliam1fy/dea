@@ -1,6 +1,5 @@
 ﻿using Discord;
 using Discord.Commands;
-using System;
 
 namespace DEA.Common.Extensions.DiscordExtensions
 {

@@ -45,7 +45,7 @@ namespace DEA.Services.Handlers
                             message = "DEA does not have permission to send messages to this user.";
                             break;
                         default:
-                            message = httpEx.Message.Remove(0, 39) + ".";
+                            message = httpEx.Message;
                             break;
                     }
                     await cmdEx.Context.Channel.ReplyAsync(cmdEx.Context.User, message, null, Config.ERROR_COLOR);
@@ -74,6 +74,8 @@ namespace DEA.Services.Handlers
 
             switch (result.Error)
             {
+                case CommandError.Exception:
+                    return Task.CompletedTask;
                 case CommandError.UnknownCommand:
                     foreach (var command in _commandService.Commands)
                     {
@@ -109,7 +111,7 @@ namespace DEA.Services.Handlers
             if (!string.IsNullOrWhiteSpace(message))
                 return context.Channel.ReplyAsync(context.User, message, null, Config.ERROR_COLOR);
             else
-                return null;
+                return Task.CompletedTask;
         }
 
     }

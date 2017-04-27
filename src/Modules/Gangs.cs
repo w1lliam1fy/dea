@@ -46,7 +46,7 @@ namespace DEA.Modules
             await ReplyAsync($"You have successfully created the {gang.Name} gang!");
         }
 
-        [Command("JoinGang")]
+        [Command("JoinGang", RunMode = RunMode.Async)]
         [Require(Attributes.NoGang)]
         [Summary("Sends a request to join a gang.")]
         public async Task AddToGang([Remainder] string gangName)

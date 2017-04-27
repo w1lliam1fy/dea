@@ -63,7 +63,7 @@ namespace DEA
             {
                 CaseSensitiveCommands = false,
                 LogLevel = LogSeverity.Debug,
-                DefaultRunMode = RunMode.Async,
+                DefaultRunMode = RunMode.Sync,
             });
 
              var dbClient = new MongoClient(_credentials.MongoDBConnectionString);
