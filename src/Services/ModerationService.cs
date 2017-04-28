@@ -82,11 +82,14 @@ namespace DEA.Services
 
             string userText = string.Empty;
             if (subject != null) userText = $"\n** User:** { subject} ({ subject.Id})";
+            var description = $"**Action:** {action}{extra}{userText}";
+            if (reason != null) description += $"\n** Reason:** { reason}";
+
             var builder = new EmbedBuilder()
             {
                 Author = author,
                 Color = color,
-                Description = $"**Action:** {action}{extra}{userText}\n**Reason:** {reason}",
+                Description = description,
                 Footer = footer
             }.WithCurrentTimestamp();
 
