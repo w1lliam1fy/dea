@@ -51,9 +51,9 @@ namespace DEA.Modules
         public async Task ModifyQuestion(string question, [Remainder] string newQuestion)
         {
             if (!Context.DbGuild.Trivia.Contains(question))
-                await ErrorAsync($"That question does not exist.");
+                ReplyError($"That question does not exist.");
             if (!Config.ANWITHQUESTIONMARK.IsMatch(newQuestion))
-                await ErrorAsync("Trivia questions may only contain alphanumerical characters excluding the question mark.");
+                ReplyError("Trivia questions may only contain alphanumerical characters excluding the question mark.");
 
             var answer = Context.DbGuild.Trivia[question];
             Context.DbGuild.Trivia.SetElement(Context.DbGuild.Trivia.IndexOfName(question), new BsonElement(newQuestion, answer));
@@ -68,9 +68,9 @@ namespace DEA.Modules
         public async Task ModifyAnswer(string question, [Remainder] string answer)
         {
             if (!Context.DbGuild.Trivia.Contains(question))
-                await ErrorAsync($"That quesiton does not exist.");
+                ReplyError($"That quesiton does not exist.");
             if (!Config.ALPHANUMERICAL.IsMatch(answer))
-                await ErrorAsync("Trivia answers may only contain alphanumerical characters.");
+                ReplyError("Trivia answers may only contain alphanumerical characters.");
 
             Context.DbGuild.Trivia[question] = answer;
             await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.Trivia, Context.DbGuild.Trivia);
@@ -84,13 +84,13 @@ namespace DEA.Modules
         public async Task AddTrivia(string question, [Remainder] string answer)
         {
             if (Context.DbGuild.Trivia.Contains(question)) 
-                await ErrorAsync("That question already exists.");
+                ReplyError("That question already exists.");
             if (question.Contains("."))
-                await ErrorAsync("Trivia questions may not contain periods.");
+                ReplyError("Trivia questions may not contain periods.");
             if (!Config.ALPHANUMERICAL.IsMatch(answer))
-                await ErrorAsync("Trivia answers may only contain alphanumerical characters.");
+                ReplyError("Trivia answers may only contain alphanumerical characters.");
             if (!Config.ANWITHQUESTIONMARK.IsMatch(question))
-                await ErrorAsync("Trivia questions may only contain alphanumerical characters excluding the question mark.");
+                ReplyError("Trivia questions may only contain alphanumerical characters excluding the question mark.");
 
             Context.DbGuild.Trivia.Add(question, answer);
             await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.Trivia, Context.DbGuild.Trivia);
@@ -104,7 +104,7 @@ namespace DEA.Modules
         public async Task RemoveTrivia([Remainder] string question)
         {
             if (!Context.DbGuild.Trivia.Contains(question))
-                await ErrorAsync($"That quesiton does not exist.");
+                ReplyError($"That quesiton does not exist.");
 
             Context.DbGuild.Trivia.Remove(question);
             await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.Trivia, Context.DbGuild.Trivia);
@@ -118,7 +118,7 @@ namespace DEA.Modules
         public async Task TriviaQuestions()
         {
             if (Context.DbGuild.Trivia.ElementCount == 0)
-                await ErrorAsync("There are no trivia questions yet!");
+                ReplyError("There are no trivia questions yet!");
 
             List<string> elements = new List<string>();
             var triviaElements = Context.DbGuild.Trivia.Elements.ToList();
@@ -139,7 +139,7 @@ namespace DEA.Modules
         public async Task TriviaAnswers([Remainder] string question = null)
         {
             if (Context.DbGuild.Trivia.ElementCount == 0)
-                await ErrorAsync("There are no trivia questions yet!");
+                ReplyError("There are no trivia questions yet!");
 
             var channel = await Context.User.CreateDMChannelAsync();
 
@@ -158,7 +158,7 @@ namespace DEA.Modules
             else
             {
                 if (!Context.DbGuild.Trivia.Contains(question))
-                    await ErrorAsync($"That quesiton does not exist.");
+                    ReplyError($"That quesiton does not exist.");
 
                 await channel.SendAsync($"The answer to that question is: {Context.DbGuild.Trivia[question]}");
                 await ReplyAsync("You have been DMed with the answer to that question!");

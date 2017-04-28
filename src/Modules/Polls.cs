@@ -33,12 +33,12 @@ namespace DEA.Modules
             var isMod = _moderationService.IsMod(Context, Context.GUser);
 
             if (modOnly && !isMod)
-                await ErrorAsync("Only moderators may create mod only polls.");
+                ReplyError("Only moderators may create mod only polls.");
 
             var choicesArray = choices.Split('~');
 
             if (choicesArray.Distinct().Count() != choicesArray.Length)
-                await ErrorAsync("You may not have multiple choices that are identicle.");
+                ReplyError("You may not have multiple choices that are identicle.");
 
             await _pollRepo.CreatePollAsync(Context, name, choicesArray, TimeSpan.FromDays(daysToLast), elderOnly, modOnly, isMod);
 
@@ -66,7 +66,7 @@ namespace DEA.Modules
             polls = polls.OrderBy(x => x.CreatedAt).ToList();
 
             if (polls.Count == 0)
-                await ErrorAsync("There are no polls in progress.");
+                ReplyError("There are no polls in progress.");
 
             List<string> elements = new List<string>();
 
@@ -129,12 +129,12 @@ namespace DEA.Modules
             var poll = await _pollRepo.FetchePollAsync(pollIndex, Context.Guild.Id);
 
             if (poll.VotesDocument.Any(x => x.Name == Context.User.Id.ToString()))
-                await ErrorAsync("You have already voted on this poll.");
+                ReplyError("You have already voted on this poll.");
             if (poll.ElderOnly && DateTime.UtcNow.Subtract((Context.GUser).JoinedAt.Value.UtcDateTime).TotalMilliseconds <
                 Config.ELDER_TIME_REQUIRED.TotalMilliseconds)
-                await ErrorAsync($"You must have been in this server for more than {Config.ELDER_TIME_REQUIRED.TotalDays} days to vote on this poll.");
+                ReplyError($"You must have been in this server for more than {Config.ELDER_TIME_REQUIRED.TotalDays} days to vote on this poll.");
             if (poll.ModOnly && !_moderationService.IsMod(Context, Context.GUser))
-                await ErrorAsync("Only a moderator may vote on this poll.");
+                ReplyError("Only a moderator may vote on this poll.");
 
             string choice = null;
             try
@@ -143,7 +143,7 @@ namespace DEA.Modules
             }
             catch (IndexOutOfRangeException)
             {
-                await ErrorAsync("This poll choice index does not exist.");
+                ReplyError("This poll choice index does not exist.");
             }
 
             poll.VotesDocument.Add(Context.User.Id.ToString(), choice);

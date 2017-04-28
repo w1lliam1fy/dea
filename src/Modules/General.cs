@@ -38,9 +38,9 @@ namespace DEA.Modules
             {
                 case "line":
                     if (Config.LINE_COST > Context.Cash)
-                        await ErrorAsync($"You do not have enough money. Balance: {Context.Cash.USD()}.");
+                        ReplyError($"You do not have enough money. Balance: {Context.Cash.USD()}.");
                     if (Context.DbUser.MessageCooldown == Config.LINE_COOLDOWN.TotalMilliseconds)
-                        await ErrorAsync($"You have already purchased this investment.");
+                        ReplyError($"You have already purchased this investment.");
 
                     await _userRepo.EditCashAsync(Context, -Config.LINE_COST);
                     await _userRepo.ModifyAsync(Context, x => x.MessageCooldown, Config.LINE_COOLDOWN.TotalMilliseconds);
@@ -50,9 +50,9 @@ namespace DEA.Modules
                 case "pound":
                 case "lb":
                     if (Config.POUND_COST > Context.Cash)
-                        await ErrorAsync($"You do not have enough money. Balance: {Context.Cash.USD()}.");
+                        ReplyError($"You do not have enough money. Balance: {Context.Cash.USD()}.");
                     if (Context.DbUser.InvestmentMultiplier >= Config.POUND_MULTIPLIER)
-                        await ErrorAsync("You already purchased this investment.");
+                        ReplyError("You already purchased this investment.");
 
                     await _userRepo.EditCashAsync(Context, -Config.POUND_COST);
                     await _userRepo.ModifyAsync(Context, x => x.InvestmentMultiplier, Config.POUND_MULTIPLIER);
@@ -63,11 +63,11 @@ namespace DEA.Modules
                 case "kilo":
                 case "kilogram":
                     if (Config.KILO_COST > Context.Cash)
-                        await ErrorAsync($"You do not have enough money. Balance: {Context.Cash.USD()}.");
+                        ReplyError($"You do not have enough money. Balance: {Context.Cash.USD()}.");
                     if (Context.DbUser.InvestmentMultiplier != Config.POUND_MULTIPLIER)
-                        await ErrorAsync("You must purchase the pound of cocaine investment before buying this one.");
+                        ReplyError("You must purchase the pound of cocaine investment before buying this one.");
                     if (Context.DbUser.InvestmentMultiplier >= Config.KILO_MULTIPLIER)
-                        await ErrorAsync("You already purchased this investment.");
+                        ReplyError("You already purchased this investment.");
 
                     await _userRepo.EditCashAsync(Context, -Config.KILO_COST);
                     await _userRepo.ModifyAsync(Context, x => x.InvestmentMultiplier, Config.KILO_MULTIPLIER);
@@ -106,7 +106,7 @@ namespace DEA.Modules
                 position++;
             }
 
-            if (description.Length == 0) await ErrorAsync("There is nobody on the leaderboards yet!");
+            if (description.Length == 0) ReplyError("There is nobody on the leaderboards yet!");
 
             await SendAsync(description, "The Richest Traffickers");
         }
@@ -131,7 +131,7 @@ namespace DEA.Modules
                 position++;
             }
 
-            if (description.Length == 0) await ErrorAsync("There is nobody on the leaderboards yet!");
+            if (description.Length == 0) ReplyError("There is nobody on the leaderboards yet!");
 
             var builder = new EmbedBuilder()
             {
@@ -149,11 +149,11 @@ namespace DEA.Modules
         public async Task Donate(decimal money, [Remainder] IGuildUser user)
         {
             if (user.Id == Context.User.Id)
-                await ErrorAsync("Hey kids! Look at that retard, he is trying to give money to himself!");
+                ReplyError("Hey kids! Look at that retard, he is trying to give money to himself!");
             if (money < Config.DONATE_MIN)
-                await ErrorAsync($"Lowest donation is {Config.DONATE_MIN}$.");
+                ReplyError($"Lowest donation is {Config.DONATE_MIN}$.");
             if (Context.Cash < money)
-                await ErrorAsync($"You do not have enough money. Balance: {Context.Cash.USD()}.");
+                ReplyError($"You do not have enough money. Balance: {Context.Cash.USD()}.");
 
             await _userRepo.EditCashAsync(Context, -money);
             decimal deaMoney = money * Config.DEA_CUT / 100;
@@ -212,7 +212,7 @@ namespace DEA.Modules
         [Summary("View all ranks.")]
         public async Task Ranks()
         {
-            if (Context.DbGuild.RankRoles.ElementCount == 0) await ErrorAsync("There are no ranks yet!");
+            if (Context.DbGuild.RankRoles.ElementCount == 0) ReplyError("There are no ranks yet!");
 
             var description = string.Empty;
             foreach (var rank in Context.DbGuild.RankRoles.OrderBy(x => x.Value.AsDouble))
@@ -227,7 +227,7 @@ namespace DEA.Modules
                 description += $"{((decimal)rank.Value.AsDouble).USD()}: {role.Mention}\n";
             }
 
-            if (description.Length > 2048) await ErrorAsync("You have too many ranks to be able to use this command.");
+            if (description.Length > 2048) ReplyError("You have too many ranks to be able to use this command.");
 
             await SendAsync(description, "Ranks");
         }
@@ -237,7 +237,7 @@ namespace DEA.Modules
         [Summary("View all the moderator roles.")]
         public async Task ModRoles()
         {
-            if (Context.DbGuild.ModRoles.ElementCount == 0) await ErrorAsync("There are no moderator roles yet!");
+            if (Context.DbGuild.ModRoles.ElementCount == 0) ReplyError("There are no moderator roles yet!");
 
             var description = "**Moderation Roles:**\n";
             foreach (var modRole in Context.DbGuild.ModRoles.OrderBy(x => x.Value))
@@ -252,7 +252,7 @@ namespace DEA.Modules
                 description += $"{role.Mention}: {modRole.Value}\n";
             }
 
-            if (description.Length > 2048) await ErrorAsync("You have too many mod roles to be able to use this command.");
+            if (description.Length > 2048) ReplyError("You have too many mod roles to be able to use this command.");
 
             await SendAsync(description + "\n**Permission Levels:**\n1: Moderator\n2: Administrator\n3: Owner");
         }
@@ -281,7 +281,7 @@ namespace DEA.Modules
                 if (cooldown.Value.TotalMilliseconds > 0)
                     description += $"{cooldown.Key}: {cooldown.Value.Hours}:{cooldown.Value.Minutes.ToString("D2")}:{cooldown.Value.Seconds.ToString("D2")}\n";
 
-            if (description.Length == 0) await ErrorAsync("All commands are available for use!");
+            if (description.Length == 0) ReplyError("All commands are available for use!");
 
             await SendAsync(description, $"All cooldowns for {Context.User}");
         }

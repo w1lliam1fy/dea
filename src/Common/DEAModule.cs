@@ -14,7 +14,7 @@ namespace DEA.Common
         public Task<IUserMessage> SendAsync(string description, string title = null, Color color = default(Color)) =>
             Context.Channel.SendAsync(description, title, color);
 
-        public Task ErrorAsync(string message) =>
+        public void ReplyError(string message) =>
             throw new DEAException(message);
 
     }

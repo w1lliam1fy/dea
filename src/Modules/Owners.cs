@@ -61,7 +61,7 @@ namespace DEA.Modules
         public async Task Add(decimal money, [Remainder] IGuildUser user)
         {
             if (money < 0)
-                await ErrorAsync("You may not add negative money to a user's balance.");
+                ReplyError("You may not add negative money to a user's balance.");
 
             var dbUser = user.Id == Context.User.Id ? Context.DbUser : await _userRepo.FetchUserAsync(user);
             await _userRepo.EditCashAsync(user, Context.DbGuild, dbUser, money);
@@ -74,7 +74,7 @@ namespace DEA.Modules
         public async Task AddTo(decimal money, [Remainder] IRole role)
         {
             if (money < 0)
-                await ErrorAsync("You may not add negative money to these users's balances.");
+                ReplyError("You may not add negative money to these users's balances.");
 
             await ReplyAsync("The addition of cash has commenced...");
             foreach (var user in Context.Guild.Users.Where(x => x.Roles.Any(y => y.Id == role.Id)))
@@ -88,7 +88,7 @@ namespace DEA.Modules
         public async Task Remove(decimal money, [Remainder] IGuildUser user)
         {
             if (money < 0)
-                await ErrorAsync("You may not remove a negative amount of money from a user's balance.");
+                ReplyError("You may not remove a negative amount of money from a user's balance.");
 
             var dbUser = user.Id == Context.User.Id ? Context.DbUser : await _userRepo.FetchUserAsync(user);
             await _userRepo.EditCashAsync(user, Context.DbGuild, dbUser, -money);
@@ -101,7 +101,7 @@ namespace DEA.Modules
         public async Task Remove(decimal money, [Remainder] IRole role)
         {
             if (money < 0)
-                await ErrorAsync("You may not remove negative money from these users's balances.");
+                ReplyError("You may not remove negative money from these users's balances.");
 
             await ReplyAsync("The cash removal has commenced...");
             foreach (var user in Context.Guild.Users.Where(x => x.Roles.Any(y => y.Id == role.Id)))
@@ -135,7 +135,7 @@ namespace DEA.Modules
         public async Task AddModRole(IRole modRole, int permissionLevel = 1)
         {
             if (permissionLevel < 1 || permissionLevel > 3)
-                await ErrorAsync("Permission levels:\nModeration: 1\nAdministration: 2\nServer Owner: 3");
+                ReplyError("Permission levels:\nModeration: 1\nAdministration: 2\nServer Owner: 3");
 
             if (Context.DbGuild.ModRoles.ElementCount == 0)
                 await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.ModRoles, new BsonDocument()
@@ -145,7 +145,7 @@ namespace DEA.Modules
             else
             {
                 if (Context.DbGuild.ModRoles.Any(x => x.Name == modRole.Id.ToString()))
-                    await ErrorAsync("You have already set this mod role.");
+                    ReplyError("You have already set this mod role.");
 
                 Context.DbGuild.ModRoles.Add(modRole.Id.ToString(), permissionLevel);
                 await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.ModRoles, Context.DbGuild.ModRoles);
@@ -159,9 +159,9 @@ namespace DEA.Modules
         public async Task RemoveModRole([Remainder] IRole modRole)
         {
             if (Context.DbGuild.ModRoles.ElementCount == 0)
-                await ErrorAsync("There are no moderator roles yet!");
+                ReplyError("There are no moderator roles yet!");
             if (!Context.DbGuild.ModRoles.Any(x => x.Name == modRole.Id.ToString()))
-                await ErrorAsync("This role is not a moderator role!");
+                ReplyError("This role is not a moderator role!");
 
             Context.DbGuild.ModRoles.Remove(modRole.Id.ToString());
             await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.ModRoles, Context.DbGuild.ModRoles);
@@ -174,11 +174,11 @@ namespace DEA.Modules
         public async Task ModifyRank(IRole modRole, int permissionLevel)
         {
             if (Context.DbGuild.ModRoles.ElementCount == 0)
-                await ErrorAsync("There are no moderator roles yet!");
+                ReplyError("There are no moderator roles yet!");
             if (!Context.DbGuild.ModRoles.Any(x => x.Name == modRole.Id.ToString()))
-                await ErrorAsync("This role is not a moderator role!");
+                ReplyError("This role is not a moderator role!");
             if (Context.DbGuild.ModRoles.First(x => x.Name == modRole.Id.ToString()).Value == permissionLevel)
-                await ErrorAsync($"This mod role already has a permission level of {permissionLevel}");
+                ReplyError($"This mod role already has a permission level of {permissionLevel}");
 
             Context.DbGuild.ModRoles[Context.DbGuild.ModRoles.IndexOfName(modRole.Id.ToString())] = permissionLevel;
             await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.ModRoles, Context.DbGuild.ModRoles);
@@ -190,7 +190,7 @@ namespace DEA.Modules
         [Summary("Sets the global chatting multiplier.")]
         public async Task SetGlobalMultiplier(decimal globalMultiplier){
             if (globalMultiplier < 0)
-                await ErrorAsync("The global multiplier may not be negative.");
+                ReplyError("The global multiplier may not be negative.");
 
             await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.GlobalChattingMultiplier, globalMultiplier);
 
@@ -201,7 +201,7 @@ namespace DEA.Modules
         [Summary("Sets the global temporary multiplier increase rate.")]
         public async Task SetMultiplierIncrease(decimal interestRate){
             if (interestRate < 0)
-                await ErrorAsync("The temporary multiplier increase rate may not be negative.");
+                ReplyError("The temporary multiplier increase rate may not be negative.");
 
             await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.TempMultiplierIncreaseRate, interestRate);
 

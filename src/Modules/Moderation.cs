@@ -29,7 +29,7 @@ namespace DEA.Modules
         public async Task Ban(IGuildUser userToBan, [Remainder] string reason = null)
         {
             if (!_moderationService.IsHigherMod(Context, Context.GUser, userToBan))
-                await ErrorAsync("You cannot ban another mod with a permission level higher or equal to your own.");
+                ReplyError("You cannot ban another mod with a permission level higher or equal to your own.");
 
             await _moderationService.InformSubjectAsync(Context.User, "Ban", userToBan, reason);
             await Context.Guild.AddBanAsync(userToBan);
@@ -45,7 +45,7 @@ namespace DEA.Modules
         public async Task Unban(IUser user, [Remainder] string reason = null)
         {
             if ((await Context.Guild.GetBansAsync()).Any(x => x.User.Id == user.Id))
-                await ErrorAsync("You may not unban someone who isn't banned.");
+                ReplyError("You may not unban someone who isn't banned.");
 
             await Context.Guild.RemoveBanAsync(user);
 
@@ -61,7 +61,7 @@ namespace DEA.Modules
         public async Task Kick(IGuildUser userToKick, [Remainder] string reason = null)
         {
             if (_moderationService.IsMod(Context, userToKick))
-                await ErrorAsync("You cannot kick another mod!");
+                ReplyError("You cannot kick another mod!");
 
             await _moderationService.InformSubjectAsync(Context.User, "Kick", userToKick, reason);
             await userToKick.KickAsync();
@@ -79,10 +79,10 @@ namespace DEA.Modules
             var mutedRole = Context.Guild.GetRole(Context.DbGuild.MutedRoleId);
 
             if (mutedRole == null)
-                await ErrorAsync($"You may not mute users if the muted role is not valid.\nPlease use the " +
+                ReplyError($"You may not mute users if the muted role is not valid.\nPlease use the " +
                                  $"`{Context.Prefix}SetMutedRole` command to change that.");
             if (_moderationService.IsMod(Context, userToMute))
-                await ErrorAsync("You cannot mute another mod.");
+                ReplyError("You cannot mute another mod.");
 
             await userToMute.AddRoleAsync(mutedRole);
             await _muteRepo.AddMuteAsync(userToMute, TimeSpan.FromDays(365));
@@ -100,18 +100,18 @@ namespace DEA.Modules
         public async Task CustomMute(double hours, IGuildUser userToMute, [Remainder] string reason = null)
         {
             if (hours > 168)
-                await ErrorAsync("You may not mute a user for more than a week.");
+                ReplyError("You may not mute a user for more than a week.");
             if (hours < 1)
-                await ErrorAsync("You may not mute a user for less than 1 hour.");
+                ReplyError("You may not mute a user for less than 1 hour.");
 
             string time = (hours == 1) ? "hour" : "hours";
             var mutedRole = Context.Guild.GetRole(Context.DbGuild.MutedRoleId);
 
             if (mutedRole == null)
-                await ErrorAsync($"You may not mute users if the muted role is not valid.\nPlease use the " +
+                ReplyError($"You may not mute users if the muted role is not valid.\nPlease use the " +
                                  $"{Context.DbGuild.Prefix}SetMutedRole command to change that.");
             if (_moderationService.IsMod(Context, userToMute))
-                await ErrorAsync("You cannot mute another mod!");
+                ReplyError("You cannot mute another mod!");
 
             await userToMute.AddRoleAsync(mutedRole);
             await _muteRepo.AddMuteAsync(userToMute, TimeSpan.FromHours(hours));
@@ -128,7 +128,7 @@ namespace DEA.Modules
         public async Task Unmute(IGuildUser userToUnmute, [Remainder] string reason = null)
         {
             if (!userToUnmute.RoleIds.Any(x => x == Context.DbGuild.MutedRoleId))
-                await ErrorAsync("You cannot unmute a user who isn't muted.");
+                ReplyError("You cannot unmute a user who isn't muted.");
             
             await userToUnmute.RemoveRoleAsync(Context.Guild.GetRole(Context.DbGuild.MutedRoleId));
             await _muteRepo.RemoveMuteAsync(userToUnmute.Id, userToUnmute.GuildId);
@@ -145,11 +145,11 @@ namespace DEA.Modules
         public async Task CleanAsync(int quantity = 25, [Remainder] string reason = null)
         {
             if (quantity < Config.MIN_CLEAR)
-                await ErrorAsync($"You may not clear less than {Config.MIN_CLEAR} messages.");
+                ReplyError($"You may not clear less than {Config.MIN_CLEAR} messages.");
             if (quantity > Config.MAX_CLEAR)
-                await ErrorAsync($"You may not clear more than {Config.MAX_CLEAR} messages.");
+                ReplyError($"You may not clear more than {Config.MAX_CLEAR} messages.");
             if (Context.Channel.Id == Context.DbGuild.ModLogId)
-                await ErrorAsync("For security reasons, you may not use this command in the mod log channel.");
+                ReplyError("For security reasons, you may not use this command in the mod log channel.");
 
             var messages = await Context.Channel.GetMessagesAsync(quantity).Flatten();
             await Context.Channel.DeleteMessagesAsync(messages);
@@ -168,9 +168,9 @@ namespace DEA.Modules
         public async Task Chill(int seconds = 30, [Remainder] string reason = null)
         {
             if (seconds < Config.MIN_CHILL.TotalSeconds)
-                await ErrorAsync($"You may not chill for less than {Config.MIN_CHILL.TotalSeconds} seconds.");
+                ReplyError($"You may not chill for less than {Config.MIN_CHILL.TotalSeconds} seconds.");
             if (seconds > Config.MAX_CHILL.TotalSeconds)
-                await ErrorAsync($"You may not chill for more than {Config.MAX_CHILL.TotalSeconds} seconds.");
+                ReplyError($"You may not chill for more than {Config.MAX_CHILL.TotalSeconds} seconds.");
 
             var channel = Context.Channel as SocketTextChannel;
             var nullablePermOverwrites = channel.GetPermissionOverwrite(Context.Guild.EveryoneRole);
@@ -178,7 +178,7 @@ namespace DEA.Modules
             var perms = nullablePermOverwrites ?? new OverwritePermissions(PermValue.Inherit, PermValue.Inherit, PermValue.Inherit, PermValue.Inherit, PermValue.Inherit);
 
             if (perms.SendMessages == PermValue.Deny)
-                await ErrorAsync("This chat is already chilled.");
+                ReplyError("This chat is already chilled.");
 
             await channel.AddPermissionOverwriteAsync(Context.Guild.EveryoneRole, new OverwritePermissions().Modify(perms.CreateInstantInvite, perms.ManageChannel, perms.AddReactions, perms.ReadMessages, PermValue.Deny));
 
