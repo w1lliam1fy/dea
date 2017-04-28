@@ -63,7 +63,7 @@ namespace DEA
             {
                 CaseSensitiveCommands = false,
                 LogLevel = LogSeverity.Debug,
-                DefaultRunMode = RunMode.Sync,
+                DefaultRunMode = RunMode.Async,
             });
 
              var dbClient = new MongoClient(_credentials.MongoDBConnectionString);
@@ -101,24 +101,17 @@ namespace DEA
 
             var map = new DependencyMap();
             ConfigureServices(map);
-            
             Logger.Log(LogSeverity.Info, "Mapping successfully configured", $"Services ready.");
-
-            new Ready(map);
-            new UserEvents(map);
-            new ApplyIntrestRate(map);
-            new AutoDeletePolls(map);
-            new AutoTrivia(map);
-            new AutoUnmute(map);
-            new ResetTempMultiplier(map);
-            await new CommandHandler(_commandService, map).InitializeAsync();
-            Logger.Log(LogSeverity.Info, "Events and command handler successfully initialized", $"Client ready.");
 
             Logger.Log(LogSeverity.Info, "MongoDb Connection Verification", "Test connection has commenced...");
             sw.Restart();
             await _users.CountAsync(y => y.Cash > 0);
             sw.Stop();
             Logger.Log(LogSeverity.Info, "Test connection has succeeded", $"Elapsed time: {sw.Elapsed.TotalSeconds.ToString("N3")} seconds.");
+
+            InitializeServices(map);
+            await new CommandHandler(_commandService, map).InitializeAsync();
+            Logger.Log(LogSeverity.Info, "Events and command handler successfully initialized", $"Client ready.");
 
             await Task.Delay(-1);
         }
@@ -143,6 +136,17 @@ namespace DEA
             map.Add(new ErrorHandler(_commandService));
             map.Add(new GangRepository(_gangs));
             map.Add(new MuteRepository(_mutes));
+        }
+
+        private void InitializeServices(IDependencyMap map)
+        {
+            new Ready(map);
+            new UserEvents(map);
+            new ApplyIntrestRate(map);
+            new AutoDeletePolls(map);
+            new AutoTrivia(map);
+            new AutoUnmute(map);
+            new ResetTempMultiplier(map);
         }
 
     }

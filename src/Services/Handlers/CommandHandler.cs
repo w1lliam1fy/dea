@@ -1,4 +1,5 @@
 ﻿using DEA.Common;
+using DEA.Common.Extensions.DiscordExtensions;
 using DEA.Database.Repositories;
 using DEA.Services.Static;
 using Discord;
@@ -37,19 +38,32 @@ namespace DEA.Services.Handlers
             {
                 Config.MESSAGES++;
                 var msg = s as SocketUserMessage;
-                if (msg == null) return;
+                if (msg == null)
+                    return;
 
                 var context = new DEAContext(_client, msg, _map);
-                if (context.Guild == null) return;
-                if (context.User.IsBot) return;
+                if (context.Guild == null)
+                    return;
+                if (context.User.IsBot)
+                    return;
 
                 var perms = (context.Guild.CurrentUser as IGuildUser).GetPermissions(context.Channel as SocketTextChannel);
 
-                if (!perms.SendMessages || !perms.EmbedLinks) return;
+                if (!perms.SendMessages || !perms.EmbedLinks)
+                {
+                    try
+                    {
+                        var channel = await context.User.CreateDMChannelAsync();
 
-                int argPos = 0;
+                        await channel.SendAsync($"DEA cannot execute any commands without the permission to send embedded messages.");
+                    }
+                    catch { }
+                    return;
+                }
 
                 await context.InitializeAsync();
+
+                int argPos = 0;
 
                 if (msg.HasStringPrefix(context.DbGuild.Prefix, ref argPos) ||
                     msg.HasMentionPrefix(_client.CurrentUser, ref argPos))

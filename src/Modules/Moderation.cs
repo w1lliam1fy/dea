@@ -28,7 +28,7 @@ namespace DEA.Modules
         [Summary("Bans a user.")]
         public async Task Ban(IGuildUser userToBan, [Remainder] string reason = null)
         {
-            if (!await _moderationService.IsHigherModAsync(Context, Context.GUser, userToBan))
+            if (!_moderationService.IsHigherMod(Context, Context.GUser, userToBan))
                 await ErrorAsync("You cannot ban another mod with a permission level higher or equal to your own.");
 
             await _moderationService.InformSubjectAsync(Context.User, "Ban", userToBan, reason);
@@ -60,7 +60,7 @@ namespace DEA.Modules
         [Summary("Kicks a user.")]
         public async Task Kick(IGuildUser userToKick, [Remainder] string reason = null)
         {
-            if (await _moderationService.IsModAsync(Context, userToKick))
+            if (_moderationService.IsMod(Context, userToKick))
                 await ErrorAsync("You cannot kick another mod!");
 
             await _moderationService.InformSubjectAsync(Context.User, "Kick", userToKick, reason);
@@ -81,7 +81,7 @@ namespace DEA.Modules
             if (mutedRole == null)
                 await ErrorAsync($"You may not mute users if the muted role is not valid.\nPlease use the " +
                                  $"`{Context.Prefix}SetMutedRole` command to change that.");
-            if (await _moderationService.IsModAsync(Context, userToMute))
+            if (_moderationService.IsMod(Context, userToMute))
                 await ErrorAsync("You cannot mute another mod.");
 
             await userToMute.AddRoleAsync(mutedRole);
@@ -110,7 +110,7 @@ namespace DEA.Modules
             if (mutedRole == null)
                 await ErrorAsync($"You may not mute users if the muted role is not valid.\nPlease use the " +
                                  $"{Context.DbGuild.Prefix}SetMutedRole command to change that.");
-            if (await _moderationService.IsModAsync(Context, userToMute))
+            if (_moderationService.IsMod(Context, userToMute))
                 await ErrorAsync("You cannot mute another mod!");
 
             await userToMute.AddRoleAsync(mutedRole);

@@ -106,7 +106,7 @@ namespace DEA.Modules
         {
             if (nickname.Length > 32)
                 await ErrorAsync("The length of a nickname may not be longer than 32 characters.");
-            if (await _moderationService.IsModAsync(Context, userToBully))
+            if (_moderationService.IsMod(Context, userToBully))
                 await ErrorAsync("You may not bully a moderator.");
             if ((await _userRepo.FetchUserAsync(userToBully)).Cash > Context.Cash)
                 await ErrorAsync("You may not bully a user with more money than you.");
@@ -120,10 +120,6 @@ namespace DEA.Modules
         [Summary("Lead a large scale operation on a local bank.")]
         public async Task Rob(decimal resources, [Remainder] IGuildUser user)
         {
-            if (await _gangRepo.InGangAsync(user))
-                await ErrorAsync("You can't rob this nigga! He in a ***gang***. If you try to rob him, his crew would fuck you up till your dick " +
-                                 "poppin out of your left cheek, ***nigga!*** Why don't you try and `$raid` his gang instead?");
-
             if (resources < Config.MIN_RESOURCES)
                 await ErrorAsync($"The minimum amount of money to spend on resources for a robbery is {Config.MIN_RESOURCES.USD()}.");
             if (Context.Cash < resources)
@@ -137,6 +133,9 @@ namespace DEA.Modules
             var stolen = resources * 2;
 
             int roll = new Random().Next(1, 101);
+
+            var successOdds = await _gangRepo.InGangAsync(Context.GUser) ? Config.ROB_SUCCESS_ODDS - 5 : Config.ROB_SUCCESS_ODDS;
+
             if (Config.ROB_SUCCESS_ODDS > roll)
             {
                 await _userRepo.EditCashAsync(user, Context.DbGuild, raidedDbUser, -stolen);

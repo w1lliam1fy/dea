@@ -30,7 +30,7 @@ namespace DEA.Modules
         [Summary("Creates a poll.")]
         public async Task AddPoll(string name, [Summary("Option 1~Option 2~Option 3...")] string choices, double daysToLast = 1, bool elderOnly = false, bool modOnly = false)
         {
-            var isMod = await _moderationService.IsModAsync(Context, Context.GUser);
+            var isMod = _moderationService.IsMod(Context, Context.GUser);
 
             if (modOnly && !isMod)
                 await ErrorAsync("Only moderators may create mod only polls.");
@@ -133,7 +133,7 @@ namespace DEA.Modules
             if (poll.ElderOnly && DateTime.UtcNow.Subtract((Context.GUser).JoinedAt.Value.UtcDateTime).TotalMilliseconds <
                 Config.ELDER_TIME_REQUIRED.TotalMilliseconds)
                 await ErrorAsync($"You must have been in this server for more than {Config.ELDER_TIME_REQUIRED.TotalDays} days to vote on this poll.");
-            if (poll.ModOnly && !await _moderationService.IsModAsync(Context, Context.GUser))
+            if (poll.ModOnly && !_moderationService.IsMod(Context, Context.GUser))
                 await ErrorAsync("Only a moderator may vote on this poll.");
 
             string choice = null;

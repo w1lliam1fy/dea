@@ -16,26 +16,26 @@ namespace DEA.Services
             _guildRepo = guildRepo;
         }
 
-        public Task<bool> IsModAsync(DEAContext context, IGuildUser user)
+        public bool IsMod(DEAContext context, IGuildUser user)
         {
             if (user.GuildPermissions.Administrator)
-                return Task.FromResult(true);
+                return true;
 
             if (context.DbGuild.ModRoles.ElementCount != 0)
                 foreach (var role in context.DbGuild.ModRoles)
                     if (user.Guild.GetRole(ulong.Parse(role.Name)) != null)
                         if (user.RoleIds.Any(x => x.ToString() == role.Name))
-                            return Task.FromResult(true);
+                            return true;
 
-            return Task.FromResult(false);
+            return false;
         }
 
-        public Task<bool> IsHigherModAsync(DEAContext context, IGuildUser mod, IGuildUser user)
+        public bool IsHigherMod(DEAContext context, IGuildUser mod, IGuildUser user)
         {
             int highest = mod.GuildPermissions.Administrator ? 2 : 0;
             int highestForUser = user.GuildPermissions.Administrator ? 2 : 0;
             if (context.DbGuild.ModRoles.ElementCount == 0)
-                return Task.FromResult(highest > highestForUser);
+                return highest > highestForUser;
 
             foreach (var role in context.DbGuild.ModRoles.OrderBy(x => x.Value))
                 if (mod.Guild.GetRole(ulong.Parse(role.Name)) != null)
@@ -47,7 +47,7 @@ namespace DEA.Services
                     if (user.RoleIds.Any(x => x.ToString() == role.Name))
                         highestForUser = role.Value.AsInt32;
 
-            return Task.FromResult(highest > highestForUser);
+            return highest > highestForUser;
         }
 
         public async Task InformSubjectAsync(IUser moderator, string action, IUser subject, string reason = "")
@@ -57,7 +57,7 @@ namespace DEA.Services
                 var channel = await subject.CreateDMChannelAsync();
                 var message = $"{moderator} has attempted to {action.ToLower()} you.";
                 if (!string.IsNullOrWhiteSpace(reason))
-                    message = message.Remove(message.Length - 1) + $" for the following reason: {reason}";
+                    message = message.Remove(message.Length - 1) + $" for the following reason: \"{reason}\".";
                 await channel.SendAsync(message);
             }
             catch { }
