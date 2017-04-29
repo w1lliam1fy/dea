@@ -11,6 +11,9 @@ using System.Threading.Tasks;
 
 namespace DEA.Services.Timers
 {
+    /// <summary>
+    /// Periodically sends out trivia messages and awaits for the answers in guilds with auto trivia enabled.
+    /// </summary>
     class AutoTrivia
     { 
         private readonly IDependencyMap _map;

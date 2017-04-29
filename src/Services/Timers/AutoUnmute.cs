@@ -12,6 +12,9 @@ using System.Threading.Tasks;
 
 namespace DEA.Services.Timers
 {
+    /// <summary>
+    /// Periodically unmutes users who's mute length has ran out.
+    /// </summary>
     class AutoUnmute
     {
         private readonly IDependencyMap _map;

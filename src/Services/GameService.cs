@@ -22,6 +22,11 @@ namespace DEA.Services
             _userRepo = userRepo;
         }
 
+        /// <summary>
+        /// Sends a trivia question in a channel and awaits the correct answer. If someone does correctly answer, they are rewarded.
+        /// </summary>
+        /// <param name="channel">The channel to send the trivia question in.</param>
+        /// <param name="dbGuild">The data information of the guild in question.</param>
         public async Task Trivia(IMessageChannel channel, Guild dbGuild)
         {
             if (dbGuild.Trivia.ElementCount == 0)
@@ -63,6 +68,13 @@ namespace DEA.Services
             }
         }
 
+        /// <summary>
+        /// Method that creates a customized gambling game.
+        /// </summary>
+        /// <param name="context">The context for guild data information and the channel to send the reply.</param>
+        /// <param name="bet">The amount of money bet.</param>
+        /// <param name="odds">The odds on 100 of winning.</param>
+        /// <param name="payoutMultiplier">The payout multiplier of the original bet.</param>
         public async Task GambleAsync(DEAContext context, decimal bet, decimal odds, decimal payoutMultiplier)
         {
             var gambleChannel = context.Guild.GetTextChannel(context.DbGuild.GambleChannelId);

@@ -1,6 +1,5 @@
 ﻿using DEA.Common.Extensions;
 using DEA.Database.Models;
-using DEA.Database.Repositories;
 using DEA.Services.Static;
 using Discord;
 using Discord.Commands;
@@ -12,6 +11,9 @@ using System.Threading.Tasks;
 
 namespace DEA.Services.Timers
 {
+    /// <summary>
+    /// Periodically delets all finished polls and informs the creator of the results.
+    /// </summary>
     class AutoDeletePolls
     {
         private readonly IDependencyMap _map;

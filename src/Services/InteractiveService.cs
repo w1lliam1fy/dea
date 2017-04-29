@@ -1,5 +1,4 @@
-﻿using DEA.Services.Static;
-using Discord;
+﻿using Discord;
 using Discord.WebSocket;
 using System;
 using System.Linq.Expressions;
@@ -17,6 +16,13 @@ namespace DEA.Services
             _client = client;
         }
 
+        /// <summary>
+        /// Waits for a message matching a filter in a specific channel.
+        /// </summary>
+        /// <param name="channel">The channel to watch for the message matching the filter.</param>
+        /// <param name="filter">The expression filtering the messages.</param>
+        /// <param name="timeout">The time to watch for the message.</param>
+        /// <returns>Task returning the first message matching the filter. Returns null if there was no match.</returns>
         public async Task<IUserMessage> WaitForMessage(IMessageChannel channel, Expression<Func<IUserMessage, bool>> filter, TimeSpan? timeout = null)
         {
             if (timeout == null) timeout = Config.DEFAULT_WAITFORMESSAGE;

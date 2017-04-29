@@ -1,13 +1,14 @@
 ﻿using System;
 
 /// <summary>
-/// Contains approximate string matching
+/// Contains approximate string matching.
 /// </summary>
 static class LevenshteinDistance
 {
     /// <summary>
     /// Compute the distance between two strings.
     /// </summary>
+    /// <returns>The levenshtein distance between the two strings.</returns>
     public static int Compute(string s, string t)
     {
         s = s.ToLower();

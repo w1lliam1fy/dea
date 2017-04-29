@@ -16,6 +16,12 @@ namespace DEA.Services
             _guildRepo = guildRepo;
         }
 
+        /// <summary>
+        /// Checks whether a user is a moderator.
+        /// </summary>
+        /// <param name="context">The context to get the guild data information.</param>
+        /// <param name="user">The user in question.</param>
+        /// <returns>Whether the user is a moderator.</returns>
         public bool IsMod(DEAContext context, IGuildUser user)
         {
             if (user.GuildPermissions.Administrator)
@@ -30,27 +36,41 @@ namespace DEA.Services
             return false;
         }
 
-        public bool IsHigherMod(DEAContext context, IGuildUser mod, IGuildUser user)
+        /// <summary>
+        /// Checks if a user has a higher permission level than another user.
+        /// </summary>
+        /// <param name="context">The context to get the guild data information.</param>
+        /// <param name="user1">The first user in question.</param>
+        /// <param name="user2">The second user in question.</param>
+        /// <returns>Whether the first user has a higher permission level than the second.</returns>
+        public bool IsHigherMod(DEAContext context, IGuildUser user1, IGuildUser user2)
         {
-            int highest = mod.GuildPermissions.Administrator ? 2 : 0;
-            int highestForUser = user.GuildPermissions.Administrator ? 2 : 0;
+            int highest = user1.GuildPermissions.Administrator ? 2 : 0;
+            int highestForUser = user2.GuildPermissions.Administrator ? 2 : 0;
             if (context.DbGuild.ModRoles.ElementCount == 0)
                 return highest > highestForUser;
 
             foreach (var role in context.DbGuild.ModRoles.OrderBy(x => x.Value))
-                if (mod.Guild.GetRole(ulong.Parse(role.Name)) != null)
-                    if (mod.RoleIds.Any(x => x.ToString() == role.Name))
+                if (user1.Guild.GetRole(ulong.Parse(role.Name)) != null)
+                    if (user1.RoleIds.Any(x => x.ToString() == role.Name))
                         highest = role.Value.AsInt32;
 
             foreach (var role in context.DbGuild.ModRoles.OrderBy(x => x.Value))
-                if (user.Guild.GetRole(ulong.Parse(role.Name)) != null)
-                    if (user.RoleIds.Any(x => x.ToString() == role.Name))
+                if (user2.Guild.GetRole(ulong.Parse(role.Name)) != null)
+                    if (user2.RoleIds.Any(x => x.ToString() == role.Name))
                         highestForUser = role.Value.AsInt32;
 
             return highest > highestForUser;
         }
 
-        public async Task InformSubjectAsync(IUser moderator, string action, IUser subject, string reason = "")
+        /// <summary>
+        /// Informs a user of an action regarding them including the responsible moderator.
+        /// </summary>
+        /// <param name="moderator">The moderator in question.</param>
+        /// <param name="action">The action.</param>
+        /// <param name="subject">The user in question.</param>
+        /// <param name="reason">The reason for the action.</param>
+        public async Task InformSubjectAsync(IUser moderator, string action, IUser subject, string reason = null)
         {
             try
             {
@@ -63,6 +83,15 @@ namespace DEA.Services
             catch { }
         }
 
+        /// <summary>
+        /// If the moderation log channel exists, it will log all moderation commands.
+        /// </summary>
+        /// <param name="context">The context of the command use.</param>
+        /// <param name="action">The action that was taken.</param>
+        /// <param name="color">The color of the embed.</param>
+        /// <param name="reason">The reason for the action.</param>
+        /// <param name="subject">The user in question.</param>
+        /// <param name="extra">An extra line for more information.</param>
         public async Task ModLogAsync(DEAContext context, string action, Color color, string reason, IUser subject = null, string extra = "")
         {
             var channel = context.Guild.GetTextChannel(context.DbGuild.ModLogChannelId);
@@ -81,9 +110,9 @@ namespace DEA.Services
             };
 
             string userText = string.Empty;
-            if (subject != null) userText = $"\n** User:** { subject} ({ subject.Id})";
+            if (subject != null) userText = $"\n**User:** {subject} ({subject.Id})";
             var description = $"**Action:** {action}{extra}{userText}";
-            if (reason != null) description += $"\n** Reason:** { reason}";
+            if (reason != null) description += $"\n**Reason:** {reason}";
 
             var builder = new EmbedBuilder()
             {

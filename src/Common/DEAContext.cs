@@ -30,6 +30,9 @@ namespace DEA.Common
             GUser = User as IGuildUser;
         }
 
+        /// <summary>
+        /// Fetches the guild and user database information for the custom context object.
+        /// </summary>
         public async Task InitializeAsync()
         {
             DbUser = await _userRepo.FetchUserAsync(this);

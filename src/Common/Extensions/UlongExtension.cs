@@ -5,6 +5,14 @@ namespace DEA.Common.Extensions
 {
     public static class UlongExtension
     {
+        /// <summary>
+        /// Tries to direct messages a user by ID. Ignores all exceptions.
+        /// </summary>
+        /// <param name="client">Discord Client object to fetch the user by ID.</param>
+        /// <param name="description">The content of the embed.</param>
+        /// <param name="title">The title of the embed.</param>
+        /// <param name="color">The color of the embed.</param>
+        /// <returns>Task returning the sent message.</returns>
         public static async Task<IUserMessage> DMAsync(this ulong userId, IDiscordClient client, string description, string title = null, Color color = default(Color))
         {
             var user = await client.GetUserAsync(userId);

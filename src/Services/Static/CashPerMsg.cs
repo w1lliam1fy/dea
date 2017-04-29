@@ -7,6 +7,12 @@ namespace DEA.Services.Static
 {
     public static class CashPerMsg
     {
+        /// <summary>
+        /// Provides the user in question with money and an increased rate if the cooldown has finished.
+        /// </summary>
+        /// <param name="userRepo">The user repository object to modify the user's cash.</param>
+        /// <param name="context">The context to get the user's data information.</param>
+        /// <returns></returns>
         public static async Task Apply(UserRepository userRepo, DEAContext context)
         {
             if (DateTime.UtcNow.Subtract(context.DbUser.Message).TotalMilliseconds > context.DbUser.MessageCooldown)

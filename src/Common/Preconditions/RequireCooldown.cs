@@ -9,6 +9,12 @@ namespace DEA.Common.Preconditions
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
     public class RequireCooldownAttribute : PreconditionAttribute
     {
+        /// <summary>
+        /// If the name of the command matches a command with a cooldown, it will check if the user's cooldown has finished. 
+        /// If it has, the command will execute normally, if not, it will reply with the time remaining on the cooldown.
+        /// </summary>
+        public RequireCooldownAttribute() { }
+
         public override async Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IDependencyMap map)
         {
             TimeSpan cooldown;

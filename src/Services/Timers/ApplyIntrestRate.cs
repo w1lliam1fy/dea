@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace DEA.Services.Timers
 {
+    /// <summary>
+    /// Periodically applies the interest rate to all gangs.
+    /// </summary>
     class ApplyIntrestRate
     {
         private readonly IDependencyMap _map;

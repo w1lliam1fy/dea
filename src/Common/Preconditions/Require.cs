@@ -20,6 +20,10 @@ namespace DEA.Common.Preconditions
 
         private Attributes[] _attributes;
 
+        /// <summary>
+        /// Requires the user to comply with all listed attributes before executing the command.
+        /// </summary>
+        /// <param name="attributes">Attribute precondition.</param>
         public RequireAttribute(params Attributes[] attributes)
         {
             _attributes = attributes;

@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace DEA.Services.Timers
 {
+    /// <summary>
+    /// Periodically resets the temporary multiplier for all users.
+    /// </summary>
     class ResetTempMultiplier
     {
         private readonly IDependencyMap _map;
