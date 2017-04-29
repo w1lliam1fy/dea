@@ -136,7 +136,7 @@ namespace DEA.Modules
 
             var successOdds = await _gangRepo.InGangAsync(Context.GUser) ? Config.ROB_SUCCESS_ODDS - 5 : Config.ROB_SUCCESS_ODDS;
 
-            if (Config.ROB_SUCCESS_ODDS > roll)
+            if (successOdds > roll)
             {
                 await _userRepo.EditCashAsync(user, Context.DbGuild, raidedDbUser, -stolen);
                 await _userRepo.EditCashAsync(Context, stolen);
