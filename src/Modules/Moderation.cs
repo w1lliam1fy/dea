@@ -42,10 +42,26 @@ namespace DEA.Modules
         [Command("Unban")]
         [RequireBotPermission(GuildPermission.BanMembers)]
         [Summary("Unban a user.")]
-        public async Task Unban(IUser user, [Remainder] string reason = null)
+        public async Task Unban([Summary("Billy Steve#4821")] string username, [Remainder] string reason = null)
         {
-            if ((await Context.Guild.GetBansAsync()).Any(x => x.User.Id == user.Id))
+            var guildBans = await Context.Guild.GetBansAsync();
+
+            var match = guildBans.Where(x => x.User.ToString().ToLower().Contains(username.ToLower()));
+
+            var count = match.Count();
+
+            if (count >= 2)
+            {
+                var matches = string.Empty;
+                foreach (var restBan in match)
+                    matches += $"{restBan.User}\n";
+
+                ReplyError($"There are multiple matches to your unban request:\n{matches}");
+            } 
+            else if (count == 0)
                 ReplyError("You may not unban someone who isn't banned.");
+
+            var user = match.First().User;
 
             await Context.Guild.RemoveBanAsync(user);
 
@@ -97,7 +113,7 @@ namespace DEA.Modules
         [Alias("CMute")]
         [RequireBotPermission(GuildPermission.ManageRoles)]
         [Summary("Temporarily mutes a user for x amount of hours.")]
-        public async Task CustomMute(double hours, IGuildUser userToMute, [Remainder] string reason = null)
+        public async Task CustomMute([Summary("2")] double hours, IGuildUser userToMute, [Remainder] string reason = null)
         {
             if (hours > 168)
                 ReplyError("You may not mute a user for more than a week.");
@@ -148,7 +164,7 @@ namespace DEA.Modules
                 ReplyError($"You may not clear less than {Config.MIN_CLEAR} messages.");
             if (quantity > Config.MAX_CLEAR)
                 ReplyError($"You may not clear more than {Config.MAX_CLEAR} messages.");
-            if (Context.Channel.Id == Context.DbGuild.ModLogId)
+            if (Context.Channel.Id == Context.DbGuild.ModLogChannelId)
                 ReplyError("For security reasons, you may not use this command in the mod log channel.");
 
             var messages = await Context.Channel.GetMessagesAsync(quantity).Flatten();

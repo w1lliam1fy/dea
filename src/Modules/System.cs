@@ -65,7 +65,7 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
         [Command("Help")]
         [Alias("commands", "cmd", "cmds", "command")]
         [Summary("All command information.")]
-        public async Task Help([Remainder] string commandOrModule = null)
+        public async Task Help([Summary("Crime")][Remainder] string commandOrModule = null)
         {
             if (commandOrModule != null)
             {
@@ -95,7 +95,11 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
                         foreach (var alias in cmd.Aliases)
                             if (alias.ToLower() == commandOrModule.ToLower())
                             {
-                                await SendAsync($"**Description:** {cmd.Summary}\n**Usage:** `{Context.Prefix}{commandOrModule.UpperFirstChar()}{cmd.GetUsage()}`", commandOrModule.UpperFirstChar());
+                                var commmandNameUpperFirst = commandOrModule.UpperFirstChar();
+                                await SendAsync($"**Description:** {cmd.Summary}\n\n" +
+                                                $"**Usage:** `{Context.Prefix}{commmandNameUpperFirst}{cmd.GetUsage()}`\n\n" +
+                                                $"**Example:** `{Context.Prefix}{commmandNameUpperFirst}{cmd.GetExample()}`", 
+                                                commandOrModule.UpperFirstChar());
                                 return;
                             }
                     }

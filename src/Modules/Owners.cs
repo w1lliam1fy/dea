@@ -6,7 +6,6 @@ using DEA.Database.Repositories;
 using MongoDB.Driver;
 using MongoDB.Bson;
 using DEA.Services.Handlers;
-using DEA.Services;
 using DEA.Common;
 using DEA.Common.Preconditions;
 using DEA.Database.Models;

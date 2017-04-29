@@ -48,7 +48,7 @@ namespace DEA.Modules
         [Command("ModifyQuestion")]
         [Require(Attributes.Moderator)]
         [Summary("Modify a trivia question.")]
-        public async Task ModifyQuestion(string question, [Remainder] string newQuestion)
+        public async Task ModifyQuestion([Summary("Do you even lift?")] string question, [Summary("Dost thou even hoist?")] [Remainder] string newQuestion)
         {
             if (!Context.DbGuild.Trivia.Contains(question))
                 ReplyError($"That question does not exist.");
@@ -65,7 +65,7 @@ namespace DEA.Modules
         [Command("ModifyAnswer")]
         [Require(Attributes.Moderator)]
         [Summary("Modify a trivia answer.")]
-        public async Task ModifyAnswer(string question, [Remainder] string answer)
+        public async Task ModifyAnswer([Summary("Do you even lift?")] string question, [Summary("HELL YEA DUDE! FIRE IT UP!")] [Remainder] string answer)
         {
             if (!Context.DbGuild.Trivia.Contains(question))
                 ReplyError($"That quesiton does not exist.");
@@ -81,7 +81,7 @@ namespace DEA.Modules
         [Command("AddQuestion")]
         [Require(Attributes.Moderator)]
         [Summary("Adds a trivia question.")]
-        public async Task AddTrivia(string question, [Remainder] string answer)
+        public async Task AddTrivia([Summary("Do you even lift?")] string question, [Summary("HELL YEA DUDE! LET HER RIP!")] [Remainder] string answer)
         {
             if (Context.DbGuild.Trivia.Contains(question)) 
                 ReplyError("That question already exists.");
@@ -101,7 +101,7 @@ namespace DEA.Modules
         [Command("RemoveQuestion")]
         [Require(Attributes.Moderator)]
         [Summary("Removes a trivia question.")]
-        public async Task RemoveTrivia([Remainder] string question)
+        public async Task RemoveTrivia([Summary("Do you even lift?")] [Remainder] string question)
         {
             if (!Context.DbGuild.Trivia.Contains(question))
                 ReplyError($"That quesiton does not exist.");
@@ -136,7 +136,7 @@ namespace DEA.Modules
         [Require(Attributes.Moderator)]
         [Alias("Answers", "Answer", "TriviaAnswer")]
         [Summary("Sends you a list of all trivia answers.")]
-        public async Task TriviaAnswers([Remainder] string question = null)
+        public async Task TriviaAnswers([Summary("Do you even lift?")] [Remainder] string question = null)
         {
             if (Context.DbGuild.Trivia.ElementCount == 0)
                 ReplyError("There are no trivia questions yet!");

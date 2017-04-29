@@ -28,7 +28,7 @@ namespace DEA.Modules
 
         [Command("CreatePoll")]
         [Summary("Creates a poll.")]
-        public async Task AddPoll(string name, [Summary("Option 1~Option 2~Option 3...")] string choices, double daysToLast = 1, bool elderOnly = false, bool modOnly = false)
+        public async Task AddPoll([Summary("Are you white?")] string poll, [Summary("HELL YEA~No~Maybe")] string choices, double daysToLast = 1, bool elderOnly = false, bool modOnly = false)
         {
             var isMod = _moderationService.IsMod(Context, Context.GUser);
 
@@ -40,7 +40,7 @@ namespace DEA.Modules
             if (choicesArray.Distinct().Count() != choicesArray.Length)
                 ReplyError("You may not have multiple choices that are identicle.");
 
-            await _pollRepo.CreatePollAsync(Context, name, choicesArray, TimeSpan.FromDays(daysToLast), elderOnly, modOnly, isMod);
+            await _pollRepo.CreatePollAsync(Context, poll, choicesArray, TimeSpan.FromDays(daysToLast), elderOnly, modOnly, isMod);
 
             await ReplyAsync($"You have successfully created poll #{await _polls.CountAsync(y => y.GuildId == Context.Guild.Id)}.");
         }

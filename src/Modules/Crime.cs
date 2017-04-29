@@ -108,7 +108,7 @@ namespace DEA.Modules
                 ReplyError("The length of a nickname may not be longer than 32 characters.");
             if (_moderationService.IsMod(Context, userToBully))
                 ReplyError("You may not bully a moderator.");
-            if ((await _userRepo.FetchUserAsync(userToBully)).Cash > Context.Cash)
+            if ((await _userRepo.FetchUserAsync(userToBully)).Cash >= Context.Cash)
                 ReplyError("You may not bully a user with more money than you.");
 
             await userToBully.ModifyAsync(x => x.Nickname = nickname);
@@ -117,9 +117,11 @@ namespace DEA.Modules
 
         [Command("Rob")]
         [Require(Attributes.Rob)]
-        [Summary("Lead a large scale operation on a local bank.")]
+        [Summary("Slam anybody on the leaderboards.")]
         public async Task Rob(decimal resources, [Remainder] IGuildUser user)
         {
+            if (user.Id == Context.User.Id)
+                ReplyError("Only the *retards* try to rob themselves. Are you a retard?");
             if (resources < Config.MIN_RESOURCES)
                 ReplyError($"The minimum amount of money to spend on resources for a robbery is {Config.MIN_RESOURCES.USD()}.");
             if (Context.Cash < resources)

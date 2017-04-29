@@ -65,12 +65,9 @@ namespace DEA.Common.Preconditions
                         if (!DbGuild.Nsfw)
                             return PreconditionResult.FromError($"This command may not be used while NSFW is disabled. An administrator may enable with the " +
                                                                 $"`{DbGuild.Prefix}ChangeNSFWSettings` command.");
-                        var nsfwChannel = await context.Guild.GetChannelAsync(DbGuild.NsfwId);
-                        if (nsfwChannel != null && context.Channel.Id != DbGuild.NsfwId)
+                        var nsfwChannel = await context.Guild.GetChannelAsync(DbGuild.NsfwChannelId);
+                        if (nsfwChannel != null && context.Channel.Id != DbGuild.NsfwChannelId)
                             return PreconditionResult.FromError($"You may only use this command in {(nsfwChannel as ITextChannel).Mention}.");
-                        var nsfwRole = context.Guild.GetRole(DbGuild.NsfwRoleId);
-                        if (nsfwRole != null && guildUser.RoleIds.All(x => x != DbGuild.NsfwRoleId))
-                            return PreconditionResult.FromError($"You do not have permission to use this command.\nRequired role: {nsfwRole.Mention}");
                         break;
                     case Attributes.InGang:
                         if (!await _gangRepo.InGangAsync(guildUser))

@@ -55,7 +55,7 @@ namespace DEA.Services.Timers
                             var mutedRole = guild.GetRole(guildData.MutedRoleId);
                             if (mutedRole != null && guild.GetUser(mute.UserId).Roles.Any(x => x.Id == mutedRole.Id))
                             {
-                                var channel = guild.GetTextChannel(guildData.ModLogId);
+                                var channel = guild.GetTextChannel(guildData.ModLogChannelId);
                                 if (channel != null && guild.CurrentUser.GuildPermissions.EmbedLinks &&
                                     (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).SendMessages
                                     && (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).EmbedLinks)

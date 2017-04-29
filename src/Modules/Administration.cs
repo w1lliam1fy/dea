@@ -37,7 +37,7 @@ namespace DEA.Modules
 
         [Command("SetPrefix")]
         [Summary("Sets the guild specific prefix.")]
-        public async Task SetPrefix(string prefix)
+        public async Task SetPrefix([Summary("!")] string prefix)
         {
             if (prefix.Length > 3)
                 ReplyError("The maximum character length of a prefix is 3.");
@@ -126,7 +126,7 @@ namespace DEA.Modules
         [Summary("Sets the moderation log.")]
         public async Task SetModLogChannel([Remainder] ITextChannel modLogChannel)
         {
-            await _guildRepo.ModifyAsync(Context.Guild.Id, x => (decimal)x.ModLogId, (decimal)modLogChannel.Id);
+            await _guildRepo.ModifyAsync(Context.Guild.Id, x => (decimal)x.ModLogChannelId, (decimal)modLogChannel.Id);
             await ReplyAsync($"You have successfully set the moderator log channel to {modLogChannel.Mention}.");
         }
 
@@ -135,7 +135,7 @@ namespace DEA.Modules
         [Summary("Sets the gambling channel.")]
         public async Task SetGambleChannel([Remainder] ITextChannel gambleChannel)
         {
-            await _guildRepo.ModifyAsync(Context.Guild.Id, x => (decimal)x.GambleId, (decimal)gambleChannel.Id);
+            await _guildRepo.ModifyAsync(Context.Guild.Id, x => (decimal)x.GambleChannelId, (decimal)gambleChannel.Id);
             await ReplyAsync($"You have successfully set the gamble channel to {gambleChannel.Mention}.");
         }
 

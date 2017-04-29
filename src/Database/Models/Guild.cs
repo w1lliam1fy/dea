@@ -21,15 +21,13 @@ namespace DEA.Database.Models
 
         public ulong MutedRoleId { get; set; }
 
-        public ulong NsfwRoleId { get; set; }
-
         //Channels
 
-        public ulong NsfwId { get; set; }
+        public ulong NsfwChannelId { get; set; }
 
-        public ulong GambleId { get; set; }
+        public ulong GambleChannelId { get; set; }
 
-        public ulong ModLogId { get; set; }
+        public ulong ModLogChannelId { get; set; }
 
         //Options
 

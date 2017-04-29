@@ -65,7 +65,7 @@ namespace DEA.Services
 
         public async Task ModLogAsync(DEAContext context, string action, Color color, string reason, IUser subject = null, string extra = "")
         {
-            var channel = context.Guild.GetTextChannel(context.DbGuild.ModLogId);
+            var channel = context.Guild.GetTextChannel(context.DbGuild.ModLogChannelId);
 
             if (channel == null) return;
 

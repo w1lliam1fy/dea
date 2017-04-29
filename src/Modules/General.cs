@@ -96,6 +96,8 @@ namespace DEA.Modules
             string description = string.Empty;
             int position = 1;
 
+            if (users.Count == 0) ReplyError("There is nobody on the leaderboards yet.");
+
             foreach (User user in sorted)
             {
                 if (Context.Guild.GetUser(user.UserId) == null)
@@ -105,8 +107,6 @@ namespace DEA.Modules
                 if (position >= Config.LEADERBOARD_CAP) break;
                 position++;
             }
-
-            if (description.Length == 0) ReplyError("There is nobody on the leaderboards yet!");
 
             await SendAsync(description, "The Richest Traffickers");
         }
@@ -121,6 +121,8 @@ namespace DEA.Modules
             string description = string.Empty;
             int position = 1;
 
+            if (users.Count == 0) ReplyError("There is nobody on the leaderboards yet.");
+
             foreach (User user in sorted)
             {
                 if (Context.Guild.GetUser(user.UserId) == null)
@@ -130,15 +132,6 @@ namespace DEA.Modules
                 if (position >= Config.RATELB_CAP) break;
                 position++;
             }
-
-            if (description.Length == 0) ReplyError("There is nobody on the leaderboards yet!");
-
-            var builder = new EmbedBuilder()
-            {
-                Title = $"The Best Chatters",
-                Color = new Color(0x00AE86),
-                Description = description
-            };
 
             await SendAsync(description, "The Best Chatters");
         }
@@ -283,7 +276,7 @@ namespace DEA.Modules
 
             if (description.Length == 0) ReplyError("All commands are available for use!");
 
-            await SendAsync(description, $"All cooldowns for {Context.User}");
+            await SendAsync(description, $"All cooldowns for {user}");
         }
 
     }

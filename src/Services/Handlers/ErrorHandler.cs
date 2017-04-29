@@ -24,47 +24,51 @@ namespace DEA.Services.Handlers
             _commandService.Log += HandleLog;
         }
 
-        public async Task HandleLog(LogMessage logMessage)
-        {
-            if (logMessage.Exception is CommandException cmdEx)
+        public Task HandleLog(LogMessage logMessage) =>
+            Task.Run(async () =>
             {
-                if (cmdEx.InnerException is DEAException)
-                    await cmdEx.Context.Channel.ReplyAsync(cmdEx.Context.User, cmdEx.InnerException.Message, null, Config.ERROR_COLOR);
-                else if (cmdEx.InnerException is HttpException httpEx)
+                if (logMessage.Exception is CommandException cmdEx)
                 {
-                    var message = string.Empty;
-                    switch (httpEx.DiscordCode)
+                    if (cmdEx.InnerException is RateLimitedException)
+                        return;
+                    if (cmdEx.InnerException is DEAException)
+                        await cmdEx.Context.Channel.ReplyAsync(cmdEx.Context.User, cmdEx.InnerException.Message, null, Config.ERROR_COLOR);
+                    else if (cmdEx.InnerException is HttpException httpEx)
                     {
-                        case null:
-                            message = "Something went wrong.";
-                            break;
-                        case 50013:
-                            message = "DEA does not have permission to do that.";
-                            break;
-                        case 50007:
-                            message = "DEA does not have permission to send messages to this user.";
-                            break;
-                        default:
-                            message = httpEx.Message;
-                            break;
+                        var message = string.Empty;
+                        switch (httpEx.DiscordCode)
+                        {
+                            case null:
+                                message = "Something went wrong.";
+                                break;
+                            case 50013:
+                                message = "DEA does not have permission to do that.";
+                                break;
+                            case 50007:
+                                message = "DEA does not have permission to send messages to this user.";
+                                break;
+                            default:
+                                message = httpEx.Message;
+                                break;
+                        }
+                        await cmdEx.Context.Channel.ReplyAsync(cmdEx.Context.User, message, null, Config.ERROR_COLOR);
                     }
-                    await cmdEx.Context.Channel.ReplyAsync(cmdEx.Context.User, message, null, Config.ERROR_COLOR);
-                }
-                else if (cmdEx.InnerException.GetType() != typeof(RateLimitedException))
-                {
-                    var message = cmdEx.InnerException.Message;
-                    if (cmdEx.InnerException.InnerException != null) message += $"\n**Inner Exception:** {cmdEx.InnerException.InnerException.Message}";
+                    else
+                    {
+                        var message = cmdEx.InnerException.Message;
+                        if (cmdEx.InnerException.InnerException != null) message += $"\n**Inner Exception:** {cmdEx.InnerException.InnerException.Message}";
 
-                    await cmdEx.Context.Channel.ReplyAsync(cmdEx.Context.User, message, null, Config.ERROR_COLOR);
+                        await cmdEx.Context.Channel.ReplyAsync(cmdEx.Context.User, message, null, Config.ERROR_COLOR);
 
-                    if ((await cmdEx.Context.Guild.GetCurrentUserAsync() as IGuildUser).GetPermissions(cmdEx.Context.Channel as SocketTextChannel).AttachFiles)
-                        using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(cmdEx.ToString() ?? string.Empty)))
-                            await cmdEx.Context.Channel.SendFileAsync(ms, "Stack_Trace.txt");
+                        if ((await cmdEx.Context.Guild.GetCurrentUserAsync() as IGuildUser).GetPermissions(cmdEx.Context.Channel as SocketTextChannel).AttachFiles)
+                            using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(cmdEx.ToString() ?? string.Empty)))
+                                await cmdEx.Context.Channel.SendFileAsync(ms, "Stack_Trace.txt");
+                    }
                 }
-            }
-            else if (logMessage.Exception != null)
-                Logger.Log(LogSeverity.Error, logMessage.Exception.Source, $"{logMessage.Exception.Message}: {logMessage.Exception.StackTrace}");
-        }
+                else if (logMessage.Exception != null)
+                    Logger.Log(LogSeverity.Error, logMessage.Exception.Source, $"{logMessage.Exception.Message}: {logMessage.Exception.StackTrace}");
+            });
+
 
         public Task HandleCommandFailureAsync(DEAContext context, IResult result, int argPos)
         {
@@ -88,7 +92,9 @@ namespace DEA.Services.Handlers
                     break;
                 case CommandError.BadArgCount:
                     var cmd = _commandService.Search(context, argPos).Commands.First().Command;
-                    message = $"You are incorrectly using this command. Usage: `{context.DbGuild.Prefix}{commandName.UpperFirstChar()}{cmd.GetUsage()}`";
+                    var cmdNameUpperFirst = commandName.UpperFirstChar();
+                    message = $"You are incorrectly using this command. \n\n**Usage:** `{context.DbGuild.Prefix}{cmdNameUpperFirst}{cmd.GetUsage()}`\n\n" +
+                              $"**Example:** `{context.DbGuild.Prefix}{cmdNameUpperFirst}{cmd.GetExample()}`";
                     break;
                 case CommandError.ParseFailed:
                     message = $"Invalid number.";

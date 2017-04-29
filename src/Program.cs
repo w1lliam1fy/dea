@@ -62,7 +62,7 @@ namespace DEA
             _commandService = new CommandService(new CommandServiceConfig()
             {
                 CaseSensitiveCommands = false,
-                LogLevel = LogSeverity.Debug,
+                LogLevel = LogSeverity.Error,
                 DefaultRunMode = RunMode.Async,
             });
 
@@ -75,7 +75,10 @@ namespace DEA
             _polls = database.GetCollection<Poll>("polls");
             _mutes = database.GetCollection<Mute>("mutes");
 
-            _guilds.UpdateMany(Builders<Guild>.Filter.Empty, Builders<Guild>.Update.Unset("DetailedLogsId"));
+            _guilds.UpdateMany(Builders<Guild>.Filter.Empty, Builders<Guild>.Update.Unset("NsfwRoleId"));
+            _guilds.UpdateMany(Builders<Guild>.Filter.Empty, Builders<Guild>.Update.Rename("NsfwId", "NsfwChannelId"));
+            _guilds.UpdateMany(Builders<Guild>.Filter.Empty, Builders<Guild>.Update.Rename("GambleId", "GambleChannelId"));
+            _guilds.UpdateMany(Builders<Guild>.Filter.Empty, Builders<Guild>.Update.Rename("ModLogId", "ModLogChannelId"));
         }
 
         private async Task RunAsync()
@@ -109,7 +112,7 @@ namespace DEA
             sw.Stop();
             Logger.Log(LogSeverity.Info, "Test connection has succeeded", $"Elapsed time: {sw.Elapsed.TotalSeconds.ToString("N3")} seconds.");
 
-            InitializeServices(map);
+            InitializeTimersAndEvents(map);
             await new CommandHandler(_commandService, map).InitializeAsync();
             Logger.Log(LogSeverity.Info, "Events and command handler successfully initialized", $"Client ready.");
 
@@ -129,7 +132,6 @@ namespace DEA
             map.Add(new GuildRepository(_guilds));
             map.Add(new RankHandler(map.Get<GuildRepository>()));
             map.Add(new UserRepository(_users, map.Get<RankHandler>()));
-            map.Add(new GamblingService(map.Get<UserRepository>()));
             map.Add(new InteractiveService(_client));
             map.Add(new GameService(map.Get<InteractiveService>(), map.Get<UserRepository>()));
             map.Add(new ModerationService(map.Get<GuildRepository>()));
@@ -138,7 +140,7 @@ namespace DEA
             map.Add(new MuteRepository(_mutes));
         }
 
-        private void InitializeServices(IDependencyMap map)
+        private void InitializeTimersAndEvents(IDependencyMap map)
         {
             new Ready(map);
             new UserEvents(map);
