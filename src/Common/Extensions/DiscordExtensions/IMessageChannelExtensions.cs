@@ -10,7 +10,7 @@ namespace DEA.Common.Extensions.DiscordExtensions
         {
             var builder = new EmbedBuilder()
             {
-                Description = $"{user}, {description}",
+                Description = $"**{user}**, {description}",
                 Color = Config.Color()
             };
             if (title != null) builder.Title = title;

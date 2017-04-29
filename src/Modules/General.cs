@@ -98,12 +98,13 @@ namespace DEA.Modules
 
             if (users.Count == 0) ReplyError("There is nobody on the leaderboards yet.");
 
-            foreach (User user in sorted)
+            foreach (User dbUser in sorted)
             {
-                if (Context.Guild.GetUser(user.UserId) == null)
+                var user = await Context.Guild.GetUserAsync(dbUser.UserId);
+                if (Context.Guild.GetUserAsync(dbUser.UserId) == null)
                     continue;
 
-                description += $"{position}. <@{user.UserId}>: {user.Cash.USD()}\n";
+                description += $"{position}. **{user}**: {dbUser.Cash.USD()}\n";
                 if (position >= Config.LEADERBOARD_CAP) break;
                 position++;
             }
@@ -123,12 +124,13 @@ namespace DEA.Modules
 
             if (users.Count == 0) ReplyError("There is nobody on the leaderboards yet.");
 
-            foreach (User user in sorted)
+            foreach (User dbUser in sorted)
             {
-                if (Context.Guild.GetUser(user.UserId) == null)
+                var user = await Context.Guild.GetUserAsync(dbUser.UserId);
+                if (await Context.Guild.GetUserAsync(dbUser.UserId) == null)
                     continue;
 
-                description += $"{position}. <@{user.UserId}>: {user.TemporaryMultiplier.ToString("N2")}\n";
+                description += $"{position}. **{user}**: {dbUser.TemporaryMultiplier.ToString("N2")}\n";
                 if (position >= Config.RATELB_CAP) break;
                 position++;
             }

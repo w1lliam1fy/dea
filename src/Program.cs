@@ -74,11 +74,6 @@ namespace DEA
             _gangs = database.GetCollection<Gang>("gangs");
             _polls = database.GetCollection<Poll>("polls");
             _mutes = database.GetCollection<Mute>("mutes");
-
-            _guilds.UpdateMany(Builders<Guild>.Filter.Empty, Builders<Guild>.Update.Unset("NsfwRoleId"));
-            _guilds.UpdateMany(Builders<Guild>.Filter.Empty, Builders<Guild>.Update.Rename("NsfwId", "NsfwChannelId"));
-            _guilds.UpdateMany(Builders<Guild>.Filter.Empty, Builders<Guild>.Update.Rename("GambleId", "GambleChannelId"));
-            _guilds.UpdateMany(Builders<Guild>.Filter.Empty, Builders<Guild>.Update.Rename("ModLogId", "ModLogChannelId"));
         }
 
         private async Task RunAsync()

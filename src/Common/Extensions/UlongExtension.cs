@@ -1,14 +1,13 @@
 ﻿using Discord;
-using Discord.WebSocket;
 using System.Threading.Tasks;
 
 namespace DEA.Common.Extensions
 {
     public static class UlongExtension
     {
-        public static async Task<IUserMessage> DMAsync(this ulong userId, DiscordSocketClient client, string description, string title = null, Color color = default(Color))
+        public static async Task<IUserMessage> DMAsync(this ulong userId, IDiscordClient client, string description, string title = null, Color color = default(Color))
         {
-            var user = client.GetUser(userId);
+            var user = await client.GetUserAsync(userId);
 
             if (user != null)
             {

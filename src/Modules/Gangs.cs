@@ -55,7 +55,7 @@ namespace DEA.Modules
             if (gang.Members.Length == 4)
                 ReplyError("This gang is already full!");
 
-            var leader = Context.Guild.GetUser(gang.LeaderId);
+            var leader = await Context.Guild.GetUserAsync(gang.LeaderId);
             await ReplyAsync($"The leader of {gang.Name} has been informed of your request to join their gang.");
 
             if (leader != null)
@@ -239,7 +239,7 @@ namespace DEA.Modules
         {
             if (cash < Config.MIN_WITHDRAW)
                 ReplyError($"The minimum withdrawal is {Config.MIN_WITHDRAW.USD()}.");
-            if (cash > Context.Gang.Wealth * Config.WITHDRAW_CAP)
+            if (cash > Math.Round(Context.Gang.Wealth * Config.WITHDRAW_CAP, 2))
                 ReplyError($"You may only withdraw {Config.WITHDRAW_CAP.ToString("P")} of your gang's wealth, " +
                                     $"that is {(Context.Gang.Wealth * Config.WITHDRAW_CAP).USD()}.");
 

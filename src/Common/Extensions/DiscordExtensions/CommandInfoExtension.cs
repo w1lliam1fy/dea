@@ -34,7 +34,7 @@ namespace DEA.Common.Extensions.DiscordExtensions
                     var paramExample = string.Empty;
                     if (param.Type == typeof(IGuildUser)) paramExample = "Sexy John#0007";
                     else if (param.Type == typeof(IRole)) paramExample = "Spicy Role";
-                    else if (param.Type == typeof(ITextChannel)) paramExample = "Clean Ass Channel";
+                    else if (param.Type == typeof(ITextChannel)) paramExample = "CleanAssChannel";
                     else if (param.Type == typeof(decimal)) paramExample = "50";
                     else if (param.Type == typeof(int)) paramExample = "2";
                     else if (param.Type == typeof(string)) paramExample = "Oh yes baby, oh yes.";
