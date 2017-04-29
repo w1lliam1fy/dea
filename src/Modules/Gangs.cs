@@ -100,11 +100,19 @@ namespace DEA.Modules
                 ReplyError("You are not in a gang.");
 
             var members = string.Empty;
+            var guildInterface = Context.Guild as IGuild;
             foreach (var member in gang.Members)
-                members += $"<@{member}>, ";
+            {
+                var user = await guildInterface.GetUserAsync(member);
+                if (user != null) members += $"**{user}**, ";
+            }
 
             if (members.Length != 0) members = $"__**Members:**__ {members.Substring(0, members.Length - 2)}\n";
-            var description = $"__**Leader:**__ <@{gang.LeaderId}>\n" + members + $"__**Wealth:**__ {gang.Wealth.USD()}\n" +
+
+            var leader = await guildInterface.GetUserAsync(gang.LeaderId);
+            if (leader != null) members = $"__**Leader:**__ **{leader}**\n";
+
+            var description = members + $"__**Wealth:**__ {gang.Wealth.USD()}\n" +
                               $"__**Interest rate:**__ {InterestRate.Calculate(gang.Wealth).ToString("P")}";
 
             await SendAsync(description, gang.Name);
