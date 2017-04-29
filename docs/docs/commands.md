@@ -15,8 +15,8 @@ The syntax of the command usage is:
 - [Gangs](#gangs)
 - [Crime](#crime)
 - [Trivia](#trivia)
-- [NSFW] (#nsfw)
-- [Polls] (#polls)
+- [NSFW](#nsfw)
+- [Polls](#polls)
 - [System](#system)
 
 These commands may only be used by the bot owners.
