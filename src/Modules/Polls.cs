@@ -10,6 +10,7 @@ using System;
 using System.Linq;
 using DEA.Services;
 using DEA.Database.Models;
+using Discord;
 
 namespace DEA.Modules
 {
@@ -117,7 +118,9 @@ namespace DEA.Modules
             else if (poll.ElderOnly)
                 description += $"\n\n**Only users that have been in this server for at least {Config.ELDER_TIME_REQUIRED.TotalHours} hours may vote on this poll.**";
 
-            description += $"\n\nCreator: <@{poll.CreatorId}>";
+            var creator = await (Context.Guild as IGuild).GetUserAsync(poll.CreatorId);
+
+            description += $"\n\nCreator: {creator}";
 
             await SendAsync(description, poll.Name);
         }

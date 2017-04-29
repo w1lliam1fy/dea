@@ -82,7 +82,7 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
                         {
                             moduleInfo += $"{Context.Prefix}{cmd.Aliases.First()}{new string(' ', (longestInModule + 1) - cmd.Aliases.First().Length)} :: {cmd.Summary}\n";
                         }
-                        moduleInfo += "```";
+                        moduleInfo += "\nUse the $help command for more information on any of these commands.```";
                         await Context.Channel.SendMessageAsync(moduleInfo);
                         return;
                     }

@@ -110,7 +110,7 @@ namespace DEA.Modules
             if (members.Length != 0) members = $"__**Members:**__ {members.Substring(0, members.Length - 2)}\n";
 
             var leader = await guildInterface.GetUserAsync(gang.LeaderId);
-            if (leader != null) members += $"__**Leader:**__ **{leader}**\n";
+            if (leader != null) members = $"__**Leader:**__ **{leader}**\n" + members;
 
             var description = members + $"__**Wealth:**__ {gang.Wealth.USD()}\n" +
                               $"__**Interest rate:**__ {InterestRate.Calculate(gang.Wealth).ToString("P")}";

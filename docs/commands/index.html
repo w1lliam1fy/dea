@@ -134,6 +134,8 @@
 <li><a href="#gangs">Gangs</a></li>
 <li><a href="#crime">Crime</a></li>
 <li><a href="#trivia">Trivia</a></li>
+<li>[NSFW] (#nsfw)</li>
+<li>[Polls] (#polls)</li>
 <li><a href="#system">System</a></li>
 </ul>
 <p>These commands may only be used by the bot owners.</p>
@@ -151,11 +153,6 @@
 <td>SetGame</td>
 <td>Sets the game of DEA.</td>
 <td><code>$SetGame &lt;Game name&gt;</code></td>
-</tr>
-<tr>
-<td>Global</td>
-<td>Send a global announcement in the default channel of all servers.</td>
-<td><code>$Global &lt;Announcement&gt;</code></td>
 </tr>
 </tbody>
 </table>
@@ -541,7 +538,7 @@
 </tr>
 <tr>
 <td>Rob</td>
-<td>Lead a large scale operation on a local bank.</td>
+<td>Slam anyone's bank account.</td>
 <td><code>$Rob &lt;Resources&gt;</code></td>
 </tr>
 </tbody>
@@ -591,6 +588,81 @@
 <td>TriviaAnswers</td>
 <td>Sends you a list of all trivia answers.</td>
 <td><code>$TriviaAnswers [Question]</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="nsfw">NSFW</h3>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Description</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ChangeNsfwSettings</td>
+<td>Enables/disables NSFW commands in your server.</td>
+<td><code>$ChangeNsfwSettings</code></td>
+</tr>
+<tr>
+<td>SetNsfwChannel</td>
+<td>Information about the DEA Cash System.</td>
+<td><code>$SetNsfwChannel &lt;@Role&gt;</code></td>
+</tr>
+<tr>
+<td>Tits</td>
+<td>Motorboat that shit.</td>
+<td><code>$Tits</code></td>
+</tr>
+<tr>
+<td>Ass</td>
+<td>Sauce me some booty how about that.</td>
+<td><code>$Ass</code></td>
+</tr>
+<tr>
+<td>Hentai</td>
+<td>The real shit goes down with custom hentai tags.</td>
+<td><code>$Hentai [tag]</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="polls">Polls</h3>
+<p>Example of the creation of a poll: <code>$CreatePoll "Are you white?" "HELL YEA~No~Maybe" 1 False False</code></p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Description</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CreatePoll</td>
+<td>Creates a poll.</td>
+<td><code>$CreatePoll &lt;poll&gt; &lt;choices&gt; [daysToLast] [elderOnly] [modOnly]</code></td>
+</tr>
+<tr>
+<td>RemovePoll</td>
+<td>Removes a poll.</td>
+<td><code>$RemovePoll &lt;Poll index&gt;</code></td>
+</tr>
+<tr>
+<td>Polls</td>
+<td>Sends you a list of all polls in progress.</td>
+<td><code>$Polls</code></td>
+</tr>
+<tr>
+<td>Poll</td>
+<td>View the information of any poll.</td>
+<td><code>$Poll &lt;Poll index&gt;</code></td>
+</tr>
+<tr>
+<td>Vote</td>
+<td>Vote on any poll.</td>
+<td><code>$Vote &lt;Poll index&gt; &lt;Choice index&gt;</code></td>
 </tr>
 </tbody>
 </table>

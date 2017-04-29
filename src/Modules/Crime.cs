@@ -117,7 +117,7 @@ namespace DEA.Modules
 
         [Command("Rob")]
         [Require(Attributes.Rob)]
-        [Summary("Slam anybody on the leaderboards.")]
+        [Summary("Slam anyone's bank account.")]
         public async Task Rob(decimal resources, [Remainder] IGuildUser user)
         {
             if (user.Id == Context.User.Id)

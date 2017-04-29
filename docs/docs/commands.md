@@ -15,6 +15,8 @@ The syntax of the command usage is:
 - [Gangs](#gangs)
 - [Crime](#crime)
 - [Trivia](#trivia)
+- [NSFW] (#nsfw)
+- [Polls] (#polls)
 - [System](#system)
 
 These commands may only be used by the bot owners.
@@ -120,7 +122,7 @@ Whore|Sell your body for some quick cash.|`$Whore`
 Jump|Jump some random nigga in the hood.|`$Jump`
 Steal|Snipe some goodies from your local stores.|`$Steal`
 Bully|Bully anyone's nickname to whatever you please.|`$Bully`
-Rob|Lead a large scale operation on a local bank.|`$Rob <Resources>`
+Rob|Slam anyone's bank account.|`$Rob <Resources>`
 
 ### Trivia
 
@@ -135,6 +137,27 @@ ModifyQuestion|Modify a trivia question.|`$ModifyQuestion <Question> <New Questi
 ModifyAnswer|Modify a trivia answer.|`$ModifyAnswer <Question> <New Answer>`
 TriviaQuestions|Sends you a list of all trivia questions.|`$TriviaQuestions`
 TriviaAnswers|Sends you a list of all trivia answers.|`$TriviaAnswers [Question]`
+
+### NSFW
+Command | Description | Usage
+----------------|--------------|-------
+ChangeNsfwSettings|Enables/disables NSFW commands in your server.|`$ChangeNsfwSettings`
+SetNsfwChannel|Information about the DEA Cash System.|`$SetNsfwChannel <@Role>`
+Tits|Motorboat that shit.|`$Tits`
+Ass|Sauce me some booty how about that.|`$Ass`
+Hentai|The real shit goes down with custom hentai tags.|`$Hentai [tag]`
+
+### Polls
+
+Example of the creation of a poll: `$CreatePoll "Are you white?" "HELL YEA~No~Maybe" 1 False False`
+
+Command | Description | Usage
+----------------|--------------|-------
+CreatePoll|Creates a poll.|`$CreatePoll <poll> <choices> [daysToLast] [elderOnly] [modOnly]`
+RemovePoll|Removes a poll.|`$RemovePoll <Poll index>`
+Polls|Sends you a list of all polls in progress.|`$Polls`
+Poll|View the information of any poll.|`$Poll <Poll index>`
+Vote|Vote on any poll.|`$Vote <Poll index> <Choice index>`
 
 ### System
 Command | Description | Usage
