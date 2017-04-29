@@ -76,7 +76,7 @@ namespace DEA.Modules
                 ReplyError("You may not add negative money to these users's balances.");
 
             await ReplyAsync("The addition of cash has commenced...");
-            foreach (var user in (await Context.Guild.GetUsersAsync()).Where(x => x.RoleIds.Any(y => y == role.Id)))
+            foreach (var user in (await (Context.Guild as IGuild).GetUsersAsync()).Where(x => x.RoleIds.Any(y => y == role.Id)))
                 await _userRepo.EditCashAsync(user, Context.DbGuild, await _userRepo.FetchUserAsync(user), money);
 
             await ReplyAsync($"Successfully added {money.USD()} to the balance of every user in the {role.Mention} role.");
@@ -103,7 +103,7 @@ namespace DEA.Modules
                 ReplyError("You may not remove negative money from these users's balances.");
 
             await ReplyAsync("The cash removal has commenced...");
-            foreach (var user in (await Context.Guild.GetUsersAsync()).Where(x => x.RoleIds.Any(y => y == role.Id)))
+            foreach (var user in (await (Context.Guild as IGuild).GetUsersAsync()).Where(x => x.RoleIds.Any(y => y == role.Id)))
                 await _userRepo.EditCashAsync(user, Context.DbGuild, await _userRepo.FetchUserAsync(user), -money);
 
             await ReplyAsync($"Successfully removed {money.USD()} from the balance of every user in the {role.Mention} role.");
@@ -122,7 +122,7 @@ namespace DEA.Modules
             }
             else
             {
-                foreach (var user in (await Context.Guild.GetUsersAsync()).Where(x => x.RoleIds.Any(y => y == role.Id)))
+                foreach (var user in (await (Context.Guild as IGuild).GetUsersAsync()).Where(x => x.RoleIds.Any(y => y == role.Id)))
                     _users.DeleteOne(y => y.UserId == user.Id && y.GuildId == user.Guild.Id);
 
                 await ReplyAsync($"Successfully reset all users with the {role.Mention} role!");

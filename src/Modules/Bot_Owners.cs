@@ -14,7 +14,7 @@ namespace DEA.Modules
         [Summary("Sets the game of DEA.")]
         public async Task SetGame([Summary("boss froth")] [Remainder] string game)
         {
-            await Context.SocketClient.SetGameAsync(game);
+            await Context.Client.SetGameAsync(game);
             await ReplyAsync($"Successfully set the game to {game}.");
         }
     }

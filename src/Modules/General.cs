@@ -100,8 +100,9 @@ namespace DEA.Modules
 
             foreach (User dbUser in sorted)
             {
-                var user = await Context.Guild.GetUserAsync(dbUser.UserId);
-                if (Context.Guild.GetUserAsync(dbUser.UserId) == null)
+                var guildInterface = Context.Guild as IGuild;
+                var user = await guildInterface.GetUserAsync(dbUser.UserId);
+                if (guildInterface.GetUserAsync(dbUser.UserId) == null)
                     continue;
 
                 description += $"{position}. **{user}**: {dbUser.Cash.USD()}\n";
@@ -126,8 +127,9 @@ namespace DEA.Modules
 
             foreach (User dbUser in sorted)
             {
-                var user = await Context.Guild.GetUserAsync(dbUser.UserId);
-                if (await Context.Guild.GetUserAsync(dbUser.UserId) == null)
+                var guildInterface = Context.Guild as IGuild;
+                var user = await guildInterface.GetUserAsync(dbUser.UserId);
+                if (await guildInterface.GetUserAsync(dbUser.UserId) == null)
                     continue;
 
                 description += $"{position}. **{user}**: {dbUser.TemporaryMultiplier.ToString("N2")}\n";
@@ -165,7 +167,7 @@ namespace DEA.Modules
         {
             user = user ?? Context.GUser;
 
-            var dbUser = await _userRepo.FetchUserAsync(user);
+            var dbUser = user.Id == Context.User.Id ? Context.DbUser : await _userRepo.FetchUserAsync(user);
             var users = await (await _users.FindAsync(y => y.GuildId == Context.Guild.Id)).ToListAsync();
             var sorted = users.OrderByDescending(x => x.Cash).ToList();
 
@@ -183,7 +185,7 @@ namespace DEA.Modules
         public async Task Rate([Remainder] IGuildUser user = null)
         {
             user = user ?? Context.GUser;
-            var dbUser = await _userRepo.FetchUserAsync(user);
+            var dbUser = user.Id == Context.User.Id ? Context.DbUser : await _userRepo.FetchUserAsync(user);
 
             await SendAsync($"Cash/msg: {(dbUser.TemporaryMultiplier * dbUser.InvestmentMultiplier).USD()}\n" +
                        $"Chatting multiplier: {dbUser.TemporaryMultiplier.ToString("N2")}\n" +
@@ -198,7 +200,7 @@ namespace DEA.Modules
         public async Task Money([Remainder] IGuildUser user = null)
         {
             user = user ?? Context.GUser;
-            var dbUser = await _userRepo.FetchUserAsync(user);
+            var dbUser = user.Id == Context.User.Id ? Context.DbUser : await _userRepo.FetchUserAsync(user);
 
             await SendAsync($"{user}'s balance: {dbUser.Cash.USD()}.");
         }

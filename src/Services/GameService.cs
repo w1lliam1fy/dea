@@ -65,7 +65,7 @@ namespace DEA.Services
 
         public async Task GambleAsync(DEAContext context, decimal bet, decimal odds, decimal payoutMultiplier)
         {
-            var gambleChannel = await context.Guild.GetTextChannelAsync(context.DbGuild.GambleChannelId);
+            var gambleChannel = context.Guild.GetTextChannel(context.DbGuild.GambleChannelId);
             if (gambleChannel != null && context.Channel.Id != context.DbGuild.GambleChannelId)
                 throw new DEAException($"You may only gamble in {gambleChannel.Mention}!");
             if (bet < Config.BET_MIN)
