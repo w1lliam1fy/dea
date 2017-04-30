@@ -17,8 +17,8 @@ namespace DEA.Services.Static
         {
             if (DateTime.UtcNow.Subtract(context.DbUser.Message).TotalMilliseconds > context.DbUser.MessageCooldown)
             {
-                await userRepo.ModifyAsync(context.DbUser.UserId, context.DbGuild.Id, x => x.TemporaryMultiplier, context.DbUser.TemporaryMultiplier + context.DbGuild.TempMultiplierIncreaseRate);
-                await userRepo.ModifyAsync(context.DbUser.UserId, context.DbGuild.Id, x => x.Message, DateTime.UtcNow);
+                await userRepo.ModifyAsync(context.DbUser.UserId, context.DbGuild.GuildId, x => x.TemporaryMultiplier, context.DbUser.TemporaryMultiplier + context.DbGuild.TempMultiplierIncreaseRate);
+                await userRepo.ModifyAsync(context.DbUser.UserId, context.DbGuild.GuildId, x => x.Message, DateTime.UtcNow);
                 await userRepo.EditCashAsync(context, context.DbGuild.GlobalChattingMultiplier * context.DbUser.TemporaryMultiplier * context.DbUser.InvestmentMultiplier);
             }
         }

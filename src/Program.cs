@@ -32,7 +32,6 @@ namespace DEA
         private readonly Credentials _credentials;
 
         private readonly IMongoCollection<Guild> _guilds;
-        private readonly IMongoCollection<NewGuild> _newGuilds;
         private readonly IMongoCollection<User> _users;
         private readonly IMongoCollection<Gang> _gangs;
         private readonly IMongoCollection<Poll> _polls;
@@ -73,13 +72,10 @@ namespace DEA
              var database = dbClient.GetDatabase(_credentials.DatabaseName);
 
             _guilds = database.GetCollection<Guild>("guilds");
-            _newGuilds = database.GetCollection<NewGuild>("newguilds");
             _users = database.GetCollection<User>("users");
             _gangs = database.GetCollection<Gang>("gangs");
             _polls = database.GetCollection<Poll>("polls");
             _mutes = database.GetCollection<Mute>("mutes");
-
-            _guilds.UpdateMany(Builders<Guild>.Filter.Empty, Builders<Guild>.Update.Unset("GuildId"));
         }
 
         private async Task RunAsync()
@@ -125,7 +121,6 @@ namespace DEA
             map.Add(_client);
             map.Add(_credentials);
             map.Add(_guilds);
-            map.Add(_newGuilds);
             map.Add(_users);
             map.Add(_gangs);
             map.Add(_polls);

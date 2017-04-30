@@ -19,7 +19,7 @@ namespace DEA.Database.Repositories
 
         public async Task<Guild> FetchGuildAsync(ulong guildId)
         {
-            var dbGuild = await (await _guilds.FindAsync(x => x.Id == guildId)).SingleOrDefaultAsync();
+            var dbGuild = await (await _guilds.FindAsync(x => x.GuildId == guildId)).SingleOrDefaultAsync();
             if (dbGuild == default(Guild))
             {
                 var createdGuild = new Guild(guildId);
@@ -32,13 +32,13 @@ namespace DEA.Database.Repositories
         public Task ModifyAsync(ulong guildId, Expression<Func<Guild, BsonValue>> field, BsonValue value)
         {
             var builder = Builders<Guild>.Update;
-            return _guilds.UpdateOneAsync(y => y.Id == guildId, builder.Set(field, value));
+            return _guilds.UpdateOneAsync(y => y.GuildId == guildId, builder.Set(field, value));
         }
 
         public Task ModifyAsync(ulong guildId, Expression<Func<Guild, BsonDocument>> field, BsonDocument value)
         {
             var builder = Builders<Guild>.Update;
-            return _guilds.UpdateOneAsync(y => y.Id == guildId, builder.Set(field, value));
+            return _guilds.UpdateOneAsync(y => y.GuildId == guildId, builder.Set(field, value));
         }
 
     }

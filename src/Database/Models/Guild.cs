@@ -2,15 +2,15 @@
 
 namespace DEA.Database.Models
 {
-    
-    public partial class Guild
+
+    public partial class Guild : Model
     {
-        public Guild(ulong id)
+        public Guild(ulong guildId)
         {
-            Id = id;
+            GuildId = guildId;
         }
 
-        public ulong Id { get; set; }
+        public ulong GuildId { get; set; }
 
         //Roles
         public BsonDocument ModRoles { get; set; } = new BsonDocument();

@@ -53,7 +53,7 @@ namespace DEA.Services.Timers
                 {
                     if (dbGuild.AutoTrivia)
                     {
-                        var guild = _client.GetGuild(dbGuild.Id);
+                        var guild = _client.GetGuild(dbGuild.GuildId);
                         if (guild != null)
                         {
                             var defaultChannel = guild.DefaultChannel;
