@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DEA.Services.Handlers;
 using Discord.Commands;
+using DEA.Common.Extensions.DiscordExtensions;
 
 namespace DEA.Events
 {
@@ -31,20 +32,45 @@ namespace DEA.Events
         private Task HandleUserJoin(SocketGuildUser u)
         {
             return Task.Run(async () =>
-{
-var user = u as IGuildUser;
-var dbGuild = await _guildRepo.FetchGuildAsync(user.Guild.Id);
-var mutedRole = user.Guild.GetRole((dbGuild.MutedRoleId));
-if (mutedRole != null && u.Guild.CurrentUser.GuildPermissions.ManageRoles &&
-mutedRole.Position < u.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
-{
-await _rankHandler.HandleAsync(u.Guild, user, dbGuild, await _userRepo.FetchUserAsync(user));
-if (await _muteRepo.IsMutedAsync(user.Id, user.Guild.Id) && mutedRole != null && user != null)
-        {
-            await user.AddRoleAsync(mutedRole);
-        }
-    }
-});
+            {
+                var user = u as IGuildUser;
+                var dbGuild = await _guildRepo.FetchGuildAsync(user.Guild.Id);
+
+                var mutedRole = user.Guild.GetRole((dbGuild.MutedRoleId));
+                if (mutedRole != null && u.Guild.CurrentUser.GuildPermissions.ManageRoles &&
+                mutedRole.Position < u.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
+                {
+                    await _rankHandler.HandleAsync(u.Guild, user, dbGuild, await _userRepo.FetchUserAsync(user));
+                    if (await _muteRepo.IsMutedAsync(user.Id, user.Guild.Id) && mutedRole != null && user != null)
+                    {
+                        await user.AddRoleAsync(mutedRole);
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(dbGuild.WelcomeMessage))
+                {
+                    var channel = _client.GetChannel(dbGuild.WelcomeChannelId);
+                    if (channel != null)
+                    {
+                        try
+                        {
+                            var msg = await (channel as ITextChannel).SendAsync($"{u}, " + dbGuild.WelcomeMessage);
+                            await Task.Delay(10000);
+                            await msg.DeleteAsync();
+                        }
+                        catch { }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            var dmChannel = await u.CreateDMChannelAsync();
+                            await dmChannel.SendAsync(dbGuild.WelcomeMessage);
+                        }
+                        catch { }
+                    }
+                }
+            });
         }
     }
 }

@@ -196,7 +196,7 @@ namespace DEA.Modules
             var otherDbUser = await _userRepo.FetchUserAsync(user);
             await _userRepo.EditCashAsync(user, Context.DbGuild, otherDbUser,  money - deaMoney);
 
-            await ReplyAsync($"Successfully donated {(money - deaMoney).USD()} to {user.Boldify()}.\nDEA has taken a {deaMoney.USD()} cut out of this donation. Balance: {(Context.Cash - money).USD()}.");
+            await ReplyAsync($"Successfully donated {(money - deaMoney).USD()} to {user.Boldify()}.\nDEA has taken a {deaMoney.USD()} cut out of this donation. Balance: {Context.Cash.USD()}.");
         }
 
         [Command("Rank")]

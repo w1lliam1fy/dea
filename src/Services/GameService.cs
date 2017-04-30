@@ -74,7 +74,7 @@ namespace DEA.Services
             else
             {
                 await channel.SendAsync($"NOBODY got the right answer for the trivia question! Alright, I'll sauce it to you guys, but next time " +
-                           $"you are on your own. The right answer is: \"{element.Value.AsString}\".");
+                                        $"you are on your own. The right answer is: \"{element.Value.AsString}\".");
             }
         }
 
@@ -106,13 +106,13 @@ namespace DEA.Services
             {
                 await _userRepo.EditCashAsync(context, (bet * payoutMultiplier));
                 await context.Channel.ReplyAsync(context.User, $"You rolled: {roll.ToString("N2")}. Congrats, you won " +
-                                                 $"{(bet * payoutMultiplier).USD()}! Balance: {(context.DbUser.Cash + (bet * payoutMultiplier)).USD()}.");
+                                                 $"{(bet * payoutMultiplier).USD()}! Balance: {context.DbUser.Cash.USD()}.");
             }
             else
             {
                 await _userRepo.EditCashAsync(context, -bet);
                 await context.Channel.ReplyAsync(context.User, $"You rolled: {roll.ToString("N2")}. Unfortunately, you lost " +
-                                                 $"{bet.USD()}. Balance: {(context.DbUser.Cash - bet).USD()}.");
+                                                 $"{bet.USD()}. Balance: {context.DbUser.Cash.USD()}.");
             }
         }
     }

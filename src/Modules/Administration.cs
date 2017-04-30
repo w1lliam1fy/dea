@@ -51,6 +51,42 @@ namespace DEA.Modules
             await ReplyAsync($"You have successfully set the prefix to {prefix}.");
         }
 
+        [Command("SetWelcomeChannel")]
+        [Summary("Set the channel where DEA will send a welcome message to all new users that join.")]
+        public async Task SetWelcomeChannel([Remainder] ITextChannel channel)
+        {
+            await _guildRepo.ModifyAsync(Context.DbGuild, x => x.WelcomeChannelId = channel.Id);
+            await ReplyAsync($"You have successfully set the welcome channel to {channel.Mention}.");
+        }
+
+        [Command("SetWelcomeMessage")]
+        [Alias("SetWelcome")]
+        [Summary("Set the channel where DEA will send a welcome message to all new users that join.")]
+        public async Task SetWelcomeMessage([Summary("WELCOME FELLOW USER!")] [Remainder] string message)
+        {
+            if (message.Length > 2048) ReplyError("The welcome message may not be over 2048 characters.");
+            await _guildRepo.ModifyAsync(Context.DbGuild, x => x.WelcomeMessage = message);
+            await ReplyAsync($"You have successfully set the welcome message.");
+        }
+
+        [Command("DisableWelcomeMessage")]
+        [Alias("DisableWelcome")]
+        [Summary("Disables the welcome message from being sent in direct messages and in the welcome channel.")]
+        public async Task DisableWelcomeMessage()
+        {
+            await _guildRepo.ModifyAsync(Context.DbGuild, x => x.WelcomeMessage = string.Empty);
+            await ReplyAsync("You have successfully disabled the welcome message. If ever change your mind, " +
+                             "simply setting the welcome message again will enable this feature.");
+        }
+
+        [Command("SetUpdateChannel")]
+        [Summary("Sets the channel where DEA will send messages informing you of its most recent updates and new features.")]
+        public async Task SetUpdateChannel([Remainder] ITextChannel channel)
+        {
+            await _guildRepo.ModifyAsync(Context.DbGuild, x => x.UpdateChannelId = channel.Id);
+            await ReplyAsync($"You have successfully set the DEA update channel to {channel.Mention}.");
+        }
+
         [Command("SetMutedRole")]
         [Alias("SetMuteRole")]
         [Summary("Sets the muted role.")]

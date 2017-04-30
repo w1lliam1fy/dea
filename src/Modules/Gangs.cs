@@ -248,28 +248,6 @@ namespace DEA.Modules
             await ReplyAsync($"You have successfully changed your gang name to {newName} at the cost of {Config.GANG_NAME_CHANGE_COST.USD()}.");
         }
 
-        [Command("TransferLeadership")]
-        [Require(Attributes.InGang, Attributes.GangLeader)]
-        [Summary("Transfers the leadership of your gang to another member.")]
-        public async Task TransferLeadership([Remainder] IGuildUser gangMember)
-        {
-            if (gangMember.Id == Context.User.Id)
-            {
-                ReplyError("You are already the leader of this gang!");
-            }
-            else if (! _gangRepo.IsMemberOfAsync(Context.Gang, gangMember.Id))
-            {
-                ReplyError("This user is not a member of your gang!");
-            }
-
-            await _gangRepo.RemoveMemberAsync(Context.Gang, gangMember.Id);
-            await _gangRepo.ModifyAsync(Context.Gang, x => x.LeaderId = gangMember.Id);
-            await _gangRepo.AddMemberAsync(Context.Gang, Context.User.Id);
-
-            await ReplyAsync($"You have successfully transferred the leadership of {Context.Gang.Name} to {gangMember}.");
-            await gangMember.Id.DMAsync(Context.Client, $"{Context.User} has trasnferred the ownership of {Context.Gang.Name} to you!");
-        }
-
         [Command("Deposit")]
         [Require(Attributes.InGang)]
         [Summary("Deposit cash into your gang's funds.")]
@@ -314,7 +292,7 @@ namespace DEA.Modules
             await _userRepo.EditCashAsync(Context, +cash);
 
             await ReplyAsync($"You have successfully withdrawn {cash.USD()}. " +
-                             $"{Context.Gang.Name}'s Wealth: {(Context.Gang.Wealth - cash).USD()}.");
+                             $"{Context.Gang.Name}'s Wealth: {Context.Gang.Wealth.USD()}.");
 
             await Context.Gang.LeaderId.DMAsync(Context.Client, $"{Context.User} has withdrawn {cash.USD()} from your gang's wealth.");
         }
@@ -338,7 +316,7 @@ namespace DEA.Modules
             if (Math.Round(resources, 2) > Math.Round(raidedGang.Wealth * Config.MAX_RAID_PERCENTAGE / 2, 2))
             {
                 ReplyError($"You are overkilling it. You only need {(raidedGang.Wealth * Config.MAX_RAID_PERCENTAGE / 2).USD()} " +
-                                 $"to steal {Config.MAX_RAID_PERCENTAGE.ToString("P")} of their cash, that is {(raidedGang.Wealth * Config.MAX_RAID_PERCENTAGE).USD()}.");
+                           $"to steal {Config.MAX_RAID_PERCENTAGE.ToString("P")} of their cash, that is {(raidedGang.Wealth * Config.MAX_RAID_PERCENTAGE).USD()}.");
             }
 
             var stolen = resources * 2;
@@ -353,7 +331,7 @@ namespace DEA.Modules
                 await raidedGang.LeaderId.DMAsync(Context.Client, $"{Context.Gang.Name} just raided your gang's wealth and managed to walk away with {stolen.USD()}.");
 
                 await ReplyAsync($"With a {Config.RAID_SUCCESS_ODDS}.00% chance of success, you successfully stole {stolen.USD()}. " +
-                            $"{Context.Gang.Name}'s Wealth {(Context.Gang.Wealth + stolen).USD()}.");
+                                 $"{Context.Gang.Name}'s Wealth {Context.Gang.Wealth.USD()}.");
             }
             else
             {
@@ -363,7 +341,7 @@ namespace DEA.Modules
                 await raidedGang.LeaderId.DMAsync(Context.Client, $"{Context.Gang.Name} tried to raid your gang's stash, but one of your loyal sicarios gunned them out.");
 
                 await ReplyAsync($"With a {Config.RAID_SUCCESS_ODDS}.00% chance of success, you failed to steal {stolen.USD()} " +
-                            $"and lost all resources in the process.");
+                                 $"and lost all resources in the process.");
             }
         }
 

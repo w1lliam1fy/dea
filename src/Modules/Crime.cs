@@ -36,14 +36,14 @@ namespace DEA.Modules
                 await _userRepo.EditCashAsync(Context, -Config.WHORE_FINE);
 
                 await ReplyAsync($"What are the fucking odds that one of your main clients was a cop... " +
-                            $"You are lucky you only got a {Config.WHORE_FINE.USD()} fine. Balance: {(Context.Cash - Config.WHORE_FINE).USD()}.");
+                            $"You are lucky you only got a {Config.WHORE_FINE.USD()} fine. Balance: {Context.Cash.USD()}.");
             }
             else
             {
                 decimal moneyWhored = (new Random().Next((int)(Config.MIN_WHORE) * 100, (int)(Config.MAX_WHORE) * 100)) / 100m;
                 await _userRepo.EditCashAsync(Context, moneyWhored);
 
-                await ReplyAsync($"You whip it out and manage to rake in {moneyWhored.USD()}. Balance: {(Context.Cash + moneyWhored).USD()}.");
+                await ReplyAsync($"You whip it out and manage to rake in {moneyWhored.USD()}. Balance: {Context.Cash.USD()}.");
             }
         }
 
@@ -60,14 +60,14 @@ namespace DEA.Modules
                 await _userRepo.EditCashAsync(Context, -Config.JUMP_FINE);
 
                 await ReplyAsync($"Turns out the nigga was a black belt, whooped your ass, and brought you in. " +
-                            $"Court's final ruling was a {Config.JUMP_FINE.USD()} fine. Balance: {(Context.Cash - Config.JUMP_FINE).USD()}.");
+                            $"Court's final ruling was a {Config.JUMP_FINE.USD()} fine. Balance: {Context.Cash.USD()}.");
             }
             else
             {
                 decimal moneyJumped = (new Random().Next((int)(Config.MIN_JUMP) * 100, (int)(Config.MAX_JUMP) * 100)) / 100m;
                 await _userRepo.EditCashAsync(Context, moneyJumped);
 
-                await ReplyAsync($"You jump some random nigga on the streets and manage to get {moneyJumped.USD()}. Balance: {(Context.Cash + moneyJumped).USD()}.");
+                await ReplyAsync($"You jump some random nigga on the streets and manage to get {moneyJumped.USD()}. Balance: {Context.Cash.USD()}.");
             }
         }
 
@@ -85,7 +85,7 @@ namespace DEA.Modules
                 await ReplyAsync($"You were on your way out with the cash, but then some hot chick asked you if you " +
                             $"wanted to bust a nut. Turns out she was cop, and raped you before turning you in. Since she passed on some " +
                             $"nice words to the judge about you not resisting arrest, you managed to walk away with only a " +
-                            $"{Config.STEAL_FINE.USD()} fine. Balance: {(Context.Cash - Config.STEAL_FINE).USD()}.");
+                            $"{Config.STEAL_FINE.USD()} fine. Balance: {Context.Cash.USD()}.");
             }
             else
             {
@@ -94,7 +94,7 @@ namespace DEA.Modules
 
                 string randomStore = Config.STORES[new Random().Next(1, Config.STORES.Length) - 1];
                 await ReplyAsync($"You walk in to your local {randomStore}, point a fake gun at the clerk, and manage to walk away " +
-                            $"with {moneyStolen.USD()}. Balance: {(Context.Cash + moneyStolen).USD()}.");
+                            $"with {moneyStolen.USD()}. Balance: {Context.Cash.USD()}.");
             }
         }
 
@@ -143,7 +143,7 @@ namespace DEA.Modules
             if (Math.Round(resources, 2) > Math.Round(raidedDbUser.Cash * Config.MAX_ROB_PERCENTAGE / 2, 2))
             {
                 ReplyError($"You are overkilling it. You only need {(raidedDbUser.Cash * Config.MAX_ROB_PERCENTAGE / 2).USD()} " +
-                      $"to rob {Config.MAX_ROB_PERCENTAGE.ToString("P")} of their cash, that is {(raidedDbUser.Cash * Config.MAX_ROB_PERCENTAGE).USD()}.");
+                           $"to rob {Config.MAX_ROB_PERCENTAGE.ToString("P")} of their cash, that is {(raidedDbUser.Cash * Config.MAX_ROB_PERCENTAGE).USD()}.");
             }
 
             var stolen = resources * 2;
@@ -159,8 +159,7 @@ namespace DEA.Modules
 
                 await user.Id.DMAsync(Context.Client, $"{Context.User} just robbed you and managed to walk away with {stolen.USD()}.");
 
-                await ReplyAsync($"With a {successOdds}.00% chance of success, you successfully stole {stolen.USD()}. " +
-                            $"Balance: {(Context.Cash + stolen).USD()}.");
+                await ReplyAsync($"With a {successOdds}.00% chance of success, you successfully stole {stolen.USD()}. Balance: {Context.Cash.USD()}.");
             }
             else
             {
@@ -169,7 +168,7 @@ namespace DEA.Modules
                 await user.Id.DMAsync(Context.Client, $"{Context.User} tried to rob your sweet cash, but the nigga slipped on a banana peel and got arrested :joy: :joy: :joy:.");
 
                 await ReplyAsync($"With a {successOdds}.00% chance of success, you failed to steal {stolen.USD()} " +
-                            $"and lost all resources in the process. Balance: {(Context.Cash - resources).USD()}.");
+                                 $"and lost all resources in the process. Balance: {Context.Cash.USD()}.");
             }
             await _userRepo.ModifyAsync(Context.DbUser, x => x.Rob = DateTime.UtcNow);
         }

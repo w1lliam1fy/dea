@@ -27,6 +27,10 @@ namespace DEA.Database.Models
 
         public ulong ModLogChannelId { get; set; }
 
+        public ulong WelcomeChannelId { get; set; }
+
+        public ulong UpdateChannelId { get; set; }
+
         //Options
 
         public bool Nsfw { get; set; } = false;
@@ -35,11 +39,13 @@ namespace DEA.Database.Models
 
         public string Prefix { get; set; } = Config.DEFAULT_PREFIX;
 
-        public decimal GlobalChattingMultiplier { get; set; } = 1;
+        public decimal GlobalChattingMultiplier { get; set; } = 1m;
 
         public decimal TempMultiplierIncreaseRate { get; set; } = 0.1m;
 
         //Misc
+
+        public string WelcomeMessage { get; set; } = string.Empty;
 
         public int CaseNumber { get; set; } = 1;
 
