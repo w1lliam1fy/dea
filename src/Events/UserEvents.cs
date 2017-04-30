@@ -54,9 +54,7 @@ namespace DEA.Events
                     {
                         try
                         {
-                            var msg = await (channel as ITextChannel).SendAsync($"{u}, " + dbGuild.WelcomeMessage);
-                            await Task.Delay(10000);
-                            await msg.DeleteAsync();
+                            await (channel as ITextChannel).SendAsync($"{u}, " + dbGuild.WelcomeMessage);
                         }
                         catch { }
                     }
