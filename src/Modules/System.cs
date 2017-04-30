@@ -26,6 +26,22 @@ namespace System.Modules
         public Task Invite() =>
             ReplyAsync($"Click on the following link to add DEA to your server: https://discordapp.com/oauth2/authorize?client_id={Context.Guild.CurrentUser.Id}&scope=bot&permissions=410119182");
 
+        [Command("Cleanup")]
+        [Summary("Deletes DEA's most recent messages to prevent chat flood.")]
+        [RequireBotPermission(GuildPermission.ManageMessages)]
+        public async Task Cleanup()
+        {
+            var messages = (await Context.Channel.GetMessagesAsync(10).Flatten()).Where(x => x.Author.Id == Context.Guild.CurrentUser.Id);
+            await Context.Channel.DeleteMessagesAsync(messages);
+        }
+
+        [Command("Usage")]
+        [Summary("Explanation of how commands are used.")]
+        public Task Usage() =>
+            SendAsync("**Optional paramater:** `[]`\n\n**Required paramater:** `<>`\n\n**Parameter with spaces:** `\"This is one parameter\"`", 
+                      "Command Usage");
+        
+
         [Command("Information")]
         [Alias("info")]
         [Summary("Information about the DEA Cash System.")]

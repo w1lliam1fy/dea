@@ -8,6 +8,7 @@ using Discord.Net;
 using Discord.WebSocket;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -39,10 +40,28 @@ namespace DEA.Services.Handlers
                         switch (httpEx.DiscordCode)
                         {
                             case null:
-                                message = "Something went wrong.";
+                                switch (httpEx.HttpCode)
+                                {
+                                    case HttpStatusCode.BadRequest:
+                                        message = "There seems to have been a bad request. Please report this issue with context at: " +
+                                                  "https://github.com/RealBlazeIt/DEA/issues.";
+                                        break;
+                                    case HttpStatusCode.BadGateway:
+                                        message = "Something went wrong with the gateway connection. Try again in a bit.";
+                                        break;
+                                    case HttpStatusCode.Forbidden:
+                                        message = "DEA does not have permission to do that. This issue may be fixed by moving the DEA role " +
+                                                  "to the top of the roles list, and giving DEA the \"Administrator\" server permission.";
+                                        break;
+                                    default:
+                                        message = "Something went wrong. Please try again later. If this issue persists, please report it with " +
+                                                  "context at: https://github.com/RealBlazeIt/DEA/issues.";
+                                        break;
+                                }
                                 break;
                             case 50013:
-                                message = "DEA does not have permission to do that.";
+                                message = "DEA does not have permission to do that. This issue may be fixed by moving the DEA role " +
+                                          "to the top of the roles list, and giving DEA the \"Administrator\" server permission.";
                                 break;
                             case 50007:
                                 message = "DEA does not have permission to send messages to this user.";
@@ -79,7 +98,7 @@ namespace DEA.Services.Handlers
             switch (result.Error)
             {
                 case CommandError.Exception:
-                    return Task.CompletedTask;
+                    return Task.CompletedTask; // Exceptions are handled by the log event from the command service.
                 case CommandError.UnknownCommand:
                     foreach (var command in _commandService.Commands)
                     {

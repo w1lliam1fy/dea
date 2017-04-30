@@ -22,9 +22,9 @@ namespace DEA.Modules
 
         [Command("50x2")]
         [Require(Attributes.FiftyX2)]
-        [Summary("Roll 50.00 or higher on a 100.00 sided die, win your bet.")]
+        [Summary("Roll 50.01 or higher on a 100.00 sided die, win your bet.")]
         public Task X2BetterOdds(decimal bet) =>
-            _gameService.GambleAsync(Context, bet, 50.0m, 1.0m);
+            _gameService.GambleAsync(Context, bet, 50.01m, 1.0m);
 
         [Command("53x2")]
         [Summary("Roll 52.50 or higher on a 100.00 sided die, win your bet.")]

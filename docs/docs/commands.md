@@ -163,6 +163,8 @@ Vote|Vote on any poll.|`$Vote <Poll index> <Choice index>`
 Command | Description | Usage
 ----------------|--------------|-------
 Invite|Provides an invite link to add DEA to your Server.|`$Invite`
+Cleanup|Deletes DEA's most recent messages to prevent chat flood.|`$Cleanup`
+Usage|Explanation of how commands are used.|`$Usage`
 Information|Information about the DEA Cash System.|`$Information`
 Modules|Provides a list of all Command Modules.|`$Modules`
 Help|All command information.|`$Help [Command or Module]`

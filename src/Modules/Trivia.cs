@@ -165,7 +165,7 @@ namespace DEA.Modules
             }
         }
 
-        [Command("Trivia", RunMode = RunMode.Async)]
+        [Command("Trivia")]
         [Require(Attributes.Moderator)]
         [Summary("Randomly select a trivia question to be asked, and reward whoever answers it correctly.")]
         public Task TriviaCmd() =>

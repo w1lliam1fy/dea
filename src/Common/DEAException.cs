@@ -2,6 +2,9 @@
 
 namespace DEA.Common
 {
+    /// <summary>
+    /// Custom exception used to be caught by the error handler.
+    /// </summary>
     class DEAException : Exception
     {
         /// <summary>

@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace DEA.Common
 {
+    /// <summary>
+    /// Custom context containing the guild user of the command user and the data information of the guild and the user.
+    /// </summary>
     public class DEAContext : SocketCommandContext
     {
         public IGuildUser GUser { get; }

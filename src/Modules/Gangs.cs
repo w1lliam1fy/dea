@@ -43,10 +43,10 @@ namespace DEA.Modules
             var gang = await _gangRepo.CreateGangAsync(Context, name);
             await _userRepo.EditCashAsync(Context, -Config.GANG_CREATION_COST);
 
-            await ReplyAsync($"You have successfully created the {gang.Name} gang!");
+            await ReplyAsync($"You have successfully created the {gang.Name} gang.");
         }
 
-        [Command("JoinGang", RunMode = RunMode.Async)]
+        [Command("JoinGang")]
         [Require(Attributes.NoGang)]
         [Summary("Sends a request to join a gang.")]
         public async Task AddToGang([Remainder] string gangName)
