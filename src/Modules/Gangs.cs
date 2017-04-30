@@ -124,7 +124,7 @@ namespace DEA.Modules
                 var user = await guildInterface.GetUserAsync(member);
                 if (user != null)
                 {
-                    members += $"**{user}**, ";
+                    members += $"{user.Boldify()}, ";
                 }
             }
 
@@ -136,7 +136,7 @@ namespace DEA.Modules
             var leader = await guildInterface.GetUserAsync(gang.LeaderId);
             if (leader != null)
             {
-                members = $"__**Leader:**__ **{leader}**\n" + members;
+                members = $"__**Leader:**__ {leader.Boldify()}\n" + members;
             }
 
             var description = members + $"__**Wealth:**__ {gang.Wealth.USD()}\n" +

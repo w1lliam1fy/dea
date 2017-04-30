@@ -124,7 +124,7 @@ namespace DEA.Modules
                     continue;
                 }
 
-                description += $"{position}. **{user.Boldify()}**: {dbUser.Cash.USD()}\n";
+                description += $"{position}. {user.Boldify()}: {dbUser.Cash.USD()}\n";
                 if (position >= Config.LEADERBOARD_CAP)
                 {
                     break;
@@ -160,7 +160,7 @@ namespace DEA.Modules
                     continue;
                 }
 
-                description += $"{position}. **{user.Boldify()}**: {dbUser.TemporaryMultiplier.ToString("N2")}\n";
+                description += $"{position}. {user.Boldify()}: {dbUser.TemporaryMultiplier.ToString("N2")}\n";
                 if (position >= Config.RATELB_CAP)
                 {
                     break;
