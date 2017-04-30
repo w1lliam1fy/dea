@@ -10,7 +10,6 @@ using Discord;
 using Discord.Commands;
 using Discord.Net;
 using Discord.WebSocket;
-using MongoDB.Bson;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using System;

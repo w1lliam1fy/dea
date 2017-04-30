@@ -64,7 +64,6 @@ namespace DEA.Modules
         [Summary("Set the channel where DEA will send a welcome message to all new users that join.")]
         public async Task SetWelcomeMessage([Summary("WELCOME FELLOW USER!")] [Remainder] string message)
         {
-            if (message.Length > 2048) ReplyError("The welcome message may not be over 2048 characters.");
             await _guildRepo.ModifyAsync(Context.DbGuild, x => x.WelcomeMessage = message);
             await ReplyAsync($"You have successfully set the welcome message.");
         }

@@ -119,12 +119,17 @@ namespace DEA.Modules
             {
                 var guildInterface = Context.Guild as IGuild;
                 var user = await guildInterface.GetUserAsync(dbUser.UserId);
-                if (guildInterface.GetUserAsync(dbUser.UserId) == null)
+                if (user == null)
                 {
                     continue;
                 }
 
-                description += $"{position}. {user.Boldify()}: {dbUser.Cash.USD()}\n";
+                try
+                {
+                    description += $"{position}. {user.Boldify()}: {dbUser.Cash.USD()}\n";
+                }
+                catch { }
+
                 if (position >= Config.LEADERBOARD_CAP)
                 {
                     break;
@@ -155,7 +160,7 @@ namespace DEA.Modules
             {
                 var guildInterface = Context.Guild as IGuild;
                 var user = await guildInterface.GetUserAsync(dbUser.UserId);
-                if (await guildInterface.GetUserAsync(dbUser.UserId) == null)
+                if (user == null)
                 {
                     continue;
                 }

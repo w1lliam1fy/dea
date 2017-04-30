@@ -266,7 +266,7 @@ namespace DEA.Modules
             await _gangRepo.ModifyAsync(Context.Gang, x => x.Wealth = Context.Gang.Wealth + cash);
 
             await ReplyAsync($"You have successfully deposited {cash.USD()}. " +
-                        $"{Context.Gang.Name}'s Wealth: {(Context.Gang.Wealth + cash).USD()}");
+                        $"{Context.Gang.Name}'s Wealth: {Context.Gang.Wealth.USD()}");
 
             await Context.Gang.LeaderId.DMAsync(Context.Client, $"{Context.User} deposited {cash.USD()} into your gang's wealth.");
         }

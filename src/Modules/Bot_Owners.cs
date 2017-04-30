@@ -51,5 +51,22 @@ namespace DEA.Modules
             }
             await ReplyAsync("All global update messages have been sent.");
         }
+
+        [Command("InformOwners")]
+        [Summary("Informs the owner of every Server DEA is in with a custom message.")]
+        public async Task InformOwners([Remainder] string message)
+        {
+            await ReplyAsync("The inform owners process has started...");
+            foreach (var guild in Context.Client.Guilds)
+            {
+                try
+                {
+                    var channel = await guild.Owner.CreateDMChannelAsync();
+                    await channel.SendAsync(message);
+                } 
+                catch { }
+            }
+            await ReplyAsync("All owners have been informed.");
+        }
     }
 }
