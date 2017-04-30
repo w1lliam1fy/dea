@@ -60,9 +60,10 @@ namespace DEA.Services.Timers
                             if (mutedRole != null && guild.GetUser(mute.UserId).Roles.Any(x => x.Id == mutedRole.Id))
                             {
                                 var channel = guild.GetTextChannel(guildData.ModLogChannelId);
-                                if (channel != null && guild.CurrentUser.GuildPermissions.EmbedLinks &&
-                                (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).SendMessages
-                                && (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).EmbedLinks)
+                                ChannelPermissions? perms = null;
+                                if (channel != null)
+                                    perms = (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel);
+                                if (channel != null && guild.CurrentUser.GuildPermissions.EmbedLinks && perms.Value.SendMessages && perms.Value.EmbedLinks)
                                 {
                                     await guild.GetUser(mute.UserId).RemoveRoleAsync(mutedRole);
                                     var footer = new EmbedFooterBuilder()
@@ -76,7 +77,7 @@ namespace DEA.Services.Timers
                                         Description = $"**Action:** Automatic Unmute\n**User:** {guild.GetUser(mute.UserId)} ({mute.UserId})",
                                         Footer = footer
                                     }.WithCurrentTimestamp();
-                                    await _guildRepo.ModifyAsync(guild.Id, x => x.CaseNumber, ++guildData.CaseNumber);
+                                    await _guildRepo.ModifyAsync(guildData, x => x.CaseNumber++);
                                     await channel.SendMessageAsync(string.Empty, embed: embedBuilder);
                                 }
                             }

@@ -35,11 +35,11 @@ namespace DEA.Modules
             switch (Context.DbGuild.AutoTrivia)
             {
                 case true:
-                    await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.AutoTrivia, false);
+                    await _guildRepo.ModifyAsync(Context.DbGuild, x => x.AutoTrivia = false);
                     await ReplyAsync($"You have successfully disabled auto trivia!");
                     break;
                 case false:
-                    await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.AutoTrivia, true);
+                    await _guildRepo.ModifyAsync(Context.DbGuild, x => x.AutoTrivia = true);
                     await ReplyAsync($"You have successfully enabled auto trivia!");
                     break;
             }
@@ -60,8 +60,8 @@ namespace DEA.Modules
             }
 
             var answer = Context.DbGuild.Trivia[question];
-            Context.DbGuild.Trivia.SetElement(Context.DbGuild.Trivia.IndexOfName(question), new BsonElement(newQuestion, answer));
-            await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.Trivia, Context.DbGuild.Trivia);
+
+            await _guildRepo.ModifyAsync(Context.DbGuild, x => x.Trivia.SetElement(Context.DbGuild.Trivia.IndexOfName(question), new BsonElement(newQuestion, answer)));
 
             await ReplyAsync($"You have successfully modified the \"{question}\" trivia question.");
         }
@@ -80,8 +80,7 @@ namespace DEA.Modules
                 ReplyError("Trivia answers may only contain alphanumerical characters.");
             }
 
-            Context.DbGuild.Trivia[question] = answer;
-            await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.Trivia, Context.DbGuild.Trivia);
+            await _guildRepo.ModifyAsync(Context.DbGuild, x => x.Trivia[question] = answer);
 
             await ReplyAsync($"You have successfully modified the \"{question}\" trivia question.");
         }
@@ -104,8 +103,7 @@ namespace DEA.Modules
                 ReplyError("Trivia questions may only contain alphanumerical characters excluding the question mark.");
             }
 
-            Context.DbGuild.Trivia.Add(question, answer);
-            await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.Trivia, Context.DbGuild.Trivia);
+            await _guildRepo.ModifyAsync(Context.DbGuild, x => x.Trivia.Add(question, answer));
 
             await ReplyAsync($"Successfully added the \"{question}\" trivia question.");
         }
@@ -120,8 +118,7 @@ namespace DEA.Modules
                 ReplyError($"That question does not exist.");
             }
 
-            Context.DbGuild.Trivia.Remove(question);
-            await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.Trivia, Context.DbGuild.Trivia);
+            await _guildRepo.ModifyAsync(Context.DbGuild, x => x.Trivia.Remove(question));
 
             await ReplyAsync($"Successfully removed the \"{question}\" trivia question.");
         }

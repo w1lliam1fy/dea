@@ -1,27 +1,19 @@
 ﻿using DEA.Common;
 using DEA.Database.Models;
-using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace DEA.Database.Repositories
 {
-    public class PollRepository
+    public class PollRepository : BaseRepository<Poll>
     {
-        private readonly IMongoCollection<Poll> _polls;
-
-        public PollRepository(IMongoCollection<Poll> polls)
-        {
-            _polls = polls;
-        }
+        public PollRepository(IMongoCollection<Poll> polls) : base(polls) { }
 
         public async Task<Poll> FetchePollAsync(int index, ulong guildId)
         {
-            var polls = await (await _polls.FindAsync(y => y.GuildId == guildId)).ToListAsync();
+            var polls = await AllAsync(y => y.GuildId == guildId);
 
             polls = polls.OrderBy(y => y.CreatedAt).ToList();
 
@@ -35,26 +27,17 @@ namespace DEA.Database.Repositories
             }
         }
 
-        public Task ModifyAsync(Poll poll, Expression<Func<Poll, BsonDocument>> field, BsonDocument value)
-        {
-            var builder = Builders<Poll>.Update;
-            return _polls.UpdateOneAsync(y => y.Id == poll.Id, builder.Set(field, value));
-        }
-
         public async Task<Poll> CreatePollAsync(DEAContext context, string name, string[] choices, TimeSpan? length = null, bool elderOnly = false, bool modOnly = false, bool createdByMod = false)
         {
-            Expression<Func<Poll, bool>> expression = x => x.Name.ToLower() == name.ToLower() && x.GuildId == context.Guild.Id;
-            if (await (await _polls.FindAsync(expression)).AnyAsync())
+            if (await ExistsAsync(x => x.Name.ToLower() == name.ToLower() && x.GuildId == context.Guild.Id))
             {
                 throw new DEAException($"There is already a poll by the name \"{name}\".");
             }
-
-            if (name.Length > Config.MAX_POLL_SIZE)
+            else if (name.Length > Config.MAX_POLL_SIZE)
             {
                 throw new DEAException($"The poll name may not be larger than {Config.MAX_POLL_SIZE} characters.");
             }
-
-            if (length.HasValue && length.Value.TotalMilliseconds > Config.MAX_POLL_LENGTH.TotalMilliseconds)
+            else if (length.HasValue && length.Value.TotalMilliseconds > Config.MAX_POLL_LENGTH.TotalMilliseconds)
             {
                 throw new DEAException($"The poll length may not be longer than one week.");
             }
@@ -71,20 +54,18 @@ namespace DEA.Database.Repositories
                 createdPoll.Length = length.Value.TotalMilliseconds;
             }
 
-            await _polls.InsertOneAsync(createdPoll, null, default(CancellationToken));
+            await InsertAsync(createdPoll);
             return createdPoll;
         }
 
         public async Task RemovePollAsync(int index, ulong guildId)
         {
-            var polls = await (await _polls.FindAsync(y => y.GuildId == guildId)).ToListAsync();
-
-            polls = polls.OrderBy(y => y.CreatedAt).ToList();
+            var polls = (await AllAsync(y => y.GuildId == guildId)).OrderBy(y => y.CreatedAt).ToList();
 
             try
             {
                 var poll = polls[index - 1];
-                await _polls.DeleteOneAsync(y => y.Id == poll.Id);
+                await DeleteAsync(y => y.Id == poll.Id);
             }
             catch (ArgumentOutOfRangeException)
             {

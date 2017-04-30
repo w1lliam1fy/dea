@@ -49,9 +49,8 @@ namespace DEA.Modules
         {
             user = user ?? Context.GUser;
 
-            Context.DbUser.Cash = 100000;
-            await _userRepo.UpdateAsync(Context.DbUser);
-            //await _userRepo.ModifyAsync(user, x => x.Cash, 100000);
+            var dbUser = user.Id == Context.User.Id ? Context.DbUser : await _userRepo.FetchUserAsync(user);
+            await _userRepo.ModifyAsync(dbUser, x => x.Cash = 100000);
             await _rankHandler.HandleAsync(Context.Guild, user, Context.DbGuild, await _userRepo.FetchUserAsync(user));
 
             await SendAsync($"Successfully set {user}'s balance to $100,000.00.");
@@ -156,10 +155,7 @@ namespace DEA.Modules
 
             if (Context.DbGuild.ModRoles.ElementCount == 0)
             {
-                await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.ModRoles, new BsonDocument()
-                {
-                    { modRole.Id.ToString(), permissionLevel }
-                });
+                await _guildRepo.ModifyAsync(Context.DbGuild, x => x.ModRoles.Add(modRole.Id.ToString(), permissionLevel));
             }
             else
             {
@@ -168,8 +164,7 @@ namespace DEA.Modules
                     ReplyError("You have already set this mod role.");
                 }
 
-                Context.DbGuild.ModRoles.Add(modRole.Id.ToString(), permissionLevel);
-                await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.ModRoles, Context.DbGuild.ModRoles);
+                await _guildRepo.ModifyAsync(Context.DbGuild, x => x.ModRoles.Add(modRole.Id.ToString(), permissionLevel));
             }
 
             await ReplyAsync($"You have successfully added {modRole.Mention} as a moderation role with a permission level of {permissionLevel}.");
@@ -188,8 +183,7 @@ namespace DEA.Modules
                 ReplyError("This role is not a moderator role!");
             }
 
-            Context.DbGuild.ModRoles.Remove(modRole.Id.ToString());
-            await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.ModRoles, Context.DbGuild.ModRoles);
+            await _guildRepo.ModifyAsync(Context.DbGuild, x => x.ModRoles.Remove(modRole.Id.ToString()));
 
             await ReplyAsync($"You have successfully removed the {modRole.Mention} moderator role.");
         }
@@ -211,8 +205,7 @@ namespace DEA.Modules
                 ReplyError($"This mod role already has a permission level of {permissionLevel}");
             }
 
-            Context.DbGuild.ModRoles[Context.DbGuild.ModRoles.IndexOfName(modRole.Id.ToString())] = permissionLevel;
-            await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.ModRoles, Context.DbGuild.ModRoles);
+            await _guildRepo.ModifyAsync(Context.DbGuild, x => x.ModRoles[Context.DbGuild.ModRoles.IndexOfName(modRole.Id.ToString())] = permissionLevel);
 
             await ReplyAsync($"You have successfully set the permission level of the {modRole.Mention} moderator role to {permissionLevel}.");
         }
@@ -225,7 +218,7 @@ namespace DEA.Modules
                 ReplyError("The global multiplier may not be negative.");
             }
 
-            await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.GlobalChattingMultiplier, globalMultiplier);
+            await _guildRepo.ModifyAsync(Context.DbGuild, x => x.GlobalChattingMultiplier = globalMultiplier);
 
             await ReplyAsync($"You have successfully set the global chatting multiplier to {globalMultiplier.ToString("N2")}.");
         }
@@ -238,7 +231,7 @@ namespace DEA.Modules
                 ReplyError("The temporary multiplier increase rate may not be negative.");
             }
 
-            await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.TempMultiplierIncreaseRate, interestRate);
+            await _guildRepo.ModifyAsync(Context.DbGuild, x => x.TempMultiplierIncreaseRate = interestRate);
 
             await ReplyAsync($"You have successfully set the global temporary multiplier increase rate to {interestRate.ToString("N2")}.");
         }

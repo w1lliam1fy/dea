@@ -185,9 +185,7 @@ namespace DEA.Modules
                 ReplyError("This poll choice index does not exist.");
             }
 
-            poll.VotesDocument.Add(Context.User.Id.ToString(), choice);
-
-            await _pollRepo.ModifyAsync(poll, x => x.VotesDocument, poll.VotesDocument);
+            await _pollRepo.ModifyAsync(poll, x => x.VotesDocument.Add(Context.User.Id.ToString(), choice));
 
             await ReplyAsync($"You have successfully voted on the \"{poll.Name}\" poll.");
         }

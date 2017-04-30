@@ -2,11 +2,8 @@
 using DEA.Database.Models;
 using DEA.Services.Handlers;
 using Discord;
-using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
-using System.Linq.Expressions;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace DEA.Database.Repositories
@@ -20,27 +17,14 @@ namespace DEA.Database.Repositories
             _rankHandler = rankHandler;
         }
 
-        public async Task<User> FetchUserAsync(DEAContext context)
-        {
-            var dbUser = await (await _collection.FindAsync(x => x.UserId == context.User.Id && x.GuildId == context.Guild.Id)).SingleOrDefaultAsync();
-
-            if (dbUser == default(User))
-            {
-                var createdUser = new User(context.User.Id, context.Guild.Id);
-                await _collection.InsertOneAsync(createdUser, null, default(CancellationToken));
-                return createdUser;
-            }
-            return dbUser;
-        }
-
         public async Task<User> FetchUserAsync(IGuildUser user)
         {
-            var dbUser = await (await _collection.FindAsync(x => x.UserId == user.Id && x.GuildId == user.GuildId)).SingleOrDefaultAsync();
+            var dbUser = await FetchAsync(x => x.UserId == user.Id && x.GuildId == user.GuildId);
 
             if (dbUser == default(User))
             {
                 var createdUser = new User(user.Id, user.GuildId);
-                await _collection.InsertOneAsync(createdUser, null, default(CancellationToken));
+                await InsertAsync(createdUser);
                 return createdUser;
             }
             return dbUser;
@@ -48,45 +32,38 @@ namespace DEA.Database.Repositories
 
         public async Task<User> FetchUserAsync(ulong userId, ulong guildId)
         {
-            var dbUser = await (await _collection.FindAsync(x => x.UserId == userId && x.GuildId == guildId)).SingleOrDefaultAsync();
+            var dbUser = await FetchAsync(x => x.UserId == userId && x.GuildId == guildId);
 
             if (dbUser == default(User))
             {
                 var createdUser = new User(userId, guildId);
-                await _collection.InsertOneAsync(createdUser, null, default(CancellationToken));
+                await InsertAsync(createdUser);
                 return createdUser;
             }
             return dbUser;
         }
 
-        public Task ModifyAsync(DEAContext context, Expression<Func<User, BsonValue>> field, BsonValue value)
+        public Task ModifyUserAsync(IGuildUser user, Action<User> function)
         {
-            var builder = Builders<User>.Update;
-            return _collection.UpdateOneAsync(y => y.UserId == context.User.Id && y.GuildId == context.Guild.Id, builder.Set(field, value));
+            return ModifyAsync(y => y.UserId == user.Id && y.GuildId == user.GuildId, function);
         }
 
-        public Task ModifyAsync(IGuildUser user, Expression<Func<User, BsonValue>> field, BsonValue value)
+        public Task ModifyUserAsync(ulong userId, ulong guildId, Action<User> function)
         {
-            var builder = Builders<User>.Update;
-            return _collection.UpdateOneAsync(y => y.UserId == user.Id && y.GuildId == user.GuildId, builder.Set(field, value));
-        }
-
-        public Task ModifyAsync(ulong userId, ulong guildId, Expression<Func<User, BsonValue>> field, BsonValue value)
-        {
-            var builder = Builders<User>.Update;
-            return _collection.UpdateOneAsync(y => y.UserId == userId && y.GuildId == guildId, builder.Set(field, value));
+            return ModifyAsync(y => y.UserId == userId && y.GuildId == guildId, function);
         }
 
         public async Task EditCashAsync(DEAContext context, decimal change)
         {
-            await ModifyAsync(context, x => x.Cash, Math.Round(context.Cash + change, 2));
+            context.DbUser.Cash = Math.Round(context.Cash + change, 2);
+            await UpdateAsync(context.DbUser);
             await _rankHandler.HandleAsync(context.Guild, context.User as IGuildUser, context.DbGuild, context.DbUser);
         }
 
         public async Task EditCashAsync(IGuildUser user, Guild dbGuild, User dbUser, decimal change)
         {
-            var cash = (await FetchUserAsync(user)).Cash;
-            await ModifyAsync(user, x => x.Cash, Math.Round(cash + change, 2));
+            dbUser.Cash = Math.Round(dbUser.Cash + change, 2);
+            await UpdateAsync(dbUser);
             await _rankHandler.HandleAsync(user.Guild, user, dbGuild, dbUser);
         }
 

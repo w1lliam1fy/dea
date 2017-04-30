@@ -35,8 +35,7 @@ namespace DEA.Services.Handlers
                     {
                         return;
                     }
-
-                    if (cmdEx.InnerException is DEAException)
+                    else if (cmdEx.InnerException is DEAException)
                     {
                         await cmdEx.Context.Channel.ReplyAsync(cmdEx.Context.User, cmdEx.InnerException.Message, null, Config.ERROR_COLOR);
                     }
@@ -99,7 +98,7 @@ namespace DEA.Services.Handlers
                 }
                 else if (logMessage.Exception != null)
                 {
-                    Logger.Log(LogSeverity.Error, logMessage.Exception.Source, $"{logMessage.Exception.Message}: {logMessage.Exception.StackTrace}");
+                    Logger.Log(LogSeverity.Error, logMessage.Exception.Source, logMessage.Exception.StackTrace);
                 }
             });
         }
@@ -125,17 +124,19 @@ namespace DEA.Services.Handlers
                                 {
                                     message = $"Did you mean `{context.DbGuild.Prefix}{alias.UpperFirstChar()}`?";
                                 }
-                                else if (alias.Length < 10)
+                            }
+                            else if (alias.Length < 10)
+                            {
+                                if (LevenshteinDistance.Compute(commandName, alias) <= 2)
                                 {
-                                    if (LevenshteinDistance.Compute(commandName, alias) <= 2)
-                                    {
-                                        message = $"Did you mean `{context.DbGuild.Prefix}{alias.UpperFirstChar()}`?";
-                                    }
-                                    else
+                                    message = $"Did you mean `{context.DbGuild.Prefix}{alias.UpperFirstChar()}`?";
+                                }
+                            }
+                            else
+                            {
                                 if (LevenshteinDistance.Compute(commandName, alias) <= 3)
-                                    {
-                                        message = $"Did you mean `{context.DbGuild.Prefix}{alias.UpperFirstChar()}`?";
-                                    }
+                                {
+                                    message = $"Did you mean `{context.DbGuild.Prefix}{alias.UpperFirstChar()}`?";
                                 }
                             }
                         }

@@ -38,13 +38,12 @@ namespace DEA.Common
         /// </summary>
         public async Task InitializeAsync()
         {
-            DbUser = await _userRepo.FetchUserAsync(this);
+            DbUser = await _userRepo.FetchUserAsync(GUser);
             DbGuild = await _guildRepo.FetchGuildAsync(Guild.Id);
-            if (await _gangRepo.InGangAsync(User as IGuildUser))
+            if (await _gangRepo.InGangAsync(GUser))
             {
-                Gang = await _gangRepo.FetchGangAsync(this);
+                Gang = await _gangRepo.FetchGangAsync(GUser);
             }
-
             Prefix = DbGuild.Prefix;
             Cash = DbUser.Cash;
         }

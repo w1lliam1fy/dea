@@ -162,7 +162,7 @@ namespace DEA.Services
             try
             {
                 await channel.SendMessageAsync(string.Empty, embed: builder);
-                await _guildRepo.ModifyAsync(context.Guild.Id, x => x.CaseNumber, ++context.DbGuild.CaseNumber);
+                await _guildRepo.ModifyAsync(context.DbGuild, x => x.CaseNumber++);
             }
             catch { }
         }

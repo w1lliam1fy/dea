@@ -29,11 +29,11 @@ namespace DEA.Modules
             switch (Context.DbGuild.Nsfw)
             {
                 case true:
-                    await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.Nsfw, false);
+                    await _guildRepo.ModifyAsync(Context.DbGuild, x => x.Nsfw = false);
                     await ReplyAsync($"You have successfully disabled NSFW commands!");
                     break;
                 case false:
-                    await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.Nsfw, true);
+                    await _guildRepo.ModifyAsync(Context.DbGuild, x => x.Nsfw = true);
                     await ReplyAsync($"You have successfully enabled NSFW commands!");
                     break;
             }
@@ -44,8 +44,7 @@ namespace DEA.Modules
         [Summary("Sets a specific channel for all NSFW commands.")]
         public async Task SetNSFWChannel([Remainder] ITextChannel nsfwChannel)
         {
-            await _guildRepo.ModifyAsync(Context.Guild.Id, x => (decimal)x.NsfwChannelId, (decimal)nsfwChannel.Id);
-
+            await _guildRepo.ModifyAsync(Context.DbGuild, x => x.NsfwChannelId = nsfwChannel.Id);
             await ReplyAsync($"You have successfully set the NSFW channel to {nsfwChannel.Mention}.");
         }
 

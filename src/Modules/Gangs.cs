@@ -199,7 +199,7 @@ namespace DEA.Modules
             {
                 ReplyError("You may not kick yourself!");
             }
-            else if (!await _gangRepo.IsMemberOfAsync(Context.Gang, gangMember.Id))
+            else if (!_gangRepo.IsMemberOfAsync(Context.Gang, gangMember.Id))
             {
                 ReplyError("This user is not a member of your gang!");
             }
@@ -243,7 +243,7 @@ namespace DEA.Modules
             }
 
             await _userRepo.EditCashAsync(Context, -Config.GANG_NAME_CHANGE_COST);
-            await _gangRepo.ModifyAsync(Context, x => x.Name, newName);
+            await _gangRepo.ModifyAsync(Context.Gang, x => x.Name = newName);
 
             await ReplyAsync($"You have successfully changed your gang name to {newName} at the cost of {Config.GANG_NAME_CHANGE_COST.USD()}.");
         }
@@ -257,13 +257,13 @@ namespace DEA.Modules
             {
                 ReplyError("You are already the leader of this gang!");
             }
-            else if (!await _gangRepo.IsMemberOfAsync(Context.Gang, gangMember.Id))
+            else if (! _gangRepo.IsMemberOfAsync(Context.Gang, gangMember.Id))
             {
                 ReplyError("This user is not a member of your gang!");
             }
 
             await _gangRepo.RemoveMemberAsync(Context.Gang, gangMember.Id);
-            await _gangRepo.ModifyAsync(Context.GUser, x => (decimal)x.LeaderId, (decimal)gangMember.Id);
+            await _gangRepo.ModifyAsync(Context.Gang, x => x.LeaderId = gangMember.Id);
             await _gangRepo.AddMemberAsync(Context.Gang, Context.User.Id);
 
             await ReplyAsync($"You have successfully transferred the leadership of {Context.Gang.Name} to {gangMember}.");
@@ -285,7 +285,7 @@ namespace DEA.Modules
             }
 
             await _userRepo.EditCashAsync(Context, -cash);
-            await _gangRepo.ModifyAsync(Context, x => x.Wealth, Context.Gang.Wealth + cash);
+            await _gangRepo.ModifyAsync(Context.Gang, x => x.Wealth = Context.Gang.Wealth + cash);
 
             await ReplyAsync($"You have successfully deposited {cash.USD()}. " +
                         $"{Context.Gang.Name}'s Wealth: {(Context.Gang.Wealth + cash).USD()}");
@@ -309,8 +309,8 @@ namespace DEA.Modules
                                     $"that is {(Context.Gang.Wealth * Config.WITHDRAW_CAP).USD()}.");
             }
 
-            await _userRepo.ModifyAsync(Context, x => x.Withdraw, DateTime.UtcNow);
-            await _gangRepo.ModifyAsync(Context, x => x.Wealth, Context.Gang.Wealth - cash);
+            await _userRepo.ModifyAsync(Context.DbUser, x => x.Withdraw = DateTime.UtcNow);
+            await _gangRepo.ModifyAsync(Context.Gang, x => x.Wealth = Context.Gang.Wealth - cash);
             await _userRepo.EditCashAsync(Context, +cash);
 
             await ReplyAsync($"You have successfully withdrawn {cash.USD()}. " +
@@ -346,9 +346,9 @@ namespace DEA.Modules
             int roll = new Random().Next(1, 101);
             if (Config.RAID_SUCCESS_ODDS > roll)
             {
-                await _gangRepo.ModifyAsync(gangName, Context.Guild.Id, x => x.Wealth, raidedGang.Wealth - stolen);
-                await _gangRepo.ModifyAsync(Context, x => x.Wealth, Context.Gang.Wealth + stolen);
-                await _gangRepo.ModifyAsync(Context, x => x.Raid, DateTime.UtcNow);
+                await _gangRepo.ModifyGangAsync(gangName, Context.Guild.Id, x => x.Wealth = raidedGang.Wealth - stolen);
+                await _gangRepo.ModifyAsync(Context.Gang, x => x.Wealth = Context.Gang.Wealth + stolen);
+                await _gangRepo.ModifyAsync(Context.Gang, x => x.Raid = DateTime.UtcNow);
 
                 await raidedGang.LeaderId.DMAsync(Context.Client, $"{Context.Gang.Name} just raided your gang's wealth and managed to walk away with {stolen.USD()}.");
 
@@ -357,8 +357,8 @@ namespace DEA.Modules
             }
             else
             {
-                await _gangRepo.ModifyAsync(Context, x => x.Wealth, Context.Gang.Wealth - resources);
-                await _gangRepo.ModifyAsync(Context, x => x.Raid, DateTime.UtcNow);
+                await _gangRepo.ModifyAsync(Context.Gang, x => x.Wealth = Context.Gang.Wealth - resources);
+                await _gangRepo.ModifyAsync(Context.Gang, x => x.Raid = DateTime.UtcNow);
 
                 await raidedGang.LeaderId.DMAsync(Context.Client, $"{Context.Gang.Name} tried to raid your gang's stash, but one of your loyal sicarios gunned them out.");
 

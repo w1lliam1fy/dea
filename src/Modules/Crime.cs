@@ -28,7 +28,7 @@ namespace DEA.Modules
         [Summary("Sell your body for some quick cash.")]
         public async Task Whore()
         {
-            await _userRepo.ModifyAsync(Context, x => x.Whore, DateTime.UtcNow);
+            await _userRepo.ModifyAsync(Context.DbUser, x => x.Whore = DateTime.UtcNow);
 
             int roll = new Random().Next(1, 101);
             if (roll > Config.WHORE_ODDS)
@@ -52,7 +52,7 @@ namespace DEA.Modules
         [Summary("Jump some random nigga in the hood.")]
         public async Task Jump()
         {
-            await _userRepo.ModifyAsync(Context, x => x.Jump, DateTime.UtcNow);
+            await _userRepo.ModifyAsync(Context.DbUser, x => x.Jump = DateTime.UtcNow);
 
             int roll = new Random().Next(1, 101);
             if (roll > Config.JUMP_ODDS)
@@ -76,7 +76,7 @@ namespace DEA.Modules
         [Summary("Snipe some goodies from your local stores.")]
         public async Task Steal()
         {
-            await _userRepo.ModifyAsync(Context, x => x.Steal, DateTime.UtcNow);
+            await _userRepo.ModifyAsync(Context.DbUser, x => x.Steal = DateTime.UtcNow);
 
             int roll = new Random().Next(1, 101);
             if (roll > Config.STEAL_ODDS)
@@ -156,7 +156,6 @@ namespace DEA.Modules
             {
                 await _userRepo.EditCashAsync(user, Context.DbGuild, raidedDbUser, -stolen);
                 await _userRepo.EditCashAsync(Context, stolen);
-                await _userRepo.ModifyAsync(Context, x => x.Rob, DateTime.UtcNow);
 
                 await user.Id.DMAsync(Context.Client, $"{Context.User} just robbed you and managed to walk away with {stolen.USD()}.");
 
@@ -166,13 +165,13 @@ namespace DEA.Modules
             else
             {
                 await _userRepo.EditCashAsync(Context, -resources);
-                await _userRepo.ModifyAsync(Context, x => x.Rob, DateTime.UtcNow);
 
                 await user.Id.DMAsync(Context.Client, $"{Context.User} tried to rob your sweet cash, but the nigga slipped on a banana peel and got arrested :joy: :joy: :joy:.");
 
                 await ReplyAsync($"With a {successOdds}.00% chance of success, you failed to steal {stolen.USD()} " +
                             $"and lost all resources in the process. Balance: {(Context.Cash - resources).USD()}.");
             }
+            await _userRepo.ModifyAsync(Context.DbUser, x => x.Rob = DateTime.UtcNow);
         }
 
     }

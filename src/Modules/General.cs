@@ -47,7 +47,7 @@ namespace DEA.Modules
                     }
 
                     await _userRepo.EditCashAsync(Context, -Config.LINE_COST);
-                    await _userRepo.ModifyAsync(Context, x => x.MessageCooldown, Config.LINE_COOLDOWN.TotalMilliseconds);
+                    await _userRepo.ModifyAsync(Context.DbUser, x => x.MessageCooldown = Config.LINE_COOLDOWN.TotalMilliseconds);
 
                     await ReplyAsync("Don't forget to wipe your nose when you are done with that line.");
                     break;
@@ -63,7 +63,7 @@ namespace DEA.Modules
                     }
 
                     await _userRepo.EditCashAsync(Context, -Config.POUND_COST);
-                    await _userRepo.ModifyAsync(Context, x => x.InvestmentMultiplier, Config.POUND_MULTIPLIER);
+                    await _userRepo.ModifyAsync(Context.DbUser, x => x.InvestmentMultiplier = Config.POUND_MULTIPLIER);
 
                     await ReplyAsync("***DOUBLE CASH SMACK DAB CENTER NIGGA!***");
                     break;
@@ -84,7 +84,7 @@ namespace DEA.Modules
                     }
 
                     await _userRepo.EditCashAsync(Context, -Config.KILO_COST);
-                    await _userRepo.ModifyAsync(Context, x => x.InvestmentMultiplier, Config.KILO_MULTIPLIER);
+                    await _userRepo.ModifyAsync(Context.DbUser, x => x.InvestmentMultiplier = Config.KILO_MULTIPLIER);
 
                     await ReplyAsync("Only the black jews would actually enjoy 4$/msg.");
                     break;
@@ -260,8 +260,6 @@ namespace DEA.Modules
                 var role = Context.Guild.GetRole(ulong.Parse(rank.Name));
                 if (role == null)
                 {
-                    Context.DbGuild.RankRoles.Remove(rank.Name);
-                    await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.RankRoles, Context.DbGuild.RankRoles);
                     continue;
                 }
                 description += $"{((decimal)rank.Value.AsDouble).USD()}: {role.Mention}\n";
@@ -286,8 +284,6 @@ namespace DEA.Modules
                 var role = Context.Guild.GetRole(ulong.Parse(modRole.Name));
                 if (role == null)
                 {
-                    Context.DbGuild.ModRoles.Remove(modRole.Name);
-                    await _guildRepo.ModifyAsync(Context.Guild.Id, x => x.ModRoles, Context.DbGuild.ModRoles);
                     continue;
                 }
                 description += $"{role.Mention}: {modRole.Value}\n";

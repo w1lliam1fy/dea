@@ -16,6 +16,7 @@ namespace DEA.Services.Handlers
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commandService;
         private readonly ErrorHandler _errorHandler;
+        private readonly RankHandler _rankHandler;
         private readonly UserRepository _userRepo;
 
         public CommandHandler(CommandService commandService, IDependencyMap map)
@@ -23,6 +24,7 @@ namespace DEA.Services.Handlers
             _map = map;
             _commandService = commandService;
             _errorHandler = map.Get<ErrorHandler>();
+            _rankHandler = map.Get<RankHandler>();
             _userRepo = map.Get<UserRepository>();
             _client = map.Get<DiscordSocketClient>();
             _client.MessageReceived += HandleCommandAsync;
@@ -90,7 +92,7 @@ namespace DEA.Services.Handlers
                 }
                 else if (msg.Content.Length >= Config.MIN_CHAR_LENGTH)
                 {
-                    await CashPerMsg.Apply(_userRepo, context);
+                    await CashPerMsg.Apply(_userRepo, _rankHandler, context);
                 }
             });
         }

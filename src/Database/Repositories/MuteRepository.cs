@@ -2,33 +2,27 @@
 using Discord;
 using MongoDB.Driver;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace DEA.Database.Repositories
 {
-    public class MuteRepository 
+    public class MuteRepository : BaseRepository<Mute>
     {
-        private readonly IMongoCollection<Mute> _mutes;
-
-        public MuteRepository(IMongoCollection<Mute> mutes)
-        {
-            _mutes = mutes;
-        }
+        public MuteRepository(IMongoCollection<Mute> mutes) : base(mutes) { }
 
         public Task AddMuteAsync(IGuildUser user, TimeSpan muteLength)
         {
-            return _mutes.InsertOneAsync(new Mute(user.Id, user.GuildId, muteLength.TotalMilliseconds), null, default(CancellationToken));
+            return InsertAsync(new Mute(user.Id, user.GuildId, muteLength.TotalMilliseconds));
         }
 
-        public async Task<bool> IsMutedAsync(ulong userId, ulong guildId)
+        public Task<bool> IsMutedAsync(ulong userId, ulong guildId)
         {
-            return await (await _mutes.FindAsync(y => y.UserId == userId && y.GuildId == guildId)).AnyAsync();
+            return ExistsAsync(y => y.UserId == userId && y.GuildId == guildId);
         }
 
         public Task RemoveMuteAsync(ulong userId, ulong guildId)
         {
-            return _mutes.DeleteOneAsync(y => y.UserId == userId && y.GuildId == guildId);
+            return DeleteAsync(y => y.UserId == userId && y.GuildId == guildId);
         }
     }
 }
