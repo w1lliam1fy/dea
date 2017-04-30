@@ -25,7 +25,10 @@ namespace DEA.Services
         /// <returns>Task returning the first message matching the filter. Returns null if there was no match.</returns>
         public async Task<IUserMessage> WaitForMessage(IMessageChannel channel, Expression<Func<IUserMessage, bool>> filter, TimeSpan? timeout = null)
         {
-            if (timeout == null) timeout = Config.DEFAULT_WAITFORMESSAGE;
+            if (timeout == null)
+            {
+                timeout = Config.DEFAULT_WAITFORMESSAGE;
+            }
 
             var blockToken = new CancellationTokenSource();
             IUserMessage response = null;
@@ -33,9 +36,18 @@ namespace DEA.Services
             Func<IMessage, Task> isValid = (messageParameter) =>
             {
                 var message = messageParameter as IUserMessage;
-                if (message == null) return Task.CompletedTask;
-                if (!filter.Compile()(message)) return Task.CompletedTask;
-                if (message.Channel.Id != channel.Id) return Task.CompletedTask;
+                if (message == null)
+                {
+                    return Task.CompletedTask;
+                }
+                else if (!filter.Compile()(message))
+                {
+                    return Task.CompletedTask;
+                }
+                else if (message.Channel.Id != channel.Id)
+                {
+                    return Task.CompletedTask;
+                }
 
                 response = message;
                 blockToken.Cancel(true);
@@ -46,9 +58,13 @@ namespace DEA.Services
             try
             {
                 if (timeout == TimeSpan.Zero)
+                {
                     await Task.Delay(-1, blockToken.Token);
+                }
                 else
+                {
                     await Task.Delay(timeout.Value, blockToken.Token);
+                }
             }
             catch (TaskCanceledException)
             {

@@ -50,7 +50,9 @@ namespace DEA.Common.Preconditions
                     return PreconditionResult.FromSuccess();
             }
             if (DateTime.UtcNow.Subtract(lastUse).TotalMilliseconds > cooldown.TotalMilliseconds)
+            {
                 return PreconditionResult.FromSuccess();
+            }
             else
             {
                 var user = command.Name.ToLower() == "raid" ? deaContext.Gang.Name : context.User.ToString();

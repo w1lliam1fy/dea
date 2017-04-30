@@ -28,18 +28,23 @@ namespace DEA.Events
             _client.UserJoined += HandleUserJoin;
         }
 
-        private Task HandleUserJoin(SocketGuildUser u) =>
-            Task.Run(async () =>
-            {
-                var user = u as IGuildUser;
-                var dbGuild = await _guildRepo.FetchGuildAsync(user.Guild.Id);
-                var mutedRole = user.Guild.GetRole((dbGuild.MutedRoleId));
-                if (mutedRole != null && u.Guild.CurrentUser.GuildPermissions.ManageRoles &&
-                    mutedRole.Position < u.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
-                {
-                    await _rankHandler.HandleAsync(u.Guild, user, dbGuild, await _userRepo.FetchUserAsync(user));
-                    if (await _muteRepo.IsMutedAsync(user.Id, user.Guild.Id) && mutedRole != null && user != null) await user.AddRoleAsync(mutedRole);
-                }
-            });
+        private Task HandleUserJoin(SocketGuildUser u)
+        {
+            return Task.Run(async () =>
+{
+var user = u as IGuildUser;
+var dbGuild = await _guildRepo.FetchGuildAsync(user.Guild.Id);
+var mutedRole = user.Guild.GetRole((dbGuild.MutedRoleId));
+if (mutedRole != null && u.Guild.CurrentUser.GuildPermissions.ManageRoles &&
+mutedRole.Position < u.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
+{
+await _rankHandler.HandleAsync(u.Guild, user, dbGuild, await _userRepo.FetchUserAsync(user));
+if (await _muteRepo.IsMutedAsync(user.Id, user.Guild.Id) && mutedRole != null && user != null)
+        {
+            await user.AddRoleAsync(mutedRole);
+        }
+    }
+});
+        }
     }
 }

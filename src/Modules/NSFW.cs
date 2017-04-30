@@ -89,12 +89,18 @@ namespace DEA.Modules
                 doc.Load(data);
 
                 var node = doc.LastChild.ChildNodes[new Random().Next(0, doc.LastChild.ChildNodes.Count)];
-                if (node == null) ReplyError("No result found.");
+                if (node == null)
+                {
+                    ReplyError("No result found.");
+                }
 
                 var url = node.Attributes["file_url"].Value;
 
                 if (!url.StartsWith("http"))
+                {
                     url = "https:" + url;
+                }
+
                 await Context.Channel.SendMessageAsync(url);
             }
         }

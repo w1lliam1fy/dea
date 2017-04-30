@@ -27,10 +27,12 @@ namespace DEA.Services
         /// </summary>
         /// <param name="channel">The channel to send the trivia question in.</param>
         /// <param name="dbGuild">The data information of the guild in question.</param>
-        public async Task Trivia(IMessageChannel channel, Guild dbGuild)
+        public async Task TriviaAsync(IMessageChannel channel, Guild dbGuild)
         {
             if (dbGuild.Trivia.ElementCount == 0)
+            {
                 throw new DEAException("There are no trivia questions yet!");
+            }
 
             var random = new Random();
             int roll = random.Next(0, dbGuild.Trivia.ElementCount);
@@ -42,13 +44,21 @@ namespace DEA.Services
             if (!answer.Any(char.IsDigit))
             {
                 if (answer.Length < 5)
+                {
                     correctResponse = y => y.Content.ToLower() == answer;
+                }
                 else if (answer.Length >= 5 && answer.Length < 10)
+                {
                     correctResponse = y => LevenshteinDistance.Compute(y.Content, element.Value.AsString) <= 1;
+                }
                 else if (answer.Length < 20)
+                {
                     correctResponse = y => LevenshteinDistance.Compute(y.Content, element.Value.AsString) <= 2;
+                }
                 else
+                {
                     correctResponse = y => LevenshteinDistance.Compute(y.Content, element.Value.AsString) <= 3;
+                }
             }
 
             await channel.SendAsync("__**TRIVIA:**__ " + element.Name);
@@ -79,11 +89,17 @@ namespace DEA.Services
         {
             var gambleChannel = context.Guild.GetTextChannel(context.DbGuild.GambleChannelId);
             if (gambleChannel != null && context.Channel.Id != context.DbGuild.GambleChannelId)
+            {
                 throw new DEAException($"You may only gamble in {gambleChannel.Mention}!");
-            if (bet < Config.BET_MIN)
+            }
+            else if (bet < Config.BET_MIN)
+            {
                 throw new DEAException($"Lowest bet is {Config.BET_MIN}$.");
-            if (bet > context.DbUser.Cash)
+            }
+            else if (bet > context.DbUser.Cash)
+            {
                 throw new DEAException($"You do not have enough money. Balance: {context.DbUser.Cash.USD()}.");
+            }
 
             decimal roll = new Random().Next(1, 10001) / 100m;
             if (roll >= odds)

@@ -18,8 +18,10 @@ namespace DEA.Common
         /// <param name="title">The title of the embed.</param>
         /// <param name="color">The color of the embed.</param>
         /// <returns>Task returning the sent message.</returns>
-        public Task<IUserMessage> ReplyAsync(string message, string title = null, Color color = default(Color)) =>
-            Context.Channel.ReplyAsync(Context.User, message, title, color);
+        public Task<IUserMessage> ReplyAsync(string message, string title = null, Color color = default(Color))
+        {
+            return Context.Channel.ReplyAsync(Context.User, message, title, color);
+        }
 
         /// <summary>
         /// Sends a embedded message.
@@ -28,15 +30,18 @@ namespace DEA.Common
         /// <param name="title">The title of the embed.</param>
         /// <param name="color">The color of the embed.</param>
         /// <returns>Task returning the sent message.</returns>
-        public Task<IUserMessage> SendAsync(string description, string title = null, Color color = default(Color)) =>
-            Context.Channel.SendAsync(description, title, color);
+        public Task<IUserMessage> SendAsync(string description, string title = null, Color color = default(Color))
+        {
+            return Context.Channel.SendAsync(description, title, color);
+        }
 
         /// <summary>
         /// Throws a DEAException which will get caught by the error handler.
         /// </summary>
         /// <param name="message">Exception message.</param>
-        public void ReplyError(string message) =>
+        public void ReplyError(string message)
+        {
             throw new DEAException(message);
-
+        }
     }
 }

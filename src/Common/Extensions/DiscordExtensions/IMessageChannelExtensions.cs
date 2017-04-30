@@ -18,11 +18,18 @@ namespace DEA.Common.Extensions.DiscordExtensions
         {
             var builder = new EmbedBuilder()
             {
-                Description = $"**{user}**, {description}",
+                Description = $"{user.Boldify()}, {description}",
                 Color = Config.Color()
             };
-            if (title != null) builder.Title = title;
-            if (color.RawValue != default(Color).RawValue) builder.Color = color;
+            if (title != null)
+            {
+                builder.Title = title;
+            }
+
+            if (color.RawValue != default(Color).RawValue)
+            {
+                builder.Color = color;
+            }
 
             return channel.SendMessageAsync(string.Empty, embed: builder);
         }
@@ -41,8 +48,15 @@ namespace DEA.Common.Extensions.DiscordExtensions
                 Description = description,
                 Color = Config.Color()
             };
-            if (title != null) builder.Title = title;
-            if (color.RawValue != default(Color).RawValue) builder.Color = color;
+            if (title != null)
+            {
+                builder.Title = title;
+            }
+
+            if (color.RawValue != default(Color).RawValue)
+            {
+                builder.Color = color;
+            }
 
             return channel.SendMessageAsync(string.Empty, embed: builder);
         }
@@ -68,7 +82,9 @@ namespace DEA.Common.Extensions.DiscordExtensions
             }
 
             foreach (var message in messages)
+            {
                 await channel.SendMessageAsync(message + "```");
+            }
         }
 
     }

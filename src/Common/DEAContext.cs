@@ -41,7 +41,10 @@ namespace DEA.Common
             DbUser = await _userRepo.FetchUserAsync(this);
             DbGuild = await _guildRepo.FetchGuildAsync(Guild.Id);
             if (await _gangRepo.InGangAsync(User as IGuildUser))
+            {
                 Gang = await _gangRepo.FetchGangAsync(this);
+            }
+
             Prefix = DbGuild.Prefix;
             Cash = DbUser.Cash;
         }

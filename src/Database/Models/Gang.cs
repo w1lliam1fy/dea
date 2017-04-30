@@ -1,11 +1,9 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-using System;
+﻿using System;
 
 namespace DEA.Database.Models
 {
 
-    public partial class Gang
+    public partial class Gang : Model
     {
         public Gang(ulong leaderId, ulong guildId, string name)
         {
@@ -13,9 +11,6 @@ namespace DEA.Database.Models
             GuildId = guildId;
             Name = name;
         }
-
-        [BsonId]
-        public ObjectId Id { get; set; }
 
         public string Name { get; set; }
 

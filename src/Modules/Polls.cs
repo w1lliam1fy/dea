@@ -34,12 +34,16 @@ namespace DEA.Modules
             var isMod = _moderationService.IsMod(Context, Context.GUser);
 
             if (modOnly && !isMod)
+            {
                 ReplyError("Only moderators may create mod only polls.");
+            }
 
             var choicesArray = choices.Split('~');
 
             if (choicesArray.Distinct().Count() != choicesArray.Length)
+            {
                 ReplyError("You may not have multiple choices that are identicle.");
+            }
 
             await _pollRepo.CreatePollAsync(Context, poll, choicesArray, TimeSpan.FromDays(daysToLast), elderOnly, modOnly, isMod);
 
@@ -67,23 +71,37 @@ namespace DEA.Modules
             polls = polls.OrderBy(x => x.CreatedAt).ToList();
 
             if (polls.Count == 0)
+            {
                 ReplyError("There are no polls in progress.");
+            }
 
             List<string> elements = new List<string>();
 
             if (polls.Any(x => x.CreatedByMod))
+            {
                 elements.Add("Polls created by moderators:\n");
+            }
 
             for (int i = 0; i < polls.Count; i++)
+            {
                 if (polls[i].CreatedByMod)
+                {
                     elements.Add($"{i + 1}. {polls[i].Name}\n");
+                }
+            }
 
             if (polls.Any(x => !x.CreatedByMod))
+            {
                 elements.Add("User polls:\n");
+            }
 
             for (int i = 0; i < polls.Count; i++)
+            {
                 if (!polls[i].CreatedByMod)
+                {
                     elements.Add($"{i + 1}. {polls[i].Name}\n");
+                }
+            }
 
             var channel = await Context.User.CreateDMChannelAsync();
             await channel.SendCodeAsync(elements, "Poll Indexes");
@@ -103,20 +121,32 @@ namespace DEA.Modules
             {
                 var choice = poll.Choices[i];
                 var percentage = (votes[choice] / (double)poll.VotesDocument.ElementCount);
-                if (double.IsNaN(percentage)) percentage = 0;
+                if (double.IsNaN(percentage))
+                {
+                    percentage = 0;
+                }
+
                 description += $"{i + 1}. **{choice}:** {votes[choice]} Vote(s) ({percentage.ToString("P")})\n";
             }
 
             var timeRemaining = TimeSpan.FromMilliseconds(poll.Length).Subtract(DateTime.UtcNow.Subtract(poll.CreatedAt));
             if (timeRemaining.Ticks > 0)
+            {
                 description += $"\nEnding in: Days: {timeRemaining.Days}, Hours: {timeRemaining.Hours}, Minutes: {timeRemaining.Minutes}, Seconds: {timeRemaining.Seconds}";
+            }
             else
+            {
                 description += $"This poll will end very soon!";
+            }
 
             if (poll.ModOnly)
+            {
                 description += "\n\n**Only moderators may vote on this poll.**";
+            }
             else if (poll.ElderOnly)
+            {
                 description += $"\n\n**Only users that have been in this server for at least {Config.ELDER_TIME_REQUIRED.TotalHours} hours may vote on this poll.**";
+            }
 
             var creator = await (Context.Guild as IGuild).GetUserAsync(poll.CreatorId);
 
@@ -132,12 +162,18 @@ namespace DEA.Modules
             var poll = await _pollRepo.FetchePollAsync(pollIndex, Context.Guild.Id);
 
             if (poll.VotesDocument.Any(x => x.Name == Context.User.Id.ToString()))
+            {
                 ReplyError("You have already voted on this poll.");
-            if (poll.ElderOnly && DateTime.UtcNow.Subtract((Context.GUser).JoinedAt.Value.UtcDateTime).TotalMilliseconds <
+            }
+            else if (poll.ElderOnly && DateTime.UtcNow.Subtract((Context.GUser).JoinedAt.Value.UtcDateTime).TotalMilliseconds <
                 Config.ELDER_TIME_REQUIRED.TotalMilliseconds)
+            {
                 ReplyError($"You must have been in this server for more than {Config.ELDER_TIME_REQUIRED.TotalDays} days to vote on this poll.");
-            if (poll.ModOnly && !_moderationService.IsMod(Context, Context.GUser))
+            }
+            else if (poll.ModOnly && !_moderationService.IsMod(Context, Context.GUser))
+            {
                 ReplyError("Only a moderator may vote on this poll.");
+            }
 
             string choice = null;
             try

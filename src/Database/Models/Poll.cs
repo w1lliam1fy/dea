@@ -1,11 +1,10 @@
 ﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
 
 namespace DEA.Database.Models
 {
-    public partial class Poll
+    public partial class Poll : Model
     {
         public Poll(ulong creatorId, ulong guildId, string name, string[] choices)
         {
@@ -14,9 +13,6 @@ namespace DEA.Database.Models
             GuildId = guildId;
             Choices = choices;
         }
-
-        [BsonId]
-        public ObjectId Id { get; set; }
 
         public string Name { get; set; }
 
@@ -43,10 +39,14 @@ namespace DEA.Database.Models
             var votesDictionary = new Dictionary<string, int>();
 
             for (int i = 0; i < Choices.Length; i++)
+            {
                 votesDictionary.Add(Choices[i], 0);
+            }
 
             foreach (var vote in VotesDocument)
+            {
                 votesDictionary[vote.Value.AsString]++;
+            }
 
             return votesDictionary;
         }

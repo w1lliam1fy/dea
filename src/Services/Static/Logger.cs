@@ -26,9 +26,14 @@ namespace DEA.Services.Static
         public static void NewLine(string text = "", ConsoleColor? foreground = null, ConsoleColor? background = null)
         {
             if (foreground == null)
+            {
                 foreground = ConsoleColor.White;
+            }
+
             if (background == null)
+            {
                 background = ConsoleColor.Black;
+            }
 
             Console.ForegroundColor = (ConsoleColor)foreground;
             Console.BackgroundColor = (ConsoleColor)background;
@@ -42,9 +47,14 @@ namespace DEA.Services.Static
         public static void Append(string text, ConsoleColor? foreground = null, ConsoleColor? background = null)
         {
             if (foreground == null)
+            {
                 foreground = ConsoleColor.White;
+            }
+
             if (background == null)
+            {
                 background = ConsoleColor.Black;
+            }
 
             Console.ForegroundColor = (ConsoleColor)foreground;
             Console.BackgroundColor = (ConsoleColor)background;

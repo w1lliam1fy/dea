@@ -51,7 +51,10 @@ namespace DEA.Database.Repositories
         {
             var gang = await (await _gangs.FindAsync(c => (c.LeaderId == context.User.Id || c.Members.Any(x => x == context.User.Id)) && c.GuildId == context.Guild.Id)).SingleOrDefaultAsync();
             if (gang == default(Gang))
+            {
                 throw new DEAException("You are not in a gang.");
+            }
+
             return gang;
         }
 
@@ -59,7 +62,10 @@ namespace DEA.Database.Repositories
         {
             var gang = await (await _gangs.FindAsync(c => (c.LeaderId == user.Id || c.Members.Any(x => x == user.Id)) && c.GuildId == user.GuildId)).SingleOrDefaultAsync();
             if (gang == default(Gang))
+            {
                 throw new DEAException("This user is not in a gang.");
+            }
+
             return gang;
         }
 
@@ -67,7 +73,10 @@ namespace DEA.Database.Repositories
         {
             var gang = await (await _gangs.FindAsync(c => c.Name.ToLower() == gangName.ToLower() && c.GuildId == guildId)).SingleOrDefaultAsync();
             if (gang == default(Gang))
+            {
                 throw new DEAException("This gang does not exist.");
+            }
+
             return gang;
         }
 
@@ -75,27 +84,40 @@ namespace DEA.Database.Repositories
         {
             Expression<Func<Gang, bool>> expression = x => x.Name.ToLower() == name.ToLower() && x.GuildId == context.Guild.Id;
             if (await (await _gangs.FindAsync(expression)).AnyAsync())
+            {
                 throw new DEAException($"There is already a gang by the name {name}.");
+            }
+
             if (name.Length > Config.GANG_NAME_CHAR_LIMIT)
+            {
                 throw new DEAException($"The length of a gang name may not be longer than {Config.GANG_NAME_CHAR_LIMIT} characters.");
+            }
 
             var createdGang = new Gang(context.User.Id, context.Guild.Id, name);
             await _gangs.InsertOneAsync(createdGang, null, default(CancellationToken));
             return createdGang;
         }
 
-        public Task DestroyGangAsync(IGuildUser user) =>
-            _gangs.DeleteOneAsync(c => (c.LeaderId == user.Id || c.Members.Any(x => x == user.Id)) && c.GuildId == user.GuildId);
+        public Task DestroyGangAsync(IGuildUser user)
+        {
+            return _gangs.DeleteOneAsync(c => (c.LeaderId == user.Id || c.Members.Any(x => x == user.Id)) && c.GuildId == user.GuildId);
+        }
 
-        public async Task<bool> InGangAsync(IGuildUser user) =>
-            await (await _gangs.FindAsync(c => (c.LeaderId == user.Id || c.Members.Any(x => x == user.Id)) && c.GuildId == user.GuildId)).AnyAsync();
+        public async Task<bool> InGangAsync(IGuildUser user)
+        {
+            return await (await _gangs.FindAsync(c => (c.LeaderId == user.Id || c.Members.Any(x => x == user.Id)) && c.GuildId == user.GuildId)).AnyAsync();
+        }
 
         public Task<bool> IsMemberOfAsync(Gang gang, ulong userId)
         {
             if (gang.LeaderId == userId || gang.Members.Any(x => x == userId))
+            {
                 return Task.FromResult(true);
+            }
             else
+            {
                 return Task.FromResult(false);
+            }
         }
 
         public Task RemoveMemberAsync(Gang gang, ulong memberId)

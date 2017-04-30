@@ -23,24 +23,32 @@ namespace System.Modules
 
         [Command("Invite")]
         [Summary("Invite DEA to your server!")]
-        public Task Invite() =>
-            ReplyAsync($"Click on the following link to add DEA to your server: https://discordapp.com/oauth2/authorize?client_id={Context.Guild.CurrentUser.Id}&scope=bot&permissions=410119182");
+        public Task Invite()
+        {
+            return ReplyAsync($"Click on the following link to add DEA to your server: https://discordapp.com/oauth2/authorize?client_id={Context.Guild.CurrentUser.Id}&scope=bot&permissions=410119182");
+        }
 
         [Command("Cleanup")]
         [Summary("Deletes DEA's most recent messages to prevent chat flood.")]
         [RequireBotPermission(GuildPermission.ManageMessages)]
         public async Task Cleanup()
         {
+            if (Context.Channel.Id == Context.DbGuild.ModLogChannelId)
+            {
+                ReplyError("For security reasons, you may not use this command in the mod log channel.");
+            }
+
             var messages = (await Context.Channel.GetMessagesAsync(10).Flatten()).Where(x => x.Author.Id == Context.Guild.CurrentUser.Id);
             await Context.Channel.DeleteMessagesAsync(messages);
         }
 
         [Command("Usage")]
         [Summary("Explanation of how commands are used.")]
-        public Task Usage() =>
-            SendAsync("**Optional paramater:** `[]`\n\n**Required paramater:** `<>`\n\n**Parameter with spaces:** `\"This is one parameter\"`", 
-                      "Command Usage");
-        
+        public Task Usage()
+        {
+            return SendAsync("**Optional paramater:** `[]`\n\n**Required paramater:** `<>`\n\n**Parameter with spaces:** `\"This is one parameter\"`",
+     "Command Usage");
+        }
 
         [Command("Information")]
         [Alias("info")]
@@ -73,7 +81,9 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
         {
             string modules = string.Empty;
             foreach (var module in _commandService.Modules)
+            {
                 modules += $"{module.Name}, ";
+            }
 
             return ReplyAsync("Current command modules: " + modules.Substring(0, modules.Length - 2) + ".");
         }
@@ -85,14 +95,24 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
         {
             if (commandOrModule != null)
             {
-                if (commandOrModule.StartsWith(Context.Prefix)) commandOrModule = commandOrModule.Remove(0, Context.Prefix.Length);
+                if (commandOrModule.StartsWith(Context.Prefix))
+                {
+                    commandOrModule = commandOrModule.Remove(0, Context.Prefix.Length);
+                }
+
                 foreach (var module in _commandService.Modules)
                 {
                     if (module.Name.ToLower() == commandOrModule.ToLower())
                     {
                         var longestInModule = 0;
                         foreach (var cmd in module.Commands)
-                            if (cmd.Aliases.First().Length > longestInModule) longestInModule = cmd.Aliases.First().Length;
+                        {
+                            if (cmd.Aliases.First().Length > longestInModule)
+                            {
+                                longestInModule = cmd.Aliases.First().Length;
+                            }
+                        }
+
                         var moduleInfo = $"**{module.Name} Commands **: ```asciidoc\n";
                         foreach (var cmd in module.Commands)
                         {
@@ -109,15 +129,18 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
                     foreach (var cmd in module.Commands)
                     {
                         foreach (var alias in cmd.Aliases)
+                        {
                             if (alias.ToLower() == commandOrModule.ToLower())
                             {
                                 var commmandNameUpperFirst = commandOrModule.UpperFirstChar();
+                                var example = cmd.Parameters.Count == 0 ? string.Empty : $"**Example:** `{Context.Prefix}{commmandNameUpperFirst}{cmd.GetExample()}`";
+                                
                                 await SendAsync($"**Description:** {cmd.Summary}\n\n" +
-                                                $"**Usage:** `{Context.Prefix}{commmandNameUpperFirst}{cmd.GetUsage()}`\n\n" +
-                                                $"**Example:** `{Context.Prefix}{commmandNameUpperFirst}{cmd.GetExample()}`", 
+                                                $"**Usage:** `{Context.Prefix}{commmandNameUpperFirst}{cmd.GetUsage()}`\n\n" + example, 
                                                 commandOrModule.UpperFirstChar());
                                 return;
                             }
+                        }
                     }
                 }
 
@@ -129,7 +152,10 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
 
                 string modules = string.Empty;
                 foreach (var module in _commandService.Modules)
+                {
                     modules += $"{module.Name}, ";
+                }
+
                 modules = modules.Replace("DEAModule, ", string.Empty);
 
                 await channel.SendAsync(

@@ -42,7 +42,8 @@ namespace DEA.Services.Timers
             StateObj.TimerReference = _timer;
         }
 
-        private void Unmute(object stateObj) =>
+        private void Unmute(object stateObj)
+        {
             Task.Run(async () =>
             {
                 Logger.Log(LogSeverity.Debug, $"Timers", "Auto Unmute");
@@ -60,8 +61,8 @@ namespace DEA.Services.Timers
                             {
                                 var channel = guild.GetTextChannel(guildData.ModLogChannelId);
                                 if (channel != null && guild.CurrentUser.GuildPermissions.EmbedLinks &&
-                                    (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).SendMessages
-                                    && (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).EmbedLinks)
+                                (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).SendMessages
+                                && (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel).EmbedLinks)
                                 {
                                     await guild.GetUser(mute.UserId).RemoveRoleAsync(mutedRole);
                                     var footer = new EmbedFooterBuilder()
@@ -84,6 +85,6 @@ namespace DEA.Services.Timers
                     }
                 }
             });
-
+        }
     }
 }

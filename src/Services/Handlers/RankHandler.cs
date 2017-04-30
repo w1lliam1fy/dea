@@ -26,7 +26,10 @@ namespace DEA.Services.Handlers
             if (dbGuild.RankRoles.ElementCount != 0)
             {
                 var currentUser = await guild.GetCurrentUserAsync() as SocketGuildUser;
-                if (!currentUser.GuildPermissions.ManageRoles) return;
+                if (!currentUser.GuildPermissions.ManageRoles)
+                {
+                    return;
+                }
 
                 decimal cash = dbUser.Cash;
 
@@ -43,15 +46,27 @@ namespace DEA.Services.Handlers
                     if (role != null && role.Position < highestRolePosition)
                     {
                         bool hasRole = user.RoleIds.Any(x => x == role.Id);
-                        if (cash >= cashRequired && !hasRole) rolesToAdd.Add(role);
-                        if (cash < cashRequired && hasRole) rolesToRemove.Add(role);
+                        if (cash >= cashRequired && !hasRole)
+                        {
+                            rolesToAdd.Add(role);
+                        }
+
+                        if (cash < cashRequired && hasRole)
+                        {
+                            rolesToRemove.Add(role);
+                        }
                     }
                 }
 
                 foreach (var role in rolesToAdd)
+                {
                     await user.AddRoleAsync(role);
+                }
+
                 foreach (var role in rolesToRemove)
+                {
                     await user.RemoveRoleAsync(role);
+                }
             }
         }
 
@@ -60,9 +75,16 @@ namespace DEA.Services.Handlers
             IRole role = null;
 
             if (context.DbGuild.RankRoles.ElementCount != 0 && context.Guild != null)
+            {
                 foreach (var rankRole in context.DbGuild.RankRoles.OrderBy(x => x.Value))
+                {
                     if (dbUser.Cash >= (decimal)rankRole.Value.AsDouble)
+                    {
                         role = context.Guild.GetRole(ulong.Parse(rankRole.Name));
+                    }
+                }
+            }
+
             return Task.FromResult(role);
         }
     }

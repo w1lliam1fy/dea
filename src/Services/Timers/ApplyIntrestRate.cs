@@ -33,7 +33,8 @@ namespace DEA.Services.Timers
             StateObj.TimerReference = _timer;
         }
 
-        private void InterestRate(object stateObj) =>
+        private void InterestRate(object stateObj)
+        {
             Task.Run(async () =>
             {
                 Logger.Log(LogSeverity.Debug, $"Timers", "Interest Rate");
@@ -41,12 +42,15 @@ namespace DEA.Services.Timers
                 var updateBuilder = Builders<Gang>.Update;
 
                 foreach (var gang in await (await _gangs.FindAsync(builder.Empty)).ToListAsync())
+                {
                     try
                     {
                         await _gangs.UpdateOneAsync(y => y.Id == gang.Id,
-                            updateBuilder.Set(x => x.Wealth, Static.InterestRate.Calculate(gang.Wealth) * gang.Wealth + gang.Wealth));
+                        updateBuilder.Set(x => x.Wealth, Static.InterestRate.Calculate(gang.Wealth) * gang.Wealth + gang.Wealth));
                     }
-                    catch (OverflowException){ }  
+                    catch (OverflowException) { }
+                }
             });
+        }
     }
 }

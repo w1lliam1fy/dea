@@ -33,19 +33,27 @@ namespace DEA.Services.Handlers
             await _commandService.AddModulesAsync(Assembly.GetEntryAssembly());
         }
 
-        public Task HandleCommandAsync(SocketMessage s) =>
-            Task.Run(async () =>
+        public Task HandleCommandAsync(SocketMessage s)
+        {
+            return Task.Run(async () =>
             {
                 Config.MESSAGES++;
                 var msg = s as SocketUserMessage;
                 if (msg == null)
+                {
                     return;
+                }
 
                 var context = new DEAContext(_client, msg, _map);
                 if (context.Guild == null)
+                {
                     return;
+                }
+
                 if (context.User.IsBot)
+                {
                     return;
+                }
 
                 var perms = (context.Guild.CurrentUser as IGuildUser).GetPermissions(context.Channel as SocketTextChannel);
 
@@ -66,18 +74,25 @@ namespace DEA.Services.Handlers
                 int argPos = 0;
 
                 if (msg.HasStringPrefix(context.DbGuild.Prefix, ref argPos) ||
-                    msg.HasMentionPrefix(_client.CurrentUser, ref argPos))
+                msg.HasMentionPrefix(_client.CurrentUser, ref argPos))
                 {
                     Logger.Log(LogSeverity.Debug, $"Guild: {context.Guild}, User: {context.User}", msg.Content);
 
                     var result = await _commandService.ExecuteAsync(context, argPos, _map);
                     if (!result.IsSuccess)
+                    {
                         await _errorHandler.HandleCommandFailureAsync(context, result, argPos);
+                    }
                     else
+                    {
                         Config.COMMANDS_RUN++;
+                    }
                 }
                 else if (msg.Content.Length >= Config.MIN_CHAR_LENGTH)
+                {
                     await CashPerMsg.Apply(_userRepo, context);
+                }
             });
+        }
     }
 }

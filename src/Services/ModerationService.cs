@@ -25,13 +25,23 @@ namespace DEA.Services
         public bool IsMod(DEAContext context, IGuildUser user)
         {
             if (user.GuildPermissions.Administrator)
+            {
                 return true;
+            }
 
             if (context.DbGuild.ModRoles.ElementCount != 0)
+            {
                 foreach (var role in context.DbGuild.ModRoles)
+                {
                     if (user.Guild.GetRole(ulong.Parse(role.Name)) != null)
+                    {
                         if (user.RoleIds.Any(x => x.ToString() == role.Name))
+                        {
                             return true;
+                        }
+                    }
+                }
+            }
 
             return false;
         }
@@ -48,17 +58,31 @@ namespace DEA.Services
             int highest = user1.GuildPermissions.Administrator ? 2 : 0;
             int highestForUser = user2.GuildPermissions.Administrator ? 2 : 0;
             if (context.DbGuild.ModRoles.ElementCount == 0)
+            {
                 return highest > highestForUser;
+            }
 
             foreach (var role in context.DbGuild.ModRoles.OrderBy(x => x.Value))
+            {
                 if (user1.Guild.GetRole(ulong.Parse(role.Name)) != null)
+                {
                     if (user1.RoleIds.Any(x => x.ToString() == role.Name))
+                    {
                         highest = role.Value.AsInt32;
+                    }
+                }
+            }
 
             foreach (var role in context.DbGuild.ModRoles.OrderBy(x => x.Value))
+            {
                 if (user2.Guild.GetRole(ulong.Parse(role.Name)) != null)
+                {
                     if (user2.RoleIds.Any(x => x.ToString() == role.Name))
+                    {
                         highestForUser = role.Value.AsInt32;
+                    }
+                }
+            }
 
             return highest > highestForUser;
         }
@@ -77,7 +101,10 @@ namespace DEA.Services
                 var channel = await subject.CreateDMChannelAsync();
                 var message = $"{moderator} has attempted to {action.ToLower()} you.";
                 if (!string.IsNullOrWhiteSpace(reason))
+                {
                     message = message.Remove(message.Length - 1) + $" for the following reason: \"{reason}\".";
+                }
+
                 await channel.SendAsync(message);
             }
             catch { }
@@ -96,7 +123,10 @@ namespace DEA.Services
         {
             var channel = context.Guild.GetTextChannel(context.DbGuild.ModLogChannelId);
 
-            if (channel == null) return;
+            if (channel == null)
+            {
+                return;
+            }
 
             EmbedFooterBuilder footer = new EmbedFooterBuilder()
             {
@@ -110,9 +140,16 @@ namespace DEA.Services
             };
 
             string userText = string.Empty;
-            if (subject != null) userText = $"\n**User:** {subject} ({subject.Id})";
+            if (subject != null)
+            {
+                userText = $"\n**User:** {subject} ({subject.Id})";
+            }
+
             var description = $"**Action:** {action}{extra}{userText}";
-            if (reason != null) description += $"\n**Reason:** {reason}";
+            if (reason != null)
+            {
+                description += $"\n**Reason:** {reason}";
+            }
 
             var builder = new EmbedBuilder()
             {

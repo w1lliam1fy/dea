@@ -28,8 +28,15 @@ namespace DEA.Common.Extensions
                         Description = description,
                         Color = Config.Color()
                     };
-                    if (title != null) builder.Title = title;
-                    if (color.RawValue != default(Color).RawValue) builder.Color = color;
+                    if (title != null)
+                    {
+                        builder.Title = title;
+                    }
+
+                    if (color.RawValue != default(Color).RawValue)
+                    {
+                        builder.Color = color;
+                    }
 
                     return await channel.SendMessageAsync(string.Empty, embed: builder);
                 }

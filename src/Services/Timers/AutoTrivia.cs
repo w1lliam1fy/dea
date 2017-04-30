@@ -43,7 +43,8 @@ namespace DEA.Services.Timers
             StateObj.TimerReference = _timer;
         }
 
-        private void Trivia(object stateObj) =>
+        private void Trivia(object stateObj)
+        {
             Task.Run(async () =>
             {
                 Logger.Log(LogSeverity.Debug, $"Timers", "Auto Trivia");
@@ -58,13 +59,13 @@ namespace DEA.Services.Timers
                             var defaultChannel = guild.DefaultChannel;
                             try
                             {
-                                await _gameService.Trivia(defaultChannel, dbGuild);
+                                await _gameService.TriviaAsync(defaultChannel, dbGuild);
                             }
                             catch { }
                         }
                     }
                 }
             });
-
+        }
     }
 }

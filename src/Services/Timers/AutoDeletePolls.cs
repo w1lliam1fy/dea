@@ -37,13 +37,15 @@ namespace DEA.Services.Timers
             StateObj.TimerReference = _timer;
         }
 
-        private void DeletePolls(object stateObj) =>
+        private void DeletePolls(object stateObj)
+        {
             Task.Run(async () =>
             {
                 Logger.Log(LogSeverity.Debug, $"Timers", "Auto Delete Polls");
                 var builder = Builders<Poll>.Filter;
 
                 foreach (var poll in await (await _polls.FindAsync(builder.Empty)).ToListAsync())
+                {
                     if (TimeSpan.FromMilliseconds(poll.Length).Subtract(DateTime.UtcNow.Subtract(poll.CreatedAt)).TotalMilliseconds < 0)
                     {
                         var description = string.Empty;
@@ -53,7 +55,11 @@ namespace DEA.Services.Timers
                         {
                             var choice = poll.Choices[j];
                             var percentage = (votes[choice] / (double)poll.VotesDocument.ElementCount);
-                            if (double.IsNaN(percentage)) percentage = 0;
+                            if (double.IsNaN(percentage))
+                            {
+                                percentage = 0;
+                            }
+
                             description += $"{j + 1}. {choice}: {votes[choice]} Votes ({percentage.ToString("P")})\n";
                         }
 
@@ -61,7 +67,8 @@ namespace DEA.Services.Timers
 
                         await _polls.DeleteOneAsync(y => y.Id == poll.Id);
                     }
+                }
             });
-
+        }
     }
 }

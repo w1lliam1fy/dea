@@ -1,19 +1,14 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-using System;
+﻿using System;
 
 namespace DEA.Database.Models
 {
-    public partial class User
+    public partial class User : Model
     {
         public User(ulong userId, ulong guildId)
         {
             UserId = userId;
             GuildId = guildId;
         }
-
-        [BsonId]
-        public ObjectId Id { get; set; }
 
         public ulong UserId { get; set; }
 
