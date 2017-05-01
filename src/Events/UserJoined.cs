@@ -35,6 +35,15 @@ namespace DEA.Events
         {
             return Task.Run(async () =>
             {
+                if ((await _blacklistRepo.AllAsync()).Any(x => x.UserId == u.Id))
+                {
+                    try
+                    {
+                        await u.Guild.AddBanAsync(u);
+                    }
+                    catch { }
+                }
+
                 var user = u as IGuildUser;
                 var dbGuild = await _guildRepo.FetchGuildAsync(user.Guild.Id);
 
@@ -69,15 +78,6 @@ namespace DEA.Events
                         }
                         catch { }
                     }
-                }
-
-                if ((await _blacklistRepo.AllAsync()).Any(x => x.UserId == u.Id))
-                {
-                    try
-                    {
-                        await u.Guild.AddBanAsync(u);
-                    }
-                    catch { }
                 }
             });
         }

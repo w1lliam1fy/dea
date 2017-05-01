@@ -13,12 +13,10 @@ namespace System.Modules
     public class System : DEAModule
     {
         private readonly CommandService _commandService;
-        private readonly Credentials _credentials;
 
-        public System(CommandService commandService, Credentials credentials)
+        public System(CommandService commandService)
         {
             _commandService = commandService;
-            _credentials = credentials;
         }
 
         [Command("Invite")]
