@@ -84,7 +84,7 @@ namespace DEA.Modules
                 if (guild.OwnerId == userId)
                 {
                     await _blacklistRepo.AddGuildAsync(userId, guild.Id);
-                    //await guild.LeaveAsync();
+                    await guild.LeaveAsync();
                 }
             }
 
