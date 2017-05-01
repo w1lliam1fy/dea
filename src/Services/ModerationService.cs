@@ -1,5 +1,6 @@
 ﻿using DEA.Common;
 using DEA.Common.Extensions.DiscordExtensions;
+using DEA.Database.Models;
 using DEA.Database.Repositories;
 using Discord;
 using System.Linq;
@@ -29,6 +30,33 @@ namespace DEA.Services
             if (context.DbGuild.ModRoles.ElementCount != 0)
             {
                 foreach (var role in context.DbGuild.ModRoles.OrderBy(x => x.Value))
+                {
+                    if (user.Guild.GetRole(ulong.Parse(role.Name)) != null)
+                    {
+                        if (user.RoleIds.Any(x => x.ToString() == role.Name))
+                        {
+                            permLevel = role.Value.AsInt32;
+                        }
+                    }
+                }
+            }
+
+            return user.GuildPermissions.Administrator && permLevel < 2 ? 2 : permLevel;
+        }
+
+        /// <summary>
+        /// Checks whether a user is a moderator.
+        /// </summary>
+        /// <param name="context">The context to get the guild data information.</param>
+        /// <param name="user">The user in question.</param>
+        /// <returns>The permission level of the user.</returns>
+        public int FetchPermLevel(Guild dbGuild, IGuildUser user)
+        {
+            var permLevel = 0;
+
+            if (dbGuild.ModRoles.ElementCount != 0)
+            {
+                foreach (var role in dbGuild.ModRoles.OrderBy(x => x.Value))
                 {
                     if (user.Guild.GetRole(ulong.Parse(role.Name)) != null)
                     {

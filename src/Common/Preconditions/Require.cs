@@ -1,5 +1,6 @@
 ﻿using DEA.Common.Extensions;
 using DEA.Database.Repositories;
+using DEA.Services;
 using Discord;
 using Discord.Commands;
 using System;
@@ -15,6 +16,7 @@ namespace DEA.Common.Preconditions
         
         private Credentials _credentials;
         private UserRepository _userRepo;
+        private ModerationService _moderationService;
         private GuildRepository _guildRepo;
         private GangRepository _gangRepo;
 
@@ -34,6 +36,7 @@ namespace DEA.Common.Preconditions
             _map = map;
             _credentials = _map.Get<Credentials>();
             _userRepo = _map.Get<UserRepository>();
+            _moderationService = map.Get<ModerationService>();
             _guildRepo = _map.Get<GuildRepository>();
             _gangRepo = _map.Get<GangRepository>();
 
@@ -74,15 +77,10 @@ namespace DEA.Common.Preconditions
 
                         break;
                     case Attributes.Moderator:
-                        if (!guildUser.GuildPermissions.Administrator && DbGuild.ModRoles.ElementCount == 0)
+                        if (_moderationService.FetchPermLevel(DbGuild, context.User as IGuildUser) == 0)
                         {
                             return PreconditionResult.FromError("Only a moderator may use this command.");
                         }
-                        else if (!guildUser.GuildPermissions.Administrator && DbGuild.ModRoles.ElementCount != 0 && !guildUser.RoleIds.Any(x => DbGuild.ModRoles.Any(y => y.Name == x.ToString())))
-                        {
-                            return PreconditionResult.FromError("Only a moderator may use this command.");
-                        }
-
                         break;
                     case Attributes.Nsfw:
                         if (!DbGuild.Nsfw)
