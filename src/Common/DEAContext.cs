@@ -17,7 +17,7 @@ namespace DEA.Common
         public Guild DbGuild { get; private set; }
         public Gang Gang { get; private set; }
         public string Prefix { get; private set; }
-        public decimal Cash { get; private set; }
+        public decimal Cash { get; set; }
 
         private readonly IDependencyMap _map;
         private readonly UserRepository _userRepo;

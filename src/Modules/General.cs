@@ -113,9 +113,10 @@ namespace DEA.Modules
                 ReplyError("There is nobody on the leaderboards yet.");
             }
 
+            var guildInterface = Context.Guild as IGuild;
+
             foreach (User dbUser in sorted)
             {
-                var guildInterface = Context.Guild as IGuild;
                 var user = await guildInterface.GetUserAsync(dbUser.UserId);
                 if (user == null)
                 {
@@ -154,9 +155,10 @@ namespace DEA.Modules
                 ReplyError("There is nobody on the leaderboards yet.");
             }
 
+            var guildInterface = Context.Guild as IGuild;
+
             foreach (User dbUser in sorted)
             {
-                var guildInterface = Context.Guild as IGuild;
                 var user = await guildInterface.GetUserAsync(dbUser.UserId);
                 if (user == null)
                 {

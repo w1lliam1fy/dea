@@ -28,7 +28,7 @@ namespace DEA.Modules
         [Summary("Creates a poll.")]
         public async Task AddPoll([Summary("Are you white?")] string poll, [Summary("HELL YEA~No~Maybe")] string choices, double daysToLast = 1, bool elderOnly = false, bool modOnly = false)
         {
-            var isMod = _moderationService.IsMod(Context, Context.GUser);
+            var isMod = _moderationService.FetchPermLevel(Context, Context.GUser) > 0;
 
             if (modOnly && !isMod)
             {
@@ -167,7 +167,7 @@ namespace DEA.Modules
             {
                 ReplyError($"You must have been in this server for more than {Config.ELDER_TIME_REQUIRED.TotalDays} days to vote on this poll.");
             }
-            else if (poll.ModOnly && !_moderationService.IsMod(Context, Context.GUser))
+            else if (poll.ModOnly && _moderationService.FetchPermLevel(Context, Context.GUser) == 0)
             {
                 ReplyError("Only a moderator may vote on this poll.");
             }

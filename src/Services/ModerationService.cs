@@ -21,70 +21,26 @@ namespace DEA.Services
         /// </summary>
         /// <param name="context">The context to get the guild data information.</param>
         /// <param name="user">The user in question.</param>
-        /// <returns>Whether the user is a moderator.</returns>
-        public bool IsMod(DEAContext context, IGuildUser user)
+        /// <returns>The permission level of the user.</returns>
+        public int FetchPermLevel(DEAContext context, IGuildUser user)
         {
-            if (user.GuildPermissions.Administrator)
-            {
-                return true;
-            }
+            var permLevel = 0;
 
             if (context.DbGuild.ModRoles.ElementCount != 0)
             {
-                foreach (var role in context.DbGuild.ModRoles)
+                foreach (var role in context.DbGuild.ModRoles.OrderBy(x => x.Value))
                 {
                     if (user.Guild.GetRole(ulong.Parse(role.Name)) != null)
                     {
                         if (user.RoleIds.Any(x => x.ToString() == role.Name))
                         {
-                            return true;
+                            permLevel = role.Value.AsInt32;
                         }
                     }
                 }
             }
 
-            return false;
-        }
-
-        /// <summary>
-        /// Checks if a user has a higher permission level than another user.
-        /// </summary>
-        /// <param name="context">The context to get the guild data information.</param>
-        /// <param name="user1">The first user in question.</param>
-        /// <param name="user2">The second user in question.</param>
-        /// <returns>Whether the first user has a higher permission level than the second.</returns>
-        public bool IsHigherMod(DEAContext context, IGuildUser user1, IGuildUser user2)
-        {
-            int highest = user1.GuildPermissions.Administrator ? 2 : 0;
-            int highestForUser = user2.GuildPermissions.Administrator ? 2 : 0;
-            if (context.DbGuild.ModRoles.ElementCount == 0)
-            {
-                return highest > highestForUser;
-            }
-
-            foreach (var role in context.DbGuild.ModRoles.OrderBy(x => x.Value))
-            {
-                if (user1.Guild.GetRole(ulong.Parse(role.Name)) != null)
-                {
-                    if (user1.RoleIds.Any(x => x.ToString() == role.Name))
-                    {
-                        highest = role.Value.AsInt32;
-                    }
-                }
-            }
-
-            foreach (var role in context.DbGuild.ModRoles.OrderBy(x => x.Value))
-            {
-                if (user2.Guild.GetRole(ulong.Parse(role.Name)) != null)
-                {
-                    if (user2.RoleIds.Any(x => x.ToString() == role.Name))
-                    {
-                        highestForUser = role.Value.AsInt32;
-                    }
-                }
-            }
-
-            return highest > highestForUser;
+            return user.GuildPermissions.Administrator && permLevel < 2 ? 2 : permLevel;
         }
 
         /// <summary>

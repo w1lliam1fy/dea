@@ -104,7 +104,7 @@ namespace DEA.Services
             decimal roll = new Random().Next(1, 10001) / 100m;
             if (roll >= odds)
             {
-                await _userRepo.EditCashAsync(context, (bet * payoutMultiplier));
+                await _userRepo.EditCashAsync(context, bet * payoutMultiplier);
                 await context.Channel.ReplyAsync(context.User, $"You rolled: {roll.ToString("N2")}. Congrats, you won " +
                                                  $"{(bet * payoutMultiplier).USD()}! Balance: {context.DbUser.Cash.USD()}.");
             }

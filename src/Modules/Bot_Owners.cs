@@ -30,6 +30,23 @@ namespace DEA.Modules
             await ReplyAsync($"Successfully set the game to {game}.");
         }
 
+        [Command("LeaveGuild")]
+        [Summary("Leaves any guild by guild ID.")]
+        public async Task LeaveGuild(ulong guildId)
+        {
+            var guild = Context.Client.GetGuild(guildId);
+            
+            if (guild != null)
+            {
+                await guild.LeaveAsync();
+                await ReplyAsync("DEA has successfully left this guild.");
+            }
+            else
+            {
+                await ReplyAsync("DEA is not in this guild.");
+            }
+        }
+
         [Command("SendGlobalUpdate")]
         [Summary("Sends a global update message into all DEA Update channels.")]
         public async Task SendGlobalUpdate([Remainder] string updateMessage)

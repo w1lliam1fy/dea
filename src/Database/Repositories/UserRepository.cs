@@ -55,7 +55,9 @@ namespace DEA.Database.Repositories
 
         public async Task EditCashAsync(DEAContext context, decimal change)
         {
-            context.DbUser.Cash = Math.Round(context.Cash + change, 2);
+            var newCash = Math.Round(context.Cash + change, 2);
+            context.Cash = newCash;
+            context.DbUser.Cash = newCash; 
             await UpdateAsync(context.DbUser);
             await _rankHandler.HandleAsync(context.Guild, context.User as IGuildUser, context.DbGuild, context.DbUser);
         }

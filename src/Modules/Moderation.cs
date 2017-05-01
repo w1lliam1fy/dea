@@ -29,7 +29,7 @@ namespace DEA.Modules
         [Summary("Bans a user.")]
         public async Task Ban(IGuildUser userToBan, [Remainder] string reason = null)
         {
-            if (!_moderationService.IsHigherMod(Context, Context.GUser, userToBan))
+            if (_moderationService.FetchPermLevel(Context, Context.GUser) < _moderationService.FetchPermLevel(Context, userToBan))
             {
                 ReplyError("You cannot ban another mod with a permission level higher or equal to your own.");
             }
@@ -83,7 +83,7 @@ namespace DEA.Modules
         [Summary("Kicks a user.")]
         public async Task Kick(IGuildUser userToKick, [Remainder] string reason = null)
         {
-            if (_moderationService.IsMod(Context, userToKick))
+            if (_moderationService.FetchPermLevel(Context, userToKick) > 0)
             {
                 ReplyError("You cannot kick another mod!");
             }
@@ -108,7 +108,7 @@ namespace DEA.Modules
                 ReplyError($"You may not mute users if the muted role is not valid.\nPlease use the " +
                                  $"`{Context.Prefix}SetMutedRole` command to change that.");
             }
-            else if (_moderationService.IsMod(Context, userToMute))
+            else if (_moderationService.FetchPermLevel(Context, userToMute) > 0)
             {
                 ReplyError("You cannot mute another mod.");
             }
@@ -145,7 +145,7 @@ namespace DEA.Modules
                 ReplyError($"You may not mute users if the muted role is not valid.\nPlease use the " +
                            $"{Context.DbGuild.Prefix}SetMutedRole command to change that.");
             }
-            else if (_moderationService.IsMod(Context, userToMute))
+            else if (_moderationService.FetchPermLevel(Context, userToMute) > 0)
             {
                 ReplyError("You cannot mute another mod.");
             }
