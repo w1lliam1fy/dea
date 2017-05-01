@@ -36,6 +36,7 @@ namespace DEA
         private readonly IMongoCollection<Gang> _gangs;
         private readonly IMongoCollection<Poll> _polls;
         private readonly IMongoCollection<Mute> _mutes;
+        private readonly IMongoCollection<Blacklist> _blacklists;
 
         public Program()
         {
@@ -76,6 +77,7 @@ namespace DEA
             _gangs = database.GetCollection<Gang>("gangs");
             _polls = database.GetCollection<Poll>("polls");
             _mutes = database.GetCollection<Mute>("mutes");
+            _blacklists = database.GetCollection<Blacklist>("blacklists");
         }
 
         private async Task RunAsync()
@@ -120,13 +122,9 @@ namespace DEA
         {
             map.Add(_client);
             map.Add(_credentials);
-            map.Add(_guilds);
-            map.Add(_users);
-            map.Add(_gangs);
-            map.Add(_polls);
-            map.Add(_mutes);
             map.Add(new PollRepository(_polls));
             map.Add(new GuildRepository(_guilds));
+            map.Add(new BlacklistRepository(_blacklists));
             map.Add(new RankHandler(map.Get<GuildRepository>()));
             map.Add(new UserRepository(_users, map.Get<RankHandler>()));
             map.Add(new InteractiveService(_client));
@@ -140,7 +138,7 @@ namespace DEA
         private void InitializeTimersAndEvents(IDependencyMap map)
         {
             new Ready(map);
-            new UserEvents(map);
+            new UserJoined(map);
             new ApplyIntrestRate(map);
             new AutoDeletePolls(map);
             new AutoTrivia(map);

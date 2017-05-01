@@ -1,4 +1,5 @@
 ﻿using DEA.Database.Models;
+using DEA.Database.Repositories;
 using DEA.Services.Static;
 using Discord;
 using Discord.Commands;
@@ -15,14 +16,14 @@ namespace DEA.Services.Timers
     class ApplyIntrestRate
     {
         private readonly IDependencyMap _map;
-        private readonly IMongoCollection<Gang> _gangs;
+        private readonly GangRepository _gangRepo;
 
         private readonly Timer _timer;
 
         public ApplyIntrestRate(IDependencyMap map)
         {
             _map = map;
-            _gangs = _map.Get<IMongoCollection<Gang>>();
+            _gangRepo = _map.Get<GangRepository>();
 
             ObjectState StateObj = new ObjectState();
 
@@ -38,14 +39,13 @@ namespace DEA.Services.Timers
             Task.Run(async () =>
             {
                 Logger.Log(LogSeverity.Debug, $"Timers", "Interest Rate");
-                var builder = Builders<Gang>.Filter;
                 var updateBuilder = Builders<Gang>.Update;
 
-                foreach (var gang in await (await _gangs.FindAsync(builder.Empty)).ToListAsync())
+                foreach (var gang in await _gangRepo.AllAsync())
                 {
                     try
                     {
-                        await _gangs.UpdateOneAsync(y => y.Id == gang.Id,
+                        await _gangRepo.Collection.UpdateOneAsync(y => y.Id == gang.Id,
                         updateBuilder.Set(x => x.Wealth, Static.InterestRate.Calculate(gang.Wealth) * gang.Wealth + gang.Wealth));
                     }
                     catch (OverflowException) { }

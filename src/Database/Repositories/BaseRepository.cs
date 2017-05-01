@@ -10,39 +10,39 @@ namespace DEA.Database.Repositories
 {
     public class BaseRepository<T> where T : Model
     {
-        public IMongoCollection<T> _collection { get; }
+        public IMongoCollection<T> Collection { get; }
 
         public BaseRepository(IMongoCollection<T> collection)
         {
-            _collection = collection;
+            Collection = collection;
         }
 
         public Task InsertAsync(T entity)
         {
-            return _collection.InsertOneAsync(entity, null, default(CancellationToken));
+            return Collection.InsertOneAsync(entity, null, default(CancellationToken));
         }
 
         public Task<T> FetchAsync(Expression<Func<T, bool>> filter)
         {
-            return _collection.Find(filter).Limit(1).FirstOrDefaultAsync();
+            return Collection.Find(filter).Limit(1).FirstOrDefaultAsync();
         }
 
         public async Task<List<T>> AllAsync(Expression<Func<T, bool>> filter = null)
         {
             if (filter != null)
-                return await (await _collection.FindAsync(filter)).ToListAsync();
+                return await (await Collection.FindAsync(filter)).ToListAsync();
             else
-                return await(await _collection.FindAsync(Builders<T>.Filter.Empty)).ToListAsync();
+                return await(await Collection.FindAsync(Builders<T>.Filter.Empty)).ToListAsync();
         }
 
         public Task UpdateAsync(T entity)
         {
-            return _collection.ReplaceOneAsync(y => y.Id == entity.Id, entity);
+            return Collection.ReplaceOneAsync(y => y.Id == entity.Id, entity);
         }
         
         public Task<bool> ExistsAsync(Expression<Func<T, bool>> filter)
         {
-            return _collection.Find(filter).Limit(1).AnyAsync();
+            return Collection.Find(filter).Limit(1).AnyAsync();
         }
 
         public Task ModifyAsync(T entity, Action<T> function)
@@ -60,7 +60,7 @@ namespace DEA.Database.Repositories
 
         public Task DeleteAsync(Expression<Func<T, bool>> filter)
         {
-            return _collection.DeleteOneAsync(filter);
+            return Collection.DeleteOneAsync(filter);
         }
 
     }

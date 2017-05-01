@@ -1,5 +1,6 @@
 ﻿using DEA.Common.Extensions;
 using DEA.Database.Models;
+using DEA.Database.Repositories;
 using DEA.Services.Static;
 using Discord;
 using Discord.Commands;
@@ -18,14 +19,14 @@ namespace DEA.Services.Timers
     {
         private readonly IDependencyMap _map;
         private readonly DiscordSocketClient _client;
-        private readonly IMongoCollection<Poll> _polls;
+        private readonly PollRepository _pollRepo;
 
         private readonly Timer _timer;
 
         public AutoDeletePolls(IDependencyMap map)
         {
             _map = map;
-            _polls = _map.Get<IMongoCollection<Poll>>();
+            _pollRepo = _map.Get<PollRepository>();
             _client = _map.Get<DiscordSocketClient>();
 
             ObjectState StateObj = new ObjectState();
@@ -42,9 +43,8 @@ namespace DEA.Services.Timers
             Task.Run(async () =>
             {
                 Logger.Log(LogSeverity.Debug, $"Timers", "Auto Delete Polls");
-                var builder = Builders<Poll>.Filter;
 
-                foreach (var poll in await (await _polls.FindAsync(builder.Empty)).ToListAsync())
+                foreach (var poll in await _pollRepo.AllAsync())
                 {
                     if (TimeSpan.FromMilliseconds(poll.Length).Subtract(DateTime.UtcNow.Subtract(poll.CreatedAt)).TotalMilliseconds < 0)
                     {
@@ -65,7 +65,7 @@ namespace DEA.Services.Timers
 
                         await poll.CreatorId.DMAsync(_client, description, $"Final Poll Results of \"{poll.Name}\" Poll");
 
-                        await _polls.DeleteOneAsync(y => y.Id == poll.Id);
+                        await _pollRepo.DeleteAsync(y => y.Id == poll.Id);
                     }
                 }
             });

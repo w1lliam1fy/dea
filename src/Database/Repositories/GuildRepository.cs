@@ -1,6 +1,5 @@
 ﻿using DEA.Database.Models;
 using MongoDB.Driver;
-using System;
 using System.Threading.Tasks;
 
 namespace DEA.Database.Repositories

@@ -20,14 +20,12 @@ namespace DEA.Modules
         private readonly GangRepository _gangRepo;
         private readonly UserRepository _userRepo;
         private readonly InteractiveService _interactiveService;
-        private readonly IMongoCollection<Gang> _gangs;
 
-        public Gangs(GangRepository gangRepo, UserRepository userRepo, InteractiveService interactiveService, IMongoCollection<Gang> gangs)
+        public Gangs(GangRepository gangRepo, UserRepository userRepo, InteractiveService interactiveService)
         {
             _gangRepo = gangRepo;
             _userRepo = userRepo;
             _interactiveService = interactiveService;
-            _gangs = gangs;
         }
 
         [Command("CreateGang")]
@@ -150,7 +148,7 @@ namespace DEA.Modules
         [Summary("Shows the wealthiest gangs.")]
         public async Task Ganglb()
         {
-            var gangs = await (await _gangs.FindAsync(y => y.GuildId == Context.Guild.Id)).ToListAsync();
+            var gangs = await (await _gangRepo.Collection.FindAsync(y => y.GuildId == Context.Guild.Id)).ToListAsync();
 
             if (gangs.Count == 0)
             {
@@ -230,7 +228,7 @@ namespace DEA.Modules
                 ReplyError($"You do not have {Config.GANG_NAME_CHANGE_COST.USD()}. Balance: {Context.Cash.USD()}.");
             }
 
-            var gangs = await (await _gangs.FindAsync(y => y.GuildId == Context.Guild.Id)).ToListAsync();
+            var gangs = await (await _gangRepo.Collection.FindAsync(y => y.GuildId == Context.Guild.Id)).ToListAsync();
 
             if (gangs.Any(x => x.Name.ToLower() == newName.ToLower()))
             {

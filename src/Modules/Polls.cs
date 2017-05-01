@@ -9,7 +9,6 @@ using DEA.Common.Extensions.DiscordExtensions;
 using System;
 using System.Linq;
 using DEA.Services;
-using DEA.Database.Models;
 using Discord;
 
 namespace DEA.Modules
@@ -18,13 +17,11 @@ namespace DEA.Modules
     {
         private readonly ModerationService _moderationService;
         private readonly PollRepository _pollRepo;
-        private readonly IMongoCollection<Poll> _polls;
 
-        public Polls(ModerationService moderationService, PollRepository pollRepo, IMongoCollection<Poll> polls)
+        public Polls(ModerationService moderationService, PollRepository pollRepo)
         {
             _moderationService = moderationService;
             _pollRepo = pollRepo;
-            _polls = polls;
         }
 
         [Command("CreatePoll")]
@@ -47,7 +44,7 @@ namespace DEA.Modules
 
             await _pollRepo.CreatePollAsync(Context, poll, choicesArray, TimeSpan.FromDays(daysToLast), elderOnly, modOnly, isMod);
 
-            await ReplyAsync($"You have successfully created poll #{await _polls.CountAsync(y => y.GuildId == Context.Guild.Id)}.");
+            await ReplyAsync($"You have successfully created poll #{await _pollRepo.Collection.CountAsync(y => y.GuildId == Context.Guild.Id)}.");
         }
 
         [Command("RemovePoll")]
@@ -66,7 +63,7 @@ namespace DEA.Modules
         [Summary("Sends you a list of all polls in progress.")]
         public async Task Indexes()
         {
-            var polls = await (await _polls.FindAsync(y => y.GuildId == Context.Guild.Id)).ToListAsync();
+            var polls = await (await _pollRepo.Collection.FindAsync(y => y.GuildId == Context.Guild.Id)).ToListAsync();
 
             polls = polls.OrderBy(x => x.CreatedAt).ToList();
 

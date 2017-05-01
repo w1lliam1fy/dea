@@ -1,6 +1,7 @@
 ﻿using DEA.Common;
 using DEA.Common.Extensions.DiscordExtensions;
 using DEA.Common.Preconditions;
+using DEA.Database.Models;
 using DEA.Database.Repositories;
 using Discord;
 using Discord.Commands;
@@ -13,10 +14,12 @@ namespace DEA.Modules
     public class Bot_Owners : DEAModule
     {
         private readonly GuildRepository _guildRepo;
+        private readonly BlacklistRepository _blacklistRepo;
 
-        public Bot_Owners(GuildRepository guildRepo)
+        public Bot_Owners(GuildRepository guildRepo, BlacklistRepository blacklistRepo)
         {
             _guildRepo = guildRepo;
+            _blacklistRepo = blacklistRepo;
         }
 
         [Command("SetGame")]
@@ -68,5 +71,25 @@ namespace DEA.Modules
             }
             await ReplyAsync("All owners have been informed.");
         }
+
+        [Command("Blacklist")]
+        [Summary("Blacklist a user from DEA entirely to the fullest extent.")]
+        public async Task Blacklist(ulong userId)
+        {
+            var blacklist = new Blacklist(userId);
+            await _blacklistRepo.InsertAsync(blacklist);
+
+            foreach (var guild in Context.Client.Guilds)
+            {
+                if (guild.OwnerId == userId)
+                {
+                    await _blacklistRepo.AddGuildAsync(userId, guild.Id);
+                    //await guild.LeaveAsync();
+                }
+            }
+
+            await ReplyAsync($"You have successfully blacklisted the following ID: {userId}.");
+        }
+
     }
 }

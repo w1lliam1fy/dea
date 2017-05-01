@@ -3,7 +3,6 @@ using Discord.Commands;
 using System.Threading.Tasks;
 using DEA.Database.Repositories;
 using System.Linq;
-using MongoDB.Bson;
 using DEA.Common;
 using DEA.Common.Preconditions;
 using DEA.Common.Extensions;

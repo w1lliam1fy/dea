@@ -1,10 +1,8 @@
-﻿using DEA.Database.Models;
-using DEA.Database.Repositories;
+﻿using DEA.Database.Repositories;
 using DEA.Services.Static;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using MongoDB.Driver;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,7 +15,7 @@ namespace DEA.Services.Timers
     class AutoTrivia
     { 
         private readonly IDependencyMap _map;
-        private readonly IMongoCollection<Guild> _guilds;
+        private readonly GuildRepository _guildRepo;
         private readonly DiscordSocketClient _client;
         private readonly UserRepository _userRepo;
         private readonly GameService _gameService;
@@ -28,7 +26,7 @@ namespace DEA.Services.Timers
         public AutoTrivia(IDependencyMap map)
         {
             _map = map;
-            _guilds = _map.Get<IMongoCollection<Guild>>();
+            _guildRepo = _map.Get<GuildRepository>();
             _userRepo = map.Get<UserRepository>();
             _client = map.Get<DiscordSocketClient>();
             _gameService = map.Get<GameService>();
@@ -48,8 +46,7 @@ namespace DEA.Services.Timers
             Task.Run(async () =>
             {
                 Logger.Log(LogSeverity.Debug, $"Timers", "Auto Trivia");
-                var builder = Builders<Guild>.Filter;
-                foreach (var dbGuild in await (await _guilds.FindAsync(builder.Empty)).ToListAsync())
+                foreach (var dbGuild in await _guildRepo.AllAsync())
                 {
                     if (dbGuild.AutoTrivia)
                     {

@@ -4,11 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using DEA.Database.Repositories;
 using MongoDB.Driver;
-using MongoDB.Bson;
 using DEA.Services.Handlers;
 using DEA.Common;
 using DEA.Common.Preconditions;
-using DEA.Database.Models;
 using DEA.Common.Extensions;
 
 namespace DEA.Modules
@@ -17,18 +15,16 @@ namespace DEA.Modules
     public class Owners : DEAModule
     {
         private readonly GuildRepository _guildRepo;
+        private readonly GangRepository _gangRepo;
         private readonly UserRepository _userRepo;
         private readonly RankHandler _rankHandler;
-        private readonly IMongoCollection<User> _users;
-        private readonly IMongoCollection<Gang> _gangs;
 
-        public Owners(GuildRepository guildRepo, UserRepository userRepo, RankHandler rankHandler, IMongoCollection<User> users, IMongoCollection<Gang> gangs)
+        public Owners(GuildRepository guildRepo, UserRepository userRepo, GangRepository gangRepo, RankHandler rankHandler)
         {
             _guildRepo = guildRepo;
+            _gangRepo = gangRepo;
             _userRepo = userRepo;
             _rankHandler = rankHandler;
-            _users = users;
-            _gangs = gangs;
         }
 
         [Command("ResetUser")]
@@ -37,7 +33,7 @@ namespace DEA.Modules
         {
             user = user ?? Context.GUser;
 
-            await _users.DeleteOneAsync(y => y.UserId == user.Id && y.GuildId == user.GuildId);
+            await _userRepo.Collection.DeleteOneAsync(y => y.UserId == user.Id && y.GuildId == user.GuildId);
             await _rankHandler.HandleAsync(Context.Guild, user, Context.DbGuild, await _userRepo.FetchUserAsync(user));
 
             await SendAsync($"Successfully reset {user.Boldify()}'s data.");
@@ -128,8 +124,8 @@ namespace DEA.Modules
         {
             if (role == null)
             {
-                await _users.DeleteManyAsync(x => x.GuildId == Context.Guild.Id);
-                await _gangs.DeleteManyAsync(y => y.GuildId == Context.Guild.Id);
+                await _userRepo.Collection.DeleteManyAsync(x => x.GuildId == Context.Guild.Id);
+                await _gangRepo.Collection.DeleteManyAsync(y => y.GuildId == Context.Guild.Id);
 
                 await ReplyAsync("Successfully reset all data in your server!");
             }
@@ -137,7 +133,7 @@ namespace DEA.Modules
             {
                 foreach (var user in (await (Context.Guild as IGuild).GetUsersAsync()).Where(x => x.RoleIds.Any(y => y == role.Id)))
                 {
-                    _users.DeleteOne(y => y.UserId == user.Id && y.GuildId == user.Guild.Id);
+                    _userRepo.Collection.DeleteOne(y => y.UserId == user.Id && y.GuildId == user.Guild.Id);
                 }
 
                 await ReplyAsync($"Successfully reset all users with the {role.Mention} role!");

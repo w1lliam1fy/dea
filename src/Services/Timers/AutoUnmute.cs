@@ -19,7 +19,6 @@ namespace DEA.Services.Timers
     {
         private readonly IDependencyMap _map;
         private readonly DiscordSocketClient _client;
-        private readonly IMongoCollection<Mute> _mutes;
         private readonly GuildRepository _guildRepo;
         private readonly MuteRepository _muteRepo;
 
@@ -29,7 +28,6 @@ namespace DEA.Services.Timers
         {
             _map = map;
             _client = _map.Get<DiscordSocketClient>();
-            _mutes = _map.Get<IMongoCollection<Mute>>();
             _guildRepo = _map.Get<GuildRepository>();
             _muteRepo = _map.Get<MuteRepository>();
 
@@ -47,8 +45,8 @@ namespace DEA.Services.Timers
             Task.Run(async () =>
             {
                 Logger.Log(LogSeverity.Debug, $"Timers", "Auto Unmute");
-                var builder = Builders<Mute>.Filter;
-                foreach (var mute in await (await _mutes.FindAsync(builder.Empty)).ToListAsync())
+
+                foreach (var mute in await _muteRepo.AllAsync())
                 {
                     if (DateTime.UtcNow.Subtract(mute.MutedAt).TotalMilliseconds > mute.MuteLength)
                     {

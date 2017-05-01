@@ -1,4 +1,5 @@
 ﻿using DEA.Database.Models;
+using DEA.Database.Repositories;
 using DEA.Services.Static;
 using Discord;
 using Discord.Commands;
@@ -15,14 +16,14 @@ namespace DEA.Services.Timers
     class ResetTempMultiplier
     {
         private readonly IDependencyMap _map;
-        private readonly IMongoCollection<User> _users;
+        private readonly UserRepository _userRepo;
 
         private readonly Timer _timer;
 
         public ResetTempMultiplier(IDependencyMap map)
         {
             _map = map;
-            _users = _map.Get<IMongoCollection<User>>();
+            _userRepo = _map.Get<UserRepository>();
 
             ObjectState StateObj = new ObjectState();
 
@@ -40,7 +41,7 @@ namespace DEA.Services.Timers
                 Logger.Log(LogSeverity.Debug, $"Timers", "Reset Temporary Multiplier");
                 var builder = Builders<User>.Filter;
                 var updateBuilder = Builders<User>.Update;
-                await _users.UpdateManyAsync(builder.Empty, updateBuilder.Set(x => x.TemporaryMultiplier, 1));
+                await _userRepo.Collection.UpdateManyAsync(builder.Empty, updateBuilder.Set(x => x.TemporaryMultiplier, 1));
             });
         }
     }

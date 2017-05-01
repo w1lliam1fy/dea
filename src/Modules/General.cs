@@ -19,15 +19,13 @@ namespace DEA.Modules
         private readonly GuildRepository _guildRepo;
         private readonly GangRepository _gangRepo;
         private readonly RankHandler _rankHandler;
-        private readonly IMongoCollection<User> _users;
 
-        public General(UserRepository userRepo, GuildRepository guildRepo, GangRepository gangRepo, RankHandler rankHandler, IMongoCollection<User> users)
+        public General(UserRepository userRepo, GuildRepository guildRepo, GangRepository gangRepo, RankHandler rankHandler)
         {
             _userRepo = userRepo;
             _guildRepo = guildRepo;
             _gangRepo = gangRepo;
             _rankHandler = rankHandler;
-            _users = users;
         }
 
         [Command("Investments")]
@@ -105,7 +103,7 @@ namespace DEA.Modules
         [Summary("View the richest Drug Traffickers.")]
         public async Task Leaderboards()
         {
-            var users = await (await _users.FindAsync(x => x.GuildId == Context.Guild.Id)).ToListAsync();
+            var users = await (await _userRepo.Collection.FindAsync(x => x.GuildId == Context.Guild.Id)).ToListAsync();
             var sorted = users.OrderByDescending(x => x.Cash);
             string description = string.Empty;
             int position = 1;
@@ -146,7 +144,7 @@ namespace DEA.Modules
         [Summary("View the richest Drug Traffickers.")]
         public async Task Chatters()
         {
-            var users = await (await _users.FindAsync(y => y.GuildId == Context.Guild.Id)).ToListAsync();
+            var users = await (await _userRepo.Collection.FindAsync(y => y.GuildId == Context.Guild.Id)).ToListAsync();
             var sorted = users.OrderByDescending(x => x.TemporaryMultiplier);
             string description = string.Empty;
             int position = 1;
@@ -211,7 +209,7 @@ namespace DEA.Modules
             user = user ?? Context.GUser;
 
             var dbUser = user.Id == Context.User.Id ? Context.DbUser : await _userRepo.FetchUserAsync(user);
-            var users = await (await _users.FindAsync(y => y.GuildId == Context.Guild.Id)).ToListAsync();
+            var users = await (await _userRepo.Collection.FindAsync(y => y.GuildId == Context.Guild.Id)).ToListAsync();
             var sorted = users.OrderByDescending(x => x.Cash).ToList();
 
             IRole rank = await _rankHandler.FetchRankAsync(Context, dbUser);

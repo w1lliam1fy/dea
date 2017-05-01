@@ -85,13 +85,13 @@ namespace DEA.Database.Repositories
         public Task RemoveMemberAsync(Gang gang, ulong memberId)
         {
             var builder = Builders<Gang>.Update;
-            return _collection.UpdateOneAsync(c => c.Id == gang.Id, builder.Pull(x => x.Members, memberId));
+            return Collection.UpdateOneAsync(c => c.Id == gang.Id, builder.Pull(x => x.Members, memberId));
         }
 
         public Task AddMemberAsync(Gang gang, ulong newMemberId)
         {
             var builder = Builders<Gang>.Update;
-            return _collection.UpdateOneAsync(c => c.Id == gang.Id, builder.Push(x => x.Members, newMemberId));
+            return Collection.UpdateOneAsync(c => c.Id == gang.Id, builder.Push(x => x.Members, newMemberId));
         }
 
     }
