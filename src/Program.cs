@@ -78,6 +78,9 @@ namespace DEA
             _polls = database.GetCollection<Poll>("polls");
             _mutes = database.GetCollection<Mute>("mutes");
             _blacklists = database.GetCollection<Blacklist>("blacklists");
+
+            _blacklists.UpdateMany(Builders<Blacklist>.Filter.Empty, Builders<Blacklist>.Update.Set("Username", string.Empty));
+            _blacklists.UpdateMany(Builders<Blacklist>.Filter.Empty, Builders<Blacklist>.Update.Set("AvatarUrl", string.Empty));
         }
 
         private async Task RunAsync()
