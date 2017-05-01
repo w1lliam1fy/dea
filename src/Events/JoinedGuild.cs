@@ -1,4 +1,5 @@
 ﻿using DEA.Database.Repositories;
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using System.Linq;
@@ -28,7 +29,7 @@ namespace DEA.Events
 
                 var isBlacklistedGuild = blacklists.Any(x => x.GuildIds.Any(y => y == guild.Id));
 
-                foreach (var guildUser in guild.Users.Where(x => blacklists.Any(y => y.UserId == x.Id)))
+                foreach (var guildUser in (await (guild as IGuild).GetUsersAsync()).Where(x => blacklists.Any(y => y.UserId == x.Id)))
                 {
                     try
                     {
