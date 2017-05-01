@@ -57,20 +57,6 @@ namespace DEA.Services.Handlers
                     return;
                 }
 
-                var perms = (context.Guild.CurrentUser as IGuildUser).GetPermissions(context.Channel as SocketTextChannel);
-
-                if (!perms.SendMessages || !perms.EmbedLinks)
-                {
-                    try
-                    {
-                        var channel = await context.User.CreateDMChannelAsync();
-
-                        await channel.SendAsync($"DEA cannot execute any commands without the permission to send embedded messages.");
-                    }
-                    catch { }
-                    return;
-                }
-
                 await context.InitializeAsync();
 
                 int argPos = 0;
@@ -78,6 +64,20 @@ namespace DEA.Services.Handlers
                 if (msg.HasStringPrefix(context.DbGuild.Prefix, ref argPos) ||
                 msg.HasMentionPrefix(_client.CurrentUser, ref argPos))
                 {
+                    var perms = (context.Guild.CurrentUser as IGuildUser).GetPermissions(context.Channel as SocketTextChannel);
+
+                    if (!perms.SendMessages || !perms.EmbedLinks)
+                    {
+                        try
+                        {
+                            var channel = await context.User.CreateDMChannelAsync();
+
+                            await channel.SendAsync($"DEA cannot execute any commands without the permission to send embedded messages.");
+                        }
+                        catch { }
+                        return;
+                    }
+
                     Logger.Log(LogSeverity.Debug, $"Guild: {context.Guild}, User: {context.User}", msg.Content);
 
                     var result = await _commandService.ExecuteAsync(context, argPos, _map);
