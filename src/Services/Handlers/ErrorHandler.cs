@@ -58,6 +58,10 @@ namespace DEA.Services.Handlers
                                         message = "DEA does not have permission to do that. This issue may be fixed by moving the DEA role " +
                                         "to the top of the roles list, and giving DEA the \"Administrator\" server permission.";
                                         break;
+                                    case HttpStatusCode.InternalServerError:
+                                        message = "Looks like Discord fucked up. An interal server error has occured on Discord's part which is" +
+                                        "entirely unrelated with DEA. Sorry, nothing I can do.";
+                                        break;
                                     default:
                                         message = "Something went wrong. Please try again later. If this issue persists, please report it with " +
                                         "context at: https://github.com/RealBlazeIt/DEA/issues.";
@@ -72,7 +76,7 @@ namespace DEA.Services.Handlers
                                 message = "DEA does not have permission to send messages to this user.";
                                 break;
                             default:
-                                message = httpEx.Message;
+                                message = httpEx.Message.Remove(0, 39) + ".";
                                 break;
                         }
                         await cmdEx.Context.Channel.ReplyAsync(cmdEx.Context.User, message, null, Config.ERROR_COLOR);

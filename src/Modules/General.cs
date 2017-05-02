@@ -72,13 +72,13 @@ namespace DEA.Modules
                     {
                         ReplyError($"You do not have enough money. Balance: {Context.Cash.USD()}.");
                     }
-                    else if (Context.DbUser.InvestmentMultiplier != Config.POUND_MULTIPLIER)
-                    {
-                        ReplyError("You must purchase the pound of cocaine investment before buying this one.");
-                    }
                     else if (Context.DbUser.InvestmentMultiplier >= Config.KILO_MULTIPLIER)
                     {
                         ReplyError("You already purchased this investment.");
+                    }
+                    else if (Context.DbUser.InvestmentMultiplier != Config.POUND_MULTIPLIER)
+                    {
+                        ReplyError("You must purchase the pound of cocaine investment before buying this one.");
                     }
 
                     await _userRepo.EditCashAsync(Context, -Config.KILO_COST);

@@ -69,7 +69,7 @@ namespace DEA.Services
                 var user = response.Author as IGuildUser;
                 var winnings = random.Next(Config.TRIVIA_PAYOUT_MIN * 100, Config.TRIVIA_PAYOUT_MAX * 100) / 100m;
                 await _userRepo.EditCashAsync(user, dbGuild, await _userRepo.FetchUserAsync(user), winnings);
-                await channel.SendAsync($"{user}, Congrats! You just won {winnings.USD()} for correctly answering \"{element.Value.AsString}\".");
+                await channel.SendAsync($"{user.Boldify()}, Congrats! You just won {winnings.USD()} for correctly answering \"{element.Value.AsString}\".");
             }
             else
             {

@@ -60,7 +60,7 @@ namespace DEA.Modules
 
         [Command("SetWelcomeMessage")]
         [Alias("SetWelcome")]
-        [Summary("Set the channel where DEA will send a welcome message to all new users that join.")]
+        [Summary("Sets the welcome message that DEA will send in either the Welcome Channel or the users DM's.")]
         public async Task SetWelcomeMessage([Summary("WELCOME FELLOW USER!")] [Remainder] string message)
         {
             await _guildRepo.ModifyAsync(Context.DbGuild, x => x.WelcomeMessage = message);
@@ -127,8 +127,6 @@ namespace DEA.Modules
                 {
                     ReplyError("There is already a role set to that amount of cash required.");
                 }
-
-                Context.DbGuild.RankRoles.Add(rankRole.Id.ToString(), cashRequired);
 
                 await _guildRepo.ModifyAsync(Context.DbGuild, x => x.RankRoles.Add(rankRole.Id.ToString(), cashRequired));
             }

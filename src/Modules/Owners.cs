@@ -49,7 +49,7 @@ namespace DEA.Modules
             await _userRepo.ModifyAsync(dbUser, x => x.Cash = 100000);
             await _rankHandler.HandleAsync(Context.Guild, user, Context.DbGuild, await _userRepo.FetchUserAsync(user));
 
-            await SendAsync($"Successfully set {user}'s balance to $100,000.00.");
+            await SendAsync($"Successfully set {user.Boldify()}'s balance to $100,000.00.");
         }
 
         [Command("Add")]
@@ -64,7 +64,7 @@ namespace DEA.Modules
             var dbUser = user.Id == Context.User.Id ? Context.DbUser : await _userRepo.FetchUserAsync(user);
             await _userRepo.EditCashAsync(user, Context.DbGuild, dbUser, money);
 
-            await SendAsync($"Successfully added {money.USD()} to {user}'s balance.");
+            await SendAsync($"Successfully added {money.USD()} to {user.Boldify()}'s balance.");
         }
 
         [Command("AddTo")]
@@ -97,7 +97,7 @@ namespace DEA.Modules
             var dbUser = user.Id == Context.User.Id ? Context.DbUser : await _userRepo.FetchUserAsync(user);
             await _userRepo.EditCashAsync(user, Context.DbGuild, dbUser, -money);
 
-            await SendAsync($"Successfully removed {money.USD()} from {user}'s balance.");
+            await SendAsync($"Successfully removed {money.USD()} from {user.Boldify()}'s balance.");
         }
 
         [Command("RemoveFrom")]
