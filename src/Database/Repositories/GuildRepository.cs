@@ -8,9 +8,9 @@ namespace DEA.Database.Repositories
     {
         public GuildRepository(IMongoCollection<Guild> guilds) : base(guilds) { }
 
-        public async Task<Guild> FetchGuildAsync(ulong guildId)
+        public async Task<Guild> GetGuildAsync(ulong guildId)
         {
-            var dbGuild = await FetchAsync(x => x.GuildId == guildId);
+            var dbGuild = await GetAsync(x => x.GuildId == guildId);
             if (dbGuild == default(Guild))
             {
                 var createdGuild = new Guild(guildId);

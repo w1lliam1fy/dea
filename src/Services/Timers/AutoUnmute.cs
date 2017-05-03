@@ -1,4 +1,4 @@
-﻿using DEA.Database.Models;
+﻿using DEA.Common.Data;
 using DEA.Database.Repositories;
 using DEA.Services.Static;
 using Discord;
@@ -50,20 +50,22 @@ namespace DEA.Services.Timers
                 {
                     if (DateTime.UtcNow.Subtract(mute.MutedAt).TotalMilliseconds > mute.MuteLength)
                     {
-                        var guild = _client.GetGuild(mute.GuildId);
-                        if (guild != null && guild.GetUser(mute.UserId) != null)
+                        var guild = await (_client as IDiscordClient).GetGuildAsync(mute.GuildId);
+                        var user = await guild.GetUserAsync(mute.UserId);
+                        if (guild != null && user != null)
                         {
-                            var guildData = await _guildRepo.FetchGuildAsync(guild.Id);
+                            var guildData = await _guildRepo.GetGuildAsync(guild.Id);
                             var mutedRole = guild.GetRole(guildData.MutedRoleId);
-                            if (mutedRole != null && guild.GetUser(mute.UserId).Roles.Any(x => x.Id == mutedRole.Id))
+                            if (mutedRole != null && user.RoleIds.Any(x => x == mutedRole.Id))
                             {
-                                var channel = guild.GetTextChannel(guildData.ModLogChannelId);
+                                var channel = await guild.GetTextChannelAsync(guildData.ModLogChannelId);
                                 ChannelPermissions? perms = null;
+                                var currentUser = await guild.GetCurrentUserAsync();
                                 if (channel != null)
-                                    perms = (guild.CurrentUser as IGuildUser).GetPermissions(channel as SocketTextChannel);
-                                if (channel != null && guild.CurrentUser.GuildPermissions.EmbedLinks && perms.Value.SendMessages && perms.Value.EmbedLinks)
+                                    perms = currentUser.GetPermissions(channel as SocketTextChannel);
+                                if (channel != null && currentUser.GuildPermissions.EmbedLinks && perms.Value.SendMessages && perms.Value.EmbedLinks)
                                 {
-                                    await guild.GetUser(mute.UserId).RemoveRoleAsync(mutedRole);
+                                    await user.RemoveRoleAsync(mutedRole);
                                     var footer = new EmbedFooterBuilder()
                                     {
                                         IconUrl = "http://i.imgur.com/BQZJAqT.png",
@@ -72,7 +74,7 @@ namespace DEA.Services.Timers
                                     var embedBuilder = new EmbedBuilder()
                                     {
                                         Color = new Color(12, 255, 129),
-                                        Description = $"**Action:** Automatic Unmute\n**User:** {guild.GetUser(mute.UserId)} ({mute.UserId})",
+                                        Description = $"**Action:** Automatic Unmute\n**User:** {user} ({mute.UserId})",
                                         Footer = footer
                                     }.WithCurrentTimestamp();
                                     await _guildRepo.ModifyAsync(guildData, x => x.CaseNumber++);

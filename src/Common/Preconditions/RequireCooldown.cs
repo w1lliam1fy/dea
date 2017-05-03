@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Discord.Commands;
 using DEA.Common.Extensions.DiscordExtensions;
 using DEA.Common.Extensions;
+using DEA.Common.Data;
 
 namespace DEA.Common.Preconditions
 {

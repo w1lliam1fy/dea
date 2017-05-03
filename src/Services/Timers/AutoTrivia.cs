@@ -1,4 +1,5 @@
-﻿using DEA.Database.Repositories;
+﻿using DEA.Common.Data;
+using DEA.Database.Repositories;
 using DEA.Services.Static;
 using Discord;
 using Discord.Commands;
@@ -50,10 +51,10 @@ namespace DEA.Services.Timers
                 {
                     if (dbGuild.AutoTrivia)
                     {
-                        var guild = _client.GetGuild(dbGuild.GuildId);
+                        var guild = await (_client as IDiscordClient).GetGuildAsync(dbGuild.GuildId);
                         if (guild != null)
                         {
-                            var defaultChannel = guild.DefaultChannel;
+                            var defaultChannel = await guild.GetDefaultChannelAsync();
                             try
                             {
                                 await _gameService.TriviaAsync(defaultChannel, dbGuild);

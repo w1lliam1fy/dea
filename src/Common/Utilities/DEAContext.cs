@@ -34,15 +34,15 @@ namespace DEA.Common
         }
 
         /// <summary>
-        /// Fetches the guild and user database information for the custom context object.
+        /// Getes the guild and user database information for the custom context object.
         /// </summary>
         public async Task InitializeAsync()
         {
-            DbUser = await _userRepo.FetchUserAsync(GUser);
-            DbGuild = await _guildRepo.FetchGuildAsync(Guild.Id);
+            DbUser = await _userRepo.GetUserAsync(GUser);
+            DbGuild = await _guildRepo.GetGuildAsync(Guild.Id);
             if (await _gangRepo.InGangAsync(GUser))
             {
-                Gang = await _gangRepo.FetchGangAsync(GUser);
+                Gang = await _gangRepo.GetGangAsync(GUser);
             }
             Prefix = DbGuild.Prefix;
             Cash = DbUser.Cash;

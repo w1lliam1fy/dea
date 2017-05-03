@@ -26,16 +26,15 @@ namespace DEA.Modules
         [Summary("Enables/disables NSFW commands in your server.")]
         public async Task ChangeNSFWSettings()
         {
-            switch (Context.DbGuild.Nsfw)
+            if (Context.DbGuild.Nsfw)
             {
-                case true:
-                    await _guildRepo.ModifyAsync(Context.DbGuild, x => x.Nsfw = false);
-                    await ReplyAsync($"You have successfully disabled NSFW commands!");
-                    break;
-                case false:
-                    await _guildRepo.ModifyAsync(Context.DbGuild, x => x.Nsfw = true);
-                    await ReplyAsync($"You have successfully enabled NSFW commands!");
-                    break;
+                await _guildRepo.ModifyAsync(Context.DbGuild, x => x.Nsfw = false);
+                await ReplyAsync($"You have successfully disabled NSFW commands!");
+            }
+            else
+            {
+                await _guildRepo.ModifyAsync(Context.DbGuild, x => x.Nsfw = true);
+                await ReplyAsync($"You have successfully enabled NSFW commands!");
             }
         }
 

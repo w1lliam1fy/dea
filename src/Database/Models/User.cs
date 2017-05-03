@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DEA.Common.Data;
+using System;
 
 namespace DEA.Database.Models
 {

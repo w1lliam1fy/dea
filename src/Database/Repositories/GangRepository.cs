@@ -1,4 +1,5 @@
 ﻿using DEA.Common;
+using DEA.Common.Data;
 using DEA.Database.Models;
 using Discord;
 using MongoDB.Driver;
@@ -22,9 +23,9 @@ namespace DEA.Database.Repositories
             return ModifyAsync(c => c.Name.ToLower() == gangName.ToLower() && c.GuildId == guildId, function);
         }
 
-        public async Task<Gang> FetchGangAsync(IGuildUser user)
+        public async Task<Gang> GetGangAsync(IGuildUser user)
         {
-            var gang = await FetchAsync(c => (c.LeaderId == user.Id || c.Members.Any(x => x == user.Id)) && c.GuildId == user.GuildId);
+            var gang = await GetAsync(c => (c.LeaderId == user.Id || c.Members.Any(x => x == user.Id)) && c.GuildId == user.GuildId);
             if (gang == default(Gang))
             {
                 throw new DEAException("This user is not in a gang.");
@@ -33,9 +34,9 @@ namespace DEA.Database.Repositories
             return gang;
         }
 
-        public async Task<Gang> FetchGangAsync(string gangName, ulong guildId)
+        public async Task<Gang> GetGangAsync(string gangName, ulong guildId)
         {
-            var gang = await FetchAsync(c => c.Name.ToLower() == gangName.ToLower() && c.GuildId == guildId);
+            var gang = await GetAsync(c => c.Name.ToLower() == gangName.ToLower() && c.GuildId == guildId);
             if (gang == default(Gang))
             {
                 throw new DEAException("This gang does not exist.");

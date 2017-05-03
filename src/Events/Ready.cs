@@ -1,4 +1,6 @@
-﻿using Discord.Commands;
+﻿using DEA.Services.Static;
+using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
 using System.Threading.Tasks;
 
@@ -20,6 +22,7 @@ namespace DEA.Events
         {
             return Task.Run(async () =>
             {
+                Logger.Log(LogSeverity.Debug, $"Event", "Ready");
                 await _client.SetGameAsync("USE $help");            
             });
         }

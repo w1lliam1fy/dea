@@ -7,6 +7,7 @@ using DEA.Common;
 using DEA.Common.Preconditions;
 using DEA.Services;
 using DEA.Common.Extensions;
+using DEA.Common.Data;
 
 namespace DEA.Modules
 {
@@ -108,17 +109,17 @@ namespace DEA.Modules
             {
                 ReplyError("The length of a nickname may not be longer than 32 characters.");
             }
-            else if (_moderationService.FetchPermLevel(Context, userToBully) > 0)
+            else if (_moderationService.GetPermLevel(Context, userToBully) > 0)
             {
                 ReplyError("You may not bully a moderator.");
             }
-            else if ((await _userRepo.FetchUserAsync(userToBully)).Cash >= Context.Cash)
+            else if ((await _userRepo.GetUserAsync(userToBully)).Cash >= Context.Cash)
             {
                 ReplyError("You may not bully a user with more money than you.");
             }
 
             await userToBully.ModifyAsync(x => x.Nickname = nickname);
-            await SendAsync($"{userToBully} just got ***BULLIED*** by {Context.User} with his new nickname: \"{nickname}\".");
+            await SendAsync($"{userToBully.Boldify()} just got ***BULLIED*** by {Context.User.Boldify()} with his new nickname: \"{nickname}\".");
         }
 
         [Command("Rob")]
@@ -139,8 +140,8 @@ namespace DEA.Modules
                 ReplyError($"You don't have enough money. Balance: {Context.Cash.USD()}.");
             }
 
-            var raidedDbUser = await _userRepo.FetchUserAsync(user);
-            if (Math.Round(resources, 2) > Math.Round(raidedDbUser.Cash * Config.MAX_ROB_PERCENTAGE / 2, 2))
+            var raidedDbUser = await _userRepo.GetUserAsync(user);
+            if (resources > Math.Round(raidedDbUser.Cash * Config.MAX_ROB_PERCENTAGE / 2, 2))
             {
                 ReplyError($"You are overkilling it. You only need {(raidedDbUser.Cash * Config.MAX_ROB_PERCENTAGE / 2).USD()} " +
                            $"to rob {Config.MAX_ROB_PERCENTAGE.ToString("P")} of their cash, that is {(raidedDbUser.Cash * Config.MAX_ROB_PERCENTAGE).USD()}.");

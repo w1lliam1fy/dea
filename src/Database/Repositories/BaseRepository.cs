@@ -22,7 +22,7 @@ namespace DEA.Database.Repositories
             return Collection.InsertOneAsync(entity, null, default(CancellationToken));
         }
 
-        public Task<T> FetchAsync(Expression<Func<T, bool>> filter)
+        public Task<T> GetAsync(Expression<Func<T, bool>> filter)
         {
             return Collection.Find(filter).Limit(1).FirstOrDefaultAsync();
         }
@@ -53,7 +53,7 @@ namespace DEA.Database.Repositories
 
         public async Task ModifyAsync(Expression<Func<T, bool>> filter, Action<T> function)
         {
-            var entity = await FetchAsync(filter);
+            var entity = await GetAsync(filter);
             function(entity);
             await UpdateAsync(entity);
         }

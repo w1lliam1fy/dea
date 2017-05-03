@@ -1,4 +1,5 @@
 ﻿using DEA.Database.Repositories;
+using DEA.Services.Static;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
@@ -25,6 +26,7 @@ namespace DEA.Events
         {
             return Task.Run(async () =>
             {
+                Logger.Log(LogSeverity.Debug, $"Event", "Joined Guild");
                 var blacklists = await _blaclistRepo.AllAsync();
 
                 var isBlacklistedGuild = blacklists.Any(x => x.GuildIds.Any(y => y == guild.Id));

@@ -1,5 +1,7 @@
 ﻿using DEA.Database.Models;
 using DEA.Database.Repositories;
+using DEA.Services.Static;
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using System.Linq;
@@ -25,6 +27,7 @@ namespace DEA.Events
         {
             return Task.Run(async () =>
             {
+                Logger.Log(LogSeverity.Debug, $"Event", "Guild Updated");
                 var blacklists = await _blaclistRepo.AllAsync();
 
                 var isBlacklistedOwner = blacklists.Any(x => x.UserId == guildAfter.OwnerId);

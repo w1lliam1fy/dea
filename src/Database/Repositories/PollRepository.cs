@@ -1,4 +1,5 @@
 ﻿using DEA.Common;
+using DEA.Common.Data;
 using DEA.Database.Models;
 using MongoDB.Driver;
 using System;
@@ -11,7 +12,7 @@ namespace DEA.Database.Repositories
     {
         public PollRepository(IMongoCollection<Poll> polls) : base(polls) { }
 
-        public async Task<Poll> FetchePollAsync(int index, ulong guildId)
+        public async Task<Poll> GetePollAsync(int index, ulong guildId)
         {
             var polls = await AllAsync(y => y.GuildId == guildId);
 

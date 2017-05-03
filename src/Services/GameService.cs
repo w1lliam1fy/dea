@@ -1,4 +1,5 @@
 ﻿using DEA.Common;
+using DEA.Common.Data;
 using DEA.Common.Extensions;
 using DEA.Common.Extensions.DiscordExtensions;
 using DEA.Database.Models;
@@ -40,7 +41,7 @@ namespace DEA.Services
             var element = dbGuild.Trivia.GetElement(roll);
             var answer = element.Value.AsString.ToLower();
 
-            Expression<Func<IUserMessage, bool>> correctResponse = y => y.Content.ToLower() == answer;
+            Predicate<IUserMessage> correctResponse = y => y.Content.ToLower() == answer;
             if (!answer.Any(char.IsDigit))
             {
                 if (answer.Length < 5)
@@ -68,7 +69,7 @@ namespace DEA.Services
             {
                 var user = response.Author as IGuildUser;
                 var winnings = random.Next(Config.TRIVIA_PAYOUT_MIN * 100, Config.TRIVIA_PAYOUT_MAX * 100) / 100m;
-                await _userRepo.EditCashAsync(user, dbGuild, await _userRepo.FetchUserAsync(user), winnings);
+                await _userRepo.EditCashAsync(user, dbGuild, await _userRepo.GetUserAsync(user), winnings);
                 await channel.SendAsync($"{user.Boldify()}, Congrats! You just won {winnings.USD()} for correctly answering \"{element.Value.AsString}\".");
             }
             else

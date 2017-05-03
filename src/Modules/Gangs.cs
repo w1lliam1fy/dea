@@ -12,6 +12,7 @@ using DEA.Common.Preconditions;
 using DEA.Services.Static;
 using DEA.Common.Extensions;
 using DEA.Common.Extensions.DiscordExtensions;
+using DEA.Common.Data;
 
 namespace DEA.Modules
 {
@@ -31,7 +32,7 @@ namespace DEA.Modules
         [Command("CreateGang")]
         [Require(Attributes.NoGang)]
         [Summary("Allows you to create a gang at a hefty price.")]
-        public async Task CreateGang([Remainder] string name)
+        public async Task CreateGang([Summary("SLAM EM BOYS")] [Remainder] string name)
         {
             if (Context.Cash < Config.GANG_CREATION_COST)
             {
@@ -51,16 +52,15 @@ namespace DEA.Modules
         [Command("JoinGang")]
         [Require(Attributes.NoGang)]
         [Summary("Sends a request to join a gang.")]
-        public async Task AddToGang([Remainder] string gangName)
+        public async Task AddToGang([Summary("SLAM EM BOYS")] [Remainder] string gangName)
         {
-            var gang = await _gangRepo.FetchGangAsync(gangName, Context.Guild.Id);
+            var gang = await _gangRepo.GetGangAsync(gangName, Context.Guild.Id);
             if (gang.Members.Length == 4)
             {
                 ReplyError("This gang is already full!");
             }
 
             var leader = await (Context.Guild as IGuild).GetUserAsync(gang.LeaderId);
-            await ReplyAsync($"The leader of {gang.Name} has been informed of your request to join their gang.");
 
             if (leader != null)
             {
@@ -69,6 +69,8 @@ namespace DEA.Modules
                 var key = new Random().Next();
                 await leaderDM.SendAsync($"{Context.User} has requested to join your gang. Please respond with \"{key}\" within 5 minutes to add this user to your gang.");
 
+                await ReplyAsync($"The leader of {gang.Name} has been informed of your request to join their gang.");
+
                 var answer = await _interactiveService.WaitForMessage(leaderDM, x => x.Content == key.ToString(), TimeSpan.FromMinutes(5));
                 if (answer != null)
                 {
@@ -76,7 +78,7 @@ namespace DEA.Modules
                     {
                         await leaderDM.SendAsync("This user has already joined a different gang.");
                     }
-                    else if ((await _gangRepo.FetchGangAsync(leader)).Members.Length == 4)
+                    else if ((await _gangRepo.GetGangAsync(leader)).Members.Length == 4)
                     {
                         await leaderDM.SendAsync("Your gang is already full.");
                     }
@@ -98,7 +100,7 @@ namespace DEA.Modules
 
         [Command("Gang")]
         [Summary("Gives you all the info about any gang.")]
-        public async Task GangInfo([Remainder] string gangName = null)
+        public async Task GangInfo([Summary("SLAM EM BOYS")] [Remainder] string gangName = null)
         {
             Gang gang;
             if (gangName == null)
@@ -107,7 +109,7 @@ namespace DEA.Modules
             }
             else
             {
-                gang = await _gangRepo.FetchGangAsync(gangName, Context.Guild.Id);
+                gang = await _gangRepo.GetGangAsync(gangName, Context.Guild.Id);
             }
 
             if (gang == null && gangName == null)
@@ -221,7 +223,7 @@ namespace DEA.Modules
         [Alias("ChangeName")]
         [Require(Attributes.InGang, Attributes.GangLeader)]
         [Summary("Changes the name of your gang.")]
-        public async Task ChangeGangName([Remainder] string newName)
+        public async Task ChangeGangName([Summary("JERK EM OFF BOYS")] [Remainder] string newName)
         {
             if (Context.Cash < Config.GANG_NAME_CHANGE_COST)
             {
@@ -299,7 +301,7 @@ namespace DEA.Modules
         [Require(Attributes.InGang)]
         [RequireCooldown]
         [Summary("Raid another gang in attempt to steal some of their wealth.")]
-        public async Task Raid(decimal resources, [Remainder] string gangName)
+        public async Task Raid(decimal resources, [Summary("SLAM EM BOYS")] [Remainder] string gangName)
         {
             if (resources < Config.MIN_RESOURCES)
             {
@@ -310,7 +312,7 @@ namespace DEA.Modules
                 ReplyError($"Your gang does not have enough money. {Context.Gang.Name}'s Wealth {Context.Gang.Wealth.USD()}.");
             }
 
-            var raidedGang = await _gangRepo.FetchGangAsync(gangName, Context.Guild.Id);
+            var raidedGang = await _gangRepo.GetGangAsync(gangName, Context.Guild.Id);
             if (Math.Round(resources, 2) > Math.Round(raidedGang.Wealth * Config.MAX_RAID_PERCENTAGE / 2, 2))
             {
                 ReplyError($"You are overkilling it. You only need {(raidedGang.Wealth * Config.MAX_RAID_PERCENTAGE / 2).USD()} " +

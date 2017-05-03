@@ -1,4 +1,5 @@
 ﻿using DEA.Common;
+using DEA.Common.Data;
 using DEA.Database.Repositories;
 using MongoDB.Driver;
 using Discord.Commands;
@@ -28,7 +29,7 @@ namespace DEA.Modules
         [Summary("Creates a poll.")]
         public async Task AddPoll([Summary("Are you white?")] string poll, [Summary("HELL YEA~No~Maybe")] string choices, double daysToLast = 1, bool elderOnly = false, bool modOnly = false)
         {
-            var isMod = _moderationService.FetchPermLevel(Context, Context.GUser) > 0;
+            var isMod = _moderationService.GetPermLevel(Context, Context.GUser) > 0;
 
             if (modOnly && !isMod)
             {
@@ -52,7 +53,7 @@ namespace DEA.Modules
         [Require(Attributes.Moderator)]
         public async Task RemovePoll(int index)
         {
-            var poll = await _pollRepo.FetchePollAsync(index, Context.Guild.Id);
+            var poll = await _pollRepo.GetePollAsync(index, Context.Guild.Id);
             await _pollRepo.RemovePollAsync(index, Context.Guild.Id);
 
             await ReplyAsync($"You have successfully removed the \"{poll.Name}\" poll!");
@@ -110,7 +111,7 @@ namespace DEA.Modules
         [Summary("View the information of any poll.")]
         public async Task PollInfo(int index)
         {
-            var poll = await _pollRepo.FetchePollAsync(index, Context.Guild.Id);
+            var poll = await _pollRepo.GetePollAsync(index, Context.Guild.Id);
             string description = string.Empty;
 
             var votes = poll.Votes();
@@ -156,7 +157,7 @@ namespace DEA.Modules
         [Summary("Vote on any poll.")]
         public async Task Vote(int pollIndex, int choiceIndex)
         {
-            var poll = await _pollRepo.FetchePollAsync(pollIndex, Context.Guild.Id);
+            var poll = await _pollRepo.GetePollAsync(pollIndex, Context.Guild.Id);
 
             if (poll.VotesDocument.Any(x => x.Name == Context.User.Id.ToString()))
             {
@@ -167,7 +168,7 @@ namespace DEA.Modules
             {
                 ReplyError($"You must have been in this server for more than {Config.ELDER_TIME_REQUIRED.TotalDays} days to vote on this poll.");
             }
-            else if (poll.ModOnly && _moderationService.FetchPermLevel(Context, Context.GUser) == 0)
+            else if (poll.ModOnly && _moderationService.GetPermLevel(Context, Context.GUser) == 0)
             {
                 ReplyError("Only a moderator may vote on this poll.");
             }
