@@ -41,7 +41,7 @@ namespace DEA.Services
                 {
                     return Task.CompletedTask;
                 }
-                else if (filter(message))
+                else if (!filter(message))
                 {
                     return Task.CompletedTask;
                 }
