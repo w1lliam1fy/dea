@@ -60,7 +60,7 @@ namespace DEA.Services.Handlers
                                         "to the top of the roles list, and giving DEA the \"Administrator\" server permission.";
                                         break;
                                     case HttpStatusCode.InternalServerError:
-                                        message = "Looks like Discord fucked up. An interal server error has occured on Discord's part which is" +
+                                        message = "Looks like Discord fucked up. An interal server error has occured on Discord's part which is " +
                                         "entirely unrelated with DEA. Sorry, nothing I can do.";
                                         break;
                                     default:
