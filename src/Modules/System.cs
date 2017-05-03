@@ -7,6 +7,7 @@ using DEA.Common;
 using DEA.Common.Extensions;
 using DEA.Common.Extensions.DiscordExtensions;
 using System.Runtime.InteropServices;
+using DEA.Common.Data;
 
 namespace System.Modules
 {
@@ -45,7 +46,7 @@ namespace System.Modules
         public Task Usage()
         {
             return SendAsync("**Optional paramater:** `[]`\n\n**Required paramater:** `<>`\n\n**Parameter with spaces:** `\"This is one parameter\"`",
-     "Command Usage");
+                             "Command Usage");
         }
 
         [Command("Information")]

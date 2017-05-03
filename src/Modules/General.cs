@@ -9,6 +9,7 @@ using MongoDB.Driver;
 using System.Collections.Generic;
 using DEA.Services.Handlers;
 using DEA.Common;
+using DEA.Common.Data;
 using DEA.Common.Extensions;
 
 namespace DEA.Modules
@@ -103,7 +104,7 @@ namespace DEA.Modules
         [Summary("View the richest Drug Traffickers.")]
         public async Task Leaderboards()
         {
-            var users = await (await _userRepo.Collection.FindAsync(x => x.GuildId == Context.Guild.Id)).ToListAsync();
+            var users = await _userRepo.AllAsync(y => y.GuildId == Context.Guild.Id);
             var sorted = users.OrderByDescending(x => x.Cash);
             string description = string.Empty;
             int position = 1;
@@ -123,12 +124,7 @@ namespace DEA.Modules
                     continue;
                 }
 
-                try
-                {
-                    description += $"{position}. {user.Boldify()}: {dbUser.Cash.USD()}\n";
-                }
-                catch { }
-
+                description += $"{position}. {user.Boldify()}: {dbUser.Cash.USD()}\n";
                 if (position >= Config.LEADERBOARD_CAP)
                 {
                     break;
@@ -145,7 +141,7 @@ namespace DEA.Modules
         [Summary("View the richest Drug Traffickers.")]
         public async Task Chatters()
         {
-            var users = await (await _userRepo.Collection.FindAsync(y => y.GuildId == Context.Guild.Id)).ToListAsync();
+            var users = await _userRepo.AllAsync(y => y.GuildId == Context.Guild.Id);
             var sorted = users.OrderByDescending(x => x.TemporaryMultiplier);
             string description = string.Empty;
             int position = 1;
@@ -198,7 +194,7 @@ namespace DEA.Modules
             await _userRepo.EditCashAsync(Context, -money);
             decimal deaMoney = money * Config.DEA_CUT / 100;
 
-            var otherDbUser = await _userRepo.FetchUserAsync(user);
+            var otherDbUser = await _userRepo.GetUserAsync(user);
             await _userRepo.EditCashAsync(user, Context.DbGuild, otherDbUser,  money - deaMoney);
 
             await ReplyAsync($"Successfully donated {(money - deaMoney).USD()} to {user.Boldify()}.\nDEA has taken a {deaMoney.USD()} cut out of this donation. Balance: {Context.Cash.USD()}.");
@@ -210,11 +206,11 @@ namespace DEA.Modules
         {
             user = user ?? Context.GUser;
 
-            var dbUser = user.Id == Context.User.Id ? Context.DbUser : await _userRepo.FetchUserAsync(user);
+            var dbUser = user.Id == Context.User.Id ? Context.DbUser : await _userRepo.GetUserAsync(user);
             var users = await (await _userRepo.Collection.FindAsync(y => y.GuildId == Context.Guild.Id)).ToListAsync();
             var sorted = users.OrderByDescending(x => x.Cash).ToList();
 
-            IRole rank = await _rankHandler.FetchRankAsync(Context, dbUser);
+            IRole rank = await _rankHandler.GetRankAsync(Context, dbUser);
             var description = $"Balance: {dbUser.Cash.USD()}\n" +
                               $"Position: #{sorted.FindIndex(x => x.UserId == user.Id) + 1}\n";
             if (rank != null)
@@ -230,7 +226,7 @@ namespace DEA.Modules
         public async Task Rate([Remainder] IGuildUser user = null)
         {
             user = user ?? Context.GUser;
-            var dbUser = user.Id == Context.User.Id ? Context.DbUser : await _userRepo.FetchUserAsync(user);
+            var dbUser = user.Id == Context.User.Id ? Context.DbUser : await _userRepo.GetUserAsync(user);
 
             await SendAsync($"Cash/msg: {(dbUser.TemporaryMultiplier * dbUser.InvestmentMultiplier).USD()}\n" +
                        $"Chatting multiplier: {dbUser.TemporaryMultiplier.ToString("N2")}\n" +
@@ -245,7 +241,7 @@ namespace DEA.Modules
         public async Task Money([Remainder] IGuildUser user = null)
         {
             user = user ?? Context.GUser;
-            var dbUser = user.Id == Context.User.Id ? Context.DbUser : await _userRepo.FetchUserAsync(user);
+            var dbUser = user.Id == Context.User.Id ? Context.DbUser : await _userRepo.GetUserAsync(user);
 
             await SendAsync($"{user.Boldify()}'s balance: {dbUser.Cash.USD()}.");
         }
@@ -302,7 +298,7 @@ namespace DEA.Modules
         public async Task Cooldowns([Remainder] IGuildUser user = null)
         {
             user = user ?? Context.GUser;
-            var dbUser = Context.User.Id == user.Id ? Context.DbUser : await _userRepo.FetchUserAsync(user);
+            var dbUser = Context.User.Id == user.Id ? Context.DbUser : await _userRepo.GetUserAsync(user);
 
             var cooldowns = new Dictionary<String, TimeSpan>
             {
@@ -315,7 +311,7 @@ namespace DEA.Modules
 
             if (await _gangRepo.InGangAsync(user))
             {
-                cooldowns.Add("Raid", Config.RAID_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(Context.User.Id == user.Id ? Context.Gang.Raid : (await _gangRepo.FetchGangAsync(user)).Raid)));
+                cooldowns.Add("Raid", Config.RAID_COOLDOWN.Subtract(DateTime.UtcNow.Subtract(Context.User.Id == user.Id ? Context.Gang.Raid : (await _gangRepo.GetGangAsync(user)).Raid)));
             }
 
             var description = string.Empty;

@@ -9,6 +9,7 @@ using DEA.Services;
 using DEA.Common;
 using DEA.Common.Preconditions;
 using DEA.Common.Extensions;
+using DEA.Common.Data;
 
 namespace DEA.Modules
 {
@@ -29,7 +30,7 @@ namespace DEA.Modules
         [Summary("Bans a user.")]
         public async Task Ban(IGuildUser userToBan, [Remainder] string reason = null)
         {
-            if (_moderationService.FetchPermLevel(Context, Context.GUser) < _moderationService.FetchPermLevel(Context, userToBan))
+            if (_moderationService.GetPermLevel(Context, Context.GUser) <= _moderationService.GetPermLevel(Context, userToBan))
             {
                 ReplyError("You cannot ban another mod with a permission level higher or equal to your own.");
             }
@@ -62,7 +63,7 @@ namespace DEA.Modules
                 }
 
                 ReplyError($"There are multiple matches to your unban request:\n{matches}");
-            } 
+            }
             else if (count == 0)
             {
                 ReplyError("You may not unban someone who isn't banned.");
@@ -83,7 +84,7 @@ namespace DEA.Modules
         [Summary("Kicks a user.")]
         public async Task Kick(IGuildUser userToKick, [Remainder] string reason = null)
         {
-            if (_moderationService.FetchPermLevel(Context, userToKick) > 0)
+            if (_moderationService.GetPermLevel(Context, userToKick) > 0)
             {
                 ReplyError("You cannot kick another mod!");
             }
@@ -108,7 +109,7 @@ namespace DEA.Modules
                 ReplyError($"You may not mute users if the muted role is not valid.\nPlease use the " +
                                  $"`{Context.Prefix}SetMutedRole` command to change that.");
             }
-            else if (_moderationService.FetchPermLevel(Context, userToMute) > 0)
+            else if (_moderationService.GetPermLevel(Context, userToMute) > 0)
             {
                 ReplyError("You cannot mute another mod.");
             }
@@ -145,7 +146,7 @@ namespace DEA.Modules
                 ReplyError($"You may not mute users if the muted role is not valid.\nPlease use the " +
                            $"{Context.DbGuild.Prefix}SetMutedRole command to change that.");
             }
-            else if (_moderationService.FetchPermLevel(Context, userToMute) > 0)
+            else if (_moderationService.GetPermLevel(Context, userToMute) > 0)
             {
                 ReplyError("You cannot mute another mod.");
             }

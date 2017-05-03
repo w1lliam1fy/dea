@@ -34,7 +34,7 @@ namespace DEA.Modules
             user = user ?? Context.GUser;
 
             await _userRepo.Collection.DeleteOneAsync(y => y.UserId == user.Id && y.GuildId == user.GuildId);
-            await _rankHandler.HandleAsync(Context.Guild, user, Context.DbGuild, await _userRepo.FetchUserAsync(user));
+            await _rankHandler.HandleAsync(Context.Guild, user, Context.DbGuild, await _userRepo.GetUserAsync(user));
 
             await SendAsync($"Successfully reset {user.Boldify()}'s data.");
         }
@@ -45,9 +45,9 @@ namespace DEA.Modules
         {
             user = user ?? Context.GUser;
 
-            var dbUser = user.Id == Context.User.Id ? Context.DbUser : await _userRepo.FetchUserAsync(user);
+            var dbUser = user.Id == Context.User.Id ? Context.DbUser : await _userRepo.GetUserAsync(user);
             await _userRepo.ModifyAsync(dbUser, x => x.Cash = 100000);
-            await _rankHandler.HandleAsync(Context.Guild, user, Context.DbGuild, await _userRepo.FetchUserAsync(user));
+            await _rankHandler.HandleAsync(Context.Guild, user, Context.DbGuild, await _userRepo.GetUserAsync(user));
 
             await SendAsync($"Successfully set {user.Boldify()}'s balance to $100,000.00.");
         }
@@ -61,7 +61,7 @@ namespace DEA.Modules
                 ReplyError("You may not add negative money to a user's balance.");
             }
 
-            var dbUser = user.Id == Context.User.Id ? Context.DbUser : await _userRepo.FetchUserAsync(user);
+            var dbUser = user.Id == Context.User.Id ? Context.DbUser : await _userRepo.GetUserAsync(user);
             await _userRepo.EditCashAsync(user, Context.DbGuild, dbUser, money);
 
             await SendAsync($"Successfully added {money.USD()} to {user.Boldify()}'s balance.");
@@ -79,7 +79,7 @@ namespace DEA.Modules
             await ReplyAsync("The addition of cash has commenced...");
             foreach (var user in (await (Context.Guild as IGuild).GetUsersAsync()).Where(x => x.RoleIds.Any(y => y == role.Id)))
             {
-                await _userRepo.EditCashAsync(user, Context.DbGuild, await _userRepo.FetchUserAsync(user), money);
+                await _userRepo.EditCashAsync(user, Context.DbGuild, await _userRepo.GetUserAsync(user), money);
             }
 
             await SendAsync($"Successfully added {money.USD()} to the balance of every user in the {role.Mention} role.");
@@ -94,7 +94,7 @@ namespace DEA.Modules
                 ReplyError("You may not remove a negative amount of money from a user's balance.");
             }
 
-            var dbUser = user.Id == Context.User.Id ? Context.DbUser : await _userRepo.FetchUserAsync(user);
+            var dbUser = user.Id == Context.User.Id ? Context.DbUser : await _userRepo.GetUserAsync(user);
             await _userRepo.EditCashAsync(user, Context.DbGuild, dbUser, -money);
 
             await SendAsync($"Successfully removed {money.USD()} from {user.Boldify()}'s balance.");
@@ -112,7 +112,7 @@ namespace DEA.Modules
             await ReplyAsync("The cash removal has commenced...");
             foreach (var user in (await (Context.Guild as IGuild).GetUsersAsync()).Where(x => x.RoleIds.Any(y => y == role.Id)))
             {
-                await _userRepo.EditCashAsync(user, Context.DbGuild, await _userRepo.FetchUserAsync(user), -money);
+                await _userRepo.EditCashAsync(user, Context.DbGuild, await _userRepo.GetUserAsync(user), -money);
             }
 
             await SendAsync($"Successfully removed {money.USD()} from the balance of every user in the {role.Mention} role.");

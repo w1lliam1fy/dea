@@ -1,4 +1,4 @@
-﻿namespace DEA.Common
+﻿namespace DEA.Common.Utilities
 {
     public class Credentials
     {

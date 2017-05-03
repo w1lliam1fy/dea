@@ -1,4 +1,5 @@
-﻿using Discord;
+﻿using DEA.Common.Data;
+using Discord;
 using Discord.WebSocket;
 using System;
 using System.Linq.Expressions;
@@ -23,7 +24,7 @@ namespace DEA.Services
         /// <param name="filter">The expression filtering the messages.</param>
         /// <param name="timeout">The time to watch for the message.</param>
         /// <returns>Task returning the first message matching the filter. Returns null if there was no match.</returns>
-        public async Task<IUserMessage> WaitForMessage(IMessageChannel channel, Expression<Func<IUserMessage, bool>> filter, TimeSpan? timeout = null)
+        public async Task<IUserMessage> WaitForMessage(IMessageChannel channel, Predicate<IUserMessage> filter, TimeSpan? timeout = null)
         {
             if (timeout == null)
             {
@@ -40,7 +41,7 @@ namespace DEA.Services
                 {
                     return Task.CompletedTask;
                 }
-                else if (!filter.Compile()(message))
+                else if (filter(message))
                 {
                     return Task.CompletedTask;
                 }

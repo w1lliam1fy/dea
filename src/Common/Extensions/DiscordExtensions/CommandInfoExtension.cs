@@ -72,6 +72,10 @@ namespace DEA.Common.Extensions.DiscordExtensions
                     {
                         paramExample = "Oh yes baby, oh yes.";
                     }
+                    else if (param.Type == typeof(ulong))
+                    {
+                        paramExample = "290759415362224139";
+                    }
                     else
                     {
                         paramExample = "UNSPECIFIED ARGUMENT EXAMPLE";

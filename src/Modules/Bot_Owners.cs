@@ -34,7 +34,7 @@ namespace DEA.Modules
         [Summary("Leaves any guild by guild ID.")]
         public async Task LeaveGuild(ulong guildId)
         {
-            var guild = Context.Client.GetGuild(guildId);
+            var guild = await (Context.Client as IDiscordClient).GetGuildAsync(guildId);
             
             if (guild != null)
             {
@@ -52,12 +52,12 @@ namespace DEA.Modules
         public async Task SendGlobalUpdate([Remainder] string updateMessage)
         {
             await ReplyAsync("The global update message process has started...");
-            foreach (var guild in Context.Client.Guilds)
+            foreach (var guild in await (Context.Client as IDiscordClient).GetGuildsAsync())
             {
-                var dbGuild = await _guildRepo.FetchGuildAsync(guild.Id);
+                var dbGuild = await _guildRepo.GetGuildAsync(guild.Id);
                 if (dbGuild.UpdateChannelId > 0)
                 {
-                    var channel = guild.GetChannel(dbGuild.UpdateChannelId);
+                    var channel = await guild.GetChannelAsync(dbGuild.UpdateChannelId);
 
                     if (channel != null)
                     {
@@ -70,23 +70,6 @@ namespace DEA.Modules
                 }
             }
             await ReplyAsync("All global update messages have been sent.");
-        }
-
-        [Command("InformOwners")]
-        [Summary("Informs the owner of every Server DEA is in with a custom message.")]
-        public async Task InformOwners([Remainder] string message)
-        {
-            await ReplyAsync("The inform owners process has started...");
-            foreach (var guild in Context.Client.Guilds)
-            {
-                try
-                {
-                    var channel = await guild.Owner.CreateDMChannelAsync();
-                    await channel.SendAsync(message);
-                } 
-                catch { }
-            }
-            await ReplyAsync("All owners have been informed.");
         }
 
         [Command("Blacklist")]

@@ -1,4 +1,6 @@
-﻿using DEA.Common.Extensions;
+﻿using DEA.Common.Data;
+using DEA.Common.Extensions;
+using DEA.Common.Utilities;
 using DEA.Database.Repositories;
 using DEA.Services;
 using Discord;
@@ -41,8 +43,8 @@ namespace DEA.Common.Preconditions
             _gangRepo = _map.Get<GangRepository>();
 
             var guildUser = context.User as IGuildUser;
-            var DbUser = await _userRepo.FetchUserAsync(guildUser);
-            var DbGuild = await _guildRepo.FetchGuildAsync(context.Guild.Id);
+            var DbUser = await _userRepo.GetUserAsync(guildUser);
+            var DbGuild = await _guildRepo.GetGuildAsync(context.Guild.Id);
             foreach (var attribute in _attributes)
             {
                 switch (attribute)
@@ -77,7 +79,7 @@ namespace DEA.Common.Preconditions
 
                         break;
                     case Attributes.Moderator:
-                        if (_moderationService.FetchPermLevel(DbGuild, context.User as IGuildUser) == 0)
+                        if (_moderationService.GetPermLevel(DbGuild, context.User as IGuildUser) == 0)
                         {
                             return PreconditionResult.FromError("Only a moderator may use this command.");
                         }
@@ -111,7 +113,7 @@ namespace DEA.Common.Preconditions
 
                         break;
                     case Attributes.GangLeader:
-                        if ((await _gangRepo.FetchGangAsync(guildUser)).LeaderId != context.User.Id)
+                        if ((await _gangRepo.GetGangAsync(guildUser)).LeaderId != context.User.Id)
                         {
                             return PreconditionResult.FromError("You must be the leader of a gang to use this command.");
                         }

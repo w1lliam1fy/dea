@@ -8,6 +8,7 @@ using MongoDB.Bson;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DEA.Common.Data;
 
 namespace DEA.Modules
 {
@@ -32,16 +33,15 @@ namespace DEA.Modules
         [Summary("Enables/disables the auto trivia feature: Sends a trivia question in the default text channel every 2 minutes.")]
         public async Task ChangeAutoTriviaSettings()
         {
-            switch (Context.DbGuild.AutoTrivia)
+            if (Context.DbGuild.AutoTrivia)
             {
-                case true:
-                    await _guildRepo.ModifyAsync(Context.DbGuild, x => x.AutoTrivia = false);
-                    await ReplyAsync($"You have successfully disabled auto trivia!");
-                    break;
-                case false:
-                    await _guildRepo.ModifyAsync(Context.DbGuild, x => x.AutoTrivia = true);
-                    await ReplyAsync($"You have successfully enabled auto trivia!");
-                    break;
+                await _guildRepo.ModifyAsync(Context.DbGuild, x => x.AutoTrivia = false);
+                await ReplyAsync($"You have successfully disabled auto trivia!");
+            }
+            else
+            {
+                await _guildRepo.ModifyAsync(Context.DbGuild, x => x.AutoTrivia = true);
+                await ReplyAsync($"You have successfully enabled auto trivia!");
             }
         }
 

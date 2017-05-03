@@ -1,4 +1,5 @@
-﻿using Discord;
+﻿using DEA.Common.Data;
+using Discord;
 using System.Threading.Tasks;
 
 namespace DEA.Common.Extensions

@@ -17,9 +17,9 @@ namespace DEA.Database.Repositories
             _rankHandler = rankHandler;
         }
 
-        public async Task<User> FetchUserAsync(IGuildUser user)
+        public async Task<User> GetUserAsync(IGuildUser user)
         {
-            var dbUser = await FetchAsync(x => x.UserId == user.Id && x.GuildId == user.GuildId);
+            var dbUser = await GetAsync(x => x.UserId == user.Id && x.GuildId == user.GuildId);
 
             if (dbUser == default(User))
             {
@@ -30,9 +30,9 @@ namespace DEA.Database.Repositories
             return dbUser;
         }
 
-        public async Task<User> FetchUserAsync(ulong userId, ulong guildId)
+        public async Task<User> GetUserAsync(ulong userId, ulong guildId)
         {
-            var dbUser = await FetchAsync(x => x.UserId == userId && x.GuildId == guildId);
+            var dbUser = await GetAsync(x => x.UserId == userId && x.GuildId == guildId);
 
             if (dbUser == default(User))
             {

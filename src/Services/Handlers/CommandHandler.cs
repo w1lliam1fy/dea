@@ -1,4 +1,5 @@
 ﻿using DEA.Common;
+using DEA.Common.Data;
 using DEA.Common.Extensions.DiscordExtensions;
 using DEA.Database.Repositories;
 using DEA.Services.Static;

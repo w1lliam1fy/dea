@@ -1,5 +1,6 @@
 ﻿using DEA.Common;
 using DEA.Common.Extensions.DiscordExtensions;
+using DEA.Common.Utilities;
 using DEA.Database.Models;
 using DEA.Database.Repositories;
 using Discord;
@@ -23,7 +24,7 @@ namespace DEA.Services
         /// <param name="context">The context to get the guild data information.</param>
         /// <param name="user">The user in question.</param>
         /// <returns>The permission level of the user.</returns>
-        public int FetchPermLevel(DEAContext context, IGuildUser user)
+        public int GetPermLevel(DEAContext context, IGuildUser user)
         {
             var permLevel = 0;
 
@@ -50,7 +51,7 @@ namespace DEA.Services
         /// <param name="context">The context to get the guild data information.</param>
         /// <param name="user">The user in question.</param>
         /// <returns>The permission level of the user.</returns>
-        public int FetchPermLevel(Guild dbGuild, IGuildUser user)
+        public int GetPermLevel(Guild dbGuild, IGuildUser user)
         {
             var permLevel = 0;
 

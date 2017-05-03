@@ -70,7 +70,7 @@ namespace DEA.Services.Handlers
             }
         }
 
-        public Task<IRole> FetchRankAsync(DEAContext context, User dbUser)
+        public Task<IRole> GetRankAsync(DEAContext context, User dbUser)
         {
             IRole role = null;
 
