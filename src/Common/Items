@@ -1,0 +1,4 @@
+namespace DEA.Common
+{
+  public enum Items {Revolver, AR15, Dragunov, Kevlar, Bullets}
+}
