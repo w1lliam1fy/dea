@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using DEA.Common;
 using DEA.Common.Extensions;
 using DEA.Common.Extensions.DiscordExtensions;
-using System.Runtime.InteropServices;
 using DEA.Common.Data;
 
 namespace System.Modules
@@ -14,10 +13,12 @@ namespace System.Modules
     public class System : DEAModule
     {
         private readonly CommandService _commandService;
+        private readonly Statistics _statistics;
 
-        public System(CommandService commandService)
+        public System(CommandService commandService, Statistics statistics)
         {
             _commandService = commandService;
+            _statistics = statistics;
         }
 
         [Command("Invite")]
@@ -183,14 +184,14 @@ If you have any other questions, you may join the **Official DEA Discord Server:
             {
                 var uptime = (DateTime.Now - process.StartTime);
                 builder.AddInlineField("Author", "John#0969")
-                .AddInlineField("Framework", $"{RuntimeInformation.FrameworkDescription}")
+                .AddInlineField("Framework", $".NET Core 1.0.3")
                 .AddInlineField("Memory", $"{(process.PrivateMemorySize64 / 1000000d).ToString("N2")} MB")
                 .AddInlineField("Servers", $"{Context.Client.Guilds.Count}")
                 .AddInlineField("Channels", $"{Context.Client.Guilds.Sum(g => g.Channels.Count) + Context.Client.DMChannels.Count}")
                 .AddInlineField("Users", $"{Context.Client.Guilds.Sum(g => g.MemberCount)}")
                 .AddInlineField("Uptime", $"Days: {uptime.Days}\nHours: {uptime.Hours}\nMinutes: {uptime.Minutes}")
-                .AddInlineField("Messages", $"{Config.MESSAGES} ({(Config.MESSAGES / uptime.TotalSeconds).ToString("N2")}/sec)")
-                .AddInlineField("Commands Run", Config.COMMANDS_RUN)
+                .AddInlineField("Messages", $"{_statistics.MessagesRecieved} ({(_statistics.MessagesRecieved / uptime.TotalSeconds).ToString("N2")}/sec)")
+                .AddInlineField("Commands Run", _statistics.CommandsRun)
                 .WithColor(Config.Color());
             }
             

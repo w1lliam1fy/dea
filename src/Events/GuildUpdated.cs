@@ -9,13 +9,16 @@ using System.Threading.Tasks;
 
 namespace DEA.Events
 {
-    class UpdatedGuild
+    /// <summary>
+    /// An event that is run every time a guild gets updated.
+    /// </summary>
+    class GuildUpdated
     {
         private readonly IDependencyMap _map;
         private readonly DiscordSocketClient _client;
         private readonly BlacklistRepository _blaclistRepo;
 
-        public UpdatedGuild(IDependencyMap map)
+        public GuildUpdated(IDependencyMap map)
         {
             _map = map;
             _client = _map.Get<DiscordSocketClient>();

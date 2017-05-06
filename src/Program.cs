@@ -1,4 +1,5 @@
-﻿using DEA.Common.Utilities;
+﻿using DEA.Common.Data;
+using DEA.Common.Utilities;
 using DEA.Database.Models;
 using DEA.Database.Repositories;
 using DEA.Events;
@@ -133,12 +134,16 @@ namespace DEA
             map.Add(new ErrorHandler(_commandService));
             map.Add(new GangRepository(_gangs));
             map.Add(new MuteRepository(_mutes));
+            map.Add(new Statistics());
         }
 
         private void InitializeTimersAndEvents(IDependencyMap map)
         {
             new Ready(map);
+            new JoinedGuild(map);
+            new GuildUpdated(map);
             new UserJoined(map);
+            new UserVoiceStateUpdated(map);
             new ApplyIntrestRate(map);
             new AutoDeletePolls(map);
             new AutoTrivia(map);

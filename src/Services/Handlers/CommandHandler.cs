@@ -11,23 +11,26 @@ using System.Threading.Tasks;
 
 namespace DEA.Services.Handlers
 {
+    /// <summary>
+    /// Handles all commands.
+    /// </summary>
     public class CommandHandler
     {
         private readonly IDependencyMap _map;
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commandService;
+        private readonly Statistics _statistics;
         private readonly ErrorHandler _errorHandler;
-        private readonly RankHandler _rankHandler;
         private readonly UserRepository _userRepo;
 
         public CommandHandler(CommandService commandService, IDependencyMap map)
         {
             _map = map;
             _commandService = commandService;
-            _errorHandler = map.Get<ErrorHandler>();
-            _rankHandler = map.Get<RankHandler>();
-            _userRepo = map.Get<UserRepository>();
-            _client = map.Get<DiscordSocketClient>();
+            _statistics = _map.Get<Statistics>();
+            _errorHandler = _map.Get<ErrorHandler>();
+            _userRepo = _map.Get<UserRepository>();
+            _client = _map.Get<DiscordSocketClient>();
             _client.MessageReceived += HandleCommandAsync;
         }
 
@@ -40,7 +43,7 @@ namespace DEA.Services.Handlers
         {
             return Task.Run(async () =>
             {
-                Config.MESSAGES++;
+                _statistics.MessagesRecieved++;
                 var msg = s as SocketUserMessage;
                 if (msg == null)
                 {
@@ -88,12 +91,12 @@ namespace DEA.Services.Handlers
                     }
                     else
                     {
-                        Config.COMMANDS_RUN++;
+                        _statistics.CommandsRun++;
                     }
                 }
                 else if (msg.Content.Length >= Config.MIN_CHAR_LENGTH)
                 {
-                    await CashPerMsg.Apply(_userRepo, _rankHandler, context);
+                    await _userRepo.ApplyCash(context.GUser, context.DbUser, context.DbGuild);
                 }
             });
         }

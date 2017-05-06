@@ -19,8 +19,6 @@ namespace DEA.Common.Data
             JUMP_REQUIREMENT = 500, STEAL_REQUIREMENT = 2500, ROB_REQUIREMENT = 5000, BULLY_REQUIREMENT = 10000, FIFTYX2_REQUIREMENT = 25000,
             MAX_ROB_PERCENTAGE = 0.20m, MAX_RAID_PERCENTAGE = 0.20m;
 
-        public static int MESSAGES = 0, COMMANDS_RUN = 0;
-
         public static readonly Regex ALPHANUMERICAL = new Regex(@"^[a-zA-Z0-9\s]*$"), ANWITHQUESTIONMARK = new Regex(@"^[a-zA-Z0-9\s\?]*$");
 
         private static readonly Color[] COLORS = { new Color(255, 38, 154), new Color(0, 255, 0), new Color(0, 232, 40), new Color(8, 248, 255),

@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace DEA.Events
 {
+    /// <summary>
+    /// An event that is run every time DEA joins a guild.
+    /// </summary>
     class JoinedGuild
     {
         private readonly IDependencyMap _map;

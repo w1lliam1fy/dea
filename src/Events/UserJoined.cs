@@ -10,6 +10,9 @@ using DEA.Services.Static;
 
 namespace DEA.Events
 {
+    /// <summary>
+    /// An event that is run every time a user joins a guild.
+    /// </summary>
     class UserJoined
     {
         private readonly IDependencyMap _map;

@@ -7,11 +7,13 @@ using DEA.Database.Repositories;
 using Discord;
 using System;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace DEA.Services
 {
+    /// <summary>
+    /// Class for all game related features in DEA.
+    /// </summary>
     public class GameService
     {
         private readonly InteractiveService _interactiveService;
