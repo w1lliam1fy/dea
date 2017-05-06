@@ -143,7 +143,6 @@ namespace DEA
             new JoinedGuild(map);
             new GuildUpdated(map);
             new UserJoined(map);
-            new UserVoiceStateUpdated(map);
             new ApplyIntrestRate(map);
             new AutoDeletePolls(map);
             new AutoTrivia(map);
