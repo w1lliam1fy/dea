@@ -95,6 +95,7 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
         {
             if (commandOrModule != null)
             {
+                commandOrModule = commandOrModule.ToLower();
                 if (commandOrModule.StartsWith(Context.Prefix))
                 {
                     commandOrModule = commandOrModule.Remove(0, Context.Prefix.Length);
@@ -102,7 +103,7 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
 
                 foreach (var module in _commandService.Modules)
                 {
-                    if (module.Name.ToLower() == commandOrModule.ToLower())
+                    if (module.Name.ToLower() == commandOrModule)
                     {
                         var longestInModule = 0;
                         foreach (var cmd in module.Commands)
@@ -126,21 +127,16 @@ To view your steadily increasing chatting multiplier, you may use the `{p}rate` 
 
                 foreach (var module in _commandService.Modules)
                 {
-                    foreach (var cmd in module.Commands)
+                    var cmd = module.Commands.FirstOrDefault(x => x.Aliases.Any(y => y.ToLower() == commandOrModule));
+                    if (cmd != default(CommandInfo))
                     {
-                        foreach (var alias in cmd.Aliases)
-                        {
-                            if (alias.ToLower() == commandOrModule.ToLower())
-                            {
-                                var commmandNameUpperFirst = commandOrModule.UpperFirstChar();
-                                var example = cmd.Parameters.Count == 0 ? string.Empty : $"**Example:** `{Context.Prefix}{commmandNameUpperFirst}{cmd.GetExample()}`";
-                                
-                                await SendAsync($"**Description:** {cmd.Summary}\n\n" +
-                                                $"**Usage:** `{Context.Prefix}{commmandNameUpperFirst}{cmd.GetUsage()}`\n\n" + example, 
-                                                commandOrModule.UpperFirstChar());
-                                return;
-                            }
-                        }
+                        var commmandNameUpperFirst = commandOrModule.UpperFirstChar();
+                        var example = cmd.Parameters.Count == 0 ? string.Empty : $"**Example:** `{Context.Prefix}{commmandNameUpperFirst}{cmd.GetExample()}`";
+
+                        await SendAsync($"**Description:** {cmd.Summary}\n\n" +
+                                        $"**Usage:** `{Context.Prefix}{commmandNameUpperFirst}{cmd.GetUsage()}`\n\n" + example,
+                                        commandOrModule.UpperFirstChar());
+                        return;
                     }
                 }
 
