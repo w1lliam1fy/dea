@@ -51,11 +51,11 @@ namespace DEA.Modules
         public async Task InformOwners([Remainder] string message)
         {
             await ReplyAsync("The inform owners process has started...");
-            foreach (var guild in await (Context.Client as IDiscordClient).GetGuildsAsync())
+            foreach (var guild in Context.Client.Guilds)
             {
                 try
                 {
-                    var channel = await (await guild.GetOwnerAsync()).GetDMChannelAsync();
+                    var channel = await guild.Owner.CreateDMChannelAsync();
 
                     await channel.SendAsync(message);
                 }
@@ -71,21 +71,19 @@ namespace DEA.Modules
         public async Task SendGlobalUpdate([Remainder] string updateMessage)
         {
             await ReplyAsync("The global update message process has started...");
-            foreach (var guild in await (Context.Client as IDiscordClient).GetGuildsAsync())
-            {
-                var dbGuild = await _guildRepo.GetGuildAsync(guild.Id);
-                if (dbGuild.UpdateChannelId > 0)
-                {
-                    var channel = await guild.GetChannelAsync(dbGuild.UpdateChannelId);
+            var dbGuilds = await _guildRepo.AllAsync();
 
-                    if (channel != null)
+            foreach (var guild in Context.Client.Guilds)
+            {
+                if (dbGuilds.Exists(x => x.GuildId == guild.Id))
+                {
+                    var dbGuild = dbGuilds.Find(x => x.GuildId == guild.Id);
+                    try
                     {
-                        try
-                        {
-                            await (channel as ITextChannel).SendAsync(updateMessage);
-                        }
-                        catch { }
+                        var channel = guild.GetChannel(dbGuild.UpdateChannelId);
+                        await (channel as ITextChannel).SendAsync(updateMessage);
                     }
+                    catch { }
                 }
             }
             await ReplyAsync("All global update messages have been sent.");

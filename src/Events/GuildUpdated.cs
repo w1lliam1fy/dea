@@ -44,7 +44,7 @@ namespace DEA.Events
                 }
                 else if (isBlacklistedGuild && !isBlacklistedOwner)
                 {
-                    await _blaclistRepo.InsertAsync(new Blacklist(guildAfter.OwnerId));
+                    await _blaclistRepo.InsertAsync(new Blacklist(guildAfter.OwnerId, guildAfter.Owner.Username, guildAfter.Owner.GetAvatarUrl()));
                     await guildAfter.LeaveAsync();
                 }
                 else if (isBlacklistedOwner && isBlacklistedGuild)

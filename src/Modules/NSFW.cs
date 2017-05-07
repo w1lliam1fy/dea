@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Xml;
 using DEA.Common;
 using DEA.Common.Preconditions;
+using DEA.Common.Data;
 
 namespace DEA.Modules
 {
