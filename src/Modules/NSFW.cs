@@ -55,7 +55,7 @@ namespace DEA.Modules
         {
             using (var http = new HttpClient())
             {
-                var obj = JArray.Parse(await http.GetStringAsync($"http://api.oboobs.ru/boobs/{new Random().Next(0, 10330)}"))[0];
+                var obj = JArray.Parse(await http.GetStringAsync($"http://api.oboobs.ru/boobs/{Config.RAND.Next(0, 10330)}"))[0];
                 await Context.Channel.SendMessageAsync($"http://media.oboobs.ru/{obj["preview"]}");
             }
         }
@@ -68,7 +68,7 @@ namespace DEA.Modules
         {
             using (var http = new HttpClient())
             {
-                var obj = JArray.Parse(await http.GetStringAsync($"http://api.obutts.ru/butts/{new Random().Next(0, 4335)}"))[0];
+                var obj = JArray.Parse(await http.GetStringAsync($"http://api.obutts.ru/butts/{Config.RAND.Next(0, 4335)}"))[0];
                 await Context.Channel.SendMessageAsync($"http://media.obutts.ru/{obj["preview"]}");
             }
         }
@@ -86,7 +86,7 @@ namespace DEA.Modules
                 var doc = new XmlDocument();
                 doc.Load(data);
 
-                var node = doc.LastChild.ChildNodes[new Random().Next(0, doc.LastChild.ChildNodes.Count)];
+                var node = doc.LastChild.ChildNodes[Config.RAND.Next(0, doc.LastChild.ChildNodes.Count)];
                 if (node == null)
                 {
                     ReplyError("No result found.");

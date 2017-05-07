@@ -37,7 +37,7 @@ namespace DEA.Services
                 throw new DEAException("There are no trivia questions yet!");
             }
 
-            var random = new Random();
+            var random = Config.RAND;
             int roll = random.Next(0, dbGuild.Trivia.ElementCount);
 
             var element = dbGuild.Trivia.GetElement(roll);
@@ -104,7 +104,7 @@ namespace DEA.Services
                 throw new DEAException($"You do not have enough money. Balance: {context.DbUser.Cash.USD()}.");
             }
 
-            decimal roll = new Random().Next(1, 10001) / 100m;
+            decimal roll = Config.RAND.Next(1, 10001) / 100m;
             if (roll >= odds)
             {
                 await _userRepo.EditCashAsync(context, bet * payoutMultiplier);

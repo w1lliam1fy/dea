@@ -163,7 +163,7 @@ This command may be used for view the commands for each of the following modules
 
 In order to **add DEA to your Discord Server**, click the following link: <https://discordapp.com/oauth2/authorize?client_id={Context.Guild.CurrentUser.Id}&scope=bot&permissions=410119182> 
 
-If you have any other questions, you may join the **Official DEA Discord Server:** <https://discord.gg/Tuptja9>, a server home to infamous meme events such as insanity.",
+If you have any other questions, you may join the **Official DEA Discord Server:** <https://discord.gg/gvyma7H>, a server home to infamous meme events such as insanity.",
                     "Welcome to DEA");
 
                 await ReplyAsync($"You have been DMed with all the command information!");

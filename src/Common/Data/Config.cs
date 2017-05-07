@@ -19,13 +19,15 @@ namespace DEA.Common.Data
             JUMP_REQUIREMENT = 500, STEAL_REQUIREMENT = 2500, ROB_REQUIREMENT = 5000, BULLY_REQUIREMENT = 10000, FIFTYX2_REQUIREMENT = 25000,
             MAX_ROB_PERCENTAGE = 0.20m, MAX_RAID_PERCENTAGE = 0.20m;
 
+        public static readonly Random RAND = new Random();
+
         public static readonly Regex ALPHANUMERICAL = new Regex(@"^[a-zA-Z0-9\s]*$"), ANWITHQUESTIONMARK = new Regex(@"^[a-zA-Z0-9\s\?]*$");
 
         private static readonly Color[] COLORS = { new Color(255, 38, 154), new Color(0, 255, 0), new Color(0, 232, 40), new Color(8, 248, 255),
         new Color(242, 38, 255), new Color(255, 28, 142), new Color(104, 255, 34), new Color(255, 190, 17), new Color(41, 84, 255),
         new Color(150, 36, 237), new Color(168, 237, 0)};
 
-        public static Color Color() { return COLORS[new Random().Next(1, COLORS.Length) - 1]; }
+        public static Color Color() { return COLORS[RAND.Next(1, COLORS.Length) - 1]; }
 
         public static readonly Color ERROR_COLOR = new Color(255, 0, 0);
 

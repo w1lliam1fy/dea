@@ -35,7 +35,6 @@ namespace DEA.Modules
         public async Task LeaveGuild(ulong guildId)
         {
             var guild = await (Context.Client as IDiscordClient).GetGuildAsync(guildId);
-            
             if (guild != null)
             {
                 await guild.LeaveAsync();
@@ -45,6 +44,26 @@ namespace DEA.Modules
             {
                 await ReplyAsync("DEA is not in this guild.");
             }
+        }
+
+        [Command("InformOwners")]
+        [Summary("Sends a message to all server owners.")]
+        public async Task InformOwners([Remainder] string message)
+        {
+            await ReplyAsync("The inform owners process has started...");
+            foreach (var guild in await (Context.Client as IDiscordClient).GetGuildsAsync())
+            {
+                try
+                {
+                    var channel = await (await guild.GetOwnerAsync()).GetDMChannelAsync();
+
+                    await channel.SendAsync(message);
+                }
+                catch { }
+
+                await Task.Delay(1000);
+            }
+            await ReplyAsync("All owners have been informed.");
         }
 
         [Command("SendGlobalUpdate")]
@@ -76,7 +95,19 @@ namespace DEA.Modules
         [Summary("Blacklist a user from DEA entirely to the fullest extent.")]
         public async Task Blacklist(ulong userId)
         {
-            var blacklist = new Blacklist(userId);
+            var username = string.Empty;
+            var avatarUrl = string.Empty;
+
+            try
+            {
+                var user = await (Context.Client as IDiscordClient).GetUserAsync(userId);
+
+                username = user.Username;
+                avatarUrl = user.GetAvatarUrl();
+            }
+            catch { }
+
+            var blacklist = new Blacklist(userId, username, avatarUrl);
             await _blacklistRepo.InsertAsync(blacklist);
 
             foreach (var guild in Context.Client.Guilds)
