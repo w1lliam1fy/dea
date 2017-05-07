@@ -20,6 +20,8 @@ namespace DEA.Database.Models
         public decimal InvestmentMultiplier { get; set; } = 1;
 
         public decimal TemporaryMultiplier { get; set; } = 1;
+        
+        public BsonDocument Inventory { get; set; } = new BsonDocument();
 
         //Cooldowns
 

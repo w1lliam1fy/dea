@@ -184,7 +184,12 @@ namespace DEA.Modules
                     {
                         ReplyError($"You do not have enough money. Balance: {Context.Cash.USD()}.");
                     }
-                    await _userRepo.ModifyAsync(Context.DbUser, x => );
+                    if (Context.DbUser.Inventory.Contains("Revolver")){
+                        await _userRepo.ModifyAsync(Context.DbUser, x => x.Inventory["Revolver"] += 1);
+                    }
+                    else {
+                        await _userRepo.ModifyAsync(Context.DbUser, x => x.Inventory.Add("Revolver", 1));
+                    }
                     await _userRepo.EditCash(Context.DbUser, -Config.REVOLVER_COST);
                     await ReplyAsync("Don't forget to load it.");
                     break;
@@ -193,7 +198,12 @@ namespace DEA.Modules
                     {
                         ReplyError($"You do not have enough money. Balance: {Context.Cash.USD()}.");
                     }
-                    await _userRepo.ModifyAsync(Context.DbUser, x => );
+                    if (Context.DbUser.Inventory.Contains("AR15")){
+                        await _userRepo.ModifyAsync(Context.DbUser, x => x.Inventory["AR15"] += 1);
+                    }
+                    else {
+                        await _userRepo.ModifyAsync(Context.DbUser, x => x.Inventory.Add("AR15", 1));
+                    }                    
                     await _userRepo.EditCash(Context.DbUser, -Config.AR15_COST);
                     await ReplyAsync("Be careful, those things are automatic.");
                     break;
@@ -201,8 +211,13 @@ namespace DEA.Modules
                     if (Config.DRAGUNOV_COST > Context.Cash)
                     {
                         ReplyError($"You do not have enough money. Balance: {Context.Cash.USD()}.");
-                    }                
-                    await _userRepo.ModifyAsync(Context.DbUser, x => );
+                    }         
+                    if (Context.DbUser.Inventory.Contains("Dragunov")){
+                        await _userRepo.ModifyAsync(Context.DbUser, x => x.Inventory["Dragunov"] += 1);
+                    }
+                    else {
+                        await _userRepo.ModifyAsync(Context.DbUser, x => x.Inventory.Add("Dragunov", 1));
+                    }                    
                     await _userRepo.EditCash(Context.DbUser, -Config.DRAGUNOV_COST);
                     await ReplyAsync("360noscope that kiddo.");
                     break;
@@ -211,7 +226,12 @@ namespace DEA.Modules
                     {
                         ReplyError($"You do not have enough money. Balance: {Context.Cash.USD()}.");
                     }
-                    await _userRepo.ModifyAsync(Context.DbUser, x => );
+                    if (Context.DbUser.Inventory.Contains("Bullets")){
+                        await _userRepo.ModifyAsync(Context.DbUser, x => x.Inventory["Bullets"] += 1);
+                    }
+                    else {
+                        await _userRepo.ModifyAsync(Context.DbUser, x => x.Inventory.Add("Bullets", 1));
+                    }                    
                     await _userRepo.EditCash(Context.DbUser, -Config.BULLETS_COST);
                     await ReplyAsync("Remember, you put this in the guns ***not*** the toaster.");
                     break;
@@ -220,7 +240,12 @@ namespace DEA.Modules
                     {
                         ReplyError($"You do not have enough money. Balance: {Context.Cash.USD()}.");
                     }
-                    await _userRepo.ModifyAsync(Context.DbUser, x => );
+                    if (Context.DbUser.Inventory.Contains("Kevlar")){
+                        await _userRepo.ModifyAsync(Context.DbUser, x => x.Inventory["Kevlar"] += 1);
+                    }
+                    else {
+                        await _userRepo.ModifyAsync(Context.DbUser, x => x.Inventory.Add("Kevlar", 1));
+                    }                   
                     await _userRepo.EditCash(Context.DbUser, -CONFIG.KEVLAR_COST);
                     await ReplyAsync("Hopefully this adds a little piece of armor to that stomach of yours.");
                     break;
