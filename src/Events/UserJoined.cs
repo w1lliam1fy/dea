@@ -4,9 +4,10 @@ using Discord.WebSocket;
 using System.Linq;
 using System.Threading.Tasks;
 using DEA.Services.Handlers;
-using Discord.Commands;
+using Microsoft.Extensions.DependencyInjection;
 using DEA.Common.Extensions.DiscordExtensions;
 using DEA.Services.Static;
+using System;
 
 namespace DEA.Events
 {
@@ -15,7 +16,7 @@ namespace DEA.Events
     /// </summary>
     class UserJoined
     {
-        private readonly IDependencyMap _map;
+        private readonly IServiceProvider _serviceProvider;
         private readonly DiscordSocketClient _client;
         private readonly UserRepository _userRepo;
         private readonly GuildRepository _guildRepo;
@@ -23,15 +24,15 @@ namespace DEA.Events
         private readonly BlacklistRepository _blacklistRepo;
         private readonly RankHandler _rankHandler;
 
-        public UserJoined(IDependencyMap map)
+        public UserJoined(IServiceProvider serviceProvider)
         {
-            _map = map;
-            _userRepo = _map.Get<UserRepository>();
-            _guildRepo = map.Get<GuildRepository>();
-            _muteRepo = map.Get<MuteRepository>();
-            _blacklistRepo = map.Get<BlacklistRepository>();
-            _rankHandler = map.Get<RankHandler>();
-            _client = _map.Get<DiscordSocketClient>();
+            _serviceProvider = serviceProvider;
+            _userRepo = _serviceProvider.GetService<UserRepository>();
+            _guildRepo = serviceProvider.GetService<GuildRepository>();
+            _muteRepo = serviceProvider.GetService<MuteRepository>();
+            _blacklistRepo = serviceProvider.GetService<BlacklistRepository>();
+            _rankHandler = serviceProvider.GetService<RankHandler>();
+            _client = _serviceProvider.GetService<DiscordSocketClient>();
             _client.UserJoined += HandleUserJoined;
         }
 

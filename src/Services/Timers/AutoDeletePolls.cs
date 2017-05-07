@@ -3,7 +3,7 @@ using DEA.Common.Extensions;
 using DEA.Database.Repositories;
 using DEA.Services.Static;
 using Discord;
-using Discord.Commands;
+using Microsoft.Extensions.DependencyInjection;
 using Discord.WebSocket;
 using System;
 using System.Threading;
@@ -16,17 +16,17 @@ namespace DEA.Services.Timers
     /// </summary>
     class AutoDeletePolls
     {
-        private readonly IDependencyMap _map;
+        private readonly IServiceProvider _serviceProvider;
         private readonly DiscordSocketClient _client;
         private readonly PollRepository _pollRepo;
 
         private readonly Timer _timer;
 
-        public AutoDeletePolls(IDependencyMap map)
+        public AutoDeletePolls(IServiceProvider serviceProvider)
         {
-            _map = map;
-            _pollRepo = _map.Get<PollRepository>();
-            _client = _map.Get<DiscordSocketClient>();
+            _serviceProvider = serviceProvider;
+            _pollRepo = _serviceProvider.GetService<PollRepository>();
+            _client = _serviceProvider.GetService<DiscordSocketClient>();
 
             ObjectState StateObj = new ObjectState();
 

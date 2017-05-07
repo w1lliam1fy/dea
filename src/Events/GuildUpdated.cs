@@ -2,8 +2,9 @@
 using DEA.Database.Repositories;
 using DEA.Services.Static;
 using Discord;
-using Discord.Commands;
+using Microsoft.Extensions.DependencyInjection;
 using Discord.WebSocket;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,15 +15,15 @@ namespace DEA.Events
     /// </summary>
     class GuildUpdated
     {
-        private readonly IDependencyMap _map;
+        private readonly IServiceProvider _serviceProvider;
         private readonly DiscordSocketClient _client;
         private readonly BlacklistRepository _blaclistRepo;
 
-        public GuildUpdated(IDependencyMap map)
+        public GuildUpdated(IServiceProvider serviceProvider)
         {
-            _map = map;
-            _client = _map.Get<DiscordSocketClient>();
-            _blaclistRepo = _map.Get<BlacklistRepository>();
+            _serviceProvider = serviceProvider;
+            _client = _serviceProvider.GetService<DiscordSocketClient>();
+            _blaclistRepo = _serviceProvider.GetService<BlacklistRepository>();
             _client.GuildUpdated += HandleGuildUpdated;
         }
 
