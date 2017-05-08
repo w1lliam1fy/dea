@@ -21,12 +21,14 @@ namespace DEA.Modules
         private readonly GangRepository _gangRepo;
         private readonly RankHandler _rankHandler;
 
-        public General(UserRepository userRepo, GuildRepository guildRepo, GangRepository gangRepo, RankHandler rankHandler)
+        private readonly Item[] _items;
+        public General(UserRepository userRepo, GuildRepository guildRepo, GangRepository gangRepo, RankHandler rankHandler, Item[] items)
         {
             _userRepo = userRepo;
             _guildRepo = guildRepo;
             _gangRepo = gangRepo;
             _rankHandler = rankHandler;
+            _items = items;
         }
 
         [Command("Investments")]

@@ -18,11 +18,13 @@ namespace DEA.Modules
         private readonly GangRepository _gangRepo;
         private readonly ModerationService _moderationService;
 
-        public Crime(UserRepository userRepo, GangRepository gangRepo, ModerationService moderationService)
+        private readonly Item[] _items;
+        public Crime(UserRepository userRepo, GangRepository gangRepo, ModerationService moderationService, Item[] _items)
         {
             _userRepo = userRepo;
             _gangRepo = gangRepo;
             _moderationService = moderationService;
+            _items = items;
         }
 
         [Command("Whore")]
@@ -175,92 +177,34 @@ namespace DEA.Modules
         }
         [Command("Shop")]
         [Summary("List of available shop items.")]
-        public async Task Shop([Summary("Bullets")]string item = null)
+        public async Task Shop([Summary("Bullets")][Remainder]string item = null)
         {
-            switch (item)
+            if (string.IsNullOrWhiteSpace(item))
             {
-                case $"{Items.Revolver}":
-                    if (Config.REVOLVER_COST > Context.Cash)
-                    {
-                        ReplyError($"You do not have enough money. Balance: {Context.Cash.USD()}.");
-                    }
-                    if (Context.DbUser.Inventory.Contains("Revolver")){
-                        await _userRepo.ModifyAsync(Context.DbUser, x => x.Inventory["Revolver"] += 1);
-                    }
-                    else {
-                        await _userRepo.ModifyAsync(Context.DbUser, x => x.Inventory.Add("Revolver", 1));
-                    }
-                    await _userRepo.EditCash(Context.DbUser, -Config.REVOLVER_COST);
-                    await ReplyAsync("Don't forget to load it.");
-                    break;
-                case $"{Items.AR15}":
-                    if (Config.AR15_COST > Context.Cash)
-                    {
-                        ReplyError($"You do not have enough money. Balance: {Context.Cash.USD()}.");
-                    }
-                    if (Context.DbUser.Inventory.Contains("AR15")){
-                        await _userRepo.ModifyAsync(Context.DbUser, x => x.Inventory["AR15"] += 1);
-                    }
-                    else {
-                        await _userRepo.ModifyAsync(Context.DbUser, x => x.Inventory.Add("AR15", 1));
-                    }                    
-                    await _userRepo.EditCash(Context.DbUser, -Config.AR15_COST);
-                    await ReplyAsync("Be careful, those things are automatic.");
-                    break;
-                case $"{Items.Dragunov}":
-                    if (Config.DRAGUNOV_COST > Context.Cash)
-                    {
-                        ReplyError($"You do not have enough money. Balance: {Context.Cash.USD()}.");
-                    }         
-                    if (Context.DbUser.Inventory.Contains("Dragunov")){
-                        await _userRepo.ModifyAsync(Context.DbUser, x => x.Inventory["Dragunov"] += 1);
-                    }
-                    else {
-                        await _userRepo.ModifyAsync(Context.DbUser, x => x.Inventory.Add("Dragunov", 1));
-                    }                    
-                    await _userRepo.EditCash(Context.DbUser, -Config.DRAGUNOV_COST);
-                    await ReplyAsync("360noscope that kiddo.");
-                    break;
-                case $"{Items.Bullets}":
-                    if (Config.BULLETS_COST > Context.Cash)
-                    {
-                        ReplyError($"You do not have enough money. Balance: {Context.Cash.USD()}.");
-                    }
-                    if (Context.DbUser.Inventory.Contains("Bullets")){
-                        await _userRepo.ModifyAsync(Context.DbUser, x => x.Inventory["Bullets"] += 1);
-                    }
-                    else {
-                        await _userRepo.ModifyAsync(Context.DbUser, x => x.Inventory.Add("Bullets", 1));
-                    }                    
-                    await _userRepo.EditCash(Context.DbUser, -Config.BULLETS_COST);
-                    await ReplyAsync("Remember, you put this in the guns ***not*** the toaster.");
-                    break;
-                case $"{Items.Kevlar}":
-                    if (Config.KEVLAR_COST > Context.Cash)
-                    {
-                        ReplyError($"You do not have enough money. Balance: {Context.Cash.USD()}.");
-                    }
-                    if (Context.DbUser.Inventory.Contains("Kevlar")){
-                        await _userRepo.ModifyAsync(Context.DbUser, x => x.Inventory["Kevlar"] += 1);
-                    }
-                    else {
-                        await _userRepo.ModifyAsync(Context.DbUser, x => x.Inventory.Add("Kevlar", 1));
-                    }                   
-                    await _userRepo.EditCash(Context.DbUser, -CONFIG.KEVLAR_COST);
-                    await ReplyAsync("Hopefully this adds a little piece of armor to that stomach of yours.");
-                    break;
-                case null:
-                     await SendAsync($@"\n **Cost: {Config.REVOLVER_COST}$** | Command: `{Config.Prefix}shop revolver` | Description: 
-                                    Pop a glock in a foe. Enough to increase chance by 5%.\n **Cost: {Config.AR15_COST}$** | Command: `{Config.Prefix}shop AR15`
-                                    Description: Assault fire. Assault weapon. 15% assault increase.\n **Cost: {Config.DRAGUNOV_COST}$** |
-                                    Command: `{Config.Prefix}shop dragunov` | Description: 360 noscope sniper shot, 20% increase.\n **Cost: {Config.BULLETS_COST}$** |
-                                    Command: `{Config.Prefix}shop bullets` | Description: You can't shoot a gun without bullets, or did you think?\n
-                                    **Cost: {Config.KEVLAR_COST}$** | Command: `{Config.Prefix}shop kevlar` | Description: Adds a piece of armor for protection. 20% less likely to be fatally shot", "Available Shop Items");
-                    break;                   
-                default:
-                    await ReplyAsync("That shop item doesn't exist");
-                    break;
+                string description = string.Empty;
+                foreach (var kv in _items)
+                {
+                    description += $"**Cost: {kv.Price}$** | Command: `{Config.Prefix}shop {kv.Name} | Description: {kv.Description}\n";
+                }
+                await SendAsync(description, "Available Shop Items");
             }
-        }
+            else if (_items.Any(x => x.Name == item))
+            {
+                var element = _items.First(x => x.Name == item);
+                if (element.Price > Context.Cash)
+                {
+                    ReplyError($"You do not have enough money. Balance: {Context.Cash.USD()}.");
+                }
+                if (Context.DbUser.Inventory.Contains(element.Name))
+                {
+                    await _userRepo.ModifyAsync(Context.DbUser, x => x.Inventory[element.Name] += 1);
+                }
+                else
+                {
+                    await _userRepo.ModifyAsync(Context.DbUser, x => x.Inventory.Add(element.Name, 1));
+                }
+                await ReplyAsync($"Successfully purchased {element.Name}!");
+            }
+        }        
     }
 }

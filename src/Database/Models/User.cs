@@ -16,6 +16,8 @@ namespace DEA.Database.Models
         public ulong GuildId { get; set; }
 
         public decimal Cash { get; set; } = 0;
+        
+        public decimal Bounty { get; set; } = 0;
 
         public decimal InvestmentMultiplier { get; set; } = 1;
 
