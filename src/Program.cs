@@ -1,4 +1,4 @@
-﻿using DEA.Common.Data;
+using DEA.Common.Data;
 using DEA.Common.Utilities;
 using DEA.Database.Models;
 using DEA.Database.Repositories;
@@ -32,6 +32,7 @@ namespace DEA
         private readonly CommandService _commandService;
 
         private readonly Credentials _credentials;
+        private readonly Item[] _items;
 
         private readonly IMongoCollection<Guild> _guilds;
         private readonly IMongoCollection<User> _users;
@@ -49,14 +50,18 @@ namespace DEA
                     JsonSerializer serializer = new JsonSerializer();
                     _credentials = (Credentials)serializer.Deserialize(file, typeof(Credentials));
                 }
+                using (StreamReader file = File.OpenText(@"ItemList.json"))
+                {
+                    JsonSerializer serializer = new JsonSerializer();
+                    _items = (Item[])serializer.Deserialize(file, typeof(Item[]));
+                }
             }
             catch (IOException e)
             {
-                Logger.Log(LogSeverity.Critical, "Error while loading up Credentials.json, please fix this issue and restart the bot", e.Message);
+                Logger.Log(LogSeverity.Critical, "Error while loading up data, please fix this issue and restart the bot", e.Message);
                 Console.ReadLine();
                 Environment.Exit(0);
             }
-
             _client = new DiscordSocketClient(new DiscordSocketConfig()
             {
                 MessageCacheSize = 10,

@@ -21,12 +21,14 @@ namespace DEA.Modules
         private readonly GangRepository _gangRepo;
         private readonly RankHandler _rankHandler;
 
-        public General(UserRepository userRepo, GuildRepository guildRepo, GangRepository gangRepo, RankHandler rankHandler)
+        private readonly Item[] _items;
+        public General(UserRepository userRepo, GuildRepository guildRepo, GangRepository gangRepo, RankHandler rankHandler, Item[] items)
         {
             _userRepo = userRepo;
             _guildRepo = guildRepo;
             _gangRepo = gangRepo;
             _rankHandler = rankHandler;
+            _items = items;
         }
 
         [Command("Investments")]
@@ -292,7 +294,24 @@ namespace DEA.Modules
 
             await SendAsync(description + "\n**Permission Levels:**\n1: Moderator\n2: Administrator\n3: Owner");
         }
-
+        [Command("Inventory")]
+        [Summary("Check the inventory of any user.")
+        public async Task Inventory([Remainder]IGuildUser user)
+        {
+            user = user ?? Context.GUser;
+            var dbUser = user.Id == Context.User.Id ? Context.DbUser : await _userRepo.GetUserAsync(user);
+            if (dbUser.Inventory.ElementCount == 0)
+            {
+                ReplyError("You have nothing in your inventory.");
+            }
+            var description = string.Empty;
+            
+            foreach(var item in dbUser.Inventory.Elements)
+            {
+                description += $"**{item.Name}** : {item.Value}.";
+            }
+            await SendAsync(description, $"Inventory of {user.Boldify()}");
+        }
         [Command("Cooldowns")]
         [Summary("Check when you can sauce out more cash.")]
         public async Task Cooldowns([Remainder] IGuildUser user = null)

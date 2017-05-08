@@ -18,11 +18,13 @@ namespace DEA.Modules
         private readonly GangRepository _gangRepo;
         private readonly ModerationService _moderationService;
 
-        public Crime(UserRepository userRepo, GangRepository gangRepo, ModerationService moderationService)
+        private readonly Item[] _items;
+        public Crime(UserRepository userRepo, GangRepository gangRepo, ModerationService moderationService, Item[] _items)
         {
             _userRepo = userRepo;
             _gangRepo = gangRepo;
             _moderationService = moderationService;
+            _items = items;
         }
 
         [Command("Whore")]
@@ -173,6 +175,36 @@ namespace DEA.Modules
             }
             await _userRepo.ModifyAsync(Context.DbUser, x => x.Rob = DateTime.UtcNow);
         }
-
+        [Command("Shop")]
+        [Summary("List of available shop items.")]
+        public async Task Shop([Summary("Bullets")][Remainder]string item = null)
+        {
+            if (string.IsNullOrWhiteSpace(item))
+            {
+                string description = string.Empty;
+                foreach (var kv in _items)
+                {
+                    description += $"**Cost: {kv.Price}$** | Command: `{Config.Prefix}shop {kv.Name} | Description: {kv.Description}\n";
+                }
+                await SendAsync(description, "Available Shop Items");
+            }
+            else if (_items.Any(x => x.Name == item))
+            {
+                var element = _items.First(x => x.Name == item);
+                if (element.Price > Context.Cash)
+                {
+                    ReplyError($"You do not have enough money. Balance: {Context.Cash.USD()}.");
+                }
+                if (Context.DbUser.Inventory.Contains(element.Name))
+                {
+                    await _userRepo.ModifyAsync(Context.DbUser, x => x.Inventory[element.Name] += 1);
+                }
+                else
+                {
+                    await _userRepo.ModifyAsync(Context.DbUser, x => x.Inventory.Add(element.Name, 1));
+                }
+                await ReplyAsync($"Successfully purchased {element.Name}!");
+            }
+        }        
     }
 }
