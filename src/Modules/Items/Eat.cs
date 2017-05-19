@@ -34,7 +34,7 @@ namespace DEA.Modules.Items
             });
 
             await _gameService.ModifyInventoryAsync(Context.DbUser, element.Name, -1);
-            await ReplyAsync($"Successfully ate {element.Name} gaining you {element.Health} health. Health: {Context.DbUser.Health}.");
+            await ReplyAsync($"You ate: \"{element.Name}\" increasing your health by {element.Health}. Health: {Context.DbUser.Health}.");
         }
     }
 }

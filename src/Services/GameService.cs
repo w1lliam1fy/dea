@@ -190,25 +190,6 @@ namespace DEA.Services
             }
         }
 
-        public async Task ModifyInventoryAsync(IGuildUser user, string item, int amountToAdd = 1)
-        {
-            var userToAdd = await _userRepo.GetUserAsync(user);
-
-            if (userToAdd.Inventory.Contains(item))
-            {
-                await _userRepo.ModifyAsync(userToAdd, x => x.Inventory[item] = amountToAdd + x.Inventory[item].AsInt32);
-            }
-            else
-            {
-                await _userRepo.ModifyAsync(userToAdd, x => x.Inventory.Add(item, amountToAdd));
-            }
-
-            if (userToAdd.Inventory[item] <= 0)
-            {
-                await _userRepo.ModifyAsync(userToAdd, x => x.Inventory.Remove(item));
-            }
-        }
-
         public IEnumerable<Item> InventoryData(User dbUser)
         {
             return _items.Where(x => dbUser.Inventory.Names.Any(y => y == x.Name));

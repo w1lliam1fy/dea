@@ -31,14 +31,9 @@ namespace DEA.Modules.Items
 
             foreach (var item in dbUser.Inventory.Elements)
             {
-                if (item.Value.AsInt32 == 1)
-                {
-                    description += $"1 {item.Name}.\n";
-                }
-                else
-                {
-                    description += $"{item.Value} {item.Name}s.\n";
-                }
+                var s = item.Value.AsInt32 == 1 ? string.Empty : "s";
+
+                description += $"{item.Value} {item.Name}{s}\n";
             }
             await SendAsync(description, $"Inventory of {user.Boldify()}");
         }
