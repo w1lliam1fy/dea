@@ -1,4 +1,4 @@
-﻿using DEA.Common.Data;
+﻿using MongoDB.Bson;
 using System;
 
 namespace DEA.Database.Models
@@ -15,19 +15,17 @@ namespace DEA.Database.Models
 
         public ulong GuildId { get; set; }
 
+        public ulong SlaveOf { get; set; } = 0;
+
         public decimal Cash { get; set; } = 0;
         
         public decimal Bounty { get; set; } = 0;
 
-        public decimal InvestmentMultiplier { get; set; } = 1;
+        public int Health { get; set; } = 100;
 
-        public decimal TemporaryMultiplier { get; set; } = 1;
-        
         public BsonDocument Inventory { get; set; } = new BsonDocument();
 
         //Cooldowns
-
-        public double MessageCooldown { get; set; } = Config.DEFAULT_MESSAGE_COOLDOWN.TotalMilliseconds;
 
         public DateTime Whore { get; set; } = DateTime.UtcNow.AddYears(-1);
 
@@ -41,5 +39,14 @@ namespace DEA.Database.Models
 
         public DateTime Steal { get; set; } = DateTime.UtcNow.AddYears(-1);
 
+        public DateTime Hunt { get; set; } = DateTime.UtcNow.AddYears(-1);
+
+        public DateTime Fish { get; set; } = DateTime.UtcNow.AddYears(-1);
+
+        public DateTime Collect { get; set; } = DateTime.UtcNow.AddYears(-1);
+
+        public DateTime Stab { get; set; } = DateTime.UtcNow.AddYears(-1);
+
+        public DateTime Shoot { get; set; } = DateTime.UtcNow.AddYears(-1);
     }
 }

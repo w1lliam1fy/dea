@@ -1,4 +1,5 @@
 ﻿using DEA.Common;
+using DEA.Common.Utilities;
 using DEA.Database.Models;
 using DEA.Services.Handlers;
 using Discord;
@@ -11,10 +12,12 @@ namespace DEA.Database.Repositories
     public class UserRepository : BaseRepository<User>
     {
         private readonly RankHandler _rankHandler;
+        private readonly Item[] _items;
 
-        public UserRepository(IMongoCollection<User> users, RankHandler rankHandler) : base (users)
+        public UserRepository(IMongoCollection<User> users, RankHandler rankHandler, Item[] items) : base (users)
         {
             _rankHandler = rankHandler;
+            _items = items;
         }
 
         /// <summary>
@@ -82,7 +85,7 @@ namespace DEA.Database.Repositories
         /// <param name="change">The +/- change on the user's cash.</param>
         public async Task EditCashAsync(DEAContext context, decimal change)
         {
-            var newCash = Math.Round(context.Cash + change, 2);
+            decimal newCash = Math.Round(context.Cash + change, 2);
             context.Cash = newCash;
             context.DbUser.Cash = newCash; 
             await UpdateAsync(context.DbUser);
@@ -101,26 +104,6 @@ namespace DEA.Database.Repositories
             dbUser.Cash = Math.Round(dbUser.Cash + change, 2);
             await UpdateAsync(dbUser);
             await _rankHandler.HandleAsync(user.Guild, user, dbGuild, dbUser);
-        }
-
-        /// <summary>
-        /// Provides the user in question with money and an increased rate if the cooldown has finished.
-        /// </summary>
-        /// <param name="userRepo">The user repository object to modify the user's cash.</param>
-        /// <param name="context">The context to get the user's data information.</param>
-        /// <returns></returns>
-        public async Task ApplyCash(IGuildUser user, User dbUser, Guild dbGuild)
-        {
-            if (DateTime.UtcNow.Subtract(dbUser.Message).TotalMilliseconds > dbUser.MessageCooldown)
-            {
-                await ModifyAsync(dbUser, x =>
-                {
-                    x.TemporaryMultiplier = dbUser.TemporaryMultiplier + dbGuild.TempMultiplierIncreaseRate;
-                    x.Message = DateTime.UtcNow;
-                    x.Cash += dbGuild.GlobalChattingMultiplier * dbUser.TemporaryMultiplier * dbUser.InvestmentMultiplier;
-                });
-                await _rankHandler.HandleAsync(user.Guild, user, dbGuild, dbUser);
-            }
         }
 
     }

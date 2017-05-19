@@ -44,9 +44,13 @@ namespace DEA.Database.Repositories
         public async Task<List<T>> AllAsync(Expression<Func<T, bool>> filter = null)
         {
             if (filter != null)
+            {
                 return await (await Collection.FindAsync(filter)).ToListAsync();
+            }
             else
+            {
                 return await(await Collection.FindAsync(Builders<T>.Filter.Empty)).ToListAsync();
+            }
         }
 
         /// <summary>

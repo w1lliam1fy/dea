@@ -45,42 +45,39 @@ namespace DEA.Services.Handlers
                     }
                     else if (cmdEx.InnerException is HttpException httpEx)
                     {
-                        var message = string.Empty;
+                        string message;
+
                         switch (httpEx.DiscordCode)
                         {
                             case null:
+                            case 50013:
                                 switch (httpEx.HttpCode)
                                 {
                                     case HttpStatusCode.BadRequest:
                                         message = "There seems to have been a bad request. Please report this issue with context at: " +
-                                        "https://github.com/RealBlazeIt/DEA/issues.";
+                                                  "https://github.com/RealBlazeIt/DEA/issues.";
                                         break;
                                     case HttpStatusCode.BadGateway:
                                         message = "Something went wrong with the gateway connection. Try again in a bit.";
                                         break;
                                     case HttpStatusCode.Forbidden:
-                                        message = "DEA does not have permission to do that. This issue may be fixed by moving the DEA role " +
-                                        "to the top of the roles list, and giving DEA the \"Administrator\" server permission.";
+                                        message = "DEA does not have permission to do that. This issue *may* be fixed by moving the DEA role " +
+                                                  "to the top of the roles list, and giving DEA the \"Administrator\" server permission.";
                                         break;
                                     case HttpStatusCode.InternalServerError:
                                         message = "Looks like Discord fucked up. An interal server error has occured on Discord's part which is " +
-                                        "entirely unrelated with DEA. Sorry, nothing I can do.";
+                                                  "entirely unrelated with DEA. Sorry, nothing we can do.";
                                         break;
                                     default:
-                                        message = "Something went wrong. Please try again later. If this issue persists, please report it with " +
-                                        "context at: https://github.com/RealBlazeIt/DEA/issues.";
+                                        message = httpEx.Reason ?? httpEx.HttpCode.ToString();
                                         break;
                                 }
-                                break;
-                            case 50013:
-                                message = "DEA does not have permission to do that. This issue may be fixed by moving the DEA role " +
-                                "to the top of the roles list, and giving DEA the \"Administrator\" server permission.";
                                 break;
                             case 50007:
                                 message = "DEA does not have permission to send messages to this user.";
                                 break;
                             default:
-                                message = httpEx.Message.Remove(0, 39) + ".";
+                                message = httpEx.Reason ?? httpEx.HttpCode.ToString();
                                 break;
                         }
                         await cmdEx.Context.Channel.ReplyAsync(cmdEx.Context.User, message, null, Config.ERROR_COLOR);
@@ -126,23 +123,25 @@ namespace DEA.Services.Handlers
                     {
                         foreach (var alias in command.Aliases)
                         {
+                            var distance = LevenshteinDistance.Compute(commandName, alias);
+
                             if (alias.Length < 5)
                             {
-                                if (LevenshteinDistance.Compute(commandName, alias) == 1)
+                                if (distance == 1)
                                 {
                                     message = $"Did you mean `{context.DbGuild.Prefix}{alias.UpperFirstChar()}`?";
                                 }
                             }
                             else if (alias.Length < 10)
                             {
-                                if (LevenshteinDistance.Compute(commandName, alias) <= 2)
+                                if (distance <= 2)
                                 {
                                     message = $"Did you mean `{context.DbGuild.Prefix}{alias.UpperFirstChar()}`?";
                                 }
                             }
                             else
                             {
-                                if (LevenshteinDistance.Compute(commandName, alias) <= 3)
+                                if (distance <= 3)
                                 {
                                     message = $"Did you mean `{context.DbGuild.Prefix}{alias.UpperFirstChar()}`?";
                                 }
@@ -158,7 +157,7 @@ namespace DEA.Services.Handlers
                     message = $"You are incorrectly using this command. \n\n**Usage:** `{context.DbGuild.Prefix}{cmdNameUpperFirst}{cmd.GetUsage()}`\n\n" + example;   
                     break;
                 case CommandError.ParseFailed:
-                    message = $"Invalid number.";
+                    message = $"Invalid number. Please ensure you are correctly using this command by entering: `{context.DbGuild.Prefix}Help {commandName}`.";
                     break;
                 case CommandError.UnmetPrecondition:
                     if (result.ErrorReason.StartsWith("Command requires guild permission "))
@@ -171,7 +170,6 @@ namespace DEA.Services.Handlers
                     {
                         message = result.ErrorReason;
                     }
-
                     break;
                 default:
                     message = result.ErrorReason;

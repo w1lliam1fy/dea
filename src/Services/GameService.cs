@@ -1,5 +1,6 @@
 ﻿using DEA.Common;
 using DEA.Common.Data;
+using DEA.Common.Utilities;
 using DEA.Common.Extensions;
 using DEA.Common.Extensions.DiscordExtensions;
 using DEA.Database.Models;
@@ -8,6 +9,7 @@ using Discord;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace DEA.Services
 {
@@ -19,10 +21,19 @@ namespace DEA.Services
         private readonly InteractiveService _interactiveService;
         private readonly UserRepository _userRepo;
 
-        public GameService(InteractiveService interactiveService, UserRepository userRepo)
+        private readonly Item[] _items;
+        private readonly IEnumerable<Item> _sortedWeapons;
+        private readonly IEnumerable<Item> _sortedFish;
+        private readonly IEnumerable<Item> _sortedMeat;
+
+        public GameService(InteractiveService interactiveService, UserRepository userRepo, Item[] items)
         {
             _interactiveService = interactiveService;
             _userRepo = userRepo;
+            _items = items;
+            _sortedWeapons = _items.Where(x => Config.WEAPON_TYPES.Any(y => y == x.ItemType)).OrderByDescending(x => x.Odds);
+            _sortedFish = _items.Where(x => x.ItemType == "Fish").OrderByDescending(x => x.Odds);
+            _sortedMeat = _items.Where(x => x.ItemType == "Meat").OrderByDescending(x => x.Odds);
         }
 
         /// <summary>
@@ -109,14 +120,99 @@ namespace DEA.Services
             {
                 await _userRepo.EditCashAsync(context, bet * payoutMultiplier);
                 await context.Channel.ReplyAsync(context.User, $"You rolled: {roll.ToString("N2")}. Congrats, you won " +
-                                                 $"{(bet * payoutMultiplier).USD()}! Balance: {context.DbUser.Cash.USD()}.");
+                                                               $"{(bet * payoutMultiplier).USD()}! Balance: {context.DbUser.Cash.USD()}.");
             }
             else
             {
                 await _userRepo.EditCashAsync(context, -bet);
                 await context.Channel.ReplyAsync(context.User, $"You rolled: {roll.ToString("N2")}. Unfortunately, you lost " +
-                                                 $"{bet.USD()}. Balance: {context.DbUser.Cash.USD()}.");
+                                                               $"{bet.USD()}. Balance: {context.DbUser.Cash.USD()}.");
             }
+        }
+
+        public async Task OpenCrateAsync(DEAContext context, int odds)
+        {
+            int cumulative = 0;
+            int sum = _sortedWeapons.Sum(x => x.Odds);
+            int roll = Config.RAND.Next(1, sum);
+            if (odds > Config.RAND.Next(1, 101))
+            {
+                foreach (var item in _sortedWeapons)
+                {
+                    cumulative += item.Odds;
+                    if (roll < cumulative)
+                    {
+                        await ModifyInventoryAsync(context.DbUser, item.Name);
+                        await context.Channel.ReplyAsync(context.User, $"Congrats! You won: {item.Name}!");
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                await ModifyInventoryAsync(context.DbUser, "Bullet");
+                await context.Channel.ReplyAsync(context.User, $"Congrats! You won: Bullet.");
+            }
+        }
+
+        public async Task GetFoodAsync(DEAContext context, string foodType)
+        {
+            int cumulative = 0;
+            int sum = foodType == "Meat" ? _sortedMeat.Sum(x => x.Odds) : _sortedFish.Sum(x => x.Odds);
+            int roll = Config.RAND.Next(1, sum);
+
+            foreach (var item in foodType == "Meat" ? _sortedMeat : _sortedFish)
+            {
+                cumulative += item.Odds;
+                if (roll < cumulative)
+                {
+                    await ModifyInventoryAsync(context.DbUser, item.Name);
+                    await context.Channel.ReplyAsync(context.User, $"Hot fucking pockets you just killed a nigga. You also managed to get: {item.Name}.");
+                    break;
+                }
+            }
+        }
+
+        public async Task ModifyInventoryAsync(User DbUser, string item, int amountToAdd = 1)
+        {
+            if (DbUser.Inventory.Contains(item))
+            {
+                await _userRepo.ModifyAsync(DbUser, x => x.Inventory[item] = amountToAdd + x.Inventory[item].AsInt32);
+            }
+            else
+            {
+                await _userRepo.ModifyAsync(DbUser, x => x.Inventory.Add(item, amountToAdd));
+            }
+
+            if (DbUser.Inventory[item] <= 0)
+            {
+                await _userRepo.ModifyAsync(DbUser, x => x.Inventory.Remove(item));
+            }
+        }
+
+        public async Task ModifyInventoryAsync(IGuildUser user, string item, int amountToAdd = 1)
+        {
+            var userToAdd = await _userRepo.GetUserAsync(user);
+
+            if (userToAdd.Inventory.Contains(item))
+            {
+                await _userRepo.ModifyAsync(userToAdd, x => x.Inventory[item] = amountToAdd + x.Inventory[item].AsInt32);
+            }
+            else
+            {
+                await _userRepo.ModifyAsync(userToAdd, x => x.Inventory.Add(item, amountToAdd));
+            }
+
+            if (userToAdd.Inventory[item] <= 0)
+            {
+                await _userRepo.ModifyAsync(userToAdd, x => x.Inventory.Remove(item));
+            }
+        }
+
+        public IEnumerable<Item> InventoryData(User dbUser)
+        {
+            return _items.Where(x => dbUser.Inventory.Names.Any(y => y == x.Name));
         }
     }
 }
+

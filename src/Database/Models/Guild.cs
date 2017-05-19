@@ -22,8 +22,6 @@ namespace DEA.Database.Models
 
         //Channels
 
-        public ulong NsfwChannelId { get; set; }
-
         public ulong GambleChannelId { get; set; }
 
         public ulong ModLogChannelId { get; set; }
@@ -34,15 +32,11 @@ namespace DEA.Database.Models
 
         //Options
 
-        public bool Nsfw { get; set; } = false;
-
         public bool AutoTrivia { get; set; } = false;
 
         public string Prefix { get; set; } = Config.DEFAULT_PREFIX;
 
         public decimal GlobalChattingMultiplier { get; set; } = 1m;
-
-        public decimal TempMultiplierIncreaseRate { get; set; } = 0.1m;
 
         //Misc
 
@@ -51,6 +45,5 @@ namespace DEA.Database.Models
         public int CaseNumber { get; set; } = 1;
 
         public BsonDocument Trivia { get; set; } = new BsonDocument();
-
     }
 }

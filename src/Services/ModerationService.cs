@@ -55,6 +55,11 @@ namespace DEA.Services
         /// <returns>The permission level of the user.</returns>
         public int GetPermLevel(Guild dbGuild, IGuildUser user)
         {
+            if (user.Guild.OwnerId == user.Id)
+            {
+                return 3;
+            }
+
             var permLevel = 0;
 
             if (dbGuild.ModRoles.ElementCount != 0)

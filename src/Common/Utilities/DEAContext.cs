@@ -36,7 +36,7 @@ namespace DEA.Common
         }
 
         /// <summary>
-        /// Getes the guild and user database information for the custom context object.
+        /// Gets the guild and user database information for the custom context object.
         /// </summary>
         public async Task InitializeAsync()
         {

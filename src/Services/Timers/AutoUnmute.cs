@@ -62,7 +62,10 @@ namespace DEA.Services.Timers
                                 ChannelPermissions? perms = null;
                                 var currentUser = await guild.GetCurrentUserAsync();
                                 if (channel != null)
+                                {
                                     perms = currentUser.GetPermissions(channel as SocketTextChannel);
+                                }
+
                                 if (channel != null && currentUser.GuildPermissions.EmbedLinks && perms.Value.SendMessages && perms.Value.EmbedLinks)
                                 {
                                     await user.RemoveRoleAsync(mutedRole);

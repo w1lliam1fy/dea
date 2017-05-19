@@ -62,6 +62,11 @@ namespace DEA.Common.Extensions.DiscordExtensions
             return channel.SendMessageAsync(string.Empty, embed: builder);
         }
 
+        public static Task<IUserMessage> SendError(this IMessageChannel channel, string message)
+        {
+            return channel.SendAsync(message, null, Config.ERROR_COLOR);
+        }
+
         /// <summary>
         /// Sends a list of elements which will automatically be split into multiple messages when over 2000 characters, and will be replied in code blocks.
         /// </summary>

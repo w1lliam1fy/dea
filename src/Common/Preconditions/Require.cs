@@ -9,6 +9,7 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
 using System.Threading.Tasks;
+using MongoDB.Driver;
 
 namespace DEA.Common.Preconditions
 {
@@ -55,49 +56,24 @@ namespace DEA.Common.Preconditions
                         {
                             return PreconditionResult.FromError("Only an owner of this bot may use this command.");
                         }
-
                         break;
                     case Attributes.ServerOwner:
-                        if (context.Guild.OwnerId != guildUser.Id && DbGuild.ModRoles.ElementCount == 0)
+                        if (_moderationService.GetPermLevel(DbGuild, guildUser) != 3)
                         {
                             return PreconditionResult.FromError("Only the owners of this server may use this command.");
                         }
-                        else if (guildUser.Guild.OwnerId != context.User.Id && DbGuild.ModRoles != null && !guildUser.RoleIds.Any(x => DbGuild.ModRoles.Any(y => y.Name == x.ToString() && y.Value.AsInt32 >= 3)))
-                        {
-                            return PreconditionResult.FromError("Only the owners of this server may use this command.");
-                        }
-
                         break;
                     case Attributes.Admin:
-                        if (!guildUser.GuildPermissions.Administrator && DbGuild.ModRoles.ElementCount == 0)
+                        if (_moderationService.GetPermLevel(DbGuild, guildUser) < 2)
                         {
                             return PreconditionResult.FromError("The administrator permission is required to use this command.");
                         }
-                        else if (!guildUser.GuildPermissions.Administrator && DbGuild.ModRoles.ElementCount != 0 && !guildUser.RoleIds.Any(x => DbGuild.ModRoles.Any(y => y.Name == x.ToString() && y.Value.AsInt32 >= 2)))
-                        {
-                            return PreconditionResult.FromError("The administrator permission is required to use this command.");
-                        }
-
                         break;
                     case Attributes.Moderator:
-                        if (_moderationService.GetPermLevel(DbGuild, context.User as IGuildUser) == 0)
+                        if (_moderationService.GetPermLevel(DbGuild, guildUser) == 0)
                         {
                             return PreconditionResult.FromError("Only a moderator may use this command.");
                         }
-                        break;
-                    case Attributes.Nsfw:
-                        if (!DbGuild.Nsfw)
-                        {
-                            return PreconditionResult.FromError($"This command may not be used while NSFW is disabled. An administrator may enable with the " +
-                                                                $"`{DbGuild.Prefix}ChangeNSFWSettings` command.");
-                        }
-
-                        var nsfwChannel = await context.Guild.GetChannelAsync(DbGuild.NsfwChannelId);
-                        if (nsfwChannel != null && context.Channel.Id != DbGuild.NsfwChannelId)
-                        {
-                            return PreconditionResult.FromError($"You may only use this command in {(nsfwChannel as ITextChannel).Mention}.");
-                        }
-
                         break;
                     case Attributes.InGang:
                         if (!await _gangRepo.InGangAsync(guildUser))
@@ -155,6 +131,12 @@ namespace DEA.Common.Preconditions
                             return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.FIFTYX2_REQUIREMENT.USD()}.");
                         }
 
+                        break;
+                    case Attributes.SlaveOwner:
+                        if (_userRepo.Collection.FindAsync(x => x.SlaveOf == DbUser.UserId && x.GuildId == DbUser.GuildId) == null)
+                        {
+                            return PreconditionResult.FromError($"You do not have the permission to use this command because you are not a slave owner.");
+                        }
                         break;
                     default:
                         return PreconditionResult.FromError($"ERROR: The {attribute} attribute is not being handled!");

@@ -47,6 +47,26 @@ namespace DEA.Common.Preconditions
                     cooldown = Config.RAID_COOLDOWN;
                     lastUse = deaContext.Gang.Raid;
                     break;
+                case "hunt":
+                    cooldown = Config.HUNT_COOLDOWN;
+                    lastUse = deaContext.DbUser.Hunt;
+                    break;
+                case "fish":
+                    cooldown = Config.FISH_COOLDOWN;
+                    lastUse = deaContext.DbUser.Fish;
+                    break;
+                case "collect":
+                    cooldown = Config.COLLECT_COOLDOWN;
+                    lastUse = deaContext.DbUser.Collect;
+                    break;
+                case "stab":
+                    cooldown = Config.STAB_COOLDOWN;
+                    lastUse = deaContext.DbUser.Stab;
+                    break;
+                case "shoot":
+                    cooldown = Config.SHOOT_COOLDOWN;
+                    lastUse = deaContext.DbUser.Shoot;
+                    break;
                 default:
                     return PreconditionResult.FromSuccess();
             }

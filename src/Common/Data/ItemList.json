@@ -1,35 +1,153 @@
-{
-	"0": {
-			"Name" : "Revolver",
-			"Description" : "Pop a glock in a foe. Enough to increase chance by 5%.",
-			"Damage" : 5,
-			"Price" : 1000,
-			"IsGun" : true
-		},
-	"1": {
-			"Name" : "AR15",
-			"Description" : "Assault fire. Assault weapon. 15% assault increase.",
-			"Damage" : 15,
-			"Price" : 5000,
-			"IsGun" : true
-		},
-	"2": {
-			"Name" : "Dragunov",
-			"Description" : "360 noscope sniper shot, 20% increase.",
-			"Damage" : 20,
-			"Price" : 20000,
-			"IsGun" : true
-		},
-	"3": {
-			"Name" : "Kevlar",
-			"Description" : "Adds a piece of armor for protection. 20% less likely to be fatally shot.",
-			"Price" : 7500,
-			"IsArmor" : true
-		},
-	"4": {
-			"Name" : "Bullets",
-			"Description" : "You can't shoot a gun without bullets, or did you think?",
-			"Price" : 500
-		}
-}
+[
+  {
+    "Name": "Glock",
+    "Description": "Weakest gun in town. Man up a bit you puss.",
+    "Damage": 15,
+    "Accuracy": 30,
+    "Odds": 40,
+    "ItemType": "Gun"
+  },
+  {
+    "Name": "Revolver",
+    "Description": "Slam a nigga's cock in a bridge so damn hard.",
+    "Damage": 20,
+    "Accuracy": 35,
+    "Odds": 30,
+    "ItemType": "Gun"
+  },
+  {
+    "Name": "AR15",
+    "Description": "Assault fire. Assault weapon. Assault feminists. *Oh fuck dude I don't think we are allowed to put that kinda joke.*",
+    "Damage": 40,
+    "Accuracy": 50,
+    "Odds": 25,
+    "ItemType": "Gun"
+  },
+  {
+    "Name": "Intervention",
+    "Description": "The only weapon that affirms you have a large penis.",
+    "Damage": 90,
+    "Accuracy": 75,
+    "Odds": 5,
+    "ItemType": "Gun"
+  },
+  {
+    "Name": "Kevlar",
+    "Description": "Adds a piece of armor for protection. 20% damage decrease.",
+    "Odds": 30
+  },
+  {
+    "Name": "Kitchen Knife",
+    "Description": "Enough to catch your granny off guard when she is taking a nap.",
+    "Damage": 5,
+    "Accuracy": 20,
+    "Odds": 75,
+    "ItemType": "Knife"
+  },
+  {
+    "Name": "Butterfly Knife",
+    "Description": "Tell em its to cut the butterflies out of there stomach.",
+    "Damage": 10,
+    "Accuracy": 45,
+    "Odds": 35,
+    "ItemType": "Knife"
+  },
+  {
+    "Name": "M9 Bayonet",
+    "Description": "Whip it out quicker than you can bust a nut, which is like 0.002 seconds.",
+    "Damage": 20,
+    "Accuracy": 55,
+    "Odds": 25,
+    "ItemType": "Knife"
+  },
+  {
+    "Name": "Karamabit",
+    "Description": "Most prestigious knife around.",
+    "Damage": 45,
+    "Accuracy": 70,
+    "Odds": 10,
+    "ItemType": "Knife"
+  },
+  {
+    "Name": "Bullet",
+    "Description": "You can't shoot a gun without bullets, or **CAN YOU?** No Steve, you fucking can't. Retard."
+  },
+  {
+    "Name": "Beef",
+    "Description": "For the weak.",
+    "Odds": 30,
+    "ItemType": "Meat",
+    "Health": 15
+  },
+  {
+    "Name": "Chicken",
+    "Description": "Slightly appetizing if you are black.",
+    "Odds": 20,
+    "ItemType": "Meat",
+    "Health": 20
+  },
+  {
+    "Name": "Bear Meat",
+    "Description": "Better be worth it, was hard to get.",
+    "Odds": 10,
+    "ItemType": "Meat",
+    "Health": 30
+  },
+  {
+    "Name": "Bear Grylls Meat",
+    "Description": "Literally from the man himself.",
+    "Odds": 5,
+    "ItemType": "Meat",
+    "Health": 50
+  },
+  {
+    "Name": "Sardine",
+    "Description": "Narly stuff.",
+    "Odds": 30,
+    "ItemType": "Fish",
+    "Health": 15
+  },
+  {
+    "Name": "Shrimp",
+    "Description": "Dip in some fancy sauce to look fancy.",
+    "Odds": 20,
+    "ItemType": "Fish",
+    "Health": 20
+  },
+  {
+    "Name": "Swordfish",
+    "Description": "Pointy nose, might kill.",
+    "Odds": 10,
+    "Health": 30,
+    "ItemType": "Fish"
+  },
+  {
+    "Name": "Shark",
+    "Description": "Better be careful when eating this.",
+    "Odds": 5,
+    "Health": 50,
+    "ItemType": "Fish"
+  },
+  {
+    "Name": "Bronze Crate",
+    "Description": "The standard stuff.",
+    "Price": 1000,
+    "ItemType": "Crate",
+    "Odds": 5
+  },
+  {
+    "Name": "Silver Crate",
+    "Description": "Shiny silvery, real good.",
+    "Price": 5000,
+    "ItemType": "Crate",
+    "Odds": 25
+  },
+  {
+    "Name": "Gold Crate",
+    "Description": "The reason it costs a lot is because you need to pay the expenses for the gold.",
+    "Price": 20000,
+    "ItemType": "Crate",
+    "Odds": 100
+  }
+]
 			

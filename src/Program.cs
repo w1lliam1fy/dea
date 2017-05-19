@@ -12,6 +12,7 @@ using Discord.Commands;
 using Discord.Net;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using System;
@@ -45,14 +46,13 @@ namespace DEA
         {
             try
             {
+                JsonSerializer serializer = new JsonSerializer();
                 using (StreamReader file = File.OpenText(@"Credentials.json"))
                 {
-                    JsonSerializer serializer = new JsonSerializer();
                     _credentials = (Credentials)serializer.Deserialize(file, typeof(Credentials));
                 }
-                using (StreamReader file = File.OpenText(@"ItemList.json"))
+                using (StreamReader file = File.OpenText(@"Common/Data/ItemList.json"))
                 {
-                    JsonSerializer serializer = new JsonSerializer();
                     _items = (Item[])serializer.Deserialize(file, typeof(Item[]));
                 }
             }
@@ -85,6 +85,23 @@ namespace DEA
             _polls = database.GetCollection<Poll>("polls");
             _mutes = database.GetCollection<Mute>("mutes");
             _blacklists = database.GetCollection<Blacklist>("blacklists");
+
+            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Set("Bounty", 0));
+            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Set("Health", 100));
+            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Set("SlaveOf", 0));
+            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Set("Hunt", DateTime.UtcNow.AddYears(-1)));
+            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Set("Fish", DateTime.UtcNow.AddYears(-1)));
+            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Set("Collect", DateTime.UtcNow.AddYears(-1)));
+            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Set("Shoot", DateTime.UtcNow.AddYears(-1)));
+            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Set("Stab", DateTime.UtcNow.AddYears(-1)));
+            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Set("Inventory", new BsonDocument()));
+            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Unset("MessageCooldown"));
+            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Unset("InvestmentMultiplier"));
+            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Unset("TemporaryMultiplier"));
+
+            _guilds.UpdateMany(Builders<Guild>.Filter.Empty, Builders<Guild>.Update.Unset("TempMultiplierIncreaseRate"));
+            _guilds.UpdateMany(Builders<Guild>.Filter.Empty, Builders<Guild>.Update.Unset("NsfwChannelId"));
+            _guilds.UpdateMany(Builders<Guild>.Filter.Empty, Builders<Guild>.Update.Unset("Nsfw"));
         }
 
         private async Task RunAsync()
@@ -136,6 +153,7 @@ namespace DEA
                 .AddSingleton(_mutes)
                 .AddSingleton(_blacklists)
                 .AddSingleton(_polls)
+                .AddSingleton(_items)
                 .AddSingleton<PollRepository>()
                 .AddSingleton<GuildRepository>()
                 .AddSingleton<BlacklistRepository>()
@@ -162,8 +180,6 @@ namespace DEA
             new AutoDeletePolls(serviceProvider);
             new AutoTrivia(serviceProvider);
             new AutoUnmute(serviceProvider);
-            new ResetTempMultiplier(serviceProvider);
         }
-
     }
 }
