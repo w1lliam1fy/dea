@@ -27,7 +27,7 @@ namespace DEA.Modules.General
                               $"Position: #{sorted.FindIndex(x => x.UserId == user.Id) + 1}\n" +
                               (rank == null ? string.Empty : $"Rank: {rank.Mention}\n") +
                               (slaveOwner == null ? string.Empty : $"Slave Owner: {slaveOwner.Boldify()}\n") +
-                              (dbUser.Bounty == 0 ? string.Empty : $"Bounty: {dbUser.Bounty}");
+                              (dbUser.Bounty == 0 ? string.Empty : $"Bounty: {dbUser.Bounty.USD()}");
 
             await SendAsync(description, $"Ranking of {user}");
         }

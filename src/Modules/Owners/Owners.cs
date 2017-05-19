@@ -1,9 +1,11 @@
-﻿using DEA.Common;
+using DEA.Common;
+using DEA.Common.Preconditions;
 using DEA.Database.Repositories;
 using DEA.Services.Handlers;
 
 namespace DEA.Modules.Owners
 {
+    [Require(Attributes.ServerOwner)]
     public partial class Owners : DEAModule
     {
         private readonly GuildRepository _guildRepo;

@@ -10,7 +10,7 @@ namespace DEA.Modules.Crime
     {
         [Command("AddBounty")]
         [Summary("Add a bounty of any user.")]
-        public async Task SetBounty(IGuildUser userToSet, decimal bounty)
+        public async Task SetBounty(decimal bounty, [Remainder] IGuildUser userToSet)
         {
             if (bounty < Config.MIN_BOUNTY)
             {

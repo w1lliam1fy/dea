@@ -9,7 +9,7 @@ namespace DEA.Modules.Administration
     {
         [Command("AddRank")]
         [Summary("Adds a rank role for the DEA cash system.")]
-        public async Task AddRank(IRole rankRole, double cashRequired = 500)
+        public async Task AddRank(double cashRequired, [Remainder] IRole rankRole)
         {
             if (rankRole.Position > Context.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
             {
