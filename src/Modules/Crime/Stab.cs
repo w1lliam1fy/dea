@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using MongoDB.Driver;
 using DEA.Common.Data;
 using DEA.Common.Preconditions;
-using System;
 
 namespace DEA.Modules.Crime
 {

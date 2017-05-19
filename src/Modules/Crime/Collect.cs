@@ -2,7 +2,6 @@
 using DEA.Common.Preconditions;
 using Discord;
 using Discord.Commands;
-using System;
 using System.Threading.Tasks;
 
 namespace DEA.Modules.Crime

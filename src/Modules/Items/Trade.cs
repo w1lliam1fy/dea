@@ -18,7 +18,7 @@ namespace DEA.Modules.Items
         {
             if (userToTrade.Id == Context.User.Id)
             {
-                ReplyError("You may not trade with yourself.");
+                ReplyError("It takes great skill and concetration to actually reach full retard by trading with yourself. You are not quite there.");
             }
 
             var element = _items.FirstOrDefault(x => x.Name.ToLower() == itemInExchange.ToLower());
