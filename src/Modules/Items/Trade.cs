@@ -14,7 +14,7 @@ namespace DEA.Modules.Items
     {
         [Command("Trade")]
         [Summary("Request to trade with any user.")]
-        public async Task Trade(IGuildUser userToTrade, [Summary("2")] int exchangeItemQuantity, [Summary("Gold Crate")] string itemInExchange, [Summary("4")] int requestedItemQuantity, [Summary("Sardine")]string requestedItem)
+        public async Task Trade(IGuildUser userToTrade, [Summary("2")] int exchangeItemQuantity, [Summary("Gold Crate")] string itemInExchange, [Summary("4")] int requestedItemQuantity, [Remainder] [Summary("Sardine")]string requestedItem)
         {
             if (userToTrade.Id == Context.User.Id)
             {
@@ -80,8 +80,8 @@ namespace DEA.Modules.Items
                     await _gameService.ModifyInventoryAsync(newRequesterDbuser, element.Name, exchangeItemQuantity);
                     await _gameService.ModifyInventoryAsync(newRequesterDbuser, elementFor.Name, -requestedItemQuantity);
 
-                    await ReplyAsync("Successfully completed trade.");
-                    await userDM.SendAsync("Successfully completed trade.");
+                    await ReplyAsync("The trade has been successfully completed trade.");
+                    await userDM.SendAsync("The trade has been successfully completed trade.");
                 }
             }
         }

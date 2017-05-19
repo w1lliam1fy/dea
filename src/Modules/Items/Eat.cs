@@ -16,7 +16,7 @@ namespace DEA.Modules.Items
 
             if (!_items.Any(x => x.Name.ToLower() == item && Config.FOOD_TYPES.Any(y => y == x.ItemType)))
             {
-                ReplyError("That is not an item that is edible.");
+                ReplyError("That item either does not exist or is not edible.");
             }
             else if (!Context.DbUser.Inventory.Any(x => x.Name.ToLower() == item))
             {

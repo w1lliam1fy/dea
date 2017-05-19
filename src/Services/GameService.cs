@@ -143,7 +143,7 @@ namespace DEA.Services
                     if (roll < cumulative)
                     {
                         await ModifyInventoryAsync(context.DbUser, item.Name);
-                        await context.Channel.ReplyAsync(context.User, $"Congrats! You won: {item.Name}!");
+                        await context.Channel.ReplyAsync(context.User, $"Congrats! You won: {item.Name}.");
                         break;
                     }
                 }

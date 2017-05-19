@@ -10,7 +10,7 @@ namespace DEA.Modules.Items
         [Command("Inventory")]
         [Alias("Inv")]
         [Summary("View the inventory of any user.")]
-        public async Task Inventory([Remainder]IGuildUser user = null)
+        public async Task Inventory([Remainder] IGuildUser user = null)
         {
             user = user ?? Context.GUser;
             var dbUser = user.Id == Context.User.Id ? Context.DbUser : await _userRepo.GetUserAsync(user);
