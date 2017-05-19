@@ -25,28 +25,6 @@ namespace DEA.Database.Models
 
         public BsonDocument Inventory { get; set; } = new BsonDocument();
 
-        //Cooldowns
-
-        public DateTime Whore { get; set; } = DateTime.UtcNow.AddYears(-1);
-
-        public DateTime Withdraw { get; set; } = DateTime.UtcNow.AddYears(-1);
-
-        public DateTime Jump { get; set; } = DateTime.UtcNow.AddYears(-1);
-
-        public DateTime Message { get; set; } = DateTime.UtcNow.AddYears(-1);
-
-        public DateTime Rob { get; set; } = DateTime.UtcNow.AddYears(-1);
-
-        public DateTime Steal { get; set; } = DateTime.UtcNow.AddYears(-1);
-
-        public DateTime Hunt { get; set; } = DateTime.UtcNow.AddYears(-1);
-
-        public DateTime Fish { get; set; } = DateTime.UtcNow.AddYears(-1);
-
-        public DateTime Collect { get; set; } = DateTime.UtcNow.AddYears(-1);
-
-        public DateTime Stab { get; set; } = DateTime.UtcNow.AddYears(-1);
-
-        public DateTime Shoot { get; set; } = DateTime.UtcNow.AddYears(-1);
+        public DateTime LastMessage { get; set; } = DateTime.UtcNow.AddYears(-1);
     }
 }

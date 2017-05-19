@@ -10,13 +10,11 @@ namespace DEA.Modules.Crime
     public partial class Crime
     {
         [Command("Jump")]
-        [RequireCooldown]
         [Require(Attributes.Jump)]
+        [Cooldown(1, 4, Scale.Hours)]
         [Summary("Jump some random nigga in the hood.")]
         public async Task Jump()
         {
-            await _userRepo.ModifyAsync(Context.DbUser, x => x.Jump = DateTime.UtcNow);
-
             int roll = Config.RAND.Next(1, 101);
             if (roll > Config.JUMP_ODDS)
             {

@@ -98,11 +98,11 @@ namespace DEA.Services.Handlers
                 }
                 else if (msg.Content.Length >= Config.MIN_CHAR_LENGTH)
                 {
-                    if (DateTime.UtcNow.Subtract(context.DbUser.Message).TotalMilliseconds > Config.MSG_COOLDOWN)
+                    if (DateTime.UtcNow.Subtract(context.DbUser.LastMessage).TotalMilliseconds > Config.MSG_COOLDOWN * 1000)
                     {
                         await _userRepo.ModifyAsync(context.DbUser, x =>
                         {
-                            x.Message = DateTime.UtcNow;
+                            x.LastMessage = DateTime.UtcNow;
                             x.Cash += context.DbGuild.GlobalChattingMultiplier * Config.CASH_PER_MSG;
                         });
                         await _rankHandler.HandleAsync(context.Guild, context.GUser, context.DbGuild, context.DbUser);

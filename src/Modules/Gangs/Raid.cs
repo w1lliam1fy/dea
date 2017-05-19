@@ -11,7 +11,7 @@ namespace DEA.Modules.Gangs
     {
         [Command("Raid")]
         [Require(Attributes.InGang)]
-        [RequireCooldown]
+        [Cooldown(1, 8, Scale.Hours)]
         [Summary("Raid another gang in attempt to steal some of their wealth.")]
         public async Task Raid(decimal resources, [Summary("SLAM EM BOYS")] [Remainder] string gangName)
         {

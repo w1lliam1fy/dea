@@ -10,13 +10,11 @@ namespace DEA.Modules.Crime
     public partial class Crime
     {
         [Command("Steal")]
-        [RequireCooldown]
         [Require(Attributes.Steal)]
+        [Cooldown(1, 6, Scale.Hours)]
         [Summary("Snipe some goodies from your local stores.")]
         public async Task Steal()
         {
-            await _userRepo.ModifyAsync(Context.DbUser, x => x.Steal = DateTime.UtcNow);
-
             int roll = Config.RAND.Next(1, 101);
             if (roll > Config.STEAL_ODDS)
             {

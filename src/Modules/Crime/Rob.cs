@@ -11,8 +11,8 @@ namespace DEA.Modules.Crime
     public partial class Crime
     {
         [Command("Rob")]
-        [RequireCooldown]
         [Require(Attributes.Rob)]
+        [Cooldown(1, 8, Scale.Hours)]
         [Summary("Slam anyone's bank account.")]
         public async Task Rob(decimal resources, [Remainder] IGuildUser user)
         {
@@ -60,7 +60,6 @@ namespace DEA.Modules.Crime
                 await ReplyAsync($"With a {successOdds}.00% chance of success, you failed to steal {stolen.USD()} " +
                                  $"and lost all resources in the process. Balance: {Context.Cash.USD()}.");
             }
-            await _userRepo.ModifyAsync(Context.DbUser, x => x.Rob = DateTime.UtcNow);
         }
     }
 }

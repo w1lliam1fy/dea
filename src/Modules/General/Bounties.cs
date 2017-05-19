@@ -1,13 +1,9 @@
-﻿using Discord.Commands;
+using Discord.Commands;
 using Discord;
 using DEA.Database.Models;
 using DEA.Common.Data;
 using DEA.Common.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using MongoDB.Driver;
 using System.Linq;
 
 namespace DEA.Modules.General

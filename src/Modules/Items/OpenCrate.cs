@@ -8,7 +8,8 @@ namespace DEA.Modules.Items
 {
     public partial class Items
     {
-        [Command("Open"), Ratelimit(1, 2, Scale.Seconds)]
+        [Command("Open")]
+        [Cooldown(1, 2, Scale.Seconds)]
         [Alias("OpenCrate")]
         [Summary("Open a crate!")]
         public async Task Crates([Remainder]string crate)

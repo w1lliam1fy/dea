@@ -11,7 +11,7 @@ namespace DEA.Modules.Items
     public partial class Items
     {
         [Command("Fish")]
-        [RequireCooldown]
+        [Cooldown(1, 15, Scale.Minutes)]
         [Summary("Go fishing for some food.")]
         public async Task Fish()
         {
@@ -19,8 +19,6 @@ namespace DEA.Modules.Items
             {
                 ReplyError("You must have a weapon to go fishing.");
             }
-
-            await _userRepo.ModifyAsync(Context.DbUser, x => x.Fish = DateTime.UtcNow);
 
             var sorted = Context.DbUser.Inventory.OrderByDescending(x => _items.First(y => y.Name == x.Name).Damage);
             var strongestWeapon = _items.First(x => x.Name == sorted.First().Name);

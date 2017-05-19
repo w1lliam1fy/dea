@@ -14,7 +14,7 @@ namespace DEA.Modules.Crime
     public partial class Crime
     {
         [Command("Shoot")]
-        [RequireCooldown]
+        [Cooldown(1, 2, Scale.Hours)]
         [Summary("Attempt to shoot a user.")]
         public async Task Shoot(IGuildUser userToShoot)
         {
@@ -68,7 +68,6 @@ namespace DEA.Modules.Crime
             }
 
             await _gameService.ModifyInventoryAsync(Context.DbUser, "Bullet", -1);
-            await _userRepo.ModifyAsync(Context.DbUser, x => x.Shoot = DateTime.UtcNow);
         }
     }
 }

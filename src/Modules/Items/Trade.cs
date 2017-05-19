@@ -6,7 +6,6 @@ using System.Linq;
 using MongoDB.Driver;
 using DEA.Common.Data;
 using DEA.Common.Extensions.DiscordExtensions;
-using DEA.Common.Utilities;
 using DEA.Common.Extensions;
 
 namespace DEA.Modules.Items
@@ -17,6 +16,11 @@ namespace DEA.Modules.Items
         [Summary("Request to trade with any user.")]
         public async Task Trade(IGuildUser userToTrade, [Summary("2")] int exchangeItemQuantity, [Summary("Gold Crate")] string itemInExchange, [Summary("4")] int requestedItemQuantity, [Summary("Sardine")]string requestedItem)
         {
+            if (userToTrade.Id == Context.User.Id)
+            {
+                ReplyError("You may not trade with yourself.");
+            }
+
             var element = _items.FirstOrDefault(x => x.Name.ToLower() == itemInExchange.ToLower());
             var elementFor = _items.FirstOrDefault(x => x.Name.ToLower() == requestedItem.ToLower());
 

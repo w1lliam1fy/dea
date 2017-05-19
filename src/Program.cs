@@ -86,22 +86,17 @@ namespace DEA
             _mutes = database.GetCollection<Mute>("mutes");
             _blacklists = database.GetCollection<Blacklist>("blacklists");
 
-            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Set("Bounty", 0));
-            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Set("Health", 100));
-            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Set("SlaveOf", 0));
-            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Set("Hunt", DateTime.UtcNow.AddYears(-1)));
-            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Set("Fish", DateTime.UtcNow.AddYears(-1)));
-            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Set("Collect", DateTime.UtcNow.AddYears(-1)));
-            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Set("Shoot", DateTime.UtcNow.AddYears(-1)));
-            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Set("Stab", DateTime.UtcNow.AddYears(-1)));
-            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Set("Inventory", new BsonDocument()));
-            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Unset("MessageCooldown"));
-            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Unset("InvestmentMultiplier"));
-            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Unset("TemporaryMultiplier"));
-
-            _guilds.UpdateMany(Builders<Guild>.Filter.Empty, Builders<Guild>.Update.Unset("TempMultiplierIncreaseRate"));
-            _guilds.UpdateMany(Builders<Guild>.Filter.Empty, Builders<Guild>.Update.Unset("NsfwChannelId"));
-            _guilds.UpdateMany(Builders<Guild>.Filter.Empty, Builders<Guild>.Update.Unset("Nsfw"));
+            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Unset("Whore"));
+            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Unset("Withdraw"));
+            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Unset("Jump"));
+            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Unset("Rob"));
+            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Unset("Steal"));
+            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Unset("Hunt"));
+            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Unset("Fish"));
+            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Unset("Collect"));
+            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Unset("Stab"));
+            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Unset("Shoot"));
+            _users.UpdateMany(Builders<User>.Filter.Empty, Builders<User>.Update.Rename("Message", "LastMessage"));
         }
 
         private async Task RunAsync()

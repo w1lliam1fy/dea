@@ -10,12 +10,10 @@ namespace DEA.Modules.Crime
     public partial class Crime
     {
         [Command("Whore")]
-        [RequireCooldown]
+        [Cooldown(1, 2, Scale.Hours)]
         [Summary("Sell your body for some quick cash.")]
         public async Task Whore()
         {
-            await _userRepo.ModifyAsync(Context.DbUser, x => x.Whore = DateTime.UtcNow);
-
             int roll = Config.RAND.Next(1, 101);
             if (roll > Config.WHORE_ODDS)
             {

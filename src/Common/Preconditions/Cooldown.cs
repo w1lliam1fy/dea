@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Discord.Commands;
 using Discord;
+using DEA.Common.Extensions.DiscordExtensions;
+using DEA.Common.Extensions;
+using DEA.Common.Data;
 
 namespace DEA.Common.Preconditions
 {
@@ -10,7 +13,7 @@ namespace DEA.Common.Preconditions
     /// <remarks>This is backed by an in-memory collection
     /// and will not persist with restarts.</remarks>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
-    public sealed class RatelimitAttribute : PreconditionAttribute
+    public sealed class CooldownAttribute : PreconditionAttribute
     {
         private readonly uint _invokeLimit;
         private readonly bool _noLimitInDMs;
@@ -22,7 +25,7 @@ namespace DEA.Common.Preconditions
         /// <param name="period">The amount of time since first invoke a user has until the limit is lifted.</param>
         /// <param name="measure">The scale in which the <paramref name="period"/> parameter should be measured.</param>
         /// <param name="noLimitInDMs">Set whether or not there is no limit to the command in DMs. Defaults to false.</param>
-        public RatelimitAttribute(uint times, double period, Scale measure, bool noLimitInDMs = false)
+        public CooldownAttribute(uint times, double period, Scale measure, bool noLimitInDMs = false)
         {
             _invokeLimit = times;
             _noLimitInDMs = noLimitInDMs;
@@ -44,23 +47,12 @@ namespace DEA.Common.Preconditions
                     break;
             }
         }
-        /// <summary> Sets how often a user is allowed to use this command. </summary>
-        /// <param name="times">The number of times a user may use the command within a certain period.</param>
-        /// <param name="period">The amount of time since first invoke a user has until the limit is lifted.</param>
-        /// <param name="noLimitInDMs">Set whether or not there is no limit to the command in DMs. Defaults to false.</param>
-        public RatelimitAttribute(uint times, TimeSpan period, bool noLimitInDMs = false)
-        {
-            _invokeLimit = times;
-            _noLimitInDMs = noLimitInDMs;
-            _invokeLimitPeriod = period;
-        }
 
-        /// <inheritdoc />
-        public override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider map)
+        public override async Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider map)
         {
             if (context.Channel is IPrivateChannel && _noLimitInDMs)
             {
-                return Task.FromResult(PreconditionResult.FromSuccess());
+                return PreconditionResult.FromSuccess();
             }
 
             var now = DateTime.UtcNow;
@@ -73,11 +65,13 @@ namespace DEA.Common.Preconditions
             if (timeout.TimesInvoked <= _invokeLimit)
             {
                 _invokeTracker[context.User.Id] = timeout;
-                return Task.FromResult(PreconditionResult.FromSuccess());
+                return PreconditionResult.FromSuccess();
             }
             else
             {
-                return Task.FromResult(PreconditionResult.FromError("Hey there buddy, you just used that command like 12 microseconds ago, might wanna cool it for a bit."));
+                var timeSpan = _invokeLimitPeriod.Subtract(DateTime.UtcNow.Subtract(timeout.FirstInvoke));
+                await context.Channel.SendAsync($"Hours: {timeSpan.Hours}\nMinutes: {timeSpan.Minutes}\nSeconds: {timeSpan.Seconds}", $"{command.Name.UpperFirstChar()} cooldown for {context.User}", Config.ERROR_COLOR);
+                return PreconditionResult.FromError(string.Empty);
             }
         }
 

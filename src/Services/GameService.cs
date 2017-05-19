@@ -135,7 +135,7 @@ namespace DEA.Services
             int cumulative = 0;
             int sum = _sortedWeapons.Sum(x => x.Odds);
             int roll = Config.RAND.Next(1, sum);
-            if (odds > Config.RAND.Next(1, 101))
+            if (odds >= Config.RAND.Next(1, 101))
             {
                 foreach (var item in _sortedWeapons)
                 {

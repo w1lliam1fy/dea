@@ -14,7 +14,7 @@ namespace DEA.Modules.Crime
     public partial class Crime
     {
         [Command("Stab")]
-        [RequireCooldown]
+        [Cooldown(1, 1, Scale.Hours)]
         [Summary("Attempt to stab a user.")]
         public async Task Stab(IGuildUser userToStab)
         {
@@ -61,8 +61,6 @@ namespace DEA.Modules.Crime
             {
                 await ReplyAsync($"This nigga actually did some acrobatics shit and bounced out of the way before you stabbed him.");
             }
-
-            await _userRepo.ModifyAsync(Context.DbUser, x => x.Stab = DateTime.UtcNow);
         }
     }
 }

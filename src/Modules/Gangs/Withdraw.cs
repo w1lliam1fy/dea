@@ -11,7 +11,7 @@ namespace DEA.Modules.Gangs
     {
         [Command("Withdraw")]
         [Require(Attributes.InGang)]
-        [RequireCooldown]
+        [Cooldown(1, 8, Scale.Hours)]
         [Summary("Withdraw cash from your gang's funds.")]
         public async Task Withdraw(decimal cash)
         {
@@ -25,7 +25,6 @@ namespace DEA.Modules.Gangs
                            $"that is {(Context.Gang.Wealth * Config.WITHDRAW_CAP).USD()}.");
             }
 
-            await _userRepo.ModifyAsync(Context.DbUser, x => x.Withdraw = DateTime.UtcNow);
             await _gangRepo.ModifyAsync(Context.Gang, x => x.Wealth = Context.Gang.Wealth - cash);
             await _userRepo.EditCashAsync(Context, +cash);
 

@@ -34,15 +34,12 @@ namespace DEA.Common.Data
 
         public static readonly Color ERROR_COLOR = new Color(255, 0, 0);
 
-        public static readonly TimeSpan WHORE_COOLDOWN = TimeSpan.FromHours(2), JUMP_COOLDOWN = TimeSpan.FromHours(4),
-            STEAL_COOLDOWN = TimeSpan.FromHours(6), ROB_COOLDOWN = TimeSpan.FromHours(3), WITHDRAW_COOLDOWN = TimeSpan.FromHours(4),
-            RAID_COOLDOWN = TimeSpan.FromHours(3), HUNT_COOLDOWN = TimeSpan.FromMinutes(30), FISH_COOLDOWN = TimeSpan.FromMinutes(30),
-            COLLECT_COOLDOWN = TimeSpan.FromHours(24), LINE_COOLDOWN = TimeSpan.FromSeconds(25), DEFAULT_WAITFORMESSAGE = TimeSpan.FromSeconds(30),
-            DEFAULT_POLL_LENGTH = TimeSpan.FromDays(1), MAX_POLL_LENGTH = TimeSpan.FromDays(7), DEFAULT_MESSAGE_COOLDOWN = TimeSpan.FromSeconds(30),
-            ELDER_TIME_REQUIRED = TimeSpan.FromDays(2), MIN_CHILL = TimeSpan.FromSeconds(5), MAX_CHILL = TimeSpan.FromHours(1),
-            TEMP_MULTIPLIER_RESET_COOLDOWN = TimeSpan.FromHours(1), INTEREST_RATE_COOLDOWN = TimeSpan.FromHours(1), AUTO_UNMUTE_COOLDOWN =
-            TimeSpan.FromMinutes(5), AUTO_TRIVIA_COOLDOWN = TimeSpan.FromMinutes(2), AUTO_DELETE_POLLS_COOLDOWN = TimeSpan.FromMinutes(1),
-            STAB_COOLDOWN = TimeSpan.FromHours(4), SHOOT_COOLDOWN = TimeSpan.FromHours(4);
+        public static readonly TimeSpan LINE_COOLDOWN = TimeSpan.FromSeconds(25), DEFAULT_WAITFORMESSAGE = TimeSpan.FromSeconds(30),
+            DEFAULT_POLL_LENGTH = TimeSpan.FromDays(1), MAX_POLL_LENGTH = TimeSpan.FromDays(7), DEFAULT_MESSAGE_COOLDOWN = 
+            TimeSpan.FromSeconds(30), ELDER_TIME_REQUIRED = TimeSpan.FromDays(2), MIN_CHILL = TimeSpan.FromSeconds(5), MAX_CHILL = 
+            TimeSpan.FromHours(1), TEMP_MULTIPLIER_RESET_COOLDOWN = TimeSpan.FromHours(1), INTEREST_RATE_COOLDOWN = TimeSpan.FromHours(1), 
+            AUTO_UNMUTE_COOLDOWN = TimeSpan.FromMinutes(5), AUTO_TRIVIA_COOLDOWN = TimeSpan.FromMinutes(2), AUTO_DELETE_POLLS_COOLDOWN = 
+            TimeSpan.FromMinutes(1);
 
         public static readonly string[] BANKS = 
         {
