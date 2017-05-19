@@ -10,7 +10,7 @@ namespace DEA.Modules.General
     public partial class General
     {
         [Command("Rank")]
-        [Alias("Info")]
+        [Alias("Info", "Health")]
         [Summary("View the detailed ranking information of any user.")]
         public async Task Rank([Remainder] IGuildUser user = null)
         {

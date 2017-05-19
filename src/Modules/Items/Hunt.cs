@@ -4,13 +4,14 @@ using System.Linq;
 using MongoDB.Driver;
 using DEA.Common.Data;
 using DEA.Common.Preconditions;
+using DEA.Common.Utilities;
 
 namespace DEA.Modules.Items
 {
     public partial class Items
     {
         [Command("Hunt")]
-        [Cooldown(1, 15, Scale.Minutes)]
+        [Cooldown(15, TimeScale.Minutes)]
         [Summary("Go hunting for some food.")]
         public async Task Hunt()
         {
@@ -31,6 +32,7 @@ namespace DEA.Modules.Items
             {
                 await ReplyAsync("Nigga you just about had that deer but then he did that hoof kick thing and fucked up your buddy Chuck, so then you had to go bust a nut all over him and the GODDAMN deer got away.");
             }
+            _commandTimeouts.Add(new CommandTimeout(Context.User.Id, Context.Guild.Id, "Hunt"));
         }
     }
 }

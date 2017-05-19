@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -46,6 +47,7 @@ namespace DEA
             try
             {
                 JsonSerializer serializer = new JsonSerializer();
+
                 using (StreamReader file = File.OpenText(@"Credentials.json"))
                 {
                     _credentials = (Credentials)serializer.Deserialize(file, typeof(Credentials));
@@ -147,7 +149,8 @@ namespace DEA
                 .AddSingleton<ErrorHandler>()
                 .AddSingleton<GangRepository>()
                 .AddSingleton<MuteRepository>()
-                .AddSingleton<Statistics>();
+                .AddSingleton<Statistics>()
+                .AddSingleton<List<CommandTimeout>>();
 
             return new DefaultServiceProviderFactory().CreateServiceProvider(services);
         }

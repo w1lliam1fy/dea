@@ -7,13 +7,14 @@ using System.Threading.Tasks;
 using MongoDB.Driver;
 using DEA.Common.Data;
 using DEA.Common.Preconditions;
+using DEA.Common.Utilities;
 
 namespace DEA.Modules.Crime
 {
     public partial class Crime
     {
         [Command("Shoot")]
-        [Cooldown(1, 2, Scale.Hours)]
+        [Cooldown(2, TimeScale.Hours)]
         [Summary("Attempt to shoot a user.")]
         public async Task Shoot(IGuildUser userToShoot)
         {
@@ -66,8 +67,8 @@ namespace DEA.Modules.Crime
             {
                 await ReplyAsync($"The nigga fucking dodged the bullet, literally. What in the sac of nuts.");
             }
-
             await _gameService.ModifyInventoryAsync(Context.DbUser, "Bullet", -1);
+            _commandTimeouts.Add(new CommandTimeout(Context.User.Id, Context.Guild.Id, "Shoot"));
         }
     }
 }

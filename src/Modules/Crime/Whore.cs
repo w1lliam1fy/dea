@@ -1,6 +1,7 @@
 ﻿using DEA.Common.Data;
 using DEA.Common.Extensions;
 using DEA.Common.Preconditions;
+using DEA.Common.Utilities;
 using Discord.Commands;
 using System.Threading.Tasks;
 
@@ -9,7 +10,7 @@ namespace DEA.Modules.Crime
     public partial class Crime
     {
         [Command("Whore")]
-        [Cooldown(1, 2, Scale.Hours)]
+        [Cooldown(2, TimeScale.Hours)]
         [Summary("Sell your body for some quick cash.")]
         public async Task Whore()
         {
@@ -28,6 +29,7 @@ namespace DEA.Modules.Crime
 
                 await ReplyAsync($"You whip it out and manage to rake in {moneyWhored.USD()}. Balance: {Context.Cash.USD()}.");
             }
+            _commandTimeouts.Add(new CommandTimeout(Context.User.Id, Context.Guild.Id, "Whore"));
         }
     }
 }

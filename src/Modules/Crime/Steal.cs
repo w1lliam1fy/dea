@@ -1,6 +1,7 @@
 ﻿using DEA.Common.Data;
 using DEA.Common.Extensions;
 using DEA.Common.Preconditions;
+using DEA.Common.Utilities;
 using Discord.Commands;
 using System.Threading.Tasks;
 
@@ -10,7 +11,7 @@ namespace DEA.Modules.Crime
     {
         [Command("Steal")]
         [Require(Attributes.Steal)]
-        [Cooldown(1, 6, Scale.Hours)]
+        [Cooldown(6, TimeScale.Hours)]
         [Summary("Snipe some goodies from your local stores.")]
         public async Task Steal()
         {
@@ -32,6 +33,7 @@ namespace DEA.Modules.Crime
                 await ReplyAsync($"You walk in to your local {randomStore}, point a fake gun at the clerk, and manage to walk away " +
                                  $"with {moneyStolen.USD()}. Balance: {Context.Cash.USD()}.");
             }
+            _commandTimeouts.Add(new CommandTimeout(Context.User.Id, Context.Guild.Id, "Steal"));
         }
     }
 }

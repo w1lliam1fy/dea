@@ -58,6 +58,8 @@ namespace DEA.Services.Timers
                             var mutedRole = guild.GetRole(guildData.MutedRoleId);
                             if (mutedRole != null && user.RoleIds.Any(x => x == mutedRole.Id))
                             {
+                                await user.RemoveRoleAsync(mutedRole);
+
                                 var channel = await guild.GetTextChannelAsync(guildData.ModLogChannelId);
                                 ChannelPermissions? perms = null;
                                 var currentUser = await guild.GetCurrentUserAsync();
@@ -68,7 +70,6 @@ namespace DEA.Services.Timers
 
                                 if (channel != null && currentUser.GuildPermissions.EmbedLinks && perms.Value.SendMessages && perms.Value.EmbedLinks)
                                 {
-                                    await user.RemoveRoleAsync(mutedRole);
                                     var footer = new EmbedFooterBuilder()
                                     {
                                         IconUrl = "http://i.imgur.com/BQZJAqT.png",

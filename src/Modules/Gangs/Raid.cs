@@ -1,6 +1,7 @@
 ﻿using DEA.Common.Data;
 using DEA.Common.Extensions;
 using DEA.Common.Preconditions;
+using DEA.Common.Utilities;
 using Discord.Commands;
 using System;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ namespace DEA.Modules.Gangs
     {
         [Command("Raid")]
         [Require(Attributes.InGang)]
-        [Cooldown(1, 8, Scale.Hours)]
+        [Cooldown(8, TimeScale.Hours)]
         [Summary("Raid another gang in attempt to steal some of their wealth.")]
         public async Task Raid(decimal resources, [Summary("SLAM EM BOYS")] [Remainder] string gangName)
         {
@@ -55,6 +56,7 @@ namespace DEA.Modules.Gangs
                 await ReplyAsync($"With a {Config.RAID_SUCCESS_ODDS}.00% chance of success, you failed to steal {stolen.USD()} " +
                                  $"and lost all resources in the process.");
             }
+            _commandTimeouts.Add(new CommandTimeout(Context.User.Id, Context.Guild.Id, "Raid"));
         }
     }
 }

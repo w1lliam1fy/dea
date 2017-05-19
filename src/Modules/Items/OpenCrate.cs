@@ -3,14 +3,15 @@ using System.Threading.Tasks;
 using System.Linq;
 using MongoDB.Driver;
 using DEA.Common.Preconditions;
+using DEA.Common.Utilities;
 
 namespace DEA.Modules.Items
 {
     public partial class Items
     {
-        [Command("Open")]
-        [Cooldown(1, 2, Scale.Seconds)]
-        [Alias("OpenCrate")]
+        [Command("OpenCrate")]
+        [Alias("Open")]
+        [Cooldown(2, TimeScale.Seconds)]
         [Summary("Open a crate!")]
         public async Task Crates([Remainder]string crate)
         {
@@ -33,6 +34,7 @@ namespace DEA.Modules.Items
 
             await _gameService.ModifyInventoryAsync(Context.DbUser, element.Name, -1);
             await _gameService.OpenCrateAsync(Context, element.Odds);
+            _commandTimeouts.Add(new CommandTimeout(Context.User.Id, Context.Guild.Id, "OpenCrate"));
         }
     }
 }

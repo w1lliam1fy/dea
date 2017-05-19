@@ -1,6 +1,7 @@
 ﻿using DEA.Common.Data;
 using DEA.Common.Extensions;
 using DEA.Common.Preconditions;
+using DEA.Common.Utilities;
 using Discord;
 using Discord.Commands;
 using System;
@@ -12,7 +13,7 @@ namespace DEA.Modules.Crime
     {
         [Command("Rob")]
         [Require(Attributes.Rob)]
-        [Cooldown(1, 8, Scale.Hours)]
+        [Cooldown(8, TimeScale.Hours)]
         [Summary("Slam anyone's bank account.")]
         public async Task Rob(decimal resources, [Remainder] IGuildUser user)
         {
@@ -60,6 +61,7 @@ namespace DEA.Modules.Crime
                 await ReplyAsync($"With a {successOdds}.00% chance of success, you failed to steal {stolen.USD()} " +
                                  $"and lost all resources in the process. Balance: {Context.Cash.USD()}.");
             }
+            _commandTimeouts.Add(new CommandTimeout(Context.User.Id, Context.Guild.Id, "Rob"));
         }
     }
 }

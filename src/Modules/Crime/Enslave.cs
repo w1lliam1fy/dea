@@ -2,6 +2,7 @@
 using DEA.Common.Extensions;
 using DEA.Common.Extensions.DiscordExtensions;
 using DEA.Common.Preconditions;
+using DEA.Common.Utilities;
 using Discord;
 using Discord.Commands;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace DEA.Modules.Crime
     public partial class Crime
     {
         [Command("Enslave")]
-        [Cooldown(1, 2, Scale.Hours)]
+        [Cooldown(2, TimeScale.Hours)]
         [Summary("Enslave any users at low health.")]
         public async Task Enslave(IGuildUser userToEnslave)
         {
@@ -52,7 +53,7 @@ namespace DEA.Modules.Crime
 
                 await userToEnslave.DMAsync($"{Context.User.Boldify()} tried to enslave you but accidentally got pregnant and now he can't move :joy: :joy: :joy:.");
             }
-            
+            _commandTimeouts.Add(new CommandTimeout(Context.User.Id, Context.Guild.Id, "Enslave"));
         }
     }
 }
