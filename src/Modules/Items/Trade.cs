@@ -42,8 +42,8 @@ namespace DEA.Modules.Items
             var firstS = exchangeItemQuantity == 1 ? string.Empty : "s";
             var secondS = requestedItemQuantity == 1 ? string.Empty : "s";
 
-            await userDM.SendAsync($"**Offer:** {exchangeItemQuantity} {itemInExchange}{firstS}\n" +
-                                   $"**Request:** {requestedItemQuantity} {requestedItem}{secondS}\n\n" +
+            await userDM.SendAsync($"**Offer:** {exchangeItemQuantity} {element.Name}{firstS}\n" +
+                                   $"**Request:** {requestedItemQuantity} {elementFor.Name}{secondS}\n\n" +
                                    $"Please respond with \"{key}\" within 5 minutes to accept this trade.",
                                    $"Trade Request from {Context.User}");
 
@@ -80,8 +80,11 @@ namespace DEA.Modules.Items
                     await _gameService.ModifyInventoryAsync(newRequesterDbuser, element.Name, exchangeItemQuantity);
                     await _gameService.ModifyInventoryAsync(newRequesterDbuser, elementFor.Name, -requestedItemQuantity);
 
-                    await ReplyAsync("The trade has been successfully completed trade.");
-                    await userDM.SendAsync("The trade has been successfully completed trade.");
+                    var message = $"**Offer:** {exchangeItemQuantity} {element.Name}{firstS}\n" +
+                                  $"**Request:** {requestedItemQuantity} {elementFor.Name}{secondS}\n\n";
+
+                    await userDM.SendAsync(message, $"Completed Trade with {Context.User}");
+                    await Context.GUser.DMAsync(message, $"Completed Trade with {userToTrade}");
                 }
             }
         }

@@ -84,6 +84,14 @@ namespace DEA
             _polls = database.GetCollection<Poll>("polls");
             _mutes = database.GetCollection<Mute>("mutes");
             _blacklists = database.GetCollection<Blacklist>("blacklists");
+
+            foreach (var user in _users.Find(Builders<User>.Filter.Empty).ToList())
+            {
+                if (user.Inventory.Contains("Karamabit"))
+                {
+                    user.Inventory.Remove("Karamabit");
+                }
+            }
         }
 
         private async Task RunAsync()
