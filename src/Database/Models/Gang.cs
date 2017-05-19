@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DEA.Database.Models
+﻿namespace DEA.Database.Models
 {
 
     public partial class Gang : Model
@@ -21,8 +19,5 @@ namespace DEA.Database.Models
         public decimal Wealth { get; set; } = 0;
 
         public ulong[] Members { get; set; } = new ulong[] { };
-
-        public DateTime Raid { get; set; } = DateTime.UtcNow.AddYears(-1);
-        
     }
 }

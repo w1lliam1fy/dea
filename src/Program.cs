@@ -86,6 +86,8 @@ namespace DEA
             _polls = database.GetCollection<Poll>("polls");
             _mutes = database.GetCollection<Mute>("mutes");
             _blacklists = database.GetCollection<Blacklist>("blacklists");
+
+            _gangs.UpdateMany(Builders<Gang>.Filter.Empty, Builders<Gang>.Update.Unset("Raid"));
         }
 
         private async Task RunAsync()
