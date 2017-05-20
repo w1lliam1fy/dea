@@ -47,11 +47,18 @@ namespace DEA.Modules.Crime
 
                 if (dbUser.Health <= 0)
                 {
+
+                    foreach (var item in dbUser.Inventory.Elements)
+                    {
+                        await _gameService.ModifyInventoryAsync(Context.DbUser, item.Name);
+                    }
+
                     await _userRepo.Collection.DeleteOneAsync(x => x.UserId == dbUser.UserId && x.GuildId == dbUser.GuildId);
                     await userToShoot.DMAsync($"Unfortunately, you were killed by {Context.User.Boldify()}. All your data has been reset.");
 
                     await _userRepo.EditCashAsync(Context, dbUser.Bounty);
-                    await ReplyAsync($"Woah, you just killed {userToShoot.Boldify()}. You just earned {dbUser.Bounty.USD()}, congrats.");
+
+                    await ReplyAsync($"Woah, you just killed {userToShoot.Boldify()}. You just earned {dbUser.Bounty.USD()} **AND** their inventory, congrats.");
                 }
                 else
                 {

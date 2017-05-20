@@ -35,11 +35,12 @@ namespace DEA.Modules.Gangs
             var stolen = resources * 2;
 
             int roll = Config.RAND.Next(1, 101);
-            if (Config.RAID_SUCCESS_ODDS > roll)
+            var membersDeduction = raidedGang.Members.Length * 5;
+
+            if (Config.RAID_SUCCESS_ODDS - membersDeduction > roll)
             {
                 await _gangRepo.ModifyGangAsync(gangName, Context.Guild.Id, x => x.Wealth = raidedGang.Wealth - stolen);
                 await _gangRepo.ModifyAsync(Context.Gang, x => x.Wealth = Context.Gang.Wealth + stolen);
-                await _gangRepo.ModifyAsync(Context.Gang, x => x.Raid = DateTime.UtcNow);
 
                 await raidedGang.LeaderId.DMAsync(Context.Client, $"{Context.Gang.Name} just raided your gang's wealth and managed to walk away with {stolen.USD()}.");
 
@@ -49,7 +50,6 @@ namespace DEA.Modules.Gangs
             else
             {
                 await _gangRepo.ModifyAsync(Context.Gang, x => x.Wealth = Context.Gang.Wealth - resources);
-                await _gangRepo.ModifyAsync(Context.Gang, x => x.Raid = DateTime.UtcNow);
 
                 await raidedGang.LeaderId.DMAsync(Context.Client, $"{Context.Gang.Name} tried to raid your gang's stash, but one of your loyal sicarios gunned them out.");
 
