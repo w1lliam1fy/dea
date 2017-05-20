@@ -42,7 +42,7 @@ namespace DEA.Modules.Crime
 
                 if (dbUser.Health <= 0)
                 {
-                    await _userRepo.Collection.DeleteOneAsync(x => x.UserId == dbUser.UserId && x.GuildId == dbUser.GuildId);
+                    await _userRepo.DeleteAsync(x => x.Id == dbUser.Id);
                     await userDM.SendAsync($"Unfortunately, you were killed by {Context.User.Boldify()}. All your data has been reset.");
 
                     await _userRepo.EditCashAsync(Context, dbUser.Bounty);
@@ -51,9 +51,6 @@ namespace DEA.Modules.Crime
                 else
                 {
                     await userDM.SendAsync($"{Context.User} tried to kill you. Unfortunately, it barely missed any organs. -{damage} health. Current Health: {dbUser.Health}");
-
-                    await _userRepo.EditCashAsync(Context, dbUser.Bounty);
-
                     await ReplyAsync($"Just stabbed that nigga in the heart, you just dealt {damage} damage to {userToStab.Boldify()}.");
                 }
             }
