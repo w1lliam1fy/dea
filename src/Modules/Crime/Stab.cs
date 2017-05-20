@@ -48,14 +48,14 @@ namespace DEA.Modules.Crime
                     }
 
                     await _userRepo.DeleteAsync(x => x.Id == dbUser.Id);
-                    await userDM.SendAsync($"Unfortunately, you were killed by {Context.User.Boldify()}. All your data has been reset.");
+                    await userToStab.DMAsync($"Unfortunately, you were killed by {Context.User.Boldify()}. All your data has been reset.");
 
                     await _userRepo.EditCashAsync(Context, dbUser.Bounty);
                     await ReplyAsync($"Woah, you just killed {userToStab.Boldify()}. You just earned {dbUser.Bounty.USD()} **AND** their inventory, congrats.");
                 }
                 else
                 {
-                    await userDM.SendAsync($"{Context.User} tried to kill you. Unfortunately, it barely missed any organs. -{damage} health. Current Health: {dbUser.Health}");
+                    await userToStab.DMAsync($"{Context.User} tried to kill you, but nigga you dodged that shit ez pz. -{damage} health. Current Health: {dbUser.Health}");
                     await ReplyAsync($"Just stabbed that nigga in the heart, you just dealt {damage} damage to {userToStab.Boldify()}.");
                 }
             }
