@@ -11,9 +11,6 @@ using System;
 
 namespace DEA.Events
 {
-    /// <summary>
-    /// An event that is run every time a user joins a guild.
-    /// </summary>
     class UserJoined
     {
         private readonly IServiceProvider _serviceProvider;
@@ -22,7 +19,7 @@ namespace DEA.Events
         private readonly GuildRepository _guildRepo;
         private readonly MuteRepository _muteRepo;
         private readonly BlacklistRepository _blacklistRepo;
-        private readonly RankHandler _rankHandler;
+        private readonly RankHandler _RankHandler;
 
         public UserJoined(IServiceProvider serviceProvider)
         {
@@ -31,7 +28,7 @@ namespace DEA.Events
             _guildRepo = serviceProvider.GetService<GuildRepository>();
             _muteRepo = serviceProvider.GetService<MuteRepository>();
             _blacklistRepo = serviceProvider.GetService<BlacklistRepository>();
-            _rankHandler = serviceProvider.GetService<RankHandler>();
+            _RankHandler = serviceProvider.GetService<RankHandler>();
             _client = _serviceProvider.GetService<DiscordSocketClient>();
             _client.UserJoined += HandleUserJoined;
         }
@@ -47,7 +44,10 @@ namespace DEA.Events
                     {
                         await u.Guild.AddBanAsync(u);
                     }
-                    catch { }
+                    catch
+                    {
+                        //Ignored.
+                    }
                 }
 
                 var user = u as IGuildUser;
@@ -57,7 +57,7 @@ namespace DEA.Events
                 if (mutedRole != null && u.Guild.CurrentUser.GuildPermissions.ManageRoles &&
                 mutedRole.Position < u.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
                 {
-                    await _rankHandler.HandleAsync(u.Guild, user, dbGuild, await _userRepo.GetUserAsync(user));
+                    await _RankHandler.HandleAsync(u.Guild, user, dbGuild, await _userRepo.GetUserAsync(user));
                     if (await _muteRepo.IsMutedAsync(user.Id, user.Guild.Id) && mutedRole != null && user != null)
                     {
                         await user.AddRoleAsync(mutedRole);
@@ -73,7 +73,10 @@ namespace DEA.Events
                         {
                             await (channel as ITextChannel).SendAsync($"{u}, " + dbGuild.WelcomeMessage);
                         }
-                        catch { }
+                        catch
+                        {
+                            //Ignored.
+                        }
                     }
                     else
                     {
@@ -82,7 +85,10 @@ namespace DEA.Events
                             var dmChannel = await u.CreateDMChannelAsync();
                             await dmChannel.SendAsync(dbGuild.WelcomeMessage);
                         }
-                        catch { }
+                        catch
+                        {
+                            //Ignored.
+                        }
                     }
                 }
             });

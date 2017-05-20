@@ -16,9 +16,6 @@ using System.Threading.Tasks;
 
 namespace DEA.Services.Handlers
 {
-    /// <summary>
-    /// Handles all errors.
-    /// </summary>
     class ErrorHandler
     {
         private readonly CommandService _commandService;
@@ -57,15 +54,17 @@ namespace DEA.Services.Handlers
                                         message = "There seems to have been a bad request. Please report this issue with context at: " +
                                                   "https://github.com/RealBlazeIt/DEA/issues.";
                                         break;
-                                    case HttpStatusCode.BadGateway:
-                                        message = "Something went wrong with the gateway connection. Try again in a bit.";
-                                        break;
                                     case HttpStatusCode.Forbidden:
                                         message = "DEA does not have permission to do that. This issue *may* be fixed by moving the DEA role " +
                                                   "to the top of the roles list, and giving DEA the \"Administrator\" server permission.";
                                         break;
                                     case HttpStatusCode.InternalServerError:
-                                        message = "Looks like Discord fucked up. An interal server error has occured on Discord's part which is " +
+                                    case HttpStatusCode.ServiceUnavailable:
+                                    case HttpStatusCode.NotImplemented:
+                                    case HttpStatusCode.HttpVersionNotSupported:
+                                    case HttpStatusCode.GatewayTimeout:
+                                    case HttpStatusCode.BadGateway:
+                                        message = "Looks like Discord fucked up. An error has occured on Discord's part which is " +
                                                   "entirely unrelated with DEA. Sorry, nothing we can do.";
                                         break;
                                     default:
@@ -123,28 +122,9 @@ namespace DEA.Services.Handlers
                     {
                         foreach (var alias in command.Aliases)
                         {
-                            var distance = LevenshteinDistance.Compute(commandName, alias);
-
-                            if (alias.Length < 5)
+                            if (commandName.SimilarTo(alias))
                             {
-                                if (distance == 1)
-                                {
-                                    message = $"Did you mean `{context.DbGuild.Prefix}{alias.UpperFirstChar()}`?";
-                                }
-                            }
-                            else if (alias.Length < 10)
-                            {
-                                if (distance <= 2)
-                                {
-                                    message = $"Did you mean `{context.DbGuild.Prefix}{alias.UpperFirstChar()}`?";
-                                }
-                            }
-                            else
-                            {
-                                if (distance <= 3)
-                                {
-                                    message = $"Did you mean `{context.DbGuild.Prefix}{alias.UpperFirstChar()}`?";
-                                }
+                                message = $"Did you mean `{context.DbGuild.Prefix}{alias.UpperFirstChar()}`?";
                             }
                         }
                     }

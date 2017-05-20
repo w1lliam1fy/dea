@@ -13,7 +13,10 @@ namespace DEA.Common.Extensions.DiscordExtensions
 
                 return await channel.SendAsync(description, title, color);
             }
-            catch { }
+            catch
+            {
+                //Ignored.
+            }
 
             return null;
         }

@@ -5,10 +5,6 @@ namespace DEA.Common.Extensions.DiscordExtensions
 {
     public static class CommandInfoExtension
     {
-        /// <summary>
-        /// Generates the usage of the command.
-        /// </summary>
-        /// <returns>The command usage.</returns>
         public static string GetUsage(this CommandInfo cmd)
         {
             string usage = string.Empty;
@@ -36,10 +32,6 @@ namespace DEA.Common.Extensions.DiscordExtensions
             return usage;
         }
 
-        /// <summary>
-        /// Generates an example of the command usage.
-        /// </summary>
-        ///<returns>An example of the usage of the command.</returns>
         public static string GetExample(this CommandInfo cmd)
         {
             string example = string.Empty;

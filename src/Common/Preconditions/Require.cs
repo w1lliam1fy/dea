@@ -14,7 +14,7 @@ using MongoDB.Driver;
 namespace DEA.Common.Preconditions
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
-    public class RequireAttribute : PreconditionAttribute
+    public sealed class RequireAttribute : PreconditionAttribute
     {
         private IServiceProvider _serviceProvider;
         
@@ -26,10 +26,6 @@ namespace DEA.Common.Preconditions
 
         private Attributes[] _attributes;
 
-        /// <summary>
-        /// Requires the user to comply with all listed attributes before executing the command.
-        /// </summary>
-        /// <param name="attributes">Attribute precondition.</param>
         public RequireAttribute(params Attributes[] attributes)
         {
             _attributes = attributes;

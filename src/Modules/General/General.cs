@@ -11,17 +11,19 @@ namespace DEA.Modules.General
         private readonly UserRepository _userRepo;
         private readonly GuildRepository _guildRepo;
         private readonly GangRepository _gangRepo;
-        private readonly RankHandler _rankHandler;
+        private readonly RankHandler _RankHandler;
         private readonly GameService _gameService;
+        private readonly RateLimitService _rateLimitService;
         private readonly Item[] _items;
 
-        public General(UserRepository userRepo, GuildRepository guildRepo, GangRepository gangRepo, RankHandler rankHandler, GameService gameService, Item[] items)
+        public General(UserRepository userRepo, GuildRepository guildRepo, GangRepository gangRepo, RankHandler rankHandler, GameService gameService, RateLimitService rateLimitService, Item[] items)
         {
             _userRepo = userRepo;
             _guildRepo = guildRepo;
             _gangRepo = gangRepo;
-            _rankHandler = rankHandler;
+            _RankHandler = rankHandler;
             _gameService = gameService;
+            _rateLimitService = rateLimitService;
             _items = items;
         }
     }

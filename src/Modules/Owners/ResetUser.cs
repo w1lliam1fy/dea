@@ -15,7 +15,7 @@ namespace DEA.Modules.Owners
             user = user ?? Context.GUser;
 
             await _userRepo.Collection.DeleteOneAsync(y => y.UserId == user.Id && y.GuildId == user.GuildId);
-            await _rankHandler.HandleAsync(Context.Guild, user, Context.DbGuild, await _userRepo.GetUserAsync(user));
+            await _RankHandler.HandleAsync(Context.Guild, user, Context.DbGuild, await _userRepo.GetUserAsync(user));
 
             await SendAsync($"Successfully reset {user.Boldify()}'s data.");
         }

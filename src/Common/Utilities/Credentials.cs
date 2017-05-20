@@ -1,8 +1,5 @@
 ﻿namespace DEA.Common.Utilities
 {
-    /// <summary>
-    /// A class containing all the bot owner information.
-    /// </summary>
     public partial class Credentials
     {
         public string Token { get; set; }

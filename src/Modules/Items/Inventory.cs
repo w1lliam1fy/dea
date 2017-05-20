@@ -1,7 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
 using System.Threading.Tasks;
-using DEA.Common.Extensions;
 
 namespace DEA.Modules.Items
 {
@@ -35,7 +34,7 @@ namespace DEA.Modules.Items
 
                 description += $"{item.Value} {item.Name}{s}\n";
             }
-            await SendAsync(description, $"Inventory of {user.Boldify()}");
+            await SendAsync(description, $"Inventory of {user}");
         }
     }
 }

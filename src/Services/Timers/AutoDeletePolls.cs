@@ -11,15 +11,11 @@ using System.Threading.Tasks;
 
 namespace DEA.Services.Timers
 {
-    /// <summary>
-    /// Periodically delets all finished polls and informs the creator of the results.
-    /// </summary>
     class AutoDeletePolls
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly DiscordSocketClient _client;
         private readonly PollRepository _pollRepo;
-
         private readonly Timer _timer;
 
         public AutoDeletePolls(IServiceProvider serviceProvider)

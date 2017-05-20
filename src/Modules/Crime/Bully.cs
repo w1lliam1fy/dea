@@ -18,7 +18,7 @@ namespace DEA.Modules.Crime
             {
                 ReplyError("The length of a nickname may not be longer than 32 characters.");
             }
-            else if (_moderationService.GetPermLevel(Context, userToBully) > 0)
+            else if (_moderationService.GetPermLevel(Context.DbGuild, userToBully) > 0)
             {
                 ReplyError("You may not bully a moderator.");
             }

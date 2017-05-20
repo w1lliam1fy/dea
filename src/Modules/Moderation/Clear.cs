@@ -30,7 +30,7 @@ namespace DEA.Modules.Moderation
 
             var msg = await ReplyAsync($"Messages deleted: **{quantity}**.");
 
-            await _moderationService.ModLogAsync(Context, "Clear", new Color(34, 59, 255), reason, null, $"\n**Quantity:** {quantity}");
+            await _moderationService.ModLogAsync(Context.DbGuild, Context.Guild, "Clear", new Color(34, 59, 255), reason, null, Context.User, "Quantity", $"{quantity}");
 
             await Task.Delay(2500);
             await msg.DeleteAsync();

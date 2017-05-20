@@ -13,7 +13,7 @@ namespace DEA.Modules.Owners
         private readonly GuildRepository _guildRepo;
         private readonly GangRepository _gangRepo;
         private readonly UserRepository _userRepo;
-        private readonly RankHandler _rankHandler;
+        private readonly RankHandler _RankHandler;
         private readonly GameService _gameService;
         private readonly Item[] _items;
 
@@ -22,7 +22,7 @@ namespace DEA.Modules.Owners
             _guildRepo = guildRepo;
             _gangRepo = gangRepo;
             _userRepo = userRepo;
-            _rankHandler = rankHandler;
+            _RankHandler = rankHandler;
             _gameService = gameService;
             _items = items;
         }

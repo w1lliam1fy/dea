@@ -21,7 +21,10 @@ namespace DEA.Modules.BotOwners
                 username = user.Username;
                 avatarUrl = user.GetAvatarUrl();
             }
-            catch { }
+            catch
+            {
+                //Ignored.
+            }
 
             var blacklist = new Blacklist(userId, username, avatarUrl);
             await _blacklistRepo.InsertAsync(blacklist);

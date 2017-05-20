@@ -10,9 +10,6 @@ using System.Threading.Tasks;
 
 namespace DEA.Services.Handlers
 {
-    /// <summary>
-    /// Handles all things related to DEA ranks.
-    /// </summary>
     public class RankHandler
     {
         private readonly GuildRepository _guildRepo;

@@ -13,7 +13,7 @@ namespace DEA.Modules.Moderation
         [Summary("Bans a user.")]
         public async Task Ban(IGuildUser userToBan, [Remainder] string reason = null)
         {
-            if (_moderationService.GetPermLevel(Context, Context.GUser) <= _moderationService.GetPermLevel(Context, userToBan))
+            if (_moderationService.GetPermLevel(Context.DbGuild, Context.GUser) <= _moderationService.GetPermLevel(Context.DbGuild, userToBan))
             {
                 ReplyError("You cannot ban another mod with a permission level higher or equal to your own.");
             }
@@ -23,7 +23,7 @@ namespace DEA.Modules.Moderation
 
             await SendAsync($"{Context.User.Boldify()} has successfully banned {userToBan.Boldify()}.");
 
-            await _moderationService.ModLogAsync(Context, "Ban", Config.ERROR_COLOR, reason, userToBan);
+            await _moderationService.ModLogAsync(Context.DbGuild, Context.Guild, "Ban", Config.ERROR_COLOR, reason, userToBan, Context.User);
         }
     }
 }

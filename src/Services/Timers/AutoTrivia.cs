@@ -10,9 +10,6 @@ using System.Threading.Tasks;
 
 namespace DEA.Services.Timers
 {
-    /// <summary>
-    /// Periodically sends out trivia messages and awaits for the answers in guilds with auto trivia enabled.
-    /// </summary>
     class AutoTrivia
     { 
         private readonly IServiceProvider _serviceProvider;
@@ -21,7 +18,6 @@ namespace DEA.Services.Timers
         private readonly UserRepository _userRepo;
         private readonly GameService _gameService;
         private readonly InteractiveService _interactiveService;
-
         private readonly Timer _timer;
 
         public AutoTrivia(IServiceProvider serviceProvider)
@@ -59,7 +55,10 @@ namespace DEA.Services.Timers
                             {
                                 await _gameService.TriviaAsync(defaultChannel, dbGuild);
                             }
-                            catch { }
+                            catch
+                            {
+                                //Ignored.
+                            }
                         }
                     }
                 }

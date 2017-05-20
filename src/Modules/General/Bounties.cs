@@ -15,7 +15,7 @@ namespace DEA.Modules.General
         [Summary("View the most targeted traffickers.")]
         public async Task Bounties()
         {
-            var users = await _userRepo.AllAsync(y => y.GuildId == Context.Guild.Id);
+            var users = await _userRepo.AllAsync(y => y.GuildId == Context.Guild.Id && y.Bounty != 0);
             var sorted = users.OrderByDescending(x => x.Bounty);
             string description = string.Empty;
             int position = 1;

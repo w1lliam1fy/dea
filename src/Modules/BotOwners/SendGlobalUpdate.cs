@@ -24,7 +24,10 @@ namespace DEA.Modules.BotOwners
                         var channel = guild.GetChannel(dbGuild.UpdateChannelId);
                         await (channel as ITextChannel).SendAsync(updateMessage);
                     }
-                    catch { }
+                    catch
+                    {
+                        //Ignored.
+                    }
                 }
             }
             await ReplyAsync("All global update messages have been sent.");

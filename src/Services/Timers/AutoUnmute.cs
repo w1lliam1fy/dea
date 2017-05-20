@@ -12,16 +12,13 @@ using System.Threading.Tasks;
 
 namespace DEA.Services.Timers
 {
-    /// <summary>
-    /// Periodically unmutes users who's mute length has ran out.
-    /// </summary>
     class AutoUnmute
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly DiscordSocketClient _client;
         private readonly GuildRepository _guildRepo;
         private readonly MuteRepository _muteRepo;
-
+        private readonly ModerationService _moderationService;
         private readonly Timer _timer;
 
         public AutoUnmute(IServiceProvider serviceProvider)
@@ -30,6 +27,7 @@ namespace DEA.Services.Timers
             _client = _serviceProvider.GetService<DiscordSocketClient>();
             _guildRepo = _serviceProvider.GetService<GuildRepository>();
             _muteRepo = _serviceProvider.GetService<MuteRepository>();
+            _moderationService = _serviceProvider.GetService<ModerationService>();
 
             ObjectState StateObj = new ObjectState();
 
@@ -48,46 +46,38 @@ namespace DEA.Services.Timers
 
                 foreach (var mute in await _muteRepo.AllAsync())
                 {
-                    if (DateTime.UtcNow.Subtract(mute.MutedAt).TotalMilliseconds > mute.MuteLength)
+                    if (DateTime.UtcNow.Subtract(mute.MutedAt).TotalMilliseconds <= mute.MuteLength)
                     {
-                        var guild = await (_client as IDiscordClient).GetGuildAsync(mute.GuildId);
-                        var user = await guild.GetUserAsync(mute.UserId);
-                        if (guild != null && user != null)
-                        {
-                            var guildData = await _guildRepo.GetGuildAsync(guild.Id);
-                            var mutedRole = guild.GetRole(guildData.MutedRoleId);
-                            if (mutedRole != null && user.RoleIds.Any(x => x == mutedRole.Id))
-                            {
-                                await user.RemoveRoleAsync(mutedRole);
-
-                                var channel = await guild.GetTextChannelAsync(guildData.ModLogChannelId);
-                                ChannelPermissions? perms = null;
-                                var currentUser = await guild.GetCurrentUserAsync();
-                                if (channel != null)
-                                {
-                                    perms = currentUser.GetPermissions(channel as SocketTextChannel);
-                                }
-
-                                if (channel != null && currentUser.GuildPermissions.EmbedLinks && perms.Value.SendMessages && perms.Value.EmbedLinks)
-                                {
-                                    var footer = new EmbedFooterBuilder()
-                                    {
-                                        IconUrl = "http://i.imgur.com/BQZJAqT.png",
-                                        Text = $"Case #{guildData.CaseNumber}"
-                                    };
-                                    var embedBuilder = new EmbedBuilder()
-                                    {
-                                        Color = new Color(12, 255, 129),
-                                        Description = $"**Action:** Automatic Unmute\n**User:** {user} ({mute.UserId})",
-                                        Footer = footer
-                                    }.WithCurrentTimestamp();
-                                    await _guildRepo.ModifyAsync(guildData, x => x.CaseNumber++);
-                                    await channel.SendMessageAsync(string.Empty, embed: embedBuilder);
-                                }
-                            }
-                        }
-                        await _muteRepo.RemoveMuteAsync(mute.UserId, mute.GuildId);
+                        return;
                     }
+
+                    await _muteRepo.RemoveMuteAsync(mute.UserId, mute.GuildId);
+
+                    var guild = await (_client as IDiscordClient).GetGuildAsync(mute.GuildId);
+                    
+                    if (guild == null)
+                    {
+                        return;
+                    }
+
+                    var user = await guild.GetUserAsync(mute.UserId);
+
+                    if (user == null)
+                    {
+                        return;
+                    }
+
+                    var dbGuild = await _guildRepo.GetGuildAsync(guild.Id);
+                    var mutedRole = guild.GetRole(dbGuild.MutedRoleId);
+
+                    if (mutedRole == null || !user.RoleIds.Any(x => x == mutedRole.Id))
+                    {
+                        return;
+                    }
+
+                    await user.RemoveRoleAsync(mutedRole);
+
+                    await _moderationService.ModLogAsync(dbGuild, guild, "Automatic Unmute", new Color(12, 255, 129), string.Empty, null, user);
                 }
             });
         }

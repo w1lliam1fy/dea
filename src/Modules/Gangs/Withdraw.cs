@@ -1,7 +1,6 @@
 ﻿using DEA.Common.Data;
 using DEA.Common.Extensions;
 using DEA.Common.Preconditions;
-using DEA.Common.Utilities;
 using Discord.Commands;
 using System;
 using System.Threading.Tasks;
@@ -12,7 +11,7 @@ namespace DEA.Modules.Gangs
     {
         [Command("Withdraw")]
         [Require(Attributes.InGang)]
-        [Cooldown(8, TimeScale.Hours)]
+        [Cooldown]
         [Summary("Withdraw cash from your gang's funds.")]
         public async Task Withdraw(decimal cash)
         {
@@ -33,7 +32,7 @@ namespace DEA.Modules.Gangs
                              $"{Context.Gang.Name}'s Wealth: {Context.Gang.Wealth.USD()}.");
 
             await Context.Gang.LeaderId.DMAsync(Context.Client, $"{Context.User.Boldify()} has withdrawn {cash.USD()} from your gang's wealth.");
-            _commandTimeouts.Add(new CommandTimeout(Context.User.Id, Context.Guild.Id, "Withdraw"));
+            _rateLimitService.Add(Context.User.Id, Context.Guild.Id, "Withdraw", Config.WITHDRAW_COOLDOWN);
         }
     }
 }

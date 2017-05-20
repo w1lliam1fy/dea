@@ -1,6 +1,6 @@
-﻿using DEA.Common.Extensions;
+﻿using DEA.Common.Data;
+using DEA.Common.Extensions;
 using DEA.Common.Preconditions;
-using DEA.Common.Utilities;
 using Discord;
 using Discord.Commands;
 using System.Threading.Tasks;
@@ -11,7 +11,7 @@ namespace DEA.Modules.Crime
     {
         [Command("Collect")]
         [Require(Attributes.SlaveOwner)]
-        [Cooldown(1, TimeScale.Days)]
+        [Cooldown]
         [Summary("Collect a portion from your slaves.")]
         public async Task Collect()
         {
@@ -37,7 +37,7 @@ namespace DEA.Modules.Crime
 
             await _userRepo.EditCashAsync(Context, totalCashGain);
             await ReplyAsync($"You have successfully collected {totalCashGain.USD()} in slave money.");
-            _commandTimeouts.Add(new CommandTimeout(Context.User.Id, Context.Guild.Id, "Collect"));
+            _rateLimitService.Add(Context.User.Id, Context.Guild.Id, "Collect", Config.COLLECT_COOLDOWN);
         }
     }
 }

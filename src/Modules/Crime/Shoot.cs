@@ -7,14 +7,13 @@ using System.Threading.Tasks;
 using MongoDB.Driver;
 using DEA.Common.Data;
 using DEA.Common.Preconditions;
-using DEA.Common.Utilities;
 
 namespace DEA.Modules.Crime
 {
     public partial class Crime
     {
         [Command("Shoot")]
-        [Cooldown(2, TimeScale.Hours)]
+        [Cooldown]
         [Summary("Attempt to shoot a user.")]
         public async Task Shoot(IGuildUser userToShoot)
         {
@@ -63,7 +62,7 @@ namespace DEA.Modules.Crime
                 else
                 {
                     await ReplyAsync($"Nice shot, you just dealt {damage} damage to {userToShoot.Boldify()}.");
-                    await userToShoot.DMAsync($"{Context.User} tried to kill you, but nigga you dodged that shit ez pz. -{damage} health. Current Health: {dbUser.Health}");
+                    await userToShoot.DMAsync($"{Context.User} tried to kill you, but nigga you *AH, HA, HA, HA, STAYIN' ALIVE*. -{damage} health. Current Health: {dbUser.Health}");
                 }
             }
             else
@@ -71,7 +70,7 @@ namespace DEA.Modules.Crime
                 await ReplyAsync($"The nigga fucking dodged the bullet, literally. What in the sac of nuts.");
             }
             await _gameService.ModifyInventoryAsync(Context.DbUser, "Bullet", -1);
-            _commandTimeouts.Add(new CommandTimeout(Context.User.Id, Context.Guild.Id, "Shoot"));
+            _rateLimitService.Add(Context.User.Id, Context.Guild.Id, "Shoot", Config.SHOOT_COOLDOWN);
         }
     }
 }

@@ -20,7 +20,7 @@ namespace DEA.Modules.Moderation
                 ReplyError($"You may not mute users if the muted role is not valid.\nPlease use the " +
                                  $"`{Context.Prefix}SetMutedRole` command to change that.");
             }
-            else if (_moderationService.GetPermLevel(Context, userToMute) > 0)
+            else if (_moderationService.GetPermLevel(Context.DbGuild, userToMute) > 0)
             {
                 ReplyError("You cannot mute another mod.");
             }
@@ -31,7 +31,7 @@ namespace DEA.Modules.Moderation
             await SendAsync($"{Context.User.Boldify()} has successfully muted {userToMute.Boldify()}.");
 
             await _moderationService.InformSubjectAsync(Context.User, "Mute", userToMute, reason);
-            await _moderationService.ModLogAsync(Context, "Mute", new Color(255, 114, 14), reason, userToMute, null);
+            await _moderationService.ModLogAsync(Context.DbGuild, Context.Guild, "Mute", new Color(255, 114, 14), reason, Context.User, userToMute);
         }
     }
 }

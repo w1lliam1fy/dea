@@ -7,14 +7,13 @@ using System.Threading.Tasks;
 using MongoDB.Driver;
 using DEA.Common.Data;
 using DEA.Common.Preconditions;
-using DEA.Common.Utilities;
 
 namespace DEA.Modules.Crime
 {
     public partial class Crime
     {
         [Command("Stab")]
-        [Cooldown(1, TimeScale.Hours)]
+        [Cooldown]
         [Summary("Attempt to stab a user.")]
         public async Task Stab(IGuildUser userToStab)
         {
@@ -55,7 +54,7 @@ namespace DEA.Modules.Crime
                 }
                 else
                 {
-                    await userToStab.DMAsync($"{Context.User} tried to kill you, but nigga you dodged that shit ez pz. -{damage} health. Current Health: {dbUser.Health}");
+                    await userToStab.DMAsync($"{Context.User} tried to kill you, but nigga *AH, HA, HA, HA, STAYIN' ALIVE*. -{damage} health. Current Health: {dbUser.Health}");
                     await ReplyAsync($"Just stabbed that nigga in the heart, you just dealt {damage} damage to {userToStab.Boldify()}.");
                 }
             }
@@ -63,7 +62,7 @@ namespace DEA.Modules.Crime
             {
                 await ReplyAsync($"This nigga actually did some acrobatics shit and bounced out of the way before you stabbed him.");
             }
-            _commandTimeouts.Add(new CommandTimeout(Context.User.Id, Context.Guild.Id, "Stab"));
+            _rateLimitService.Add(Context.User.Id, Context.Guild.Id, "Stab", Config.STAB_COOLDOWN);
         }
     }
 }

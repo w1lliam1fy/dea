@@ -24,7 +24,7 @@ namespace DEA.Modules.Polls
             {
                 ReplyError($"You must have been in this server for more than {Config.ELDER_TIME_REQUIRED.TotalDays} days to vote on this poll.");
             }
-            else if (poll.ModOnly && _moderationService.GetPermLevel(Context, Context.GUser) == 0)
+            else if (poll.ModOnly && _moderationService.GetPermLevel(Context.DbGuild, Context.GUser) == 0)
             {
                 ReplyError("Only a moderator may vote on this poll.");
             }

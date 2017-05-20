@@ -12,7 +12,7 @@ namespace DEA.Modules.Polls
         [Summary("Creates a poll.")]
         public async Task AddPoll([Summary("Are you white?")] string poll, [Summary("HELL YEA~No~Maybe")] string choices, double daysToLast = 1, bool elderOnly = false, bool modOnly = false)
         {
-            var isMod = _moderationService.GetPermLevel(Context, Context.GUser) > 0;
+            var isMod = _moderationService.GetPermLevel(Context.DbGuild, Context.GUser) > 0;
 
             if (modOnly && !isMod)
             {

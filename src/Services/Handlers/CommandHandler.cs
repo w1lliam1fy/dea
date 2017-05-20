@@ -13,9 +13,6 @@ using System.Threading.Tasks;
 
 namespace DEA.Services.Handlers
 {
-    /// <summary>
-    /// Handles all commands.
-    /// </summary>
     public class CommandHandler
     {
         private readonly IServiceProvider _serviceProvider;
@@ -23,7 +20,7 @@ namespace DEA.Services.Handlers
         private readonly CommandService _commandService;
         private readonly Statistics _statistics;
         private readonly ErrorHandler _errorHandler;
-        private readonly RankHandler _rankHandler;
+        private readonly RankHandler _RankHandler;
         private readonly UserRepository _userRepo;
 
         public CommandHandler(CommandService commandService, IServiceProvider serviceProvider)
@@ -32,7 +29,7 @@ namespace DEA.Services.Handlers
             _commandService = commandService;
             _statistics = _serviceProvider.GetService<Statistics>();
             _errorHandler = _serviceProvider.GetService<ErrorHandler>();
-            _rankHandler = _serviceProvider.GetService<RankHandler>();
+            _RankHandler = _serviceProvider.GetService<RankHandler>();
             _userRepo = _serviceProvider.GetService<UserRepository>();
             _client = _serviceProvider.GetService<DiscordSocketClient>();
             _client.MessageReceived += HandleCommandAsync;
@@ -80,7 +77,10 @@ namespace DEA.Services.Handlers
 
                             await channel.SendAsync($"DEA cannot execute any commands without the permission to send embedded messages.");
                         }
-                        catch { }
+                        catch
+                        {
+                            //Ignored.
+                        }
                         return;
                     }
 
@@ -105,7 +105,7 @@ namespace DEA.Services.Handlers
                             x.LastMessage = DateTime.UtcNow;
                             x.Cash += context.DbGuild.GlobalChattingMultiplier * Config.CASH_PER_MSG;
                         });
-                        await _rankHandler.HandleAsync(context.Guild, context.GUser, context.DbGuild, context.DbUser);
+                        await _RankHandler.HandleAsync(context.Guild, context.GUser, context.DbGuild, context.DbUser);
                     }
                 }
             });

@@ -10,9 +10,6 @@ using System.Threading.Tasks;
 
 namespace DEA.Events
 {
-    /// <summary>
-    /// An event that is run every time a guild gets updated.
-    /// </summary>
     class GuildUpdated
     {
         private readonly IServiceProvider _serviceProvider;

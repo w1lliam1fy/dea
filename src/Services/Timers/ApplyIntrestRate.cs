@@ -11,14 +11,10 @@ using System.Threading.Tasks;
 
 namespace DEA.Services.Timers
 {
-    /// <summary>
-    /// Periodically applies the interest rate to all gangs.
-    /// </summary>
     class ApplyIntrestRate
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly GangRepository _gangRepo;
-
         private readonly Timer _timer;
 
         public ApplyIntrestRate(IServiceProvider serviceProvider)

@@ -21,7 +21,7 @@ namespace DEA.Modules.General
             var sorted = users.OrderByDescending(x => x.Cash).ToList();
             var slaveOwner = await (Context.Guild as IGuild).GetUserAsync(dbUser.SlaveOf);
 
-            IRole rank = await _rankHandler.GetRankAsync(Context, dbUser);
+            IRole rank = await _RankHandler.GetRankAsync(Context, dbUser);
             var description = $"Balance: {dbUser.Cash.USD()}\n" +
                               $"Health: {dbUser.Health}\n" +
                               $"Position: #{sorted.FindIndex(x => x.UserId == user.Id) + 1}\n" +

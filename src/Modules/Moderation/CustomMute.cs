@@ -23,7 +23,7 @@ namespace DEA.Modules.Moderation
                 ReplyError("You may not mute a user for less than 1 hour.");
             }
 
-            string time = (hours == 1) ? "hour" : "hours";
+            var time = hours == 1 ? "hour" : "hours";
             var mutedRole = Context.Guild.GetRole(Context.DbGuild.MutedRoleId);
 
             if (mutedRole == null)
@@ -31,7 +31,7 @@ namespace DEA.Modules.Moderation
                 ReplyError($"You may not mute users if the muted role is not valid.\nPlease use the " +
                            $"{Context.DbGuild.Prefix}SetMutedRole command to change that.");
             }
-            else if (_moderationService.GetPermLevel(Context, userToMute) > 0)
+            else if (_moderationService.GetPermLevel(Context.DbGuild, userToMute) > 0)
             {
                 ReplyError("You cannot mute another mod.");
             }
@@ -42,7 +42,7 @@ namespace DEA.Modules.Moderation
             await SendAsync($"{Context.User.Boldify()} has successfully muted {userToMute.Boldify()} for {hours} {time}.");
 
             await _moderationService.InformSubjectAsync(Context.User, "Mute", userToMute, reason);
-            await _moderationService.ModLogAsync(Context, "Mute", new Color(255, 114, 14), reason, userToMute, $"\n**Length:** {hours} {time}");
+            await _moderationService.ModLogAsync(Context.DbGuild, Context.Guild, "Mute", new Color(255, 114, 14), reason, Context.User, userToMute, "Length", $"{hours} {time}");
         }
     }
 }

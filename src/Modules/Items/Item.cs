@@ -25,7 +25,7 @@ namespace DEA.Modules.Items
                 message += element.Health == 0 ? string.Empty : $"**Health:** {element.Health}\n";
                 message += element.Odds == 0 || !Config.WEAPON_TYPES.Any(x => x == element.ItemType) ? string.Empty : $"**Crate Odds:** {(element.Odds / (decimal)_itemWeaponOdds).ToString("P")}\n";
 
-                await SendAsync(message, element.Name.Boldify());
+                await SendAsync(message, element.Name);
             }
             else
             {

@@ -12,7 +12,7 @@ namespace DEA.Modules.Moderation
         [Summary("Kicks a user.")]
         public async Task Kick(IGuildUser userToKick, [Remainder] string reason = null)
         {
-            if (_moderationService.GetPermLevel(Context, userToKick) > 0)
+            if (_moderationService.GetPermLevel(Context.DbGuild, userToKick) > 0)
             {
                 ReplyError("You cannot kick another mod!");
             }
@@ -22,7 +22,7 @@ namespace DEA.Modules.Moderation
 
             await SendAsync($"{Context.User.Boldify()} has successfully kicked {userToKick.Boldify()}.");
 
-            await _moderationService.ModLogAsync(Context, "Kick", new Color(255, 114, 14), reason, userToKick);
+            await _moderationService.ModLogAsync(Context.DbGuild, Context.Guild, "Kick", new Color(255, 114, 14), reason, Context.User, userToKick);
         }
     }
 }

@@ -13,9 +13,6 @@ using System.Collections.Generic;
 
 namespace DEA.Services
 {
-    /// <summary>
-    /// Class for all game related features in DEA.
-    /// </summary>
     public class GameService
     {
         private readonly InteractiveService _interactiveService;
@@ -36,11 +33,6 @@ namespace DEA.Services
             _sortedMeat = _items.Where(x => x.ItemType == "Meat").OrderByDescending(x => x.Odds);
         }
 
-        /// <summary>
-        /// Sends a trivia question in a channel and awaits the correct answer. If someone does correctly answer, they are rewarded.
-        /// </summary>
-        /// <param name="channel">The channel to send the trivia question in.</param>
-        /// <param name="dbGuild">The data information of the guild in question.</param>
         public async Task TriviaAsync(IMessageChannel channel, Guild dbGuild)
         {
             if (dbGuild.Trivia.ElementCount == 0)
@@ -57,22 +49,7 @@ namespace DEA.Services
             Predicate<IUserMessage> correctResponse = y => y.Content.ToLower() == answer;
             if (!answer.Any(char.IsDigit))
             {
-                if (answer.Length < 5)
-                {
-                    correctResponse = y => y.Content.ToLower() == answer;
-                }
-                else if (answer.Length >= 5 && answer.Length < 10)
-                {
-                    correctResponse = y => LevenshteinDistance.Compute(y.Content, element.Value.AsString) <= 1;
-                }
-                else if (answer.Length < 20)
-                {
-                    correctResponse = y => LevenshteinDistance.Compute(y.Content, element.Value.AsString) <= 2;
-                }
-                else
-                {
-                    correctResponse = y => LevenshteinDistance.Compute(y.Content, element.Value.AsString) <= 3;
-                }
+                correctResponse = y => y.Content.SimilarTo(element.Value.AsString, 5, 10, 20);
             }
 
             await channel.SendAsync("__**TRIVIA:**__ " + element.Name);
@@ -92,19 +69,13 @@ namespace DEA.Services
             }
         }
 
-        /// <summary>
-        /// Method that creates a customized gambling game.
-        /// </summary>
-        /// <param name="context">The context for guild data information and the channel to send the reply.</param>
-        /// <param name="bet">The amount of money bet.</param>
-        /// <param name="odds">The odds on 100 of winning.</param>
-        /// <param name="payoutMultiplier">The payout multiplier of the original bet.</param>
         public async Task GambleAsync(DEAContext context, decimal bet, decimal odds, decimal payoutMultiplier)
         {
             var gambleChannel = context.Guild.GetTextChannel(context.DbGuild.GambleChannelId);
+
             if (gambleChannel != null && context.Channel.Id != context.DbGuild.GambleChannelId)
             {
-                throw new DEAException($"You may only gamble in {gambleChannel.Mention}!");
+                throw new DEAException($"You may only gamble in {gambleChannel.Mention}.");
             }
             else if (bet < Config.BET_MIN)
             {

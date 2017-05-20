@@ -7,9 +7,6 @@ using System;
 
 namespace DEA.Events
 {
-    /// <summary>
-    /// An event that is run when DEA is ready to access the Discord API Client.
-    /// </summary>
     class Ready
     {
         private readonly IServiceProvider _serviceProvider;

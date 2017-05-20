@@ -15,7 +15,6 @@ using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -148,11 +147,11 @@ namespace DEA
                 .AddSingleton<InteractiveService>()
                 .AddSingleton<GameService>()
                 .AddSingleton<ModerationService>()
+                .AddSingleton<RateLimitService>()
                 .AddSingleton<ErrorHandler>()
                 .AddSingleton<GangRepository>()
                 .AddSingleton<MuteRepository>()
-                .AddSingleton<Statistics>()
-                .AddSingleton<List<CommandTimeout>>();
+                .AddSingleton<Statistics>();
 
             return new DefaultServiceProviderFactory().CreateServiceProvider(services);
         }

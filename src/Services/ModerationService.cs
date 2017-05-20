@@ -1,5 +1,4 @@
-﻿using DEA.Common;
-using DEA.Common.Extensions.DiscordExtensions;
+﻿using DEA.Common.Extensions.DiscordExtensions;
 using DEA.Database.Models;
 using DEA.Database.Repositories;
 using Discord;
@@ -8,9 +7,6 @@ using System.Threading.Tasks;
 
 namespace DEA.Services
 {
-    /// <summary>
-    /// All moderation utilies.
-    /// </summary>
     public class ModerationService
     {
         private readonly GuildRepository _guildRepo;
@@ -20,39 +16,6 @@ namespace DEA.Services
             _guildRepo = guildRepo;
         }
 
-        /// <summary>
-        /// Checks whether a user is a moderator.
-        /// </summary>
-        /// <param name="context">The context to get the guild data information.</param>
-        /// <param name="user">The user in question.</param>
-        /// <returns>The permission level of the user.</returns>
-        public int GetPermLevel(DEAContext context, IGuildUser user)
-        {
-            var permLevel = 0;
-
-            if (context.DbGuild.ModRoles.ElementCount != 0)
-            {
-                foreach (var role in context.DbGuild.ModRoles.OrderBy(x => x.Value))
-                {
-                    if (user.Guild.GetRole(ulong.Parse(role.Name)) != null)
-                    {
-                        if (user.RoleIds.Any(x => x.ToString() == role.Name))
-                        {
-                            permLevel = role.Value.AsInt32;
-                        }
-                    }
-                }
-            }
-
-            return user.GuildPermissions.Administrator && permLevel < 2 ? 2 : permLevel;
-        }
-
-        /// <summary>
-        /// Checks whether a user is a moderator.
-        /// </summary>
-        /// <param name="context">The context to get the guild data information.</param>
-        /// <param name="user">The user in question.</param>
-        /// <returns>The permission level of the user.</returns>
         public int GetPermLevel(Guild dbGuild, IGuildUser user)
         {
             if (user.Guild.OwnerId == user.Id)
@@ -79,13 +42,6 @@ namespace DEA.Services
             return user.GuildPermissions.Administrator && permLevel < 2 ? 2 : permLevel;
         }
 
-        /// <summary>
-        /// Informs a user of an action regarding them including the responsible moderator.
-        /// </summary>
-        /// <param name="moderator">The moderator in question.</param>
-        /// <param name="action">The action.</param>
-        /// <param name="subject">The user in question.</param>
-        /// <param name="reason">The reason for the action.</param>
         public async Task InformSubjectAsync(IUser moderator, string action, IUser subject, string reason = null)
         {
             try
@@ -99,64 +55,67 @@ namespace DEA.Services
 
                 await channel.SendAsync(message);
             }
-            catch { }
+            catch
+            {
+                //Ignored.
+            }
         }
 
-        /// <summary>
-        /// If the moderation log channel exists, it will log all moderation commands.
-        /// </summary>
-        /// <param name="context">The context of the command use.</param>
-        /// <param name="action">The action that was taken.</param>
-        /// <param name="color">The color of the embed.</param>
-        /// <param name="reason">The reason for the action.</param>
-        /// <param name="subject">The user in question.</param>
-        /// <param name="extra">An extra line for more information.</param>
-        public async Task ModLogAsync(DEAContext context, string action, Color color, string reason, IUser subject = null, string extra = "")
+        public async Task ModLogAsync(Guild dbGuild, IGuild guild, string action, Color color, string reason = "", IUser moderator = null, IUser subject = null, string extraInfoType = "", string extraInfo = "")
         {
-            var channel = context.Guild.GetTextChannel(context.DbGuild.ModLogChannelId);
+            var channel = await guild.GetTextChannelAsync(dbGuild.ModLogChannelId);
 
             if (channel == null)
             {
                 return;
             }
 
-            EmbedFooterBuilder footer = new EmbedFooterBuilder()
-            {
-                IconUrl = "http://i.imgur.com/BQZJAqT.png",
-                Text = $"Case #{context.DbGuild.CaseNumber}"
-            };
-            EmbedAuthorBuilder author = new EmbedAuthorBuilder()
-            {
-                IconUrl = context.User.GetAvatarUrl(),
-                Name = $"{context.User.Username}#{context.User.Discriminator}"
-            };
+            var builder = new EmbedBuilder()
+                .WithColor(color)
+                .WithFooter(x =>
+                {
+                    x.IconUrl = "http://i.imgur.com/BQZJAqT.png";
+                    x.Text = $"Case #{dbGuild.CaseNumber}";
+                })
+                .WithCurrentTimestamp();
 
-            string userText = string.Empty;
+            if (moderator != null)
+            {
+                builder.WithAuthor(x =>
+                {
+                    x.IconUrl = moderator.GetAvatarUrl();
+                    x.Name = $"{moderator}";
+                });
+            }
+
+            var description = $"**Action:** {action}\n";
+
+            if (!string.IsNullOrWhiteSpace(extraInfoType))
+            {
+                description += $"**{extraInfoType}:** {extraInfo}\n";
+            }
+
             if (subject != null)
             {
-                userText = $"\n**User:** {subject} ({subject.Id})";
+                description += $"**User:** {subject} ({subject.Id})\n";
             }
 
-            var description = $"**Action:** {action}{extra}{userText}";
-            if (reason != null)
+            if (!string.IsNullOrWhiteSpace(reason))
             {
-                description += $"\n**Reason:** {reason}";
+                description += $"**Reason:** {reason}\n";
             }
 
-            var builder = new EmbedBuilder()
-            {
-                Author = author,
-                Color = color,
-                Description = description,
-                Footer = footer
-            }.WithCurrentTimestamp();
+            builder.WithDescription(description);
 
             try
             {
                 await channel.SendMessageAsync(string.Empty, embed: builder);
-                await _guildRepo.ModifyAsync(context.DbGuild, x => x.CaseNumber++);
+                await _guildRepo.ModifyAsync(dbGuild, x => x.CaseNumber++);
             }
-            catch { }
+            catch
+            {
+                //Ignored.
+            }
         }
     }
 }

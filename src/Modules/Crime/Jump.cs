@@ -1,7 +1,6 @@
 ﻿using DEA.Common.Data;
 using DEA.Common.Extensions;
 using DEA.Common.Preconditions;
-using DEA.Common.Utilities;
 using Discord.Commands;
 using System.Threading.Tasks;
 
@@ -11,7 +10,7 @@ namespace DEA.Modules.Crime
     {
         [Command("Jump")]
         [Require(Attributes.Jump)]
-        [Cooldown(4, TimeScale.Hours)]
+        [Cooldown]
         [Summary("Jump some random nigga in the hood.")]
         public async Task Jump()
         {
@@ -30,7 +29,7 @@ namespace DEA.Modules.Crime
 
                 await ReplyAsync($"You jump some random nigga on the streets and manage to get {moneyJumped.USD()}. Balance: {Context.Cash.USD()}.");
             }
-            _commandTimeouts.Add(new CommandTimeout(Context.User.Id, Context.Guild.Id, "Jump"));
+            _rateLimitService.Add(Context.User.Id, Context.Guild.Id, "Jump", Config.JUMP_COOLDOWN);
         }
     }
 }

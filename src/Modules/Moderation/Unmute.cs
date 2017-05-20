@@ -25,7 +25,7 @@ namespace DEA.Modules.Moderation
             await SendAsync($"{Context.User.Boldify()} has successfully unmuted {userToUnmute.Boldify()}.");
 
             await _moderationService.InformSubjectAsync(Context.User, "Unmute", userToUnmute, reason);
-            await _moderationService.ModLogAsync(Context, "Unmute", new Color(12, 255, 129), reason, userToUnmute);
+            await _moderationService.ModLogAsync(Context.DbGuild, Context.Guild, "Unmute", new Color(12, 255, 129), reason, Context.User, userToUnmute);
         }
     }
 }

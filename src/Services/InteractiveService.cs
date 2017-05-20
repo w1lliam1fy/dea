@@ -7,9 +7,6 @@ using System.Threading.Tasks;
 
 namespace DEA.Services
 {
-    /// <summary>
-    /// All interactive services.
-    /// </summary>
     public class InteractiveService
     {
         private readonly DiscordSocketClient _client;
@@ -19,13 +16,6 @@ namespace DEA.Services
             _client = client;
         }
 
-        /// <summary>
-        /// Waits for a message matching a filter in a specific channel.
-        /// </summary>
-        /// <param name="channel">The channel to watch for the message matching the filter.</param>
-        /// <param name="filter">The expression filtering the messages.</param>
-        /// <param name="timeout">The time to watch for the message.</param>
-        /// <returns>Task returning the first message matching the filter. Returns null if there was no match.</returns>
         public async Task<IUserMessage> WaitForMessage(IMessageChannel channel, Predicate<IUserMessage> filter, TimeSpan? timeout = null)
         {
             if (timeout == null)
