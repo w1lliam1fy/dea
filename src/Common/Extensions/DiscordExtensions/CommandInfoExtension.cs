@@ -27,7 +27,7 @@ namespace DEA.Common.Extensions.DiscordExtensions
                     before += "#";
                 }
 
-                usage += $" {before}{param.Name}{after} ";
+                usage += $" {before}{param.Name}{after}";
             }
             return usage;
         }

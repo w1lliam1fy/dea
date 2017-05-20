@@ -46,12 +46,12 @@ namespace DEA
             try
             {
                 JsonSerializer serializer = new JsonSerializer();
-
-                using (StreamReader file = File.OpenText(@"Credentials.json"))
+                
+                using (StreamReader file = File.OpenText(Config.MAIN_DIRECTORY + @"src\Credentials.json"))
                 {
                     _credentials = (Credentials)serializer.Deserialize(file, typeof(Credentials));
                 }
-                using (StreamReader file = File.OpenText(@"Common/Data/ItemList.json"))
+                using (StreamReader file = File.OpenText(Config.MAIN_DIRECTORY + @"src\Common\Data\ItemList.json"))
                 {
                     _items = (Item[])serializer.Deserialize(file, typeof(Item[]));
                 }
@@ -105,7 +105,7 @@ namespace DEA
                 Console.ReadLine();
                 Environment.Exit(0);
             }
-               
+
             await _client.StartAsync();
             sw.Stop();
             Logger.Log(LogSeverity.Info, "Successfully connected", $"Elapsed time: {sw.Elapsed.TotalSeconds.ToString("N3")} seconds.");
@@ -158,7 +158,6 @@ namespace DEA
 
         private void InitializeTimersAndEvents(IServiceProvider serviceProvider)
         {
-            new Ready(serviceProvider);
             new JoinedGuild(serviceProvider);
             new GuildUpdated(serviceProvider);
             new UserJoined(serviceProvider);
@@ -166,6 +165,7 @@ namespace DEA
             new AutoDeletePolls(serviceProvider);
             new AutoTrivia(serviceProvider);
             new AutoUnmute(serviceProvider);
+            new Ready(serviceProvider);
         }
     }
 }

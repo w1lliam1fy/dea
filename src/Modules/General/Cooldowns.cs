@@ -27,7 +27,7 @@ namespace DEA.Modules.General
             foreach (var cooldown in cooldowns)
             {
                 var timespan = cooldown.ExpiresAt.Subtract(DateTime.UtcNow);
-                description += $"{cooldown.CommandId}: {timespan.ToString("h\\:mm\\:ss")}\n";
+                description += $"**{cooldown.CommandId}:** {timespan.ToString("h\\:mm\\:ss")}\n";
             }
 
             return SendAsync(description, $"All cooldowns for {user}");

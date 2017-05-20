@@ -22,7 +22,7 @@ namespace DEA.Modules.Crime
             {
                 var dbUser = await _userRepo.GetUserAsync(Context.DbUser.SlaveOf, Context.Guild.Id);
 
-                foreach(var item in dbUser.Inventory.Elements)
+                foreach(var item in Context.DbUser.Inventory.Elements)
                 {
                     await _gameService.ModifyInventoryAsync(dbUser, item.Name);
                 }

@@ -4,10 +4,12 @@ using DEA.Common.Utilities;
 using DEA.Database.Repositories;
 using DEA.Services;
 using DEA.Services.Handlers;
+using Discord.Commands;
 
 namespace DEA.Modules.Owners
 {
     [Require(Attributes.ServerOwner)]
+    [Summary("These commands may only be used by a user with the set mod role with a permission level of 3, or the ownership of the server.")]
     public partial class Owners : DEAModule
     {
         private readonly GuildRepository _guildRepo;

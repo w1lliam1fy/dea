@@ -39,7 +39,7 @@ namespace DEA.Modules.Moderation
             await Task.Delay(seconds * 1000);
             await channel.AddPermissionOverwriteAsync(Context.Guild.EveryoneRole, new OverwritePermissions().Modify(perms.CreateInstantInvite, perms.ManageChannel, perms.AddReactions, perms.ReadMessages, perms.SendMessages));
 
-            await _moderationService.ModLogAsync(Context.DbGuild, Context.Guild, "Chill", new Color(34, 59, 255), reason, null, Context.User, "Length", $"{seconds} seconds");
+            await _moderationService.ModLogAsync(Context.DbGuild, Context.Guild, "Chill", new Color(34, 59, 255), reason, Context.User, null, "Length", $"{seconds} seconds");
         }
     }
 }

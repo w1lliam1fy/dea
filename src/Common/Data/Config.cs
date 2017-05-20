@@ -44,6 +44,8 @@ namespace DEA.Common.Data
             TimeSpan.FromMinutes(2), AUTO_DELETE_POLLS_COOLDOWN = TimeSpan.FromMinutes(1), STAB_COOLDOWN = TimeSpan.FromHours(4),
             SHOOT_COOLDOWN = TimeSpan.FromHours(4), ENSLAVE_COOLDOWN = TimeSpan.FromHours(2), OPEN_CRATE_COOLDOWN = TimeSpan.FromSeconds(2);
 
+        public static readonly string MAIN_DIRECTORY = AppContext.BaseDirectory.Remove(AppContext.BaseDirectory.IndexOfAny("src".ToCharArray()));
+
         public static readonly string[] BANKS = 
         {
             "Bank of America", "Wells Fargo Bank", "JPMorgan Chase Bank", "Capital One Bank", "RBC Bank", "USAA Bank", "Union Bank",

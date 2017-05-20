@@ -4,7 +4,7 @@ To invite DEA to your Discord Server, click the image below.
 
 [![img][img]](https://discordapp.com/oauth2/authorize?client_id=290823959669374987&scope=bot&permissions=410119182)
 
-DEA is a multi-purpose Discord Bot mainly known for it's infamous Cash System with multiple subtleties referencing to the show Narcos, which inspired the creation of this masterpiece. 
+DEA is a multi-purpose Discord Bot mainly known for it's infamous Cash AND Item System, allowing you to buy crates and win prizes such as rare weapons or knives, and trade them with other users. 
 
 This bot is also capable of being an excellent moderation bot for all needs. Multiple commands such as kick, ban, mute are available at your disposition. One of the most acclaimed features of DEA is the automatic unmutes after the specified amount of time with mute evasion prevention. 
 

@@ -2,7 +2,8 @@
 Once DEA is on your server, you need to use a few commands to get it working.
 
 * Assign a few rank roles using the `$AddRank` command so the members of your server have something to grind for.
-* After this you may now use the `$Info` command for more information on the Cash System.
+* After this you may now use the `$CashInfo` command for more information on the Cash System.
+* For all the item information, you may use the `$help items` command, and use the `$item <item name` for juicy details.
 * If you wish to prevent spam of gambling commands, you may set a gambling channel with the `$SetGambleChannel` command.
 
 ##Moderation Setup
