@@ -67,7 +67,7 @@ namespace DEA.Services.Timers
                     }
                     finally
                     {
-                        await _muteRepo.RemoveMuteAsync(mute.UserId, mute.GuildId);
+                        await _muteRepo.DeleteAsync(x => x.Id == mute.Id);
                     }
                 }
             });
