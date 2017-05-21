@@ -132,7 +132,7 @@ namespace DEA.Services.Handlers
                 case CommandError.BadArgCount:
                     var cmd = _commandService.Search(context, argPos).Commands.First().Command;
                     var cmdNameUpperFirst = commandName.UpperFirstChar();
-                    var example = cmd.Parameters.Count == 0 ? string.Empty : $"**Example:** `{context.DbGuild.Prefix}{cmdNameUpperFirst}{cmd.GetExample()}`";
+                    var example = cmd.Parameters.Count == 0 ? string.Empty : $"**Example:** `{context.DbGuild.Prefix}{cmdNameUpperFirst} {cmd.Remarks}`";
 
                     message = $"You are incorrectly using this command. \n\n**Usage:** `{context.DbGuild.Prefix}{cmdNameUpperFirst}{cmd.GetUsage()}`\n\n" + example;   
                     break;

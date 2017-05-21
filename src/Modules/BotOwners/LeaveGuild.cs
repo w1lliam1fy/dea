@@ -7,7 +7,7 @@ namespace DEA.Modules.BotOwners
     public partial class BotOwners
     {
         [Command("LeaveGuild")]
-        [Remarks("LeaveGuild 290759415362224139")]
+        [Remarks("290759415362224139")]
         [Summary("Leaves any guild by guild ID.")]
         public async Task LeaveGuild(ulong guildId)
         {

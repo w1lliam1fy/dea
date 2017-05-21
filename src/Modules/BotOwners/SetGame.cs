@@ -6,8 +6,8 @@ namespace DEA.Modules.BotOwners
     public partial class BotOwners
     {
         [Command("SetGame")]
+        [Remarks("boss froth")]
         [Summary("Sets the game of DEA.")]
-        [Remarks("SetGame boss froth")]
         public async Task SetGame([Remainder] string game)
         {
             await Context.Client.SetGameAsync(game);

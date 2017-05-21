@@ -10,7 +10,7 @@ namespace DEA.Modules.Items
     public partial class Items
     {
         [Command("Item")]
-        [Remarks("Item Kitchen Knife")]
+        [Remarks("Kitchen Knife")]
         [Summary("Get all the information on any item.")]
         public async Task Item([Remainder] string item)
         {

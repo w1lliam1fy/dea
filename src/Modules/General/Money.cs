@@ -9,7 +9,7 @@ namespace DEA.Modules.General
     {
         [Command("Money")]
         [Alias("Cash", "Balance", "Bal")]
-        [Remarks("Money Sexy John#0007")]
+        [Remarks("Sexy John#0007")]
         [Summary("View the wealth of anyone.")]
         public async Task Money([Remainder] IGuildUser user = null)
         {

@@ -11,7 +11,7 @@ namespace DEA.Modules.System
     {
         [Command("Help")]
         [Alias("commands", "cmd", "cmds", "command")]
-        [Remarks("Help Moderation")]
+        [Remarks("Moderation")]
         [Summary("All command information.")]
         public async Task Help([Remainder] string commandOrModule = null)
         {
@@ -50,7 +50,7 @@ namespace DEA.Modules.System
                     if (command != default(CommandInfo))
                     {
                         var commmandNameUpperFirst = commandOrModule.UpperFirstChar();
-                        var example = command.Parameters.Count == 0 ? string.Empty : $"**Example:** `{Context.Prefix}{commmandNameUpperFirst}{command.GetExample()}`";
+                        var example = command.Parameters.Count == 0 ? string.Empty : $"**Example:** `{Context.Prefix}{commmandNameUpperFirst} {command.Remarks}`";
 
                         await SendAsync($"**Description:** {command.Summary}\n\n" +
                                         $"**Usage:** `{Context.Prefix}{commmandNameUpperFirst}{command.GetUsage()}`\n\n" + example,

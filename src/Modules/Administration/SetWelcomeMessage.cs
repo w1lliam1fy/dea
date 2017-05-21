@@ -7,7 +7,7 @@ namespace DEA.Modules.Administration
     {
         [Command("SetWelcomeMessage")]
         [Alias("SetWelcome")]
-        [Remarks("SetWelcomeMessage CleanAssChannel")]
+        [Remarks("Welcome to our server!")]
         [Summary("Sets the welcome message that DEA will send in either the Welcome Channel or the users DM's.")]
         public async Task SetWelcomeMessage([Remainder] string message)
         {

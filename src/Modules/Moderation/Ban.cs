@@ -10,7 +10,7 @@ namespace DEA.Modules.Moderation
     {
         [Command("Ban")]
         [RequireBotPermission(GuildPermission.BanMembers)]
-        [Remarks("Ban \"Sexy John#0007\" Being too sexy for this server")]
+        [Remarks("\"Sexy John#0007\" Being too sexy for this server")]
         [Summary("Bans a user.")]
         public async Task Ban(IGuildUser userToBan, [Remainder] string reason = null)
         {

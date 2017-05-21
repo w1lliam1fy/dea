@@ -8,7 +8,7 @@ namespace DEA.Modules.Owners
     public partial class Owners
     {
         [Command("100k")]
-        [Remarks("100k Sexy John#0007")]
+        [Remarks("Sexy John#0007")]
         [Summary("Sets the user's balance to $100,000.00.")]
         public async Task HundredK([Remainder] IGuildUser user = null)
         {

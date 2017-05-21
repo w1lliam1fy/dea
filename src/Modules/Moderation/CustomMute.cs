@@ -11,7 +11,7 @@ namespace DEA.Modules.Moderation
         [Command("CustomMute")]
         [Alias("CMute")]
         [RequireBotPermission(GuildPermission.ManageRoles)]
-        [Remarks("CustomMute 2 \"Sexy John#0007\" Being Too Sexy")]
+        [Remarks("2 \"Sexy John#0007\" Being Too Sexy")]
         [Summary("Temporarily mutes a user for x amount of hours.")]
         public async Task CustomMute(double hours, IGuildUser userToMute, [Remainder] string reason = null)
         {

@@ -9,7 +9,7 @@ namespace DEA.Modules.Moderation
     {
         [Command("Kick")]
         [RequireBotPermission(GuildPermission.KickMembers)]
-        [Remarks("Kick \"Sexy John#0007\" Being too sexy")]
+        [Remarks("\"Sexy John#0007\" Being too sexy")]
         [Summary("Kicks a user.")]
         public async Task Kick(IGuildUser userToKick, [Remainder] string reason = null)
         {

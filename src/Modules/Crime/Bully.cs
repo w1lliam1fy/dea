@@ -10,7 +10,7 @@ namespace DEA.Modules.Crime
     {
         [Command("Bully")]
         [Require(Attributes.Bully)]
-        [Remarks("Bully \"Sexy John#0007\" Retard LOL")]
+        [Remarks("\"Sexy John#0007\" Retard LOL")]
         [Summary("Bully anyone's nickname to whatever you please.")]
         [RequireBotPermission(GuildPermission.ManageNicknames)]
         public async Task Bully(IGuildUser userToBully, [Remainder] string nickname)

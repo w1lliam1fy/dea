@@ -10,7 +10,7 @@ namespace DEA.Modules.Moderation
     {
         [Command("Mute")]
         [RequireBotPermission(GuildPermission.ManageRoles)]
-        [Remarks("Mute \"Sexy John#0007\" Was so sexy others felt bad about themselves")]
+        [Remarks("\"Sexy John#0007\" Was so sexy others felt bad about themselves")]
         [Summary("Permanently mutes a user.")]
         public async Task Mute(IGuildUser userToMute, [Remainder] string reason = null)
         {

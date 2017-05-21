@@ -10,7 +10,7 @@ namespace DEA.Modules.Trivia
     {
         [Command("ModifyQuestion")]
         [Require(Attributes.Moderator)]
-        [Remarks("ModifyQuestion \"Is DEA the best discord bot?\" Is DEA vastly superior to all other discord bots?")]
+        [Remarks("\"Is DEA the best discord bot?\" Is DEA vastly superior to all other discord bots?")]
         [Summary("Modify a trivia question.")]
         public async Task ModifyQuestion(string question, [Remainder] string newQuestion)
         {

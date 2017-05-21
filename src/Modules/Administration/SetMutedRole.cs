@@ -9,7 +9,7 @@ namespace DEA.Modules.Administration
     {
         [Command("SetMutedRole")]
         [Alias("SetMuteRole")]
-        [Remarks("SetMutedRole Muted Role")]
+        [Remarks("Muted")]
         [Summary("Sets the muted role.")]
         public async Task SetMutedRole([Remainder] IRole mutedRole)
         {

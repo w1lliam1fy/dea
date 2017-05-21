@@ -10,7 +10,7 @@ namespace DEA.Modules.Polls
     public partial class Polls
     {
         [Command("Vote")]
-        [Remarks("Vote 12 1")]
+        [Remarks("12 1")]
         [Summary("Vote on any poll.")]
         public async Task Vote(int pollIndex, int choiceIndex)
         {

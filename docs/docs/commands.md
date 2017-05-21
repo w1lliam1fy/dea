@@ -59,7 +59,7 @@ Bully|Bully anyone's nickname to whatever you please.|`$Bully <@userToBully> <ni
 Collect|Collect a portion from your slaves.|`$Collect`
 Enslave|Enslave any users at low health.|`$Enslave <@userToEnslave>`
 Jump|Jump some random nigga in the hood.|`$Jump`
-Rob|Slam anyone's bank account.|`$Rob <resources> <@user>`
+Rob|Slam anyone's bank account.|`$Rob <@user> <resources>`
 Shoot|Attempt to shoot a user.|`$Shoot <@userToShoot>`
 Stab|Attempt to stab a user.|`$Stab <@userToStab>`
 Steal|Snipe some goodies from your local stores.|`$Steal`
@@ -87,7 +87,7 @@ GangLb|Shows the wealthiest gangs.|`$GangLb`
 JoinGang|Sends a request to join a gang.|`$JoinGang <gangName>`
 KickGangMember|Kicks a user from your gang.|`$KickGangMember <@gangMember>`
 LeaveGang|Allows you to break all ties with a gang.|`$LeaveGang`
-Raid|Raid another gang in attempt to steal some of their wealth.|`$Raid <resources> <gangName>`
+Raid|Raid another gang in attempt to steal some of their wealth.|`$Raid <gangName> <resources>`
 Withdraw|Withdraw cash from your gang's funds.|`$Withdraw <cash>`
 
 ### General
@@ -145,7 +145,7 @@ Command | Description | Usage
 100k|Sets the user's balance to $100,000.00.|`$100k [@user]`
 AddModRole|Adds a moderator role.|`$AddModRole <@modRole> [permissionLevel]`
 AddTo|Add cash to every users balance in a specific role.|`$AddTo <@role> <money>`
-ModifyCash|Add cash into a user's balance.|`$ModifyCash <money> [@user]`
+ModifyCash|Modify a user's balance.|`$ModifyCash <money> [@user]`
 ModifyHealth|Modify a user's health.|`$ModifyHealth <modifyHealth> [@user]`
 ModifyInventory|Modify a user's inventory.|`$ModifyInventory <quantity> <item> [@user]`
 ModifyModRole|Modfies a moderator role.|`$ModifyModRole <@modRole> <permissionLevel>`

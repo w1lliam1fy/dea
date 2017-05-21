@@ -8,7 +8,7 @@ namespace DEA.Modules.Administration
     public partial class Administration
     {
         [Command("AddRank")]
-        [Remarks("AddRank \"Spicy Role\" 1000")]
+        [Remarks("\"Spicy Role\" 1000")]
         [Summary("Adds a rank role for the DEA cash system.")]
         public async Task AddRank(IRole rankRole, double cashRequired)
         {

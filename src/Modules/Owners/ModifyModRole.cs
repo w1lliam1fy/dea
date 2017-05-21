@@ -9,12 +9,12 @@ namespace DEA.Modules.Owners
     public partial class Owners
     {
         [Command("ModifyModRole")]
-        [Remarks("ModifyModRole \"Big Daddy Mods\" 2")]
+        [Remarks("\"Big Daddy Mods\" 2")]
         [Summary("Modfies a moderator role.")]
         public async Task ModifyRank(IRole modRole, int permissionLevel)
         {
             if (Context.DbGuild.ModRoles.ElementCount == 0)
-            {
+            { 
                 ReplyError("There are no moderator roles yet!");
             }
             else if (!Context.DbGuild.ModRoles.Any(x => x.Name == modRole.Id.ToString()))

@@ -40,7 +40,7 @@
                     return false;
                 }
             }
-            else
+            else if (s.Length >= stringLength3)
             {
                 if (distance <= 3)
                 {
@@ -51,6 +51,7 @@
                     return false;
                 }
             }
+            return false;
         }
     }
 }

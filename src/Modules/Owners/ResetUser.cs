@@ -9,7 +9,7 @@ namespace DEA.Modules.Owners
     public partial class Owners
     {
         [Command("ResetUser")]
-        [Remarks("ResetUser Sexy John#0007")]
+        [Remarks("Sexy John#0007")]
         [Summary("Resets all data for a specific user.")]
         public async Task ResetUser([Remainder] IGuildUser user = null)
         {

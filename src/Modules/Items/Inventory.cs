@@ -8,7 +8,7 @@ namespace DEA.Modules.Items
     {
         [Command("Inventory")]
         [Alias("Inv")]
-        [Remarks("Inventory Sexy John#0007")]
+        [Remarks("Sexy John#0007")]
         [Summary("View the inventory of any user.")]
         public async Task Inventory([Remainder] IGuildUser user = null)
         {

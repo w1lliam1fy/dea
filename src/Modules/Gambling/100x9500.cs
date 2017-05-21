@@ -7,7 +7,7 @@ namespace DEA.Modules.Gambling
     public partial class Gambling : DEAModule
     {
         [Command("100x9500")]
-        [Remarks("100x9500 50")]
+        [Remarks("50")]
         [Summary("Roll 100.00 on a 100.00 sided die, win 9500X your bet.")]
         public Task X90(decimal bet)
         {

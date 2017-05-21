@@ -9,7 +9,7 @@ namespace DEA.Modules.Items
     public partial class Items
     {
         [Command("Eat")]
-        [Remarks("Eat Bear Grylls Meat")]
+        [Remarks("Bear Grylls Meat")]
         [Summary("Eat a chosen food in your inventory to gain health.")]
         public async Task Eat([Remainder]string item)
         {

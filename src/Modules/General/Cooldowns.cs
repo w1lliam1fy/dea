@@ -10,6 +10,7 @@ namespace DEA.Modules.General
     {
         [Command("Cooldowns")]
         [Alias("cd")]
+        [Remarks("Sexy John#0007")]
         [Summary("View all your command cooldowns.")]
         public Task Cooldowns([Remainder] IGuildUser user = null)
         {

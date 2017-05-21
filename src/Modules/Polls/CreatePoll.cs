@@ -9,7 +9,7 @@ namespace DEA.Modules.Polls
     public partial class Polls
     {
         [Command("CreatePoll")]
-        [Remarks("CreatePoll \"Are there any discord bots better than DEA?\" \"No~No way hoe zay~Not a chance buddy\" 1 false false")]
+        [Remarks("\"Are there any discord bots better than DEA?\" \"No~No way hoe zay~Not a chance buddy\" 1 false false")]
         [Summary("Creates a poll.")]
         public async Task AddPoll(string poll, string choices, double daysToLast = 1, bool elderOnly = false, bool modOnly = false)
         {

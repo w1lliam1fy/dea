@@ -7,7 +7,7 @@ namespace DEA.Modules.Polls
     public partial class Polls
     {
         [Command("RemovePoll")]
-        [Remarks("Removepoll 13")]
+        [Remarks("13")]
         [Summary("Removes a poll.")]
         [Require(Attributes.Moderator)]
         public async Task RemovePoll(int index)

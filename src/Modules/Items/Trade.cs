@@ -13,7 +13,7 @@ namespace DEA.Modules.Items
     public partial class Items
     {
         [Command("Trade")]
-        [Remarks("Trade \"Sexy John#0007\" 1 \"Bear Grylls Meat\" 1 Gold Crate")]
+        [Remarks("\"Sexy John#0007\" 1 \"Bear Grylls Meat\" 1 Gold Crate")]
         [Summary("Request to trade with any user.")]
         public async Task Trade(IGuildUser userToTrade, int exchangeItemQuantity, string itemInExchange, int requestedItemQuantity, [Remainder] string requestedItem)
         {

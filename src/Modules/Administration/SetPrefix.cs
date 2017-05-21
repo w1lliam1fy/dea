@@ -6,7 +6,7 @@ namespace DEA.Modules.Administration
     public partial class Administration
     {
         [Command("SetPrefix")]
-        [Remarks("SetPrefix !")]
+        [Remarks("!")]
         [Summary("Sets the guild specific prefix.")]
         public async Task SetPrefix([Remainder] string prefix)
         {

@@ -11,7 +11,7 @@ namespace DEA.Modules.Moderation
     {
         [Command("Unmute")]
         [RequireBotPermission(GuildPermission.ManageRoles)]
-        [Remarks("Unmute \"Sexy John#0007\" We needed the sexiness back")]
+        [Remarks("\"Sexy John#0007\" We needed the sexiness back")]
         [Summary("Unmutes a muted user.")]
         public async Task Unmute(IGuildUser userToUnmute, [Remainder] string reason = null)
         {

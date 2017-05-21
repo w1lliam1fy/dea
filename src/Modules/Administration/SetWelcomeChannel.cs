@@ -7,7 +7,7 @@ namespace DEA.Modules.Administration
     public partial class Administration
     {
         [Command("SetWelcomeChannel")]
-        [Remarks("SetWelcomeChannel CleanAssChannel")]
+        [Remarks("Welcome")]
         [Summary("Set the channel where DEA will send a welcome message to all new users that join.")]
         public async Task SetWelcomeChannel([Remainder] ITextChannel channel)
         {

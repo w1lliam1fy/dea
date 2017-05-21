@@ -9,7 +9,7 @@ namespace DEA.Modules.Crime
     public partial class Crime
     {
         [Command("AddBounty")]
-        [Remarks("AddBounty \"Sexy John#0007\" 50")]
+        [Remarks("\"Sexy John#0007\" 50")]
         [Summary("Add a bounty of any user.")]
         public async Task SetBounty(IGuildUser userToSet, decimal bounty)
         {

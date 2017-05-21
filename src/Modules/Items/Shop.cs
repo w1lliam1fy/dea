@@ -10,7 +10,7 @@ namespace DEA.Modules.Items
     {
         [Command("Shop")]
         [Alias("Buy")]
-        [Remarks("Shop Gold Crate")]
+        [Remarks("Gold Crate")]
         [Summary("List of available shop items.")]
         public async Task Shop([Remainder] string item = null)
         {

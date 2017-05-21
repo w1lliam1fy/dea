@@ -13,7 +13,7 @@ namespace DEA.Modules.Crime
         [Command("Rob")]
         [Require(Attributes.Rob)]
         [Cooldown]
-        [Remarks("Rob \"Sexy John#0007\" 50")]
+        [Remarks("\"Sexy John#0007\" 50")]
         [Summary("Slam anyone's bank account.")]
         public async Task Rob(IGuildUser user, decimal resources)
         {
