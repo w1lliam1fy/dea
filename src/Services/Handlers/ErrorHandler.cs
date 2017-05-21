@@ -52,7 +52,7 @@ namespace DEA.Services.Handlers
                                 {
                                     case HttpStatusCode.BadRequest:
                                         message = "There seems to have been a bad request. Please report this issue with context at: " +
-                                                  "https://github.com/RealBlazeIt/DEA/issues.";
+                                                  "https://github.com/RealBlazeIt/DEA/issues.\n" + httpEx.InnerException.StackTrace;
                                         break;
                                     case HttpStatusCode.Forbidden:
                                         message = "DEA does not have permission to do that. This issue *may* be fixed by moving the DEA role " +

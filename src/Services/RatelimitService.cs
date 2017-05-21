@@ -77,10 +77,10 @@ namespace DEA.Services
 
     public class RateLimitEntry
     {
-        public ulong UserId { get; private set; }
-        public ulong GuildId { get; private set; }
-        public string CommandId { get; private set; }
-        public DateTime ExpiresAt { get; private set; }
+        public ulong UserId { get; }
+        public ulong GuildId { get; }
+        public string CommandId { get; }
+        public DateTime ExpiresAt { get; }
 
         public RateLimitEntry(ulong userId, ulong guildId, string commandId, TimeSpan duration)
         {
