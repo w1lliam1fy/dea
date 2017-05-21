@@ -13,7 +13,7 @@ namespace DEA.Modules.Gangs
     {
         [Command("JoinGang")]
         [Require(Attributes.NoGang)]
-        [Remarks("JoinGang SLAM EM BOYS")]
+        [Remarks("SLAM EM BOYS")]
         [Summary("Sends a request to join a gang.")]
         public async Task AddToGang([Remainder] string gangName)
         {

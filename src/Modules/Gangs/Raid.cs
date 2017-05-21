@@ -12,7 +12,7 @@ namespace DEA.Modules.Gangs
         [Command("Raid")]
         [Require(Attributes.InGang)]
         [Cooldown]
-        [Remarks("Raid \"SLAM EM BOYS\" 50")]
+        [Remarks("\"SLAM EM BOYS\" 50")]
         [Summary("Raid another gang in attempt to steal some of their wealth.")]
         public async Task Raid(string gangName, decimal resources)
         {

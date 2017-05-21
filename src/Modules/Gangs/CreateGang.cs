@@ -10,7 +10,7 @@ namespace DEA.Modules.Gangs
     {
         [Command("CreateGang")]
         [Require(Attributes.NoGang)]
-        [Remarks("CreateGang SLAM EM BOYS")]
+        [Remarks("SLAM EM BOYS")]
         [Summary("Allows you to create a gang at a hefty price.")]
         public async Task CreateGang([Remainder] string name)
         {

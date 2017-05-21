@@ -13,7 +13,7 @@ namespace DEA.Modules.Gangs
         [Command("ChangeGangName")]
         [Alias("ChangeName")]
         [Require(Attributes.InGang, Attributes.GangLeader)]
-        [Remarks("ChangeGangName JERK EM OFF BOYS")]
+        [Remarks("JERK EM OFF BOYS")]
         [Summary("Changes the name of your gang.")]
         public async Task ChangeGangName([Remainder] string newName)
         {

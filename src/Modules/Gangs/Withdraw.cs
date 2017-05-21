@@ -12,7 +12,7 @@ namespace DEA.Modules.Gangs
         [Command("Withdraw")]
         [Require(Attributes.InGang)]
         [Cooldown]
-        [Remarks("Withdraw 50")]
+        [Remarks("50")]
         [Summary("Withdraw cash from your gang's funds.")]
         public async Task Withdraw(decimal cash)
         {

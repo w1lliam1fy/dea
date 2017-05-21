@@ -10,7 +10,7 @@ namespace DEA.Modules.Gangs
     {
         [Command("Deposit")]
         [Require(Attributes.InGang)]
-        [Remarks("Deposit 50")]
+        [Remarks("50")]
         [Summary("Deposit cash into your gang's funds.")]
         public async Task Deposit(decimal cash)
         {
