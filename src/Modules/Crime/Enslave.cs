@@ -14,7 +14,7 @@ namespace DEA.Modules.Crime
         [Command("Enslave")]
         [Cooldown]
         [Summary("Enslave any users at low health.")]
-        public async Task Enslave(IGuildUser userToEnslave)
+        public async Task Enslave([Remainder] IGuildUser userToEnslave)
         {
             var user = await _userRepo.GetUserAsync(userToEnslave);
             if (userToEnslave.Id == Context.User.Id)

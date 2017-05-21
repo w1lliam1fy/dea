@@ -11,7 +11,7 @@ namespace DEA.Modules.Owners
     {
         [Command("RemoveFrom")]
         [Summary("Remove cash to every users balance in a specific role.")]
-        public async Task Remove(decimal money, [Remainder] IRole role)
+        public async Task Remove(IRole role, decimal money)
         {
             if (money < 0)
             {

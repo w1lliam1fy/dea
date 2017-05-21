@@ -27,7 +27,7 @@ These commands may only be used by a user with the set mod role with a permissio
 
 Command | Description | Usage
 ---------------- | --------------| -------
-AddRank|Adds a rank role for the DEA cash system.|`$AddRank <cashRequired> <@rankRole>`
+AddRank|Adds a rank role for the DEA cash system.|`$AddRank <@rankRole> <cashRequired>`
 DisableWelcomeMessage|Disables the welcome message from being sent in direct messages and in the welcome channel.|`$DisableWelcomeMessage`
 ModifyRank|Modfies a rank role for the DEA cash system.|`$ModifyRank <@rankRole> <newCashRequired>`
 RemoveRank|Removes a rank role for the DEA cash system.|`$RemoveRank <@rankRole>`
@@ -54,7 +54,7 @@ SetGame|Sets the game of DEA.|`$SetGame <game>`
 ### Crime
 Command | Description | Usage
 ---------------- | --------------| -------
-AddBounty|Add a bounty of any user.|`$AddBounty <bounty> <@userToSet>`
+AddBounty|Add a bounty of any user.|`$AddBounty <@userToSet> <bounty>`
 Bully|Bully anyone's nickname to whatever you please.|`$Bully <@userToBully> <nickname>`
 Collect|Collect a portion from your slaves.|`$Collect`
 Enslave|Enslave any users at low health.|`$Enslave <@userToEnslave>`
@@ -95,7 +95,7 @@ Command | Description | Usage
 ---------------- | --------------| -------
 Bounties|View the most targeted traffickers.|`$Bounties`
 Cooldowns|View all your command cooldowns.|`$Cooldowns [@user]`
-Donate|Sauce some cash to one of your mates.|`$Donate <money> <@user>`
+Donate|Sauce some cash to one of your mates.|`$Donate <@user> <money>`
 Leaderboards|View the richest Drug Traffickers.|`$Leaderboards`
 ModRoles|View all the moderator roles.|`$ModRoles`
 Money|View the wealth of anyone.|`$Money [@user]`
@@ -143,14 +143,13 @@ These commands may only be used by a user with the set mod role with a permissio
 Command | Description | Usage
 ---------------- | --------------| -------
 100k|Sets the user's balance to $100,000.00.|`$100k [@user]`
-Add|Add cash into a user's balance.|`$Add <money> <@user>`
 AddModRole|Adds a moderator role.|`$AddModRole <@modRole> [permissionLevel]`
-AddTo|Add cash to every users balance in a specific role.|`$AddTo <money> <@role>`
+AddTo|Add cash to every users balance in a specific role.|`$AddTo <@role> <money>`
+ModifyCash|Add cash into a user's balance.|`$ModifyCash <money> [@user]`
 ModifyHealth|Modify a user's health.|`$ModifyHealth <modifyHealth> [@user]`
 ModifyInventory|Modify a user's inventory.|`$ModifyInventory <quantity> <item> [@user]`
 ModifyModRole|Modfies a moderator role.|`$ModifyModRole <@modRole> <permissionLevel>`
-Remove|Remove cash from a user's balance.|`$Remove <money> <@user>`
-RemoveFrom|Remove cash to every users balance in a specific role.|`$RemoveFrom <money> <@role>`
+RemoveFrom|Remove cash to every users balance in a specific role.|`$RemoveFrom <@role> <money>`
 RemoveModRole|Removes a moderator role.|`$RemoveModRole <@modRole>`
 Reset|Resets all user data for the entire server or a specific role.|`$Reset [@role]`
 ResetUser|Resets all data for a specific user.|`$ResetUser [@user]`
@@ -174,7 +173,6 @@ Help|All command information.|`$Help [commandOrModule]`
 Invite|Invite DEA to your server!|`$Invite`
 Modules|All command modules.|`$Modules`
 Statistics|All the statistics about DEA.|`$Statistics`
-Usage|Explanation of how commands are used.|`$Usage`
 
 ### Trivia
 Command | Description | Usage

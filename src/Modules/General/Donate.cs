@@ -11,7 +11,7 @@ namespace DEA.Modules.General
         [Command("Donate")]
         [Alias("Sauce")]
         [Summary("Sauce some cash to one of your mates.")]
-        public async Task Donate(decimal money, [Remainder] IGuildUser user)
+        public async Task Donate(IGuildUser user, decimal money)
         {
             if (user.Id == Context.User.Id)
             {

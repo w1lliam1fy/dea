@@ -7,19 +7,16 @@ namespace DEA.Modules.Owners
 {
     public partial class Owners
     {
-        [Command("Add")]
-        [Summary("Add cash into a user's balance.")]
-        public async Task Add(decimal money, [Remainder] IGuildUser user)
+        [Command("ModifyCash")]
+        [Summary("Modify a user's balance.")]
+        public async Task ModifyCash(decimal money, [Remainder] IGuildUser user = null)
         {
-            if (money < 0)
-            {
-                ReplyError("You may not add negative money to a user's balance.");
-            }
+            user = user ?? Context.GUser;
 
             var dbUser = user.Id == Context.User.Id ? Context.DbUser : await _userRepo.GetUserAsync(user);
             await _userRepo.EditCashAsync(user, Context.DbGuild, dbUser, money);
 
-            await SendAsync($"Successfully added {money.USD()} to {user.Boldify()}'s balance.");
+            await ReplyAsync($"You have successfully modified {user.Boldify()}'s balance to: {dbUser.Cash.USD()}.");
         }
     }
 }

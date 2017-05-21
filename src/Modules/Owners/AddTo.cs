@@ -11,7 +11,7 @@ namespace DEA.Modules.Owners
     {
         [Command("AddTo")]
         [Summary("Add cash to every users balance in a specific role.")]
-        public async Task AddTo(decimal money, [Remainder] IRole role)
+        public async Task AddTo(IRole role, decimal money)
         {
             if (money < 0)
             {

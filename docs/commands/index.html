@@ -169,7 +169,7 @@
 <tr>
 <td>AddRank</td>
 <td>Adds a rank role for the DEA cash system.</td>
-<td><code>$AddRank &lt;cashRequired&gt; &lt;@rankRole&gt;</code></td>
+<td><code>$AddRank &lt;@rankRole&gt; &lt;cashRequired&gt;</code></td>
 </tr>
 <tr>
 <td>DisableWelcomeMessage</td>
@@ -274,7 +274,7 @@
 <tr>
 <td>AddBounty</td>
 <td>Add a bounty of any user.</td>
-<td><code>$AddBounty &lt;bounty&gt; &lt;@userToSet&gt;</code></td>
+<td><code>$AddBounty &lt;@userToSet&gt; &lt;bounty&gt;</code></td>
 </tr>
 <tr>
 <td>Bully</td>
@@ -455,7 +455,7 @@
 <tr>
 <td>Donate</td>
 <td>Sauce some cash to one of your mates.</td>
-<td><code>$Donate &lt;money&gt; &lt;@user&gt;</code></td>
+<td><code>$Donate &lt;@user&gt; &lt;money&gt;</code></td>
 </tr>
 <tr>
 <td>Leaderboards</td>
@@ -633,11 +633,6 @@
 <td><code>$100k [@user]</code></td>
 </tr>
 <tr>
-<td>Add</td>
-<td>Add cash into a user's balance.</td>
-<td><code>$Add &lt;money&gt; &lt;@user&gt;</code></td>
-</tr>
-<tr>
 <td>AddModRole</td>
 <td>Adds a moderator role.</td>
 <td><code>$AddModRole &lt;@modRole&gt; [permissionLevel]</code></td>
@@ -645,7 +640,12 @@
 <tr>
 <td>AddTo</td>
 <td>Add cash to every users balance in a specific role.</td>
-<td><code>$AddTo &lt;money&gt; &lt;@role&gt;</code></td>
+<td><code>$AddTo &lt;@role&gt; &lt;money&gt;</code></td>
+</tr>
+<tr>
+<td>ModifyCash</td>
+<td>Add cash into a user's balance.</td>
+<td><code>$ModifyCash &lt;money&gt; [@user]</code></td>
 </tr>
 <tr>
 <td>ModifyHealth</td>
@@ -663,14 +663,9 @@
 <td><code>$ModifyModRole &lt;@modRole&gt; &lt;permissionLevel&gt;</code></td>
 </tr>
 <tr>
-<td>Remove</td>
-<td>Remove cash from a user's balance.</td>
-<td><code>$Remove &lt;money&gt; &lt;@user&gt;</code></td>
-</tr>
-<tr>
 <td>RemoveFrom</td>
 <td>Remove cash to every users balance in a specific role.</td>
-<td><code>$RemoveFrom &lt;money&gt; &lt;@role&gt;</code></td>
+<td><code>$RemoveFrom &lt;@role&gt; &lt;money&gt;</code></td>
 </tr>
 <tr>
 <td>RemoveModRole</td>
@@ -770,11 +765,6 @@
 <td>Statistics</td>
 <td>All the statistics about DEA.</td>
 <td><code>$Statistics</code></td>
-</tr>
-<tr>
-<td>Usage</td>
-<td>Explanation of how commands are used.</td>
-<td><code>$Usage</code></td>
 </tr>
 </tbody>
 </table>

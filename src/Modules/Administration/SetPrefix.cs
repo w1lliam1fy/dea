@@ -7,7 +7,7 @@ namespace DEA.Modules.Administration
     {
         [Command("SetPrefix")]
         [Summary("Sets the guild specific prefix.")]
-        public async Task SetPrefix([Summary("!")] string prefix)
+        public async Task SetPrefix([Remainder] string prefix)
         {
             if (prefix.Length > 3)
             {
