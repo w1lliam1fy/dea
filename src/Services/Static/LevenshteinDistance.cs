@@ -4,8 +4,6 @@ static class LevenshteinDistance
 {
     public static int Compute(string s, string t)
     {
-        s = s.ToLower();
-        t = t.ToLower();
         int n = s.Length;
         int m = t.Length;
         int[,] d = new int[n + 1, m + 1];

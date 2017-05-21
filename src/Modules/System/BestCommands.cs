@@ -19,7 +19,7 @@ namespace DEA.Modules.System
 
             foreach (var element in best)
             {
-                message += $"**{element.Key}:** {element.Value} uses\n";
+                message += $"{position}. **{element.Key}:** {element.Value} uses\n";
 
                 if (position >= Config.COMMAND_LB_CAP)
                 {

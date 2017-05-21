@@ -16,6 +16,14 @@
 
         public static bool SimilarTo(this string s, string s2, int stringLength1 = 0, int stringLength2 = 5, int stringLength3 = 15)
         {
+            s = s.ToLower();
+            s2 = s2.ToLower();
+
+            if (s == s2)
+            {
+                return true;
+            }
+
             var distance = LevenshteinDistance.Compute(s, s2);
 
             if (s.Length >= stringLength1 && s.Length < stringLength2)
