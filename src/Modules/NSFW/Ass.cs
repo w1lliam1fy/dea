@@ -10,7 +10,6 @@ namespace DEA.Modules.NSFW
     {
         [Command("Ass")]
         [Alias("butt", "butts", "booty")]
-        [RequireNsfw]
         [Summary("Sauce me some booty how about that.")]
         public async Task Ass()
         {

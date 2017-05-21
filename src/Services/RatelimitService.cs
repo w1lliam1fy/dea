@@ -8,9 +8,9 @@ namespace DEA.Services
 {
     public class RateLimitService
     {
-        private SemaphoreSlim _sema = new SemaphoreSlim(1, 1);
-        private List<RateLimitEntry> _rateLimits = new List<RateLimitEntry>();
-        private Dictionary<RateLimitEntry, Timer> _timers = new Dictionary<RateLimitEntry, Timer>();
+        private readonly SemaphoreSlim _sema = new SemaphoreSlim(1, 1);
+        private readonly List<RateLimitEntry> _rateLimits = new List<RateLimitEntry>();
+        private readonly Dictionary<RateLimitEntry, Timer> _timers = new Dictionary<RateLimitEntry, Timer>();
 
         public IReadOnlyCollection<RateLimitEntry> RateLimits => _rateLimits.ToImmutableList();
 

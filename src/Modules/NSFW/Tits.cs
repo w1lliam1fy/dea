@@ -10,7 +10,6 @@ namespace DEA.Modules.NSFW
     {
         [Command("Tits")]
         [Alias("titties", "tities", "boobs", "boob")]
-        [RequireNsfw]
         [Summary("Motorboat that shit.")]
         public async Task Tits()
         {

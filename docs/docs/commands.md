@@ -167,12 +167,14 @@ Vote|Vote on any poll.|`$Vote <pollIndex> <choiceIndex>`
 ### System
 Command | Description | Usage
 ---------------- | --------------| -------
+BestCommands|The most popular DEA commands.|`$BestCommands`
 CashInfo|Information about the DEA Cash System.|`$CashInfo`
 Cleanup|Deletes DEA's most recent messages to prevent chat flood.|`$Cleanup`
 Help|All command information.|`$Help [commandOrModule]`
 Invite|Invite DEA to your server!|`$Invite`
 Modules|All command modules.|`$Modules`
 Statistics|All the statistics about DEA.|`$Statistics`
+WorstCommands|The least popular DEA commands.|`$WorstCommands`
 
 ### Trivia
 Command | Description | Usage

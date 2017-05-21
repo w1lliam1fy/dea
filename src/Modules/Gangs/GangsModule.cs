@@ -1,9 +1,11 @@
 ﻿using DEA.Common;
+using DEA.Common.Preconditions;
 using DEA.Database.Repositories;
 using DEA.Services;
 
 namespace DEA.Modules.Gangs
 {
+    [Global]
     public partial class Gangs : DEAModule
     {
         private readonly GangRepository _gangRepo;

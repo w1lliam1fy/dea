@@ -1,5 +1,6 @@
 ﻿using DEA.Common;
 using DEA.Common.Data;
+using DEA.Common.Preconditions;
 using DEA.Common.Utilities;
 using DEA.Database.Repositories;
 using DEA.Services;
@@ -7,6 +8,7 @@ using System.Linq;
 
 namespace DEA.Modules.Items
 {
+    [Global]
     public partial class Items : DEAModule
     {
         private readonly UserRepository _userRepo;
