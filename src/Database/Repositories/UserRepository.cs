@@ -20,24 +20,16 @@ namespace DEA.Database.Repositories
             _items = items;
         }
 
-        public async Task<User> GetUserAsync(IGuildUser user)
+        public Task<User> GetUserAsync(IGuildUser user)
         {
-            var dbUser = await GetAsync(x => x.UserId == user.Id && x.GuildId == user.GuildId);
-
-            if (dbUser == default(User))
-            {
-                var createdUser = new User(user.Id, user.GuildId);
-                await InsertAsync(createdUser);
-                return createdUser;
-            }
-            return dbUser;
+            return GetUserAsync(user.Id, user.GuildId);
         }
 
         public async Task<User> GetUserAsync(ulong userId, ulong guildId)
         {
             var dbUser = await GetAsync(x => x.UserId == userId && x.GuildId == guildId);
 
-            if (dbUser == default(User))
+            if (dbUser == null)
             {
                 var createdUser = new User(userId, guildId);
                 await InsertAsync(createdUser);
@@ -46,14 +38,9 @@ namespace DEA.Database.Repositories
             return dbUser;
         }
 
-        public Task ModifyUserAsync(IGuildUser user, Action<User> function)
+        public async Task ModifyUserAsync(IGuildUser user, Action<User> function)
         {
-            return ModifyAsync(y => y.UserId == user.Id && y.GuildId == user.GuildId, function);
-        }
-
-        public Task ModifyUserAsync(ulong userId, ulong guildId, Action<User> function)
-        {
-            return ModifyAsync(y => y.UserId == userId && y.GuildId == guildId, function);
+            await ModifyAsync(await GetUserAsync(user.Id, user.GuildId), function);
         }
 
         public async Task EditCashAsync(DEAContext context, decimal change)
@@ -62,7 +49,7 @@ namespace DEA.Database.Repositories
             context.Cash = newCash;
             context.DbUser.Cash = newCash; 
             await UpdateAsync(context.DbUser);
-            await _RankHandler.HandleAsync(context.Guild, context.User as IGuildUser, context.DbGuild, context.DbUser);
+            await _RankHandler.HandleAsync(context.Guild, context.GUser, context.DbGuild, context.DbUser);
         }
 
         public async Task EditCashAsync(IGuildUser user, Guild dbGuild, User dbUser, decimal change)

@@ -4,9 +4,7 @@ using DEA.Services.Static;
 using Discord;
 using Microsoft.Extensions.DependencyInjection;
 using Discord.WebSocket;
-using MongoDB.Driver;
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 

@@ -22,6 +22,7 @@ namespace DEA.Services.Handlers
         private readonly ErrorHandler _errorHandler;
         private readonly RankHandler _RankHandler;
         private readonly UserRepository _userRepo;
+        private readonly BlacklistRepository _blacklistRepo;
 
         public CommandHandler(CommandService commandService, IServiceProvider serviceProvider)
         {
@@ -31,6 +32,7 @@ namespace DEA.Services.Handlers
             _errorHandler = _serviceProvider.GetService<ErrorHandler>();
             _RankHandler = _serviceProvider.GetService<RankHandler>();
             _userRepo = _serviceProvider.GetService<UserRepository>();
+            _blacklistRepo = _serviceProvider.GetService<BlacklistRepository>();
             _client = _serviceProvider.GetService<DiscordSocketClient>();
             _client.MessageReceived += HandleCommandAsync;
         }
@@ -45,17 +47,24 @@ namespace DEA.Services.Handlers
             return Task.Run(async () =>
             {
                 _statistics.MessagesRecieved++;
+
                 var msg = s as SocketUserMessage;
                 if (msg == null)
                 {
                     return;
                 }
+                else if ((await _blacklistRepo.AllAsync()).Exists(x => x.UserId == msg.Author.Id))
+                {
+                    return;
+                }
+
                 var context = new DEAContext(_client, msg, _serviceProvider);
+
                 if (context.Guild == null)
                 {
                     return;
                 }
-                if (context.User.IsBot)
+                else if (context.User.IsBot)
                 {
                     return;
                 }
