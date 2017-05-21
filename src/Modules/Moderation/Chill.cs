@@ -10,6 +10,7 @@ namespace DEA.Modules.Moderation
     {
         [Command("Chill")]
         [RequireBotPermission(GuildPermission.Administrator)]
+        [Remarks("Chill 60")]
         [Summary("Prevents users from talking in a specific channel for x amount of seconds.")]
         public async Task Chill(int seconds = 30, [Remainder] string reason = null)
         {

@@ -9,6 +9,7 @@ namespace DEA.Modules.Owners
     public partial class Owners
     {
         [Command("Reset")]
+        [Remarks("Reset Cheaters")]
         [Summary("Resets all user data for the entire server or a specific role.")]
         public async Task Remove([Remainder] IRole role = null)
         {

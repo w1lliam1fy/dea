@@ -10,6 +10,7 @@ namespace DEA.Modules.General
     {
         [Command("Donate")]
         [Alias("Sauce")]
+        [Remarks("Donate \"Sexy John#0007\" 10000.01")]
         [Summary("Sauce some cash to one of your mates.")]
         public async Task Donate(IGuildUser user, decimal money)
         {

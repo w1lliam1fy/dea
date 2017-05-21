@@ -12,6 +12,7 @@ namespace DEA.Modules.Items
         [Command("OpenCrate")]
         [Alias("Open")]
         [Cooldown]
+        [Remarks("OpenCrate Gold Crate")]
         [Summary("Open a crate!")]
         public async Task Crates([Remainder]string crate)
         {

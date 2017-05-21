@@ -11,8 +11,9 @@ namespace DEA.Modules.Moderation
     {
         [Command("Unban")]
         [RequireBotPermission(GuildPermission.BanMembers)]
+        [Remarks("Unban \"Sexy John#0007\" We long for his sexiness back)]
         [Summary("Unban a user.")]
-        public async Task Unban([Summary("Billy Steve#4821")] string username, [Remainder] string reason = null)
+        public async Task Unban(string username, [Remainder] string reason = null)
         {
             var guildBans = await Context.Guild.GetBansAsync();
 

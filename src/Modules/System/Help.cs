@@ -11,8 +11,9 @@ namespace DEA.Modules.System
     {
         [Command("Help")]
         [Alias("commands", "cmd", "cmds", "command")]
+        [Remarks("Help Moderation")]
         [Summary("All command information.")]
-        public async Task Help([Summary("Crime")][Remainder] string commandOrModule = null)
+        public async Task Help([Remainder] string commandOrModule = null)
         {
             if (commandOrModule != null)
             {

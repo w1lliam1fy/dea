@@ -8,6 +8,7 @@ namespace DEA.Modules.Owners
     public partial class Owners
     {
         [Command("ModifyHealth")]
+        [Remarks("ModifyHealth 50 Sexy John#0007")]
         [Summary("Modify a user's health.")]
         public async Task ModifyHealth(int modifyHealth, [Remainder] IGuildUser user = null)
         {

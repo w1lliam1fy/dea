@@ -9,6 +9,7 @@ namespace DEA.Modules.Polls
     public partial class Polls
     {
         [Command("Poll")]
+        [Remarks("Poll 13")]
         [Summary("View the information of any poll.")]
         public async Task PollInfo(int index)
         {

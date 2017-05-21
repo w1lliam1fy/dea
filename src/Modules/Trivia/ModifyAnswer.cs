@@ -9,8 +9,9 @@ namespace DEA.Modules.Trivia
     {
         [Command("ModifyAnswer")]
         [Require(Attributes.Moderator)]
+        [Remarks("ModifyAnswer \"Is DEA the best discord bot?\" HELL YEA DUDE!")]
         [Summary("Modify a trivia answer.")]
-        public async Task ModifyAnswer([Summary("Do you even lift?")] string question, [Summary("HELL YEA DUDE! FIRE IT UP!")] [Remainder] string answer)
+        public async Task ModifyAnswer(string question, [Remainder] string answer)
         {
             if (!Context.DbGuild.Trivia.Contains(question))
             {

@@ -11,6 +11,7 @@ namespace DEA.Modules.General
     {
         [Command("Rank")]
         [Alias("Info", "Health")]
+        [Remarks("Rank Sexy John#0007")]
         [Summary("View the detailed ranking information of any user.")]
         public async Task Rank([Remainder] IGuildUser user = null)
         {

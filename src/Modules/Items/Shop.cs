@@ -10,8 +10,9 @@ namespace DEA.Modules.Items
     {
         [Command("Shop")]
         [Alias("Buy")]
+        [Remarks("Shop Gold Crate")]
         [Summary("List of available shop items.")]
-        public async Task Shop([Remainder] [Summary("Bullet")] string item = null)
+        public async Task Shop([Remainder] string item = null)
         {
             item = item?.ToLower();
 

@@ -8,8 +8,9 @@ namespace DEA.Modules.Trivia
     {
         [Command("RemoveQuestion")]
         [Require(Attributes.Moderator)]
+        [Remarks("RemoveQuestion What discord bot is better than DEA?")]
         [Summary("Removes a trivia question.")]
-        public async Task RemoveTrivia([Summary("Do you even lift?")] [Remainder] string question)
+        public async Task RemoveTrivia([Remainder] string question)
         {
             if (!Context.DbGuild.Trivia.Contains(question))
             {

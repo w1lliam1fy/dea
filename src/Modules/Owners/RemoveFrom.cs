@@ -10,6 +10,7 @@ namespace DEA.Modules.Owners
     public partial class Owners
     {
         [Command("RemoveFrom")]
+        [Remarks("RemoveFrom \"The Rich\" 9000.01")]
         [Summary("Remove cash to every users balance in a specific role.")]
         public async Task Remove(IRole role, decimal money)
         {

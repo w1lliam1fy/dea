@@ -10,6 +10,7 @@ namespace DEA.Modules.Owners
     {
         [Command("ModifyInventory")]
         [Alias("ModifyInv")]
+        [Remarks("ModifyInventory 1 \"Kitchen Knife\" Sexy John#0007")]
         [Summary("Modify a user's inventory.")]
         public async Task ModifyInventory(int quantity, string item, IGuildUser user = null)
         {

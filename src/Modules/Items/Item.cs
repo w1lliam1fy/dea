@@ -10,8 +10,9 @@ namespace DEA.Modules.Items
     public partial class Items
     {
         [Command("Item")]
+        [Remarks("Item Kitchen Knife")]
         [Summary("Get all the information on any item.")]
-        public async Task Item([Remainder] [Summary("Bullet")] string item)
+        public async Task Item([Remainder] string item)
         {
             item = item?.ToLower();
             if (_items.Any(x => x.Name.ToLower() == item))

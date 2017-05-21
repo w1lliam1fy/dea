@@ -9,6 +9,7 @@ namespace DEA.Modules.Owners
     public partial class Owners
     {
         [Command("RemoveModRole")]
+        [Remarks("RemoveModRole Stupid Mods")]
         [Summary("Removes a moderator role.")]
         public async Task RemoveModRole([Remainder] IRole modRole)
         {

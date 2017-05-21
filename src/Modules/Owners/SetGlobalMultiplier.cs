@@ -6,6 +6,7 @@ namespace DEA.Modules.Owners
     public partial class Owners
     {
         [Command("SetGlobalMultiplier")]
+        [Remarks("SetGlobalMultiplier 1.5")]
         [Summary("Sets the global chatting multiplier.")]
         public async Task SetGlobalMultiplier(decimal globalMultiplier)
         {

@@ -13,8 +13,9 @@ namespace DEA.Modules.Trivia
         [Command("TriviaAnswers")]
         [Require(Attributes.Moderator)]
         [Alias("Answers", "Answer", "TriviaAnswer")]
+        [Remarks("TriviaAnswers Is DEA the best discord bot?")]
         [Summary("Sends you a list of all trivia answers.")]
-        public async Task TriviaAnswers([Summary("Do you even lift?")] [Remainder] string question = null)
+        public async Task TriviaAnswers([Remainder] string question = null)
         {
             if (Context.DbGuild.Trivia.ElementCount == 0)
             {

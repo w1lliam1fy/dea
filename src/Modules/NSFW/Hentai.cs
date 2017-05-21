@@ -10,6 +10,7 @@ namespace DEA.Modules.NSFW
     {
         [Command("Hentai")]
         [RequireNsfw]
+        [Remarks("Hentai boob")]
         [Summary("The real shit goes down with custom hentai tags.")]
         public async Task Gelbooru([Remainder] string tag = "")
         {

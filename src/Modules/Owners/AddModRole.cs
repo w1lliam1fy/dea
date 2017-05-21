@@ -9,6 +9,7 @@ namespace DEA.Modules.Owners
     public partial class Owners
     {
         [Command("AddModRole")]
+        [Remarks("AddModRole \"Mini Mods\" 1")]
         [Summary("Adds a moderator role.")]
         public async Task AddModRole(IRole modRole, int permissionLevel = 1)
         {

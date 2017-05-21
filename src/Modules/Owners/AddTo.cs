@@ -10,6 +10,7 @@ namespace DEA.Modules.Owners
     public partial class Owners
     {
         [Command("AddTo")]
+        [Remarks("AddTo \"Poor People\" 100.50")]
         [Summary("Add cash to every users balance in a specific role.")]
         public async Task AddTo(IRole role, decimal money)
         {

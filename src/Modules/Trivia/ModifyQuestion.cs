@@ -10,8 +10,9 @@ namespace DEA.Modules.Trivia
     {
         [Command("ModifyQuestion")]
         [Require(Attributes.Moderator)]
+        [Remarks("ModifyQuestion \"Is DEA the best discord bot?\" Is DEA vastly superior to all other discord bots?")]
         [Summary("Modify a trivia question.")]
-        public async Task ModifyQuestion([Summary("Do you even lift?")] string question, [Summary("Dost thou even hoist?")] [Remainder] string newQuestion)
+        public async Task ModifyQuestion(string question, [Remainder] string newQuestion)
         {
             if (!Context.DbGuild.Trivia.Contains(question))
             {

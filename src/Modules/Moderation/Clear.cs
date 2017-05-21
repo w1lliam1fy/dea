@@ -9,6 +9,7 @@ namespace DEA.Modules.Moderation
     {
         [Command("Clear")]
         [RequireBotPermission(GuildPermission.ManageMessages)]
+        [Remarks("Clear 20 Cleaning up spam")]
         [Summary("Deletes x amount of messages.")]
         public async Task CleanAsync(int quantity = 25, [Remainder] string reason = null)
         {
