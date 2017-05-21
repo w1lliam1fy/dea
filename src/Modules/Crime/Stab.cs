@@ -14,8 +14,9 @@ namespace DEA.Modules.Crime
     {
         [Command("Stab")]
         [Cooldown]
+        [Remarks("Stab Sexy John#0007")]
         [Summary("Attempt to stab a user.")]
-        public async Task Stab(IGuildUser userToStab)
+        public async Task Stab([Remainder] IGuildUser userToStab)
         {
             var userItemData = _gameService.InventoryData(Context.DbUser);
 

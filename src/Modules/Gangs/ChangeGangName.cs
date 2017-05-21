@@ -13,8 +13,9 @@ namespace DEA.Modules.Gangs
         [Command("ChangeGangName")]
         [Alias("ChangeName")]
         [Require(Attributes.InGang, Attributes.GangLeader)]
+        [Remarks("ChangeGangName JERK EM OFF BOYS")]
         [Summary("Changes the name of your gang.")]
-        public async Task ChangeGangName([Summary("JERK EM OFF BOYS")] [Remainder] string newName)
+        public async Task ChangeGangName([Remainder] string newName)
         {
             if (Context.Cash < Config.GANG_NAME_CHANGE_COST)
             {

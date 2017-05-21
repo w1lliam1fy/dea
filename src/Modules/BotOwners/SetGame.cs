@@ -7,7 +7,8 @@ namespace DEA.Modules.BotOwners
     {
         [Command("SetGame")]
         [Summary("Sets the game of DEA.")]
-        public async Task SetGame([Summary("boss froth")] [Remainder] string game)
+        [Remarks("SetGame boss froth")]
+        public async Task SetGame([Remainder] string game)
         {
             await Context.Client.SetGameAsync(game);
             await ReplyAsync($"Successfully set the game to {game}.");

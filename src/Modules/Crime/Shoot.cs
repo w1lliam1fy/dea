@@ -14,8 +14,9 @@ namespace DEA.Modules.Crime
     {
         [Command("Shoot")]
         [Cooldown]
+        [Remarks("Shoot Sexy John#0007")]
         [Summary("Attempt to shoot a user.")]
-        public async Task Shoot(IGuildUser userToShoot)
+        public async Task Shoot([Remainder] IGuildUser userToShoot)
         {
             var userItemData = _gameService.InventoryData(Context.DbUser);
 

@@ -8,6 +8,7 @@ namespace DEA.Modules.BotOwners
     public partial class BotOwners
     {
         [Command("SendGlobalUpdate")]
+        [Remarks("SetGlobalUpdate DEA can now doxx people *instantly!*")]
         [Summary("Sends a global update message into all DEA Update channels.")]
         public async Task SendGlobalUpdate([Remainder] string updateMessage)
         {

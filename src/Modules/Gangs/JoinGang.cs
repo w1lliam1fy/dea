@@ -13,8 +13,9 @@ namespace DEA.Modules.Gangs
     {
         [Command("JoinGang")]
         [Require(Attributes.NoGang)]
+        [Remarks("JoinGang SLAM EM BOYS")]
         [Summary("Sends a request to join a gang.")]
-        public async Task AddToGang([Summary("SLAM EM BOYS")] [Remainder] string gangName)
+        public async Task AddToGang([Remainder] string gangName)
         {
             var gang = await _gangRepo.GetGangAsync(gangName, Context.Guild.Id);
             if (gang.Members.Length == 4)

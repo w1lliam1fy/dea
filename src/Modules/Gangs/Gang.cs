@@ -10,8 +10,9 @@ namespace DEA.Modules.Gangs
     public partial class Gangs
     {
         [Command("Gang")]
+        [Remarks("Gang SLAM EM BOYS")]
         [Summary("Gives you all the info about any gang.")]
-        public async Task GangInfo([Summary("SLAM EM BOYS")] [Remainder] string gangName = null)
+        public async Task GangInfo([Remainder] string gangName = null)
         {
             Gang gang;
             if (gangName == null)

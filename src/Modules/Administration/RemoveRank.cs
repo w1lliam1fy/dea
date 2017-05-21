@@ -8,6 +8,7 @@ namespace DEA.Modules.Administration
     public partial class Administration
     {
         [Command("RemoveRank")]
+        [Remarks("RemoveRank Spicy Role")]
         [Summary("Removes a rank role for the DEA cash system.")]
         public async Task RemoveRank([Remainder] IRole rankRole)
         {

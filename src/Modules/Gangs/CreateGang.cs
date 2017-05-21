@@ -10,8 +10,9 @@ namespace DEA.Modules.Gangs
     {
         [Command("CreateGang")]
         [Require(Attributes.NoGang)]
+        [Remarks("CreateGang SLAM EM BOYS")]
         [Summary("Allows you to create a gang at a hefty price.")]
-        public async Task CreateGang([Summary("SLAM EM BOYS")] [Remainder] string name)
+        public async Task CreateGang([Remainder] string name)
         {
             if (Context.Cash < Config.GANG_CREATION_COST)
             {

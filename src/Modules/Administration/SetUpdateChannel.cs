@@ -7,6 +7,7 @@ namespace DEA.Modules.Administration
     public partial class Administration
     {
         [Command("SetUpdateChannel")]
+        [Remarks("SetUpdateChannel CleanAssChannel")]
         [Summary("Sets the channel where DEA will send messages informing you of its most recent updates and new features.")]
         public async Task SetUpdateChannel([Remainder] ITextChannel channel)
         {

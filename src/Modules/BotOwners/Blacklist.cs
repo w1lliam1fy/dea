@@ -8,6 +8,7 @@ namespace DEA.Modules.BotOwners
     public partial class BotOwners
     {
         [Command("Blacklist")]
+        [Remarks("Blacklist 290759415362224139")]
         [Summary("Blacklist a user from DEA entirely to the fullest extent.")]
         public async Task Blacklist(ulong userId)
         {

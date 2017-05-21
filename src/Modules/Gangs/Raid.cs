@@ -12,8 +12,9 @@ namespace DEA.Modules.Gangs
         [Command("Raid")]
         [Require(Attributes.InGang)]
         [Cooldown]
+        [Remarks("Raid \"SLAM EM BOYS\" 50")]
         [Summary("Raid another gang in attempt to steal some of their wealth.")]
-        public async Task Raid(decimal resources, [Summary("SLAM EM BOYS")] [Remainder] string gangName)
+        public async Task Raid(string gangName, decimal resources)
         {
             if (resources < Config.MIN_RESOURCES)
             {

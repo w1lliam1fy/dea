@@ -7,6 +7,7 @@ namespace DEA.Modules.Administration
     public partial class Administration
     {
         [Command("SetModLog")]
+        [Remarks("SetModLog mod_log")]
         [Summary("Sets the moderation log.")]
         public async Task SetModLogChannel([Remainder] ITextChannel modLogChannel)
         {

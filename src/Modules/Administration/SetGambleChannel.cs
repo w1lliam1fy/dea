@@ -8,6 +8,7 @@ namespace DEA.Modules.Administration
     {
         [Command("SetGambleChannel")]
         [Alias("SetGamble")]
+        [Remarks("SetGambleChannel CleanAssChannel")]
         [Summary("Sets the gambling channel.")]
         public async Task SetGambleChannel([Remainder] ITextChannel gambleChannel)
         {

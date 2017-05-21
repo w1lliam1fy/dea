@@ -10,6 +10,7 @@ namespace DEA.Modules.Gangs
     {
         [Command("KickGangMember")]
         [Require(Attributes.InGang, Attributes.GangLeader)]
+        [Remarks("KickGangMember Sexy John#0007")]
         [Summary("Kicks a user from your gang.")]
         public async Task KickFromGang([Remainder] IGuildUser gangMember)
         {
