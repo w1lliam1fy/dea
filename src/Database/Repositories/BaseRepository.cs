@@ -28,15 +28,15 @@ namespace DEA.Database.Repositories
             return _collection.Find(filter).Limit(1).FirstOrDefaultAsync();
         }
 
-        public async Task<List<T>> AllAsync(Expression<Func<T, bool>> filter = null)
+        public Task<List<T>> AllAsync(Expression<Func<T, bool>> filter = null)
         {
             if (filter != null)
             {
-                return await (await _collection.FindAsync(filter)).ToListAsync();
+                return _collection.Find(filter).ToListAsync();
             }
             else
             {
-                return await(await _collection.FindAsync(Builders<T>.Filter.Empty)).ToListAsync();
+                return _collection.Find(Builders<T>.Filter.Empty).ToListAsync();
             }
         }
 

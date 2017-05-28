@@ -17,18 +17,19 @@ namespace DEA.Modules.General
         {
             user = user ?? Context.GUser;
 
+            var guildInterface = Context.Guild as IGuild;
             var dbUser = user.Id == Context.User.Id ? Context.DbUser : await _userRepo.GetUserAsync(user);
             var users = await _userRepo.AllAsync(x => x.GuildId == Context.Guild.Id);
             var sorted = users.OrderByDescending(x => x.Cash).ToList();
-            var slaveOwner = await (Context.Guild as IGuild).GetUserAsync(dbUser.SlaveOf);
-            var ownedSlaves = users.Where(x => x.SlaveOf == user.Id);
+            var slaveOwner = await guildInterface.GetUserAsync(dbUser.SlaveOf);
+            var ownedSlaves = users.Where(x => x.SlaveOf == user.Id && x.GuildId == Context.Guild.Id);
 
             var slaveInfo = "**Owned Slaves:** ";
-            var guildInterface = Context.Guild as IGuild;
+            
 
             foreach (var dbUserSlave in ownedSlaves)
             {
-                var slaveUser = await guildInterface.GetUserAsync(dbUser.UserId);
+                var slaveUser = await guildInterface.GetUserAsync(dbUserSlave.UserId);
 
                 if (slaveUser == null)
                 {
