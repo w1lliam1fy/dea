@@ -19,7 +19,8 @@ namespace DEA.Modules.Items
         private readonly Crate[] _crates;
         private readonly CrateItem[] _crateItems;
         private readonly RateLimitService _rateLimitService;
-        private readonly int _itemWeaponOdds;
+        private readonly int _crateItemOdds;
+        private readonly int _foodAcquireOdds;
 
         public Items(UserRepository userRepo, InteractiveService interactiveService, GuildRepository guildRepo, GangRepository gangRepo, 
                      GameService gameService, Item[] items, Fish[] fish,  Meat[] meat, Crate[] crates, CrateItem[] crateItems, 
@@ -34,7 +35,8 @@ namespace DEA.Modules.Items
             _crates = crates;
             _crateItems = crateItems;
             _rateLimitService = rateLimitService;
-            _itemWeaponOdds = _crateItems.Sum(x => x.CrateOdds);
+            _crateItemOdds = _crateItems.Sum(x => x.CrateOdds);
+            _foodAcquireOdds = _fish.Sum(x => x.AcquireOdds);
         }
     }
 }

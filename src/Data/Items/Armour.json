@@ -1,7 +1,7 @@
 [
   {
   "Name": "Kevlar",
-  "Description": "Adds a piece of armor for protection. 20% damage decrease.",
+  "Description": "You won't even feel the bullet wearing this thing.",
   "DamageReduction":20,
   "CrateOdds": 30
   }

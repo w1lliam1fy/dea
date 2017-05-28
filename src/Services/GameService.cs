@@ -116,7 +116,7 @@ namespace DEA.Services
 
                 if (itemsToAdd.TryGetValue(item.Name, out int itemCount))
                 {
-                    itemsToAdd[item.Name] = itemCount++;
+                    itemsToAdd[item.Name]++;
                 }
                 else
                 {

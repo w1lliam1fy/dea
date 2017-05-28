@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using DEA.Common.Extensions;
 using DEA.Common.Items;
 using System.Reflection;
+using System;
 
 namespace DEA.Modules.Items
 {
@@ -22,8 +23,24 @@ namespace DEA.Modules.Items
                     continue;
                 }
 
-                var value =  property.GetValue(item);
-                message += $"**{property.Name.SplitCamelCase()}:** {(value is decimal ? ((decimal)value).USD() : value.ToString())}\n";
+                var value = property.GetValue(item);
+
+                if (value is decimal newValue)
+                {
+                    message += $"**{property.Name.SplitCamelCase()}:** {newValue.USD()}\n";
+                }
+                else if (property.Name == "CrateOdds")
+                {
+                    message += $"**{property.Name.SplitCamelCase()}:** {(Convert.ToSingle(value) / _crateItemOdds).ToString("P")}\n";
+                }
+                else if (property.Name == "AcquireOdds")
+                {
+                    message += $"**{property.Name.SplitCamelCase()}:** {(Convert.ToSingle(value) / _foodAcquireOdds).ToString("P")}\n";
+                }
+                else
+                {
+                    message += $"**{property.Name.SplitCamelCase()}:** {value.ToString()}\n";
+                } 
             }
 
             await SendAsync(message, item.Name);
