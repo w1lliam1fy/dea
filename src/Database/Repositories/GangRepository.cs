@@ -84,12 +84,12 @@ namespace DEA.Database.Repositories
 
         public Task RemoveMemberAsync(Gang gang, ulong memberId)
         {
-            return PullAsync(c => c.Id == gang.Id, "Members", (decimal)memberId);
+            return PullAsync(c => c.Id == gang.Id, "Members", memberId);
         }
 
         public Task AddMemberAsync(Gang gang, ulong newMemberId)
         {
-            return PushAsync(c => c.Id == gang.Id, "Members", (decimal)newMemberId);
+            return PushAsync(c => c.Id == gang.Id, "Members", newMemberId);
         }
 
     }

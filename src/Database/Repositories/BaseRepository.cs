@@ -63,12 +63,12 @@ namespace DEA.Database.Repositories
             await UpdateAsync(entity);
         }
 
-        public Task PushAsync(Expression<Func<T, bool>> filter, FieldDefinition<T> field, BsonValue value)
+        public Task PushAsync(Expression<Func<T, bool>> filter, FieldDefinition<T> field, ulong value)
         {
             return _collection.UpdateOneAsync(filter, Builders<T>.Update.Push(field, value));
         }
 
-        public Task PullAsync(Expression<Func<T, bool>> filter, FieldDefinition<T> field, BsonValue value)
+        public Task PullAsync(Expression<Func<T, bool>> filter, FieldDefinition<T> field, ulong value)
         {
             return _collection.UpdateOneAsync(filter, Builders<T>.Update.Pull(field, value));
         }

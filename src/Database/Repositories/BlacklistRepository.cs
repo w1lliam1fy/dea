@@ -10,7 +10,7 @@ namespace DEA.Database.Repositories
 
         public Task AddGuildAsync(ulong userId, ulong newGuildId)
         {
-            return PushAsync(c => c.UserId == userId, "GuildIds", (decimal)newGuildId);
+            return PushAsync(c => c.UserId == userId, "GuildIds", newGuildId);
         }
     }
 }
