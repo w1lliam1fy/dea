@@ -1,6 +1,6 @@
-﻿using DEA.Common.Data;
-using DEA.Common.Extensions;
+﻿using DEA.Common.Extensions;
 using DEA.Common.Preconditions;
+using DEA.Common.Utilities;
 using Discord.Commands;
 using System;
 using System.Threading.Tasks;
@@ -42,7 +42,7 @@ namespace DEA.Modules.Gangs
                 await _gangRepo.ModifyGangAsync(gangName, Context.Guild.Id, x => x.Wealth = raidedGang.Wealth - stolen);
                 await _gangRepo.ModifyAsync(Context.Gang, x => x.Wealth = Context.Gang.Wealth + stolen);
 
-                await raidedGang.LeaderId.DMAsync(Context.Client, $"{Context.Gang.Name} just raided your gang's wealth and managed to walk away with {stolen.USD()}.");
+                await raidedGang.LeaderId.TryDMAsync(Context.Client, $"{Context.Gang.Name} just raided your gang's wealth and managed to walk away with {stolen.USD()}.");
 
                 await ReplyAsync($"With a {Config.RAID_SUCCESS_ODDS}.00% chance of success, you successfully stole {stolen.USD()}. " +
                                  $"{Context.Gang.Name}'s Wealth {Context.Gang.Wealth.USD()}.");
@@ -51,12 +51,12 @@ namespace DEA.Modules.Gangs
             {
                 await _gangRepo.ModifyAsync(Context.Gang, x => x.Wealth = Context.Gang.Wealth - resources);
 
-                await raidedGang.LeaderId.DMAsync(Context.Client, $"{Context.Gang.Name} tried to raid your gang's stash, but one of your loyal sicarios gunned them out.");
+                await raidedGang.LeaderId.TryDMAsync(Context.Client, $"{Context.Gang.Name} tried to raid your gang's stash, but one of your loyal sicarios gunned them out.");
 
                 await ReplyAsync($"With a {Config.RAID_SUCCESS_ODDS}.00% chance of success, you failed to steal {stolen.USD()} " +
                                  $"and lost all resources in the process.");
             }
-            _rateLimitService.Add(Context.User.Id, Context.Guild.Id, "Raid", Config.RAID_COOLDOWN);
+            _rateLimitService.TryAdd(new RateLimit(Context.User.Id, Context.Guild.Id, "Raid", Config.RAID_COOLDOWN));
         }
     }
 }

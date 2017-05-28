@@ -1,6 +1,6 @@
 ﻿namespace DEA.Services.Static
 {
-    public static class InterestRate
+    internal static class InterestRate
     {
         public static decimal Calculate (decimal wealth)
         {

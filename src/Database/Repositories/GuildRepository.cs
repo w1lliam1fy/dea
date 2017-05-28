@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace DEA.Database.Repositories
 {
-    public class GuildRepository : BaseRepository<Guild>
+    public sealed class GuildRepository : BaseRepository<Guild>
     {
         public GuildRepository(IMongoCollection<Guild> guilds) : base(guilds) { }
 

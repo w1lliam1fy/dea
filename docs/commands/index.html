@@ -45,60 +45,58 @@
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
 	<ul class="current">
+	  
           
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="..">Home</a>
-        
-    </li>
-<li>
+            <li class="toctree-l1">
+		
+    <a class="" href="..">Home</a>
+	    </li>
           
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../setup/">Setup</a>
-        
-    </li>
-<li>
+            <li class="toctree-l1">
+		
+    <a class="" href="../setup/">Setup</a>
+	    </li>
           
-            <li>
-    <li class="toctree-l1 current">
-        <a class="current" href="./">Commands</a>
-        
-            <ul>
+            <li class="toctree-l1 current">
+		
+    <a class="current" href="./">Commands</a>
+    <ul class="subnav">
             
-                <li class="toctree-l3"><a href="#table-of-contents">Table Of Contents</a></li>
-                
-                    <li><a class="toctree-l4" href="#administration">Administration</a></li>
-                
-                    <li><a class="toctree-l4" href="#botowners">BotOwners</a></li>
-                
-                    <li><a class="toctree-l4" href="#crime">Crime</a></li>
-                
-                    <li><a class="toctree-l4" href="#gambling">Gambling</a></li>
-                
-                    <li><a class="toctree-l4" href="#gangs">Gangs</a></li>
-                
-                    <li><a class="toctree-l4" href="#general">General</a></li>
-                
-                    <li><a class="toctree-l4" href="#items">Items</a></li>
-                
-                    <li><a class="toctree-l4" href="#moderation">Moderation</a></li>
-                
-                    <li><a class="toctree-l4" href="#nsfw">NSFW</a></li>
-                
-                    <li><a class="toctree-l4" href="#owners">Owners</a></li>
-                
-                    <li><a class="toctree-l4" href="#polls">Polls</a></li>
-                
-                    <li><a class="toctree-l4" href="#system">System</a></li>
-                
-                    <li><a class="toctree-l4" href="#trivia">Trivia</a></li>
-                
-            
-            </ul>
+    <li class="toctree-l2"><a href="#table-of-contents">Table Of Contents</a></li>
+    
+        <ul>
         
-    </li>
-<li>
+            <li><a class="toctree-l3" href="#administration">Administration</a></li>
+        
+            <li><a class="toctree-l3" href="#botowners">BotOwners</a></li>
+        
+            <li><a class="toctree-l3" href="#crime">Crime</a></li>
+        
+            <li><a class="toctree-l3" href="#gambling">Gambling</a></li>
+        
+            <li><a class="toctree-l3" href="#gangs">Gangs</a></li>
+        
+            <li><a class="toctree-l3" href="#general">General</a></li>
+        
+            <li><a class="toctree-l3" href="#items">Items</a></li>
+        
+            <li><a class="toctree-l3" href="#moderation">Moderation</a></li>
+        
+            <li><a class="toctree-l3" href="#nsfw">NSFW</a></li>
+        
+            <li><a class="toctree-l3" href="#owners">Owners</a></li>
+        
+            <li><a class="toctree-l3" href="#polls">Polls</a></li>
+        
+            <li><a class="toctree-l3" href="#system">System</a></li>
+        
+            <li><a class="toctree-l3" href="#trivia">Trivia</a></li>
+        
+        </ul>
+    
+
+    </ul>
+	    </li>
           
         </ul>
       </div>
@@ -289,7 +287,7 @@
 <tr>
 <td>Enslave</td>
 <td>Enslave any users at low health.</td>
-<td><code>$Enslave &lt;@userToEnslave&gt;</code></td>
+<td><code>$Enslave &lt;@userToEnslave&gt; &lt;weapon&gt;</code></td>
 </tr>
 <tr>
 <td>Jump</td>
@@ -304,12 +302,12 @@
 <tr>
 <td>Shoot</td>
 <td>Attempt to shoot a user.</td>
-<td><code>$Shoot &lt;@userToShoot&gt;</code></td>
+<td><code>$Shoot &lt;@userToShoot&gt; &lt;gun&gt;</code></td>
 </tr>
 <tr>
 <td>Stab</td>
 <td>Attempt to stab a user.</td>
-<td><code>$Stab &lt;@userToStab&gt;</code></td>
+<td><code>$Stab &lt;@userToStab&gt; &lt;knife&gt;</code></td>
 </tr>
 <tr>
 <td>Steal</td>
@@ -443,11 +441,6 @@
 </thead>
 <tbody>
 <tr>
-<td>Bounties</td>
-<td>View the most targeted traffickers.</td>
-<td><code>$Bounties</code></td>
-</tr>
-<tr>
 <td>Cooldowns</td>
 <td>View all your command cooldowns.</td>
 <td><code>$Cooldowns [@user]</code></td>
@@ -482,6 +475,11 @@
 <td>View all ranks.</td>
 <td><code>$Ranks</code></td>
 </tr>
+<tr>
+<td>Wanted</td>
+<td>View the most targeted traffickers.</td>
+<td><code>$Wanted</code></td>
+</tr>
 </tbody>
 </table>
 <h3 id="items">Items</h3>
@@ -497,17 +495,17 @@
 <tr>
 <td>Eat</td>
 <td>Eat a chosen food in your inventory to gain health.</td>
-<td><code>$Eat &lt;item&gt;</code></td>
+<td><code>$Eat &lt;food&gt;</code></td>
 </tr>
 <tr>
 <td>Fish</td>
 <td>Go fishing for some food.</td>
-<td><code>$Fish</code></td>
+<td><code>$Fish &lt;weapon&gt;</code></td>
 </tr>
 <tr>
 <td>Hunt</td>
 <td>Go hunting for some food.</td>
-<td><code>$Hunt</code></td>
+<td><code>$Hunt &lt;weapon&gt;</code></td>
 </tr>
 <tr>
 <td>Inventory</td>
@@ -520,6 +518,11 @@
 <td><code>$Item &lt;item&gt;</code></td>
 </tr>
 <tr>
+<td>OpenAll</td>
+<td>Open a crate!</td>
+<td><code>$OpenAll &lt;crate&gt;</code></td>
+</tr>
+<tr>
 <td>OpenCrate</td>
 <td>Open a crate!</td>
 <td><code>$OpenCrate &lt;crate&gt;</code></td>
@@ -527,7 +530,7 @@
 <tr>
 <td>Shop</td>
 <td>List of available shop items.</td>
-<td><code>$Shop [item]</code></td>
+<td><code>$Shop [crate]</code></td>
 </tr>
 <tr>
 <td>Trade</td>
@@ -863,7 +866,7 @@
   <div class="rst-versions" role="note" style="cursor: pointer">
     <span class="rst-current-version" data-toggle="rst-current-version">
       
-          <a href="https://github.com/RealBlazeIt/DEA" class="icon icon-github" style="float: left; color: #fcfcfc"> GitHub</a>
+          <a href="https://github.com/RealBlazeIt/DEA" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
       
       
         <span><a href="../setup/" style="color: #fcfcfc;">&laquo; Previous</a></span>

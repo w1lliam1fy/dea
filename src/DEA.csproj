@@ -8,13 +8,14 @@
   <ItemGroup>
     <None Remove="Events\ve-3350.tmp" />
     <None Remove="Modules\Crime\ve-9C40.tmp" />
+    <None Remove="Modules\Crime\ve-C238.tmp" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Discord.Net" Version="1.0.0-rc3-00743" />
-    <PackageReference Include="Discord.Net.Commands" Version="1.0.0-rc3-00743" />
-    <PackageReference Include="Discord.Net.Core" Version="1.0.0-rc3-00743" />
-    <PackageReference Include="Discord.Net.WebSocket" Version="1.0.0-rc3-00743" />
+    <PackageReference Include="Discord.Net" Version="1.0.0-rc3-00746" />
+    <PackageReference Include="Discord.Net.Commands" Version="1.0.0-rc3-00746" />
+    <PackageReference Include="Discord.Net.Core" Version="1.0.0-rc3-00746" />
+    <PackageReference Include="Discord.Net.WebSocket" Version="1.0.0-rc3-00746" />
     <PackageReference Include="MongoDB.Bson" Version="2.4.3" />
     <PackageReference Include="MongoDB.Driver" Version="2.4.3" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />

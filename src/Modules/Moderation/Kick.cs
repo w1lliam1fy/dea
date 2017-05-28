@@ -18,12 +18,12 @@ namespace DEA.Modules.Moderation
                 ReplyError("You cannot kick another mod!");
             }
 
-            await _moderationService.InformSubjectAsync(Context.User, "Kick", userToKick, reason);
+            await _moderationService.TryInformSubjectAsync(Context.User, "Kick", userToKick, reason);
             await userToKick.KickAsync();
 
             await SendAsync($"{Context.User.Boldify()} has successfully kicked {userToKick.Boldify()}.");
 
-            await _moderationService.ModLogAsync(Context.DbGuild, Context.Guild, "Kick", new Color(255, 114, 14), reason, Context.User, userToKick);
+            await _moderationService.TryModLogAsync(Context.DbGuild, Context.Guild, "Kick", new Color(255, 114, 14), reason, Context.User, userToKick);
         }
     }
 }

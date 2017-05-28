@@ -2,11 +2,10 @@
 using Discord.Commands;
 using System;
 using System.Threading.Tasks;
-using System.Linq;
-using MongoDB.Driver;
-using DEA.Common.Data;
 using DEA.Common.Extensions.DiscordExtensions;
 using DEA.Common.Extensions;
+using DEA.Common.Items;
+using DEA.Common.Preconditions;
 
 namespace DEA.Modules.Items
 {
@@ -15,27 +14,11 @@ namespace DEA.Modules.Items
         [Command("Trade")]
         [Remarks("\"Sexy John#0007\" 1 \"Bear Grylls Meat\" 1 Gold Crate")]
         [Summary("Request to trade with any user.")]
-        public async Task Trade(IGuildUser userToTrade, int exchangeItemQuantity, string itemInExchange, int requestedItemQuantity, [Remainder] string requestedItem)
+        public async Task Trade(IGuildUser userToTrade, int exchangeItemQuantity, [Own] Item itemInExchange, int requestedItemQuantity, Item requestedItem)
         {
             if (userToTrade.Id == Context.User.Id)
             {
                 ReplyError("It takes great skill and concetration to actually reach full retard by trading with yourself. You are not quite there.");
-            }
-
-            var element = _items.FirstOrDefault(x => x.Name.ToLower() == itemInExchange.ToLower());
-            var elementFor = _items.FirstOrDefault(x => x.Name.ToLower() == requestedItem.ToLower());
-
-            if (requestedItemQuantity < 1 || exchangeItemQuantity < 1)
-            {
-                ReplyError("Item quantity must be greater than 0.");
-            } 
-            else if (element == null)
-            {
-                ReplyError($"{itemInExchange} is not an item.");
-            }
-            else if (elementFor == null)
-            {
-                ReplyError($"{requestedItem} is not an item.");
             }
 
             var userDM = await userToTrade.CreateDMChannelAsync();
@@ -43,8 +26,8 @@ namespace DEA.Modules.Items
             var firstS = exchangeItemQuantity == 1 ? string.Empty : "s";
             var secondS = requestedItemQuantity == 1 ? string.Empty : "s";
 
-            await userDM.SendAsync($"**Offer:** {exchangeItemQuantity} {element.Name}{firstS}\n" +
-                                   $"**Request:** {requestedItemQuantity} {elementFor.Name}{secondS}\n\n" +
+            await userDM.SendAsync($"**Offer:** {exchangeItemQuantity} {itemInExchange.Name}{firstS}\n" +
+                                   $"**Request:** {requestedItemQuantity} {requestedItem.Name}{secondS}\n\n" +
                                    $"Please respond with \"{key}\" within 5 minutes to accept this trade.",
                                    $"Trade Request from {Context.User}");
 
@@ -57,35 +40,35 @@ namespace DEA.Modules.Items
                 var newOffererDbuser = await _userRepo.GetUserAsync(Context.GUser);
                 var newRequesterDbuser = await _userRepo.GetUserAsync(userToTrade);
 
-                if (!newOffererDbuser.Inventory.Contains(element.Name))
+                if (!newOffererDbuser.Inventory.Contains(itemInExchange.Name))
                 {
-                    await userDM.SendError($"{Context.User.Boldify()} does not own the following item: {element.Name}.");
+                    await userDM.SendErrorAsync($"{Context.User.Boldify()} does not own the following item: {itemInExchange.Name}.");
                 }
-                else if (!newRequesterDbuser.Inventory.Contains(elementFor.Name))
+                else if (!newRequesterDbuser.Inventory.Contains(requestedItem.Name))
                 {
-                    await userDM.SendError($"You do not own the following item: {elementFor.Name}.");
+                    await userDM.SendErrorAsync($"You do not own the following item: {requestedItem.Name}.");
                 }
-                else if (!(newOffererDbuser.Inventory[element.Name].AsInt32 >= exchangeItemQuantity))
+                else if (!(newOffererDbuser.Inventory[itemInExchange.Name].AsInt32 >= exchangeItemQuantity))
                 {
-                    await userDM.SendError($"{Context.User.Boldify()} does not own {exchangeItemQuantity} {element.Name}{firstS}.");
+                    await userDM.SendErrorAsync($"{Context.User.Boldify()} does not own {exchangeItemQuantity} {itemInExchange.Name}{firstS}.");
                 }
-                else if (!(newRequesterDbuser.Inventory[elementFor.Name].AsInt32 >= requestedItemQuantity))
+                else if (!(newRequesterDbuser.Inventory[requestedItem.Name].AsInt32 >= requestedItemQuantity))
                 {
-                    await userDM.SendError($"You do not own {requestedItemQuantity} {elementFor.Name}{secondS}.");
+                    await userDM.SendErrorAsync($"You do not own {requestedItemQuantity} {requestedItem.Name}{secondS}.");
                 }
                 else
                 {
-                    await _gameService.ModifyInventoryAsync(newOffererDbuser, element.Name, -exchangeItemQuantity);
-                    await _gameService.ModifyInventoryAsync(newOffererDbuser, elementFor.Name, requestedItemQuantity);
+                    await _gameService.ModifyInventoryAsync(newOffererDbuser, itemInExchange.Name, -exchangeItemQuantity);
+                    await _gameService.ModifyInventoryAsync(newOffererDbuser, requestedItem.Name, requestedItemQuantity);
 
-                    await _gameService.ModifyInventoryAsync(newRequesterDbuser, element.Name, exchangeItemQuantity);
-                    await _gameService.ModifyInventoryAsync(newRequesterDbuser, elementFor.Name, -requestedItemQuantity);
+                    await _gameService.ModifyInventoryAsync(newRequesterDbuser, itemInExchange.Name, exchangeItemQuantity);
+                    await _gameService.ModifyInventoryAsync(newRequesterDbuser, requestedItem.Name, -requestedItemQuantity);
 
-                    var message = $"**Offer:** {exchangeItemQuantity} {element.Name}{firstS}\n" +
-                                  $"**Request:** {requestedItemQuantity} {elementFor.Name}{secondS}\n\n";
+                    var message = $"**Offer:** {exchangeItemQuantity} {itemInExchange.Name}{firstS}\n" +
+                                  $"**Request:** {requestedItemQuantity} {requestedItem.Name}{secondS}\n\n";
 
                     await userDM.SendAsync(message, $"Completed Trade with {Context.User}");
-                    await Context.GUser.DMAsync(message, $"Completed Trade with {userToTrade}");
+                    await Context.GUser.TryDMAsync(message, $"Completed Trade with {userToTrade}");
                 }
             }
         }

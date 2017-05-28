@@ -1,7 +1,6 @@
 using Discord.Commands;
 using Discord;
 using DEA.Database.Models;
-using DEA.Common.Data;
 using DEA.Common.Extensions;
 using System.Threading.Tasks;
 using System.Linq;
@@ -10,8 +9,8 @@ namespace DEA.Modules.General
 {
     public partial class General
     {
-        [Command("Bounties")]
-        [Alias("bl", "bountyleaderboards")]
+        [Command("Wanted")]
+        [Alias("Bounties", "bl", "bountyleaderboards")]
         [Summary("View the most targeted traffickers.")]
         public async Task Bounties()
         {

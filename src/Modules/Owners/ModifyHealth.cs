@@ -19,7 +19,7 @@ namespace DEA.Modules.Owners
 
             if (dbUser.Health <= 0)
             {
-                await _userRepo.DeleteAsync(x => x.Id == dbUser.Id);
+                await _userRepo.DeleteAsync(dbUser);
                 await ReplyAsync("NIGGA! You just killed him!");
             } 
             else

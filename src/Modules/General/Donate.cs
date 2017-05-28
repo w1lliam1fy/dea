@@ -1,7 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
 using System.Threading.Tasks;
-using DEA.Common.Data;
 using DEA.Common.Extensions;
 
 namespace DEA.Modules.General

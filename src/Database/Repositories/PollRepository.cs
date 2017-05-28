@@ -1,5 +1,4 @@
 ﻿using DEA.Common;
-using DEA.Common.Data;
 using DEA.Database.Models;
 using MongoDB.Driver;
 using System;
@@ -8,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DEA.Database.Repositories
 {
-    public class PollRepository : BaseRepository<Poll>
+    public sealed class PollRepository : BaseRepository<Poll>
     {
         public PollRepository(IMongoCollection<Poll> polls) : base(polls) { }
 
@@ -30,7 +29,7 @@ namespace DEA.Database.Repositories
 
         public async Task<Poll> CreatePollAsync(DEAContext context, string name, string[] choices, TimeSpan? length = null, bool elderOnly = false, bool modOnly = false, bool createdByMod = false)
         {
-            if (await ExistsAsync(x => x.Name.ToLower() == name.ToLower() && x.GuildId == context.Guild.Id))
+            if (await AnyAsync(x => x.Name.ToLower() == name.ToLower() && x.GuildId == context.Guild.Id))
             {
                 throw new DEAException($"There is already a poll by the name \"{name}\".");
             }

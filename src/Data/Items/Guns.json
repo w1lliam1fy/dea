@@ -1,0 +1,30 @@
+[
+  {
+    "Name": "Glock",
+    "Description": "Weakest gun in town. Man up a bit you puss.",
+    "Damage": 15,
+    "Accuracy": 30,
+    "CrateOdds": 40
+  },
+  {
+    "Name": "Revolver",
+    "Description": "Slam a nigga's cock in a bridge so damn hard.",
+    "Damage": 20,
+    "Accuracy": 35,
+    "CrateOdds": 30
+  },
+  {
+    "Name": "AR15",
+    "Description": "Assault fire. Assault weapon. Assault feminists. *Oh fuck dude I don't think we are allowed to put that kinda joke.*",
+    "Damage": 40,
+    "Accuracy": 50,
+    "CrateOdds": 25
+  },
+  {
+    "Name": "Intervention",
+    "Description": "The only weapon that affirms you have a large penis.",
+    "Damage": 90,
+    "Accuracy": 75,
+    "CrateOdds": 3
+  }
+]

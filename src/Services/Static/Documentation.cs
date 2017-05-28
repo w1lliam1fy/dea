@@ -1,12 +1,11 @@
-﻿using DEA.Common.Data;
-using DEA.Common.Extensions.DiscordExtensions;
+﻿using DEA.Common.Extensions.DiscordExtensions;
 using Discord.Commands;
 using System.IO;
 using System.Linq;
 
 namespace DEA.Services.Static
 {
-    public static class Documentation
+    internal static class Documentation
     {
         public static void CreateAndSave(CommandService commandService)
         {

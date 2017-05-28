@@ -1,6 +1,6 @@
-﻿using DEA.Common.Data;
-using DEA.Common.Extensions;
+﻿using DEA.Common.Extensions;
 using DEA.Common.Preconditions;
+using DEA.Common.Utilities;
 using Discord;
 using Discord.Commands;
 using System;
@@ -48,7 +48,7 @@ namespace DEA.Modules.Crime
                 await _userRepo.EditCashAsync(user, Context.DbGuild, raidedDbUser, -stolen);
                 await _userRepo.EditCashAsync(Context, stolen);
 
-                await user.Id.DMAsync(Context.Client, $"{Context.User} just robbed you and managed to walk away with {stolen.USD()}.");
+                await user.Id.TryDMAsync(Context.Client, $"{Context.User} just robbed you and managed to walk away with {stolen.USD()}.");
 
                 await ReplyAsync($"With a {successOdds}.00% chance of success, you successfully stole {stolen.USD()}. Balance: {Context.Cash.USD()}.");
             }
@@ -56,12 +56,12 @@ namespace DEA.Modules.Crime
             {
                 await _userRepo.EditCashAsync(Context, -resources);
 
-                await user.Id.DMAsync(Context.Client, $"{Context.User} tried to rob your sweet cash, but the nigga slipped on a banana peel and got arrested :joy: :joy: :joy:.");
+                await user.Id.TryDMAsync(Context.Client, $"{Context.User} tried to rob your sweet cash, but the nigga slipped on a banana peel and got arrested :joy: :joy: :joy:.");
 
                 await ReplyAsync($"With a {successOdds}.00% chance of success, you failed to steal {stolen.USD()} " +
                                  $"and lost all resources in the process. Balance: {Context.Cash.USD()}.");
             }
-            _rateLimitService.Add(Context.User.Id, Context.Guild.Id, "Rob", Config.ROB_COOLDOWN);
+            _rateLimitService.TryAdd(new RateLimit(Context.User.Id, Context.Guild.Id, "Rob", Config.ROB_COOLDOWN));
         }
     }
 }

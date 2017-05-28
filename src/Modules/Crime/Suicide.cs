@@ -1,8 +1,6 @@
-﻿using DEA.Common.Data;
-using DEA.Common.Extensions;
+﻿using DEA.Common.Extensions;
 using Discord.Commands;
 using System.Threading.Tasks;
-using MongoDB.Driver;
 
 namespace DEA.Modules.Crime
 {
@@ -27,7 +25,7 @@ namespace DEA.Modules.Crime
                     await _gameService.ModifyInventoryAsync(dbUser, item.Name);
                 }
             }
-            await _userRepo.Collection.DeleteOneAsync(x => x.UserId == Context.User.Id && x.GuildId == Context.Guild.Id);
+            await _userRepo.DeleteAsync(Context.DbUser);
 
             await ReplyAsync($"You have successfully killed yourself.");
         }

@@ -1,5 +1,4 @@
-﻿using DEA.Common.Data;
-using DEA.Common.Extensions;
+﻿using DEA.Common.Extensions;
 using DEA.Common.Preconditions;
 using Discord.Commands;
 using System.Threading.Tasks;

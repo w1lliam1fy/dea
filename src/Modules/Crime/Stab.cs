@@ -5,8 +5,9 @@ using Discord.Commands;
 using System.Linq;
 using System.Threading.Tasks;
 using MongoDB.Driver;
-using DEA.Common.Data;
 using DEA.Common.Preconditions;
+using DEA.Common.Utilities;
+using DEA.Common.Items;
 
 namespace DEA.Modules.Crime
 {
@@ -16,27 +17,20 @@ namespace DEA.Modules.Crime
         [Cooldown]
         [Remarks("Sexy John#0007")]
         [Summary("Attempt to stab a user.")]
-        public async Task Stab([Remainder] IGuildUser userToStab)
+        public async Task Stab(IGuildUser userToStab, [Own] [Remainder] Knife knife)
         {
-            var userItemData = _gameService.InventoryData(Context.DbUser);
-
             if (userToStab.Id == Context.User.Id)
             {
                 ReplyError("Hey, look at that retard! He's trying to stab himself lmfao.");
             }
-            else if (!userItemData.Any(x => x.ItemType == "Knife"))
-            {
-                ReplyError("You must have a knife to stab someone.");
-            }
 
             var dbUser = await _userRepo.GetUserAsync(userToStab);
-            var sorted = userItemData.OrderByDescending(x => x.Damage);
-            var strongestWeapon = sorted.First(x => x.ItemType == "Knife");
 
-            if (Config.RAND.Next(1, 101) < strongestWeapon.Accuracy)
+            if (Config.RAND.Next(1, 101) < knife.Accuracy)
             {
-                var userDM = await userToStab.CreateDMChannelAsync();
-                var damage = dbUser.Inventory.Contains("Kevlar") ? (int)(strongestWeapon.Damage * 0.8) : strongestWeapon.Damage;
+                var invData = _gameService.InventoryData(dbUser);
+                var damage = invData.Any(x => x is Armour) ? (int)(knife.Damage * 0.8) : knife.Damage;
+                //TODO: Rework armour.
 
                 await _userRepo.ModifyAsync(dbUser, x => x.Health -= damage);
 
@@ -47,15 +41,15 @@ namespace DEA.Modules.Crime
                         await _gameService.ModifyInventoryAsync(Context.DbUser, item.Name);
                     }
 
-                    await _userRepo.DeleteAsync(x => x.Id == dbUser.Id);
-                    await userToStab.DMAsync($"Unfortunately, you were killed by {Context.User.Boldify()}. All your data has been reset.");
+                    await _userRepo.DeleteAsync(dbUser);
+                    await userToStab.TryDMAsync($"Unfortunately, you were killed by {Context.User.Boldify()}. All your data has been reset.");
 
                     await _userRepo.EditCashAsync(Context, dbUser.Bounty);
                     await ReplyAsync($"Woah, you just killed {userToStab.Boldify()}. You just earned {dbUser.Bounty.USD()} **AND** their inventory, congrats.");
                 }
                 else
                 {
-                    await userToStab.DMAsync($"{Context.User} tried to kill you, but nigga *AH, HA, HA, HA, STAYIN' ALIVE*. -{damage} health. Current Health: {dbUser.Health}");
+                    await userToStab.TryDMAsync($"{Context.User} tried to kill you, but nigga *AH, HA, HA, HA, STAYIN' ALIVE*. -{damage} health. Current Health: {dbUser.Health}");
                     await ReplyAsync($"Just stabbed that nigga in the heart, you just dealt {damage} damage to {userToStab.Boldify()}.");
                 }
             }
@@ -63,7 +57,7 @@ namespace DEA.Modules.Crime
             {
                 await ReplyAsync($"This nigga actually did some acrobatics shit and bounced out of the way before you stabbed him.");
             }
-            _rateLimitService.Add(Context.User.Id, Context.Guild.Id, "Stab", Config.STAB_COOLDOWN);
+            _rateLimitService.TryAdd(new RateLimit(Context.User.Id, Context.Guild.Id, "Stab", Config.STAB_COOLDOWN));
         }
     }
 }

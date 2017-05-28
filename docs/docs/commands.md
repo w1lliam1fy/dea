@@ -57,11 +57,11 @@ Command | Description | Usage
 AddBounty|Add a bounty of any user.|`$AddBounty <@userToSet> <bounty>`
 Bully|Bully anyone's nickname to whatever you please.|`$Bully <@userToBully> <nickname>`
 Collect|Collect a portion from your slaves.|`$Collect`
-Enslave|Enslave any users at low health.|`$Enslave <@userToEnslave>`
+Enslave|Enslave any users at low health.|`$Enslave <@userToEnslave> <weapon>`
 Jump|Jump some random nigga in the hood.|`$Jump`
 Rob|Slam anyone's bank account.|`$Rob <@user> <resources>`
-Shoot|Attempt to shoot a user.|`$Shoot <@userToShoot>`
-Stab|Attempt to stab a user.|`$Stab <@userToStab>`
+Shoot|Attempt to shoot a user.|`$Shoot <@userToShoot> <gun>`
+Stab|Attempt to stab a user.|`$Stab <@userToStab> <knife>`
 Steal|Snipe some goodies from your local stores.|`$Steal`
 Suicide|Kill yourself.|`$Suicide`
 Whore|Sell your body for some quick cash.|`$Whore`
@@ -93,7 +93,6 @@ Withdraw|Withdraw cash from your gang's funds.|`$Withdraw <cash>`
 ### General
 Command | Description | Usage
 ---------------- | --------------| -------
-Bounties|View the most targeted traffickers.|`$Bounties`
 Cooldowns|View all your command cooldowns.|`$Cooldowns [@user]`
 Donate|Sauce some cash to one of your mates.|`$Donate <@user> <money>`
 Leaderboards|View the richest Drug Traffickers.|`$Leaderboards`
@@ -101,17 +100,19 @@ ModRoles|View all the moderator roles.|`$ModRoles`
 Money|View the wealth of anyone.|`$Money [@user]`
 Rank|View the detailed ranking information of any user.|`$Rank [@user]`
 Ranks|View all ranks.|`$Ranks`
+Wanted|View the most targeted traffickers.|`$Wanted`
 
 ### Items
 Command | Description | Usage
 ---------------- | --------------| -------
-Eat|Eat a chosen food in your inventory to gain health.|`$Eat <item>`
-Fish|Go fishing for some food.|`$Fish`
-Hunt|Go hunting for some food.|`$Hunt`
+Eat|Eat a chosen food in your inventory to gain health.|`$Eat <food>`
+Fish|Go fishing for some food.|`$Fish <weapon>`
+Hunt|Go hunting for some food.|`$Hunt <weapon>`
 Inventory|View the inventory of any user.|`$Inventory [@user]`
 Item|Get all the information on any item.|`$Item <item>`
+OpenAll|Open a crate!|`$OpenAll <crate>`
 OpenCrate|Open a crate!|`$OpenCrate <crate>`
-Shop|List of available shop items.|`$Shop [item]`
+Shop|List of available shop items.|`$Shop [crate]`
 Trade|Request to trade with any user.|`$Trade <@userToTrade> <exchangeItemQuantity> <itemInExchange> <requestedItemQuantity> <requestedItem>`
 
 ### Moderation

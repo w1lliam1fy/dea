@@ -1,8 +1,7 @@
 ﻿using Discord.Commands;
 using System.Threading.Tasks;
-using System.Linq;
-using MongoDB.Driver;
 using DEA.Common.Extensions;
+using DEA.Common.Items;
 
 namespace DEA.Modules.Items
 {
@@ -12,39 +11,29 @@ namespace DEA.Modules.Items
         [Alias("Buy")]
         [Remarks("Gold Crate")]
         [Summary("List of available shop items.")]
-        public async Task Shop([Remainder] string item = null)
+        public async Task Shop([Remainder] Crate crate = null)
         {
-            item = item?.ToLower();
-
-            if (string.IsNullOrWhiteSpace(item))
+            if (crate == null)
             {
                 string description = string.Empty;
-                foreach (var _item in _items.OrderBy(x => x.Price))
+                foreach (var item in _crates)
                 {
-                    if (_item.ItemType == "Crate")
-                    {
-                        description += $"**Cost:** {_item.Price.USD()} | **Command:** `{Context.Prefix}shop {_item.Name}` | **Description:** {_item.Description}\n";
-                    }
+                    description += $"**Cost:** {item.Price.USD()} | **Command:** `{Context.Prefix}shop {item.Name}` | **Description:** {item.Description}\n";
                 }
 
                 await SendAsync(description, "Available Shop Items");
             }
-            else if (_items.Any(x => x.Name.ToLower() == item && x.ItemType == "Crate"))
+            else
             {
-                var element = _items.First(x => x.Name.ToLower() == item);
-                if (element.Price > Context.Cash)
+                if (crate.Price > Context.Cash)
                 {
                     ReplyError($"You do not have enough money. Balance: {Context.Cash.USD()}.");
                 }
 
-                await _gameService.ModifyInventoryAsync(Context.DbUser, element.Name);
-                await _userRepo.EditCashAsync(Context, -element.Price);
+                await _gameService.ModifyInventoryAsync(Context.DbUser, crate.Name);
+                await _userRepo.EditCashAsync(Context, -crate.Price);
 
-                await ReplyAsync($"You have successfully purchased: {element.Name}!");
-            }
-            else
-            {
-                ReplyError("This item either does not exist or is not a crate.");
+                await ReplyAsync($"You have successfully purchased: {crate.Name}!");
             }
         }
     }

@@ -1,5 +1,4 @@
-﻿using DEA.Common.Data;
-using DEA.Database.Repositories;
+﻿using DEA.Database.Repositories;
 using DEA.Services.Static;
 using Discord;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DEA.Services.Timers
 {
-    class AutoUnmute
+    internal sealed class AutoUnmute
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly DiscordSocketClient _client;
@@ -57,7 +56,8 @@ namespace DEA.Services.Timers
                         var mutedRole = guild.GetRole(dbGuild.MutedRoleId);
 
                         await user.RemoveRoleAsync(mutedRole);
-                        await _moderationService.ModLogAsync(dbGuild, guild, "Automatic Unmute", new Color(12, 255, 129), string.Empty, null, user);
+                        await _moderationService.TryModLogAsync(dbGuild, guild, "Automatic Unmute", new Color(12, 255, 129), string.Empty, null, user);
+                        await Task.Delay(500);
                     }
                     catch
                     {
@@ -65,7 +65,7 @@ namespace DEA.Services.Timers
                     }
                     finally
                     {
-                        await _muteRepo.DeleteAsync(x => x.Id == mute.Id);
+                        await _muteRepo.DeleteAsync(mute);
                     }
                 }
             });

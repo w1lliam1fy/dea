@@ -1,5 +1,4 @@
-﻿using DEA.Common.Data;
-using DEA.Common.Extensions;
+﻿using DEA.Common.Extensions;
 using DEA.Common.Preconditions;
 using Discord.Commands;
 using System.Threading.Tasks;
@@ -29,7 +28,7 @@ namespace DEA.Modules.Gangs
             await ReplyAsync($"You have successfully deposited {cash.USD()}. " +
                         $"{Context.Gang.Name}'s Wealth: {Context.Gang.Wealth.USD()}");
 
-            await Context.Gang.LeaderId.DMAsync(Context.Client, $"{Context.User.Boldify()} deposited {cash.USD()} into your gang's wealth.");
+            await Context.Gang.LeaderId.TryDMAsync(Context.Client, $"{Context.User.Boldify()} deposited {cash.USD()} into your gang's wealth.");
         }
     }
 }

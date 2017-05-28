@@ -1,0 +1,8 @@
+[
+  {
+  "Name": "Kevlar",
+  "Description": "Adds a piece of armor for protection. 20% damage decrease.",
+  "DamageReduction":20,
+  "CrateOdds": 30
+  }
+]

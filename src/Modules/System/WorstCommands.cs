@@ -1,7 +1,6 @@
 ﻿using Discord.Commands;
 using System.Threading.Tasks;
 using System.Linq;
-using DEA.Common.Data;
 
 namespace DEA.Modules.System
 {
@@ -15,7 +14,7 @@ namespace DEA.Modules.System
             var worst = _statistics.CommandUsage.OrderBy(x => x.Value);
 
             var message = string.Empty;
-            var position = 0;
+            var position = 1;
 
             foreach (var element in worst)
             {

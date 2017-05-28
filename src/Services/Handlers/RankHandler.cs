@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DEA.Services.Handlers
 {
-    public class RankHandler
+    public sealed class RankHandler
     {
         private readonly GuildRepository _guildRepo;
 
@@ -19,11 +19,11 @@ namespace DEA.Services.Handlers
             _guildRepo = guildRepo;
         }
 
-        public async Task HandleAsync(IGuild guild, IGuildUser user, Guild dbGuild, User dbUser)
+        public async Task HandleAsync(IGuildUser user, Guild dbGuild, User dbUser)
         {
             if (dbGuild.RankRoles.ElementCount != 0)
             {
-                var currentUser = await guild.GetCurrentUserAsync() as SocketGuildUser;
+                var currentUser = await user.Guild.GetCurrentUserAsync() as SocketGuildUser;
                 if (!currentUser.GuildPermissions.ManageRoles)
                 {
                     return;
@@ -39,7 +39,7 @@ namespace DEA.Services.Handlers
                 foreach (var rankRole in dbGuild.RankRoles)
                 {
                     var cashRequired = (decimal)rankRole.Value.AsDouble;
-                    var role = guild.GetRole(ulong.Parse(rankRole.Name));
+                    var role = user.Guild.GetRole(ulong.Parse(rankRole.Name));
                     if (role != null && role.Position < highestRolePosition)
                     {
                         bool hasRole = user.RoleIds.Any(x => x == role.Id);

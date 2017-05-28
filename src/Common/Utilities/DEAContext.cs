@@ -1,5 +1,6 @@
 ﻿using DEA.Database.Models;
 using DEA.Database.Repositories;
+using DEA.Services;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
@@ -12,16 +13,18 @@ namespace DEA.Common
     public class DEAContext : SocketCommandContext
     {
         public IGuildUser GUser { get; }
+        public CommandInfo Command { get; internal set; }
         public User DbUser { get; private set; }
         public Guild DbGuild { get; private set; }
         public Gang Gang { get; private set; }
         public string Prefix { get; private set; }
-        public decimal Cash { get; set; }
+        public decimal Cash { get; internal set; }
 
         private readonly IServiceProvider _serviceProvider;
         private readonly UserRepository _userRepo;
         private readonly GuildRepository _guildRepo;
         private readonly GangRepository _gangRepo;
+        private readonly GameService _gameService;
 
         public DEAContext(DiscordSocketClient client, SocketUserMessage msg, IServiceProvider serviceProvider) : base(client, msg)
         {
@@ -29,6 +32,8 @@ namespace DEA.Common
             _userRepo = _serviceProvider.GetService<UserRepository>();
             _guildRepo = _serviceProvider.GetService<GuildRepository>();
             _gangRepo = _serviceProvider.GetService<GangRepository>();
+            _gameService = _serviceProvider.GetService<GameService>();
+            
             GUser = User as IGuildUser;
         }
 

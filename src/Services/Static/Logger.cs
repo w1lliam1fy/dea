@@ -3,47 +3,27 @@ using System;
 
 namespace DEA.Services.Static
 {
-    public static class Logger
+    internal static class Logger
     {
         public static void Log(LogSeverity severity, string source, string message)
         {
-            NewLine($"{DateTime.Now.ToString("hh:mm:ss")} ", ConsoleColor.DarkGray);
+            Append($"{DateTime.Now.ToString("hh:mm:ss")} ", ConsoleColor.DarkGray);
             Append($"[{severity}] ", ConsoleColor.Red);
             Append($"{source}: ", ConsoleColor.DarkGreen);
-            Append(message, ConsoleColor.White);
+            NewLine(message);
         }
 
-        public static void NewLine(string text = "", ConsoleColor? foreground = null, ConsoleColor? background = null)
+        public static void NewLine(string text = "", ConsoleColor foreground = ConsoleColor.White, ConsoleColor background = ConsoleColor.Black)
         {
-            if (foreground == null)
-            {
-                foreground = ConsoleColor.White;
-            }
-
-            if (background == null)
-            {
-                background = ConsoleColor.Black;
-            }
-
-            Console.ForegroundColor = (ConsoleColor)foreground;
-            Console.BackgroundColor = (ConsoleColor)background;
-            Console.Write(Environment.NewLine + text);
+            Console.ForegroundColor = foreground;
+            Console.BackgroundColor = background;
+            Console.WriteLine(text);
         }
 
-        public static void Append(string text, ConsoleColor? foreground = null, ConsoleColor? background = null)
+        public static void Append(string text, ConsoleColor foreground = ConsoleColor.White, ConsoleColor background = ConsoleColor.Black)
         {
-            if (foreground == null)
-            {
-                foreground = ConsoleColor.White;
-            }
-
-            if (background == null)
-            {
-                background = ConsoleColor.Black;
-            }
-
-            Console.ForegroundColor = (ConsoleColor)foreground;
-            Console.BackgroundColor = (ConsoleColor)background;
+            Console.ForegroundColor = foreground;
+            Console.BackgroundColor = background;
             Console.Write(text);
         }
     }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DEA.Services
 {
-    public class ModerationService
+    public sealed class ModerationService
     {
         private readonly GuildRepository _guildRepo;
 
@@ -42,7 +42,7 @@ namespace DEA.Services
             return user.GuildPermissions.Administrator && permLevel < 2 ? 2 : permLevel;
         }
 
-        public async Task InformSubjectAsync(IUser moderator, string action, IUser subject, string reason = null)
+        public async Task<bool> TryInformSubjectAsync(IUser moderator, string action, IUser subject, string reason = null)
         {
             try
             {
@@ -54,20 +54,21 @@ namespace DEA.Services
                 }
 
                 await channel.SendAsync(message);
+                return true;
             }
             catch
             {
-                //Ignored.
+                return false;
             }
         }
 
-        public async Task ModLogAsync(Guild dbGuild, IGuild guild, string action, Color color, string reason = "", IUser moderator = null, IUser subject = null, string extraInfoType = "", string extraInfo = "")
+        public async Task<bool> TryModLogAsync(Guild dbGuild, IGuild guild, string action, Color color, string reason = "", IUser moderator = null, IUser subject = null, string extraInfoType = "", string extraInfo = "")
         {
             var channel = await guild.GetTextChannelAsync(dbGuild.ModLogChannelId);
 
             if (channel == null)
             {
-                return;
+                return false;
             }
 
             var builder = new EmbedBuilder()
@@ -110,11 +111,12 @@ namespace DEA.Services
             try
             {
                 await channel.SendMessageAsync(string.Empty, embed: builder);
-                await _guildRepo.ModifyAsync(dbGuild, x => x.CaseNumber++);
+                await _guildRepo.ModifyAsync(x=> x.Id == dbGuild.Id, x => x.CaseNumber++);
+                return true;
             }
             catch
             {
-                //Ignored.
+                return false;
             }
         }
     }

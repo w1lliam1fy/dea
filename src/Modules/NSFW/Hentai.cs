@@ -1,6 +1,5 @@
 ﻿using Discord.Commands;
 using System.Threading.Tasks;
-using DEA.Common.Data;
 using System.Xml;
 using System.Net.Http;
 

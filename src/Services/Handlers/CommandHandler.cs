@@ -1,5 +1,4 @@
 ﻿using DEA.Common;
-using DEA.Common.Data;
 using DEA.Common.Extensions.DiscordExtensions;
 using DEA.Database.Repositories;
 using DEA.Services.Static;
@@ -10,10 +9,11 @@ using Discord.WebSocket;
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
+using DEA.Common.Utilities;
 
 namespace DEA.Services.Handlers
 {
-    public class CommandHandler
+    internal sealed class CommandHandler
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly DiscordSocketClient _client;
@@ -80,17 +80,7 @@ namespace DEA.Services.Handlers
 
                     if (!perms.SendMessages || !perms.EmbedLinks)
                     {
-                        try
-                        {
-                            var channel = await context.User.CreateDMChannelAsync();
-
-                            await channel.SendAsync($"DEA cannot execute any commands without the permission to send embedded messages.");
-                        }
-                        catch
-                        {
-                            //Ignored.
-                        }
-                        return;
+                        await context.User.TryDMAsync("DEA cannot execute any commands without the permission to send embedded messages.");
                     }
 
                     Logger.Log(LogSeverity.Debug, $"Guild: {context.Guild}, User: {context.User}", msg.Content);
@@ -98,7 +88,7 @@ namespace DEA.Services.Handlers
                     var result = await _commandService.ExecuteAsync(context, argPos, _serviceProvider);
                     if (!result.IsSuccess)
                     {
-                        await _errorHandler.HandleCommandFailureAsync(context, result, argPos);
+                        await _errorHandler.HandleCommandFailureAsync(context, result);
                     }
                     else
                     {
@@ -114,7 +104,7 @@ namespace DEA.Services.Handlers
                             x.LastMessage = DateTime.UtcNow;
                             x.Cash += context.DbGuild.GlobalChattingMultiplier * Config.CASH_PER_MSG;
                         });
-                        await _RankHandler.HandleAsync(context.Guild, context.GUser, context.DbGuild, context.DbUser);
+                        await _RankHandler.HandleAsync(context.GUser, context.DbGuild, context.DbUser);
                     }
                 }
             });

@@ -1,5 +1,4 @@
 ﻿using DEA.Common;
-using DEA.Common.Data;
 using DEA.Database.Models;
 using Discord;
 using MongoDB.Driver;
@@ -9,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DEA.Database.Repositories
 {
-    public class GangRepository : BaseRepository<Gang>
+    public sealed class GangRepository : BaseRepository<Gang>
     {
         public GangRepository(IMongoCollection<Gang> gangs) : base(gangs) { }
 
@@ -47,7 +46,7 @@ namespace DEA.Database.Repositories
 
         public async Task<Gang> CreateGangAsync(DEAContext context, string name)
         {
-            if (await ExistsAsync(x => x.Name.ToLower() == name.ToLower() && x.GuildId == context.Guild.Id))
+            if (await AnyAsync(x => x.Name.ToLower() == name.ToLower() && x.GuildId == context.Guild.Id))
             {
                 throw new DEAException($"There is already a gang by the name {name}.");
             }
@@ -68,7 +67,7 @@ namespace DEA.Database.Repositories
 
         public Task<bool> InGangAsync(IGuildUser user)
         {
-            return ExistsAsync(c => (c.LeaderId == user.Id || c.Members.Any(x => x == user.Id)) && c.GuildId == user.GuildId);
+            return AnyAsync(c => (c.LeaderId == user.Id || c.Members.Any(x => x == user.Id)) && c.GuildId == user.GuildId);
         }
         
         public bool IsMemberOfAsync(Gang gang, ulong userId)
@@ -85,14 +84,12 @@ namespace DEA.Database.Repositories
 
         public Task RemoveMemberAsync(Gang gang, ulong memberId)
         {
-            var builder = Builders<Gang>.Update;
-            return Collection.UpdateOneAsync(c => c.Id == gang.Id, builder.Pull(x => x.Members, memberId));
+            return PullAsync(c => c.Id == gang.Id, "Members", (decimal)memberId);
         }
 
         public Task AddMemberAsync(Gang gang, ulong newMemberId)
         {
-            var builder = Builders<Gang>.Update;
-            return Collection.UpdateOneAsync(c => c.Id == gang.Id, builder.Push(x => x.Members, newMemberId));
+            return PushAsync(c => c.Id == gang.Id, "Members", (decimal)newMemberId);
         }
 
     }

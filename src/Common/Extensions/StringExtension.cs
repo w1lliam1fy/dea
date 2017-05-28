@@ -1,4 +1,6 @@
-﻿namespace DEA.Common.Extensions
+﻿using System.Text.RegularExpressions;
+
+namespace DEA.Common.Extensions
 {
     public static class StringExtension
     {
@@ -60,6 +62,11 @@
                 }
             }
             return false;
+        }
+
+        public static string SplitCamelCase(this string s)
+        {
+            return Regex.Replace(s, "(?<=[a-z])([A-Z])", " $1", RegexOptions.Compiled).Trim();
         }
     }
 }

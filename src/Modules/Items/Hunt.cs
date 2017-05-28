@@ -1,9 +1,8 @@
 ﻿using Discord.Commands;
 using System.Threading.Tasks;
-using System.Linq;
-using MongoDB.Driver;
-using DEA.Common.Data;
 using DEA.Common.Preconditions;
+using DEA.Common.Utilities;
+using DEA.Common.Items;
 
 namespace DEA.Modules.Items
 {
@@ -11,27 +10,21 @@ namespace DEA.Modules.Items
     {
         [Command("Hunt")]
         [Cooldown]
+        [Remarks("Intervention")]
         [Summary("Go hunting for some food.")]
-        public async Task Hunt()
+        public async Task Hunt([Own] [Remainder] Weapon weapon)
         {
-            var invData = _gameService.InventoryData(Context.DbUser).OrderByDescending(x => x.Damage);
+            var result = await _gameService.AcquireFoodAsync(typeof(Meat), weapon.Accuracy, Context.DbUser);
 
-            if (!invData.Any(x => Config.WEAPON_TYPES.Any(y => y == x.ItemType)))
+            if (result != null)
             {
-                ReplyError("You must have a weapon to go hunting.");
-            }
-
-            var strongestWeapon = invData.First();
-
-            if (strongestWeapon.Accuracy >= Config.RAND.Next(1, 101))
-            {
-                await _gameService.GetFoodAsync(Context, "Meat");
+                await ReplyAsync($"Clean kill. Boss froth. Smooth beans. You got: {result.Name}");
             }
             else
             {
                 await ReplyAsync("Nigga you just about had that deer but then he did that hoof kick thing and fucked up your buddy Chuck, so then you had to go bust a nut all over him and the GODDAMN deer got away.");
             }
-            _rateLimitService.Add(Context.User.Id, Context.Guild.Id, "Hunt", Config.HUNT_COOLDOWN);
+            _rateLimitService.TryAdd(new RateLimit(Context.User.Id, Context.Guild.Id, "Hunt", Config.HUNT_COOLDOWN));
         }
     }
 }

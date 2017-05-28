@@ -29,7 +29,7 @@ namespace DEA.Modules.Polls
 
             await _pollRepo.CreatePollAsync(Context, poll, choicesArray, TimeSpan.FromDays(daysToLast), elderOnly, modOnly, isMod);
 
-            await ReplyAsync($"You have successfully created poll #{await _pollRepo.Collection.CountAsync(y => y.GuildId == Context.Guild.Id)}.");
+            await ReplyAsync($"You have successfully created poll #{await _pollRepo.CountAsync(y => y.GuildId == Context.Guild.Id)}.");
         }
     }
 }

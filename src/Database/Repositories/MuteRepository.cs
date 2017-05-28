@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DEA.Database.Repositories
 {
-    public class MuteRepository : BaseRepository<Mute>
+    public sealed class MuteRepository : BaseRepository<Mute>
     {
         public MuteRepository(IMongoCollection<Mute> mutes) : base(mutes) { }
 
@@ -17,7 +17,7 @@ namespace DEA.Database.Repositories
 
         public Task<bool> IsMutedAsync(ulong userId, ulong guildId)
         {
-            return ExistsAsync(y => y.UserId == userId && y.GuildId == guildId);
+            return AnyAsync(y => y.UserId == userId && y.GuildId == guildId);
         }
 
         public Task RemoveMuteAsync(ulong userId, ulong guildId)

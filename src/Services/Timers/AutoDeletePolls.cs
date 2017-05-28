@@ -1,5 +1,4 @@
-﻿using DEA.Common.Data;
-using DEA.Common.Extensions;
+﻿using DEA.Common.Extensions;
 using DEA.Database.Repositories;
 using DEA.Services.Static;
 using Discord;
@@ -11,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DEA.Services.Timers
 {
-    class AutoDeletePolls
+    internal sealed class AutoDeletePolls
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly DiscordSocketClient _client;
@@ -58,9 +57,9 @@ namespace DEA.Services.Timers
                             description += $"{j + 1}. {choice}: {votes[choice]} Votes ({percentage.ToString("P")})\n";
                         }
 
-                        await poll.CreatorId.DMAsync(_client, description, $"Final Poll Results of \"{poll.Name}\" Poll");
+                        await poll.CreatorId.TryDMAsync(_client, description, $"Final Poll Results of \"{poll.Name}\" Poll");
 
-                        await _pollRepo.DeleteAsync(y => y.Id == poll.Id);
+                        await _pollRepo.DeleteAsync(poll);
                     }
                 }
             });

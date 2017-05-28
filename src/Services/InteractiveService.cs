@@ -1,5 +1,4 @@
-﻿using DEA.Common.Data;
-using Discord;
+﻿using Discord;
 using Discord.WebSocket;
 using System;
 using System.Threading;
@@ -7,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DEA.Services
 {
-    public class InteractiveService
+    public sealed class InteractiveService
     {
         private readonly DiscordSocketClient _client;
 
@@ -20,7 +19,7 @@ namespace DEA.Services
         {
             if (timeout == null)
             {
-                timeout = Config.DEFAULT_WAITFORMESSAGE;
+                timeout = Config.DEFAULT_WAIT_FOR_MESSAGE;
             }
 
             var blockToken = new CancellationTokenSource();

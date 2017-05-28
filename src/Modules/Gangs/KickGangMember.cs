@@ -9,7 +9,7 @@ namespace DEA.Modules.Gangs
     public partial class Gangs
     {
         [Command("KickGangMember")]
-        [Require(Attributes.InGang, Attributes.GangLeader)]
+        [Require(Attributes.GangLeader)]
         [Remarks("Sexy John#0007")]
         [Summary("Kicks a user from your gang.")]
         public async Task KickFromGang([Remainder] IGuildUser gangMember)
@@ -26,7 +26,7 @@ namespace DEA.Modules.Gangs
             await _gangRepo.RemoveMemberAsync(Context.Gang, gangMember.Id);
             await ReplyAsync($"You have successfully kicked {gangMember.Boldify()} from {Context.Gang.Name}.");
 
-            await gangMember.Id.DMAsync(Context.Client, $"You have been kicked from {Context.Gang.Name}.");
+            await gangMember.Id.TryDMAsync(Context.Client, $"You have been kicked from {Context.Gang.Name}.");
         }
     }
 }

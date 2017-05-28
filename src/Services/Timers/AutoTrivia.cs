@@ -1,5 +1,4 @@
-﻿using DEA.Common.Data;
-using DEA.Database.Repositories;
+﻿using DEA.Database.Repositories;
 using DEA.Services.Static;
 using Discord;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DEA.Services.Timers
 {
-    class AutoTrivia
+    internal sealed class AutoTrivia
     { 
         private readonly IServiceProvider _serviceProvider;
         private readonly GuildRepository _guildRepo;

@@ -11,7 +11,7 @@ using System;
 
 namespace DEA.Events
 {
-    class UserJoined
+    internal sealed class UserJoined
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly DiscordSocketClient _client;
@@ -57,7 +57,7 @@ namespace DEA.Events
                 if (mutedRole != null && u.Guild.CurrentUser.GuildPermissions.ManageRoles &&
                 mutedRole.Position < u.Guild.CurrentUser.Roles.OrderByDescending(x => x.Position).First().Position)
                 {
-                    await _RankHandler.HandleAsync(u.Guild, user, dbGuild, await _userRepo.GetUserAsync(user));
+                    await _RankHandler.HandleAsync(user, dbGuild, await _userRepo.GetUserAsync(user));
                     if (await _muteRepo.IsMutedAsync(user.Id, user.Guild.Id) && mutedRole != null && user != null)
                     {
                         await user.AddRoleAsync(mutedRole);

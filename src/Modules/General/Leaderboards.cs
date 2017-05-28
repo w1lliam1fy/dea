@@ -1,5 +1,4 @@
-﻿using DEA.Common.Data;
-using DEA.Common.Extensions;
+﻿using DEA.Common.Extensions;
 using DEA.Database.Models;
 using Discord;
 using Discord.Commands;
@@ -15,19 +14,18 @@ namespace DEA.Modules.General
         [Summary("View the richest Drug Traffickers.")]
         public async Task Leaderboards()
         {
-            var users = await _userRepo.AllAsync(y => y.GuildId == Context.Guild.Id);
-            var sorted = users.OrderByDescending(x => x.Cash);
+            var users = (await _userRepo.AllAsync(y => y.GuildId == Context.Guild.Id)).OrderByDescending(x => x.Cash);
             string description = string.Empty;
             int position = 1;
 
-            if (users.Count == 0)
+            if (users.Count() == 0)
             {
                 ReplyError("There is nobody on the leaderboards yet.");
             }
 
             var guildInterface = Context.Guild as IGuild;
 
-            foreach (User dbUser in sorted)
+            foreach (User dbUser in users)
             {
                 var user = await guildInterface.GetUserAsync(dbUser.UserId);
                 if (user == null)

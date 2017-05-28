@@ -1,5 +1,4 @@
-﻿using DEA.Common.Data;
-using DEA.Common.Extensions;
+﻿using DEA.Common.Extensions;
 using DEA.Common.Extensions.DiscordExtensions;
 using DEA.Common.Preconditions;
 using Discord;
@@ -51,7 +50,7 @@ namespace DEA.Modules.Gangs
 
                         await leaderDM.SendAsync($"You have successfully added {Context.User.Boldify()} as a member of your gang.");
 
-                        await Context.User.Id.DMAsync(Context.Client, $"Congrats! {leader} has accepted your request to join {gang.Name}!");
+                        await Context.User.Id.TryDMAsync(Context.Client, $"Congrats! {leader} has accepted your request to join {gang.Name}!");
                     }
                 }
             }
