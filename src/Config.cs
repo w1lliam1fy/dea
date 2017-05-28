@@ -19,9 +19,7 @@ internal static class Config
         JUMP_REQUIREMENT = 500, STEAL_REQUIREMENT = 2500, ROB_REQUIREMENT = 5000, BULLY_REQUIREMENT = 10000, FIFTYX2_REQUIREMENT = 25000,
         MAX_ROB_PERCENTAGE = 0.20m, MAX_RAID_PERCENTAGE = 0.20m, SLAVE_COLLECT_VALUE = 0.8m, MIN_BOUNTY = 500, SUICIDE_COST = 500;
 
-    private static int SEED = Environment.TickCount;
-
-    private static readonly ThreadLocal<Random> RANDOM = new ThreadLocal<Random>(() => new Random(Interlocked.Increment(ref SEED)));
+    private static readonly ThreadLocal<Random> RANDOM = new ThreadLocal<Random>(() => new Random());
 
     public static readonly Random RAND = RANDOM.Value;
 
