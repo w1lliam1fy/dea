@@ -1,9 +1,8 @@
 ﻿using Discord.Commands;
 using System.Threading.Tasks;
-using System.Linq;
-using MongoDB.Driver;
-using DEA.Common.Data;
 using DEA.Common.Preconditions;
+using DEA.Common.Utilities;
+using DEA.Common.Items;
 
 namespace DEA.Modules.Items
 {
@@ -11,27 +10,21 @@ namespace DEA.Modules.Items
     {
         [Command("Fish")]
         [Cooldown]
+        [Remarks("Butterfly Knife")]
         [Summary("Go fishing for some food.")]
-        public async Task Fish()
+        public async Task Fish([Own] [Remainder] Weapon weapon)
         {
-            var invData = _gameService.InventoryData(Context.DbUser).OrderByDescending(x => x.Damage);
+            var result = await _gameService.AcquireFoodAsync(typeof(Fish), weapon.Accuracy, Context.DbUser);
 
-            if (!invData.Any(x => Config.WEAPON_TYPES.Any(y => y == x.ItemType)))
+            if (result != null)
             {
-                ReplyError("You must have a weapon to go fishing.");
-            }
-            
-            var strongestWeapon = invData.First();
-
-            if (strongestWeapon.Accuracy >= Config.RAND.Next(1, 101))
-            {
-                await _gameService.GetFoodAsync(Context, "Fish");
+                await ReplyAsync($"RIP NEMO LMFAO. Finding nemo, more like EATING NEMO ROFL! Good buddy, you got: {result.Name}");
             }
             else
             {
-                await ReplyAsync("You had the fucking fish in your pocket on the way to the supermarket to get some spices, and the nigga flipping fish jumped into the sink and pulled some goddamn Finding Nemo shit and bounced like fish do.");
+                await ReplyAsync("You had the fucking fish in your pocket on the way to the supermarket to get some spices, and the nigga flipping fish jumped into the sink and pulled some goddamn Finding Nemo shit and bounced.");
             }
-            _rateLimitService.Add(Context.User.Id, Context.Guild.Id, "Fish", Config.FISH_COOLDOWN);
+            _rateLimitService.TryAdd(new RateLimit(Context.User.Id, Context.Guild.Id, "Fish", Config.FISH_COOLDOWN));
         }
     }
 }

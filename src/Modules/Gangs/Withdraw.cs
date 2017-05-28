@@ -1,6 +1,6 @@
-﻿using DEA.Common.Data;
-using DEA.Common.Extensions;
+﻿using DEA.Common.Extensions;
 using DEA.Common.Preconditions;
+using DEA.Common.Utilities;
 using Discord.Commands;
 using System;
 using System.Threading.Tasks;
@@ -32,8 +32,8 @@ namespace DEA.Modules.Gangs
             await ReplyAsync($"You have successfully withdrawn {cash.USD()}. " +
                              $"{Context.Gang.Name}'s Wealth: {Context.Gang.Wealth.USD()}.");
 
-            await Context.Gang.LeaderId.DMAsync(Context.Client, $"{Context.User.Boldify()} has withdrawn {cash.USD()} from your gang's wealth.");
-            _rateLimitService.Add(Context.User.Id, Context.Guild.Id, "Withdraw", Config.WITHDRAW_COOLDOWN);
+            await Context.Gang.LeaderId.TryDMAsync(Context.Client, $"{Context.User.Boldify()} has withdrawn {cash.USD()} from your gang's wealth.");
+            _rateLimitService.TryAdd(new RateLimit(Context.User.Id, Context.Guild.Id, "Withdraw", Config.WITHDRAW_COOLDOWN));
         }
     }
 }

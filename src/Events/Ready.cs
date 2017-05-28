@@ -5,11 +5,11 @@ using Discord.WebSocket;
 using System.Threading.Tasks;
 using System;
 using Discord.Commands;
-using DEA.Common.Data;
+using DEA.Common.Utilities;
 
 namespace DEA.Events
 {
-    class Ready
+    internal sealed class Ready
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly CommandService _commandService;

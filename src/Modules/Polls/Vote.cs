@@ -3,7 +3,6 @@ using System;
 using System.Threading.Tasks;
 using System.Linq;
 using MongoDB.Driver;
-using DEA.Common.Data;
 
 namespace DEA.Modules.Polls
 {

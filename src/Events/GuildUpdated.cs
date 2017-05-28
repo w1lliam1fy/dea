@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DEA.Events
 {
-    class GuildUpdated
+    internal sealed class GuildUpdated
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly DiscordSocketClient _client;

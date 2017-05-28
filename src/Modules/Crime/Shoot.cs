@@ -2,11 +2,12 @@
 using DEA.Common.Extensions.DiscordExtensions;
 using Discord;
 using Discord.Commands;
-using System.Linq;
 using System.Threading.Tasks;
 using MongoDB.Driver;
-using DEA.Common.Data;
 using DEA.Common.Preconditions;
+using DEA.Common.Utilities;
+using DEA.Common.Items;
+using System.Linq;
 
 namespace DEA.Modules.Crime
 {
@@ -16,30 +17,20 @@ namespace DEA.Modules.Crime
         [Cooldown]
         [Remarks("Sexy John#0007")]
         [Summary("Attempt to shoot a user.")]
-        public async Task Shoot([Remainder] IGuildUser userToShoot)
+        public async Task Shoot(IGuildUser userToShoot, [Own] [Remainder] Gun gun)
         {
-            var userItemData = _gameService.InventoryData(Context.DbUser);
-
             if (userToShoot.Id == Context.User.Id)
             {
                 ReplyError("Hey, look at that retard! He's trying to shoot himself l0l.");
             }
-            else if (!userItemData.Any(x => x.ItemType == "Gun"))
-            {
-                ReplyError("You must have a gun to shoot someone.");
-            }
-            else if (!Context.DbUser.Inventory.Any(x => x.Name == "Bullet"))
-            {
-                ReplyError("You need bullets to shoot a gun.");
-            }
 
             var dbUser = await _userRepo.GetUserAsync(userToShoot);
-            var sorted = userItemData.OrderByDescending(x => x.Damage);
-            var strongestWeapon = sorted.First(x => x.ItemType == "Gun");
 
-            if (Config.RAND.Next(1, 101) < strongestWeapon.Accuracy)
+            if (Config.RAND.Next(1, 101) < gun.Accuracy)
             {
-                var damage = dbUser.Inventory.Contains("Kevlar") ? (int)(strongestWeapon.Damage * 0.8) : strongestWeapon.Damage;
+                var invData = _gameService.InventoryData(dbUser);
+                var damage = invData.Any(x => x is Armour) ? (int)(gun.Damage * 0.8) : gun.Damage;
+                //TODO: Rework armour.
 
                 await _userRepo.ModifyAsync(dbUser, x => x.Health -= damage);
 
@@ -53,8 +44,8 @@ namespace DEA.Modules.Crime
                         await _gameService.ModifyInventoryAsync(Context.DbUser, item.Name);
                     }
 
-                    await _userRepo.Collection.DeleteOneAsync(x => x.UserId == dbUser.UserId && x.GuildId == dbUser.GuildId);
-                    await userToShoot.DMAsync($"Unfortunately, you were killed by {Context.User.Boldify()}. All your data has been reset.");
+                    await _userRepo.DeleteAsync(dbUser);
+                    await userToShoot.TryDMAsync($"Unfortunately, you were killed by {Context.User.Boldify()}. All your data has been reset.");
 
                     await _userRepo.EditCashAsync(Context, dbUser.Bounty);
 
@@ -63,7 +54,7 @@ namespace DEA.Modules.Crime
                 else
                 {
                     await ReplyAsync($"Nice shot, you just dealt {damage} damage to {userToShoot.Boldify()}.");
-                    await userToShoot.DMAsync($"{Context.User} tried to kill you, but nigga you *AH, HA, HA, HA, STAYIN' ALIVE*. -{damage} health. Current Health: {dbUser.Health}");
+                    await userToShoot.TryDMAsync($"{Context.User} tried to kill you, but nigga you *AH, HA, HA, HA, STAYIN' ALIVE*. -{damage} health. Current Health: {dbUser.Health}");
                 }
             }
             else
@@ -71,7 +62,7 @@ namespace DEA.Modules.Crime
                 await ReplyAsync($"The nigga fucking dodged the bullet, literally. What in the sac of nuts.");
             }
             await _gameService.ModifyInventoryAsync(Context.DbUser, "Bullet", -1);
-            _rateLimitService.Add(Context.User.Id, Context.Guild.Id, "Shoot", Config.SHOOT_COOLDOWN);
+            _rateLimitService.TryAdd(new RateLimit(Context.User.Id, Context.Guild.Id, "Shoot", Config.SHOOT_COOLDOWN));
         }
     }
 }

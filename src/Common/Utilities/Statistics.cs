@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
 
-namespace DEA.Common.Data
+namespace DEA.Common.Utilities
 {
     public class Statistics
     {

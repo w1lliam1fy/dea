@@ -16,7 +16,7 @@ namespace DEA.Modules.Owners
 
             var dbUser = user.Id == Context.User.Id ? Context.DbUser : await _userRepo.GetUserAsync(user);
             await _userRepo.ModifyAsync(dbUser, x => x.Cash = 100000);
-            await _RankHandler.HandleAsync(Context.Guild, user, Context.DbGuild, await _userRepo.GetUserAsync(user));
+            await _RankHandler.HandleAsync(user, Context.DbGuild, await _userRepo.GetUserAsync(user));
 
             await SendAsync($"Successfully set {user.Boldify()}'s balance to $100,000.00.");
         }

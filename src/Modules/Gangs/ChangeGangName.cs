@@ -1,5 +1,4 @@
-﻿using DEA.Common.Data;
-using DEA.Common.Preconditions;
+﻿using DEA.Common.Preconditions;
 using Discord.Commands;
 using System.Threading.Tasks;
 using MongoDB.Driver;
@@ -12,7 +11,7 @@ namespace DEA.Modules.Gangs
     {
         [Command("ChangeGangName")]
         [Alias("ChangeName")]
-        [Require(Attributes.InGang, Attributes.GangLeader)]
+        [Require(Attributes.GangLeader)]
         [Remarks("JERK EM OFF BOYS")]
         [Summary("Changes the name of your gang.")]
         public async Task ChangeGangName([Remainder] string newName)
@@ -22,7 +21,7 @@ namespace DEA.Modules.Gangs
                 ReplyError($"You do not have {Config.GANG_NAME_CHANGE_COST.USD()}. Balance: {Context.Cash.USD()}.");
             }
 
-            var gangs = await (await _gangRepo.Collection.FindAsync(y => y.GuildId == Context.Guild.Id)).ToListAsync();
+            var gangs = await _gangRepo.AllAsync();
 
             if (gangs.Any(x => x.Name.ToLower() == newName.ToLower()))
             {

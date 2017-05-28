@@ -1,6 +1,6 @@
 ﻿using System;
 
-static class LevenshteinDistance
+internal static class LevenshteinDistance
 {
     public static int Compute(string s, string t)
     {

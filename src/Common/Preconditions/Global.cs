@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Discord.Commands;
-using DEA.Common.Data;
 using Microsoft.Extensions.DependencyInjection;
 using DEA.Services;
+using DEA.Common.Utilities;
 
 namespace DEA.Common.Preconditions
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
-    public sealed class GlobalAttribute : PreconditionAttribute
+    internal sealed class Global : PreconditionAttribute
     {
         private IServiceProvider _serviceProvider;
         private RateLimitService _rateLimitService;
@@ -17,22 +17,27 @@ namespace DEA.Common.Preconditions
 
         public override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider serviceProvider)
         {
-            _serviceProvider = serviceProvider;
-            _rateLimitService = _serviceProvider.GetService<RateLimitService>();
-            _statistics = _serviceProvider.GetService<Statistics>();
-
-            if (!_rateLimitService.TryGetEntry(context.User.Id, 0, "Global", out _cooldown))
+            return Task.Run(() =>
             {
-                _rateLimitService.Add(context.User.Id, 0, "Global", Config.USER_RATE_LIMIT);
+                _serviceProvider = serviceProvider;
+                _rateLimitService = _serviceProvider.GetService<RateLimitService>();
+                _statistics = _serviceProvider.GetService<Statistics>();
 
-                _statistics.CommandUsage.AddOrUpdate(command.Name, 0, (key, value) => value + 1);
+                if (!_rateLimitService.TryGet(x => x.UserId == context.User.Id && x.Global, out _cooldown))
+                {
+                    _rateLimitService.TryAdd(new RateLimit(context.User.Id, true, Config.USER_RATE_LIMIT));
 
-                return Task.FromResult(PreconditionResult.FromSuccess());
-            }
-            else
-            {
-                return Task.FromResult(PreconditionResult.FromError(string.Empty));
-            }
+                    _statistics.CommandUsage.AddOrUpdate(command.Name, 0, (key, value) => value + 1);
+
+                    (context as DEAContext).Command = command;
+
+                    return Task.FromResult(PreconditionResult.FromSuccess());
+                }
+                else
+                {
+                    return Task.FromResult(PreconditionResult.FromError(string.Empty));
+                }
+            });
         }
     }
 }

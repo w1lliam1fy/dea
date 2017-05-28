@@ -21,6 +21,7 @@ namespace DEA.Modules.General
                 var role = Context.Guild.GetRole(ulong.Parse(rank.Name));
                 if (role == null)
                 {
+                    await _guildRepo.ModifyAsync(Context.DbGuild, x => x.RankRoles.Remove(rank.Name));
                     continue;
                 }
                 description += $"{((decimal)rank.Value.AsDouble).USD()}: {role.Mention}\n";

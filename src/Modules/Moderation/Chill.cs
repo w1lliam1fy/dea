@@ -1,7 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
 using System.Threading.Tasks;
-using DEA.Common.Data;
 using Discord.WebSocket;
 
 namespace DEA.Modules.Moderation
@@ -40,7 +39,7 @@ namespace DEA.Modules.Moderation
             await Task.Delay(seconds * 1000);
             await channel.AddPermissionOverwriteAsync(Context.Guild.EveryoneRole, new OverwritePermissions().Modify(perms.CreateInstantInvite, perms.ManageChannel, perms.AddReactions, perms.ReadMessages, perms.SendMessages));
 
-            await _moderationService.ModLogAsync(Context.DbGuild, Context.Guild, "Chill", new Color(34, 59, 255), reason, Context.User, null, "Length", $"{seconds} seconds");
+            await _moderationService.TryModLogAsync(Context.DbGuild, Context.Guild, "Chill", new Color(34, 59, 255), reason, Context.User, null, "Length", $"{seconds} seconds");
         }
     }
 }

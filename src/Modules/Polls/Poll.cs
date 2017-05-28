@@ -2,7 +2,6 @@
 using Discord.Commands;
 using System;
 using System.Threading.Tasks;
-using DEA.Common.Data;
 
 namespace DEA.Modules.Polls
 {

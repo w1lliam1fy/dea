@@ -1,7 +1,6 @@
 ﻿using Discord.Commands;
 using System.Threading.Tasks;
 using MongoDB.Driver;
-using DEA.Common.Data;
 using System.Linq;
 using DEA.Common.Extensions;
 
@@ -14,7 +13,7 @@ namespace DEA.Modules.Gangs
         [Summary("Shows the wealthiest gangs.")]
         public async Task Ganglb()
         {
-            var gangs = await (await _gangRepo.Collection.FindAsync(y => y.GuildId == Context.Guild.Id)).ToListAsync();
+            var gangs = await _gangRepo.AllAsync();
 
             if (gangs.Count == 0)
             {

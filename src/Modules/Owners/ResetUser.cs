@@ -1,7 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
 using System.Threading.Tasks;
-using MongoDB.Driver;
 using DEA.Common.Extensions;
 
 namespace DEA.Modules.Owners
@@ -15,8 +14,8 @@ namespace DEA.Modules.Owners
         {
             user = user ?? Context.GUser;
 
-            await _userRepo.Collection.DeleteOneAsync(y => y.UserId == user.Id && y.GuildId == user.GuildId);
-            await _RankHandler.HandleAsync(Context.Guild, user, Context.DbGuild, await _userRepo.GetUserAsync(user));
+            await _userRepo.DeleteAsync(Context.DbUser);
+            await _RankHandler.HandleAsync(user, Context.DbGuild, await _userRepo.GetUserAsync(user));
 
             await SendAsync($"Successfully reset {user.Boldify()}'s data.");
         }

@@ -20,7 +20,7 @@ namespace DEA.Modules.BotOwners
                 var user = await (Context.Client as IDiscordClient).GetUserAsync(userId);
 
                 username = user.Username;
-                avatarUrl = user.GetAvatarUrl();
+                avatarUrl = user.GetAvatarUrl(ImageFormat.Png, 2048);
             }
             catch
             {
@@ -30,8 +30,22 @@ namespace DEA.Modules.BotOwners
             var blacklist = new Blacklist(userId, username, avatarUrl);
             await _blacklistRepo.InsertAsync(blacklist);
 
-            foreach (var guild in Context.Client.Guilds)
+            foreach (var guild in await (Context.Client as IDiscordClient).GetGuildsAsync())
             {
+                var user = guild.GetUserAsync(userId);
+
+                if (user != null)
+                {
+                    try
+                    {
+                        await guild.AddBanAsync(user as IUser);
+                    }
+                    catch
+                    {
+                        //Ignored.
+                    }
+                }
+
                 if (guild.OwnerId == userId)
                 {
                     await _blacklistRepo.AddGuildAsync(userId, guild.Id);

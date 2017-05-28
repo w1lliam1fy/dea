@@ -1,5 +1,4 @@
-﻿using DEA.Common.Data;
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
 
 namespace DEA.Database.Models
 {

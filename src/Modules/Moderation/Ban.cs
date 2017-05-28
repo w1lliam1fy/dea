@@ -1,7 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
 using System.Threading.Tasks;
-using DEA.Common.Data;
 using DEA.Common.Extensions;
 
 namespace DEA.Modules.Moderation
@@ -19,12 +18,12 @@ namespace DEA.Modules.Moderation
                 ReplyError("You cannot ban another mod with a permission level higher or equal to your own.");
             }
 
-            await _moderationService.InformSubjectAsync(Context.User, "Ban", userToBan, reason);
+            await _moderationService.TryInformSubjectAsync(Context.User, "Ban", userToBan, reason);
             await Context.Guild.AddBanAsync(userToBan);
 
             await SendAsync($"{Context.User.Boldify()} has successfully banned {userToBan.Boldify()}.");
 
-            await _moderationService.ModLogAsync(Context.DbGuild, Context.Guild, "Ban", Config.ERROR_COLOR, reason, Context.User, userToBan);
+            await _moderationService.TryModLogAsync(Context.DbGuild, Context.Guild, "Ban", Config.ERROR_COLOR, reason, Context.User, userToBan);
         }
     }
 }

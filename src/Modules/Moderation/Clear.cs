@@ -1,7 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
 using System.Threading.Tasks;
-using DEA.Common.Data;
 
 namespace DEA.Modules.Moderation
 {
@@ -31,7 +30,7 @@ namespace DEA.Modules.Moderation
 
             var msg = await ReplyAsync($"Messages deleted: **{quantity}**.");
 
-            await _moderationService.ModLogAsync(Context.DbGuild, Context.Guild, "Clear", new Color(34, 59, 255), reason, Context.User, null, "Quantity", $"{quantity}");
+            await _moderationService.TryModLogAsync(Context.DbGuild, Context.Guild, "Clear", new Color(34, 59, 255), reason, Context.User, null, "Quantity", $"{quantity}");
 
             await Task.Delay(2500);
             await msg.DeleteAsync();

@@ -1,6 +1,6 @@
-﻿using DEA.Common.Data;
-using DEA.Common.Extensions;
+﻿using DEA.Common.Extensions;
 using DEA.Common.Preconditions;
+using DEA.Common.Utilities;
 using Discord.Commands;
 using System.Threading.Tasks;
 
@@ -32,7 +32,7 @@ namespace DEA.Modules.Crime
                 await ReplyAsync($"You walk in to your local {randomStore}, point a fake gun at the clerk, and manage to walk away " +
                                  $"with {moneyStolen.USD()}. Balance: {Context.Cash.USD()}.");
             }
-            _rateLimitService.Add(Context.User.Id, Context.Guild.Id, "Steal", Config.STEAL_COOLDOWN);
+            _rateLimitService.TryAdd(new RateLimit(Context.User.Id, Context.Guild.Id, "Steal", Config.STEAL_COOLDOWN));
         }
     }
 }

@@ -3,7 +3,6 @@ using Discord.Commands;
 using System;
 using System.Threading.Tasks;
 using System.Linq;
-using DEA.Common.Data;
 using System.Diagnostics;
 
 namespace DEA.Modules.System

@@ -1,5 +1,5 @@
 ﻿using DEA.Common;
-using DEA.Common.Utilities;
+using DEA.Common.Items;
 using DEA.Database.Models;
 using DEA.Services.Handlers;
 using Discord;
@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DEA.Database.Repositories
 {
-    public class UserRepository : BaseRepository<User>
+    public sealed class UserRepository : BaseRepository<User>
     {
         private readonly RankHandler _RankHandler;
         private readonly Item[] _items;
@@ -40,7 +40,7 @@ namespace DEA.Database.Repositories
 
         public async Task ModifyUserAsync(IGuildUser user, Action<User> function)
         {
-            await ModifyAsync(await GetUserAsync(user.Id, user.GuildId), function);
+            await ModifyAsync(await GetUserAsync(user), function);
         }
 
         public async Task EditCashAsync(DEAContext context, decimal change)
@@ -49,14 +49,14 @@ namespace DEA.Database.Repositories
             context.Cash = newCash;
             context.DbUser.Cash = newCash; 
             await UpdateAsync(context.DbUser);
-            await _RankHandler.HandleAsync(context.Guild, context.GUser, context.DbGuild, context.DbUser);
+            await _RankHandler.HandleAsync(context.GUser, context.DbGuild, context.DbUser);
         }
 
         public async Task EditCashAsync(IGuildUser user, Guild dbGuild, User dbUser, decimal change)
         {
             dbUser.Cash = Math.Round(dbUser.Cash + change, 2);
             await UpdateAsync(dbUser);
-            await _RankHandler.HandleAsync(user.Guild, user, dbGuild, dbUser);
+            await _RankHandler.HandleAsync(user, dbGuild, dbUser);
         }
 
     }

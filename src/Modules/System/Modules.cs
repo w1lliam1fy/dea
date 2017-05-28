@@ -16,7 +16,7 @@ namespace DEA.Modules.System
                 modules += $"{module.Name}, ";
             }
 
-            return ReplyAsync("Current command modules: " + modules.Substring(0, modules.Length - 2) + ".");
+            return ReplyAsync("Current command modules: " + modules.Remove(modules.Length - 2) + ".");
         }
     }
 }

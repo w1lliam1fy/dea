@@ -1,6 +1,6 @@
-﻿using DEA.Common.Data;
-using DEA.Common.Extensions;
+﻿using DEA.Common.Extensions;
 using DEA.Common.Preconditions;
+using DEA.Common.Utilities;
 using Discord;
 using Discord.Commands;
 using System.Threading.Tasks;
@@ -37,7 +37,7 @@ namespace DEA.Modules.Crime
 
             await _userRepo.EditCashAsync(Context, totalCashGain);
             await ReplyAsync($"You have successfully collected {totalCashGain.USD()} in slave money.");
-            _rateLimitService.Add(Context.User.Id, Context.Guild.Id, "Collect", Config.COLLECT_COOLDOWN);
+            _rateLimitService.TryAdd(new RateLimit(Context.User.Id, Context.Guild.Id, "Collect", Config.COLLECT_COOLDOWN));
         }
     }
 }

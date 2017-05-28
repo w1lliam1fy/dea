@@ -20,7 +20,7 @@ namespace DEA.Modules.Gangs
             await _gangRepo.RemoveMemberAsync(Context.Gang, Context.User.Id);
             await ReplyAsync($"You have successfully left {Context.Gang.Name}.");
 
-            await Context.Gang.LeaderId.DMAsync(Context.Client, $"{Context.User.Boldify()} has left {Context.Gang.Name}.");
+            await Context.Gang.LeaderId.TryDMAsync(Context.Client, $"{Context.User.Boldify()} has left {Context.Gang.Name}.");
         }
     }
 }

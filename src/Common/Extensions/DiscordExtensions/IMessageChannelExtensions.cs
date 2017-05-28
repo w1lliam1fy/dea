@@ -1,5 +1,4 @@
-﻿using DEA.Common.Data;
-using Discord;
+﻿using Discord;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -47,7 +46,7 @@ namespace DEA.Common.Extensions.DiscordExtensions
             return channel.SendMessageAsync(string.Empty, embed: builder);
         }
 
-        public static Task<IUserMessage> SendError(this IMessageChannel channel, string message)
+        public static Task<IUserMessage> SendErrorAsync(this IMessageChannel channel, string message)
         {
             return channel.SendAsync(message, null, Config.ERROR_COLOR);
         }

@@ -14,7 +14,7 @@ namespace DEA.Modules.Polls
         [Summary("Sends you a list of all polls in progress.")]
         public async Task Indexes()
         {
-            var polls = await (await _pollRepo.Collection.FindAsync(y => y.GuildId == Context.Guild.Id)).ToListAsync();
+            var polls = await _pollRepo.AllAsync(x => x.GuildId == Context.Guild.Id);
 
             polls = polls.OrderBy(x => x.CreatedAt).ToList();
 

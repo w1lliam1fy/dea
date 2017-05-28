@@ -1,5 +1,4 @@
 ﻿using DEA.Common;
-using DEA.Common.Data;
 using DEA.Common.Extensions;
 using DEA.Common.Extensions.DiscordExtensions;
 using DEA.Services.Static;
@@ -16,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace DEA.Services.Handlers
 {
-    class ErrorHandler
+    internal sealed class ErrorHandler
     {
         private readonly CommandService _commandService;
 
@@ -98,6 +97,8 @@ namespace DEA.Services.Handlers
                                 await cmdEx.Context.Channel.SendFileAsync(ms, "Stack_Trace.txt");
                             }
                         }
+
+                        Logger.Log(LogSeverity.Error, cmdEx.Source, cmdEx.StackTrace);
                     }
                 }
                 else if (logMessage.Exception != null)
@@ -107,7 +108,7 @@ namespace DEA.Services.Handlers
             });
         }
 
-        public Task HandleCommandFailureAsync(DEAContext context, IResult result, int argPos)
+        public Task HandleCommandFailureAsync(DEAContext context, IResult result)
         {
             var args = context.Message.Content.Split(' ');
             var commandName = args.First().StartsWith(context.DbGuild.Prefix) ? args.First().Remove(0, context.DbGuild.Prefix.Length) : args[1];
@@ -130,11 +131,10 @@ namespace DEA.Services.Handlers
                     }
                     break;
                 case CommandError.BadArgCount:
-                    var cmd = _commandService.Search(context, argPos).Commands.First().Command;
-                    var cmdNameUpperFirst = commandName.UpperFirstChar();
-                    var example = cmd.Parameters.Count == 0 ? string.Empty : $"**Example:** `{context.DbGuild.Prefix}{cmdNameUpperFirst} {cmd.Remarks}`";
+                    commandName = commandName.UpperFirstChar();
+                    var example = context.Command.Parameters.Count == 0 ? string.Empty : $"**Example:** `{context.DbGuild.Prefix}{commandName} {context.Command.Remarks}`";
 
-                    message = $"You are incorrectly using this command. \n\n**Usage:** `{context.DbGuild.Prefix}{cmdNameUpperFirst}{cmd.GetUsage()}`\n\n" + example;   
+                    message = $"You are incorrectly using this command. \n\n**Usage:** `{context.DbGuild.Prefix}{commandName}{context.Command.GetUsage()}`\n\n" + example;   
                     break;
                 case CommandError.ParseFailed:
                     message = $"Invalid number. Please ensure you are correctly using this command by entering: `{context.DbGuild.Prefix}Help {commandName}`.";
