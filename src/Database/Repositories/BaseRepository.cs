@@ -35,7 +35,7 @@ namespace DEA.Database.Repositories
             }
             else
             {
-                return await (await Collection.FindAsync(Builders<T>.Filter.Empty)).ToListAsync();
+                return await(await Collection.FindAsync(Builders<T>.Filter.Empty)).ToListAsync();
             }
         }
 
