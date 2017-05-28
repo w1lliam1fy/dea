@@ -41,7 +41,7 @@ namespace DEA.Services.Timers
                 {
                     try
                     {
-                        await _gangRepo.ModifyAsync(y => y.Id == gang.Id, x => x.Wealth += InterestRate.Calculate(gang.Wealth) * gang.Wealth);
+                        await _gangRepo.ModifyAsync(gang, x => x.Wealth += InterestRate.Calculate(x.Wealth) * x.Wealth);
                     }
                     catch (OverflowException)
                     {

@@ -15,7 +15,7 @@ namespace DEA.Modules.Crime
     {
         [Command("Shoot")]
         [Cooldown]
-        [Remarks("Sexy John#0007")]
+        [Remarks("Sexy John#0007 Revolver")]
         [Summary("Attempt to shoot a user.")]
         public async Task Shoot(IGuildUser userToShoot, [Own] [Remainder] Gun gun)
         {

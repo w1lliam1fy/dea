@@ -15,7 +15,7 @@ namespace DEA.Modules.Crime
     {
         [Command("Stab")]
         [Cooldown]
-        [Remarks("Sexy John#0007")]
+        [Remarks("Sexy John#0007 Huntsman Knife")]
         [Summary("Attempt to stab a user.")]
         public async Task Stab(IGuildUser userToStab, [Own] [Remainder] Knife knife)
         {

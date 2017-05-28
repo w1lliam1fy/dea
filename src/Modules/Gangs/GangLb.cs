@@ -13,7 +13,7 @@ namespace DEA.Modules.Gangs
         [Summary("Shows the wealthiest gangs.")]
         public async Task Ganglb()
         {
-            var gangs = await _gangRepo.AllAsync();
+            var gangs = await _gangRepo.AllAsync(x => x.GuildId == Context.Guild.Id);
 
             if (gangs.Count == 0)
             {
