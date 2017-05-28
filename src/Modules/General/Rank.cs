@@ -36,7 +36,7 @@ namespace DEA.Modules.General
                     continue;
                 }
 
-                slaveInfo += $"{slaveUser.Boldify()}, ";
+                slaveInfo += $"{slaveUser}, ";
             }
 
             IRole rank = await _RankHandler.GetRankAsync(Context, dbUser);
@@ -44,7 +44,7 @@ namespace DEA.Modules.General
                               $"**Health:** {dbUser.Health}\n" +
                               $"**Position:** #{sorted.FindIndex(x => x.UserId == user.Id) + 1}\n" +
                               (rank == null ? string.Empty : $"**Rank:** {rank.Mention}\n") +
-                              (slaveOwner == null ? string.Empty : $"**Slave Owner:** {slaveOwner.Boldify()}\n") +
+                              (slaveOwner == null ? string.Empty : $"**Slave Owner:** {slaveOwner}\n") +
                               (dbUser.Bounty == 0 ? string.Empty : $"**Bounty:** {dbUser.Bounty.USD()}") +
                               (ownedSlaves.Any() ? slaveInfo.Remove(slaveInfo.Length - 2) : string.Empty);
 
