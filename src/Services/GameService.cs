@@ -45,8 +45,7 @@ namespace DEA.Services
                 throw new DEAException("There are no trivia questions yet!");
             }
 
-            var random = Config.RAND;
-            int roll = random.Next(0, dbGuild.Trivia.ElementCount);
+            int roll = Config.RAND.Next(0, dbGuild.Trivia.ElementCount);
 
             var element = dbGuild.Trivia.GetElement(roll);
             var answer = element.Value.AsString.ToLower();
@@ -63,7 +62,7 @@ namespace DEA.Services
             if (response != null)
             {
                 var user = response.Author as IGuildUser;
-                var winnings = random.Next(Config.TRIVIA_PAYOUT_MIN * 100, Config.TRIVIA_PAYOUT_MAX * 100) / 100m;
+                var winnings = Config.RAND.Next(Config.TRIVIA_PAYOUT_MIN * 100, Config.TRIVIA_PAYOUT_MAX * 100) / 100m;
                 await _userRepo.EditCashAsync(user, dbGuild, await _userRepo.GetUserAsync(user), winnings);
                 await channel.SendAsync($"{user.Boldify()}, Congrats! You just won {winnings.USD()} for correctly answering \"{element.Value.AsString}\".");
             }
