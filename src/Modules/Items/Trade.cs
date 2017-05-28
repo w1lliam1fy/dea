@@ -20,6 +20,10 @@ namespace DEA.Modules.Items
             {
                 ReplyError("It takes great skill and concetration to actually reach full retard by trading with yourself. You are not quite there.");
             }
+            else if (exchangeItemQuantity < 0 || requestedItemQuantity < 0)
+            {
+                ReplyError("You may not trade negative items.");
+            }
 
             var userDM = await userToTrade.CreateDMChannelAsync();
             var key = Config.RAND.Next();
