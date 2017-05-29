@@ -20,16 +20,19 @@ namespace DEA.Common.TypeReaders
 
         public override Task<TypeReaderResult> Read(ICommandContext context, string input)
         {
-            input = input.ToLower();
-
-            var item = _items.FirstOrDefault(x => x.Name.ToLower() == input);
-
-            if (item != null)
+            return Task.Run(() =>
             {
-                return Task.FromResult(TypeReaderResult.FromSuccess(item));
-            }
+                input = input.ToLower();
 
-            return Task.FromResult(TypeReaderResult.FromError(CommandError.ObjectNotFound, "This item does not exist."));
+                var item = _items.FirstOrDefault(x => x.Name.ToLower() == input);
+
+                if (item != null)
+                {
+                    return Task.FromResult(TypeReaderResult.FromSuccess(item));
+                }
+
+                return Task.FromResult(TypeReaderResult.FromError(CommandError.ObjectNotFound, "This item does not exist."));
+            });
         }
     }
 }

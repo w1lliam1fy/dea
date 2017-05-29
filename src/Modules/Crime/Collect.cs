@@ -10,12 +10,12 @@ namespace DEA.Modules.Crime
     public partial class Crime
     {
         [Command("Collect")]
-        [Require(Attributes.SlaveOwner)]
         [Cooldown]
         [Summary("Collect a portion from your slaves.")]
         public async Task Collect()
         {
             var collection = await _userRepo.AllAsync(x => x.SlaveOf == Context.User.Id && x.GuildId == Context.Guild.Id);
+
             if (collection.Count == 0)
             {
                 ReplyError("You are not an owner of any slaves.");

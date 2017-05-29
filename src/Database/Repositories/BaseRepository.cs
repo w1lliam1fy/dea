@@ -1,5 +1,4 @@
 ﻿using DEA.Database.Models;
-using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -9,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DEA.Database.Repositories
 {
-    public class BaseRepository<T> where T : Model
+    public abstract class BaseRepository<T> where T : Model
     {
         private readonly IMongoCollection<T> _collection;
 
@@ -28,16 +27,14 @@ namespace DEA.Database.Repositories
             return _collection.Find(filter).Limit(1).FirstOrDefaultAsync();
         }
 
-        public Task<List<T>> AllAsync(Expression<Func<T, bool>> filter = null)
+        public Task<List<T>> AllAsync(Expression<Func<T, bool>> filter)
         {
-            if (filter != null)
-            {
-                return _collection.Find(filter).ToListAsync();
-            }
-            else
-            {
-                return _collection.Find(Builders<T>.Filter.Empty).ToListAsync();
-            }
+            return _collection.Find(filter).ToListAsync();
+        }
+
+        public Task<List<T>> AllAsync()
+        {
+            return _collection.Find(Builders<T>.Filter.Empty).ToListAsync();
         }
 
         public Task UpdateAsync(T entity)

@@ -22,7 +22,7 @@ namespace DEA.Modules.General
             var users = await _userRepo.AllAsync(x => x.GuildId == Context.Guild.Id);
             var sorted = users.OrderByDescending(x => x.Cash).ToList();
             var slaveOwner = await guildInterface.GetUserAsync(dbUser.SlaveOf);
-            var ownedSlaves = users.Where(x => x.SlaveOf == user.Id && x.GuildId == Context.Guild.Id);
+            var ownedSlaves = users.Where(x => x.SlaveOf == user.Id);
 
             var slaveInfo = "**Owned Slaves:** ";
             

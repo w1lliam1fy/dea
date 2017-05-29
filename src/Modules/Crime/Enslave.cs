@@ -13,7 +13,7 @@ namespace DEA.Modules.Crime
     {
         [Command("Enslave")]
         [Cooldown]
-        [Remarks("Sexy John#0007")]
+        [Remarks("Sexy John#0007 Karambit")]
         [Summary("Enslave any users at low health.")]
         public async Task Enslave(IGuildUser userToEnslave, [Own] [Remainder] Weapon weapon)
         {

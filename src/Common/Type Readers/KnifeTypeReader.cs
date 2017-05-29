@@ -20,16 +20,19 @@ namespace DEA.Common.TypeReaders
 
         public override Task<TypeReaderResult> Read(ICommandContext context, string input)
         {
-            input = input.ToLower();
-
-            var knife = _knives.FirstOrDefault(x => x.Name.ToLower() == input);
-
-            if (knife != null)
+            return Task.Run(() =>
             {
-                return Task.FromResult(TypeReaderResult.FromSuccess(knife));
-            }
+                input = input.ToLower();
 
-            return Task.FromResult(TypeReaderResult.FromError(CommandError.ObjectNotFound, "This item either does not exist or is not a knife."));
+                var knife = _knives.FirstOrDefault(x => x.Name.ToLower() == input);
+
+                if (knife != null)
+                {
+                    return Task.FromResult(TypeReaderResult.FromSuccess(knife));
+                }
+
+                return Task.FromResult(TypeReaderResult.FromError(CommandError.ObjectNotFound, "This item either does not exist or is not a knife."));
+            });
         }
     }
 }

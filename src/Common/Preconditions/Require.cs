@@ -28,7 +28,7 @@ namespace DEA.Common.Preconditions
         
         public override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider serviceProvider)
         {
-            return Task.Run(async () =>
+            return Task.Run(() =>
             {
                 _serviceProvider = serviceProvider;
                 _userRepo = _serviceProvider.GetService<UserRepository>();
@@ -115,12 +115,6 @@ namespace DEA.Common.Preconditions
                             if (deaContext.Cash < Config.FIFTYX2_REQUIREMENT)
                             {
                                 return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.FIFTYX2_REQUIREMENT.USD()}.");
-                            }
-                            break;
-                        case Attributes.SlaveOwner:
-                            if (await _userRepo.AnyAsync(x => x.SlaveOf == deaContext.DbUser.UserId && x.GuildId == deaContext.DbUser.GuildId))
-                            {
-                                return PreconditionResult.FromError($"Only slave owners may use this command.");
                             }
                             break;
                         default:
