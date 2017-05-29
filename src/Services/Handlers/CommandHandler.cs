@@ -53,7 +53,7 @@ namespace DEA.Services.Handlers
                 {
                     return;
                 }
-                else if ((await _blacklistRepo.AllAsync()).Exists(x => x.UserId == msg.Author.Id))
+                else if (await _blacklistRepo.AnyAsync(x => x.UserId == msg.Author.Id))
                 {
                     return;
                 }
