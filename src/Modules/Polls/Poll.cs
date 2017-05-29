@@ -31,7 +31,7 @@ namespace DEA.Modules.Polls
             var timeRemaining = TimeSpan.FromMilliseconds(poll.Length).Subtract(DateTime.UtcNow.Subtract(poll.CreatedAt));
             if (timeRemaining.Ticks > 0)
             {
-                description += $"\nEnding in: Days: {timeRemaining.Days}, Hours: {timeRemaining.Hours}, Minutes: {timeRemaining.Minutes}, Seconds: {timeRemaining.Seconds}";
+                description += $"\n**Ending:** Days: {timeRemaining.Days}, Hours: {timeRemaining.Hours}, Minutes: {timeRemaining.Minutes}, Seconds: {timeRemaining.Seconds}";
             }
             else
             {
@@ -49,7 +49,7 @@ namespace DEA.Modules.Polls
 
             var creator = await (Context.Guild as IGuild).GetUserAsync(poll.CreatorId);
 
-            description += $"\n\nCreator: {creator}";
+            description += $"\n\n**Creator:** {creator}";
 
             await SendAsync(description, poll.Name);
         }
