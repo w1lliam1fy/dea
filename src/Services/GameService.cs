@@ -107,6 +107,11 @@ namespace DEA.Services
 
         public async Task<IReadOnlyDictionary<string, int>> MassOpenCratesAsync(Crate crate, int quantity, User dbUser = null)
         {
+            if (quantity > Config.MAX_CRATE_OPEN)
+            {
+                throw new DEAException($"You may not be open more than {Config.MAX_CRATE_OPEN.ToString("N0")} crates.");
+            }
+
             var itemsToAdd = new Dictionary<string, int>();
 
             for (int i = 0; i < quantity; i++)

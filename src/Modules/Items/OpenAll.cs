@@ -17,7 +17,6 @@ namespace DEA.Modules.Items
         {
             var quantity = Context.DbUser.Inventory[crate.Name].AsInt32;
 
-            await _gameService.ModifyInventoryAsync(Context.DbUser, crate.Name, -quantity);
             IReadOnlyDictionary<string,int> items = await _gameService.MassOpenCratesAsync(crate, quantity, Context.DbUser);
 
             var reply = string.Empty;
