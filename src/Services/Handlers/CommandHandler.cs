@@ -81,6 +81,7 @@ namespace DEA.Services.Handlers
                     if (!perms.SendMessages || !perms.EmbedLinks)
                     {
                         await context.User.TryDMAsync("DEA cannot execute any commands without the permission to send embedded messages.");
+                        return;
                     }
 
                     Logger.Log(LogSeverity.Debug, $"Guild: {context.Guild}, User: {context.User}", msg.Content);

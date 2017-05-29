@@ -24,7 +24,7 @@ namespace DEA.Modules.BotOwners
             }
             catch
             {
-                //Ignored.
+                // Ignored.
             }
 
             var blacklist = new Blacklist(userId, username, avatarUrl);
@@ -42,7 +42,7 @@ namespace DEA.Modules.BotOwners
                     }
                     catch
                     {
-                        //Ignored.
+                        // Ignored.
                     }
                 }
 

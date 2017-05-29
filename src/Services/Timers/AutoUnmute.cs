@@ -61,7 +61,7 @@ namespace DEA.Services.Timers
                     }
                     catch
                     {
-                        //Ignored.
+                        // Ignored.
                     }
                     finally
                     {

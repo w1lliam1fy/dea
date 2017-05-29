@@ -27,7 +27,7 @@ namespace DEA.Modules.BotOwners
                     }
                     catch
                     {
-                        //Ignored.
+                        // Ignored.
                     }
                 }
             }

@@ -46,7 +46,7 @@ namespace DEA.Events
                     }
                     catch
                     {
-                        //Ignored.
+                        // Ignored.
                     }
                 }
 
@@ -75,7 +75,7 @@ namespace DEA.Events
                         }
                         catch
                         {
-                            //Ignored.
+                            // Ignored.
                         }
                     }
                     else
@@ -87,7 +87,7 @@ namespace DEA.Events
                         }
                         catch
                         {
-                            //Ignored.
+                            // Ignored.
                         }
                     }
                 }
