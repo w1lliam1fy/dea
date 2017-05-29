@@ -45,7 +45,7 @@ namespace DEA.Services.Timers
                     }
                     catch (OverflowException)
                     {
-                        //Ignored.
+                        // Ignored.
                     }
                 }
             });
