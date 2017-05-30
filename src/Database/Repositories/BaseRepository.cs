@@ -52,7 +52,7 @@ namespace DEA.Database.Repositories
         
         public async Task<bool> AnyAsync(Expression<Func<T, bool>> filter)
         {
-            return (await _collection.Find(filter).Limit(1).CountAsync()) == 0;
+            return (await _collection.Find(filter).Limit(1).CountAsync()) != 0;
         }
 
         public Task ModifyAsync(T entity, Action<T> function)

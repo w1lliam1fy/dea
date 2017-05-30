@@ -1,7 +1,6 @@
 ﻿using DEA.Common.Extensions;
 using DEA.Common.Preconditions;
 using DEA.Common.Utilities;
-using DEA.Services.Static;
 using Discord.Commands;
 using System;
 using System.Threading.Tasks;
@@ -35,7 +34,7 @@ namespace DEA.Modules.Gangs
 
             var stolen = resources * 2;
 
-            int roll = CryptoRandom.Next(100);
+            int roll = Config.Random.Next(1, 101);
             var membersDeduction = raidedGang.Members.Length * 5;
 
             if (Config.RAID_SUCCESS_ODDS - membersDeduction > roll)

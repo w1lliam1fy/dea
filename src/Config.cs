@@ -1,7 +1,8 @@
-﻿using DEA.Services.Static;
-using Discord;
+﻿using Discord;
 using System;
 using System.Text.RegularExpressions;
+using System.Threading;
+using Troschuetz.Random;
 
 internal static class Config
 {
@@ -28,7 +29,13 @@ internal static class Config
         new Color(150, 36, 237), new Color(168, 237, 0)
     };
 
-    public static Color Color() { return _colors[CryptoRandom.Next(_colors.Length) - 1]; }
+    private static int _seed = Environment.TickCount;
+
+    private static readonly ThreadLocal<TRandom> _random = new ThreadLocal<TRandom>(() => new TRandom(Interlocked.Increment(ref _seed)));
+
+    public static TRandom Random => _random.Value;
+
+    public static Color Color() { return _colors[Random.Next(_colors.Length)]; }
 
     public static readonly Color ERROR_COLOR = new Color(255, 0, 0);
 

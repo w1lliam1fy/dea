@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using System.Net.Http;
 using Newtonsoft.Json.Linq;
-using DEA.Services.Static;
 
 namespace DEA.Modules.NSFW
 {
@@ -15,7 +14,7 @@ namespace DEA.Modules.NSFW
         {
             using (var http = new HttpClient())
             {
-                var obj = JArray.Parse(await http.GetStringAsync($"http://api.oboobs.ru/boobs/{CryptoRandom.Next(10738)}"))[0];
+                var obj = JArray.Parse(await http.GetStringAsync($"http://api.oboobs.ru/boobs/{Config.Random.Next(10738)}"))[0];
                 await Context.Channel.SendMessageAsync($"http://media.oboobs.ru/{obj["preview"]}");
             }
         }

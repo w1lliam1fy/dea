@@ -15,8 +15,6 @@ namespace DEA.Modules.Items
         [Summary("Open a crate!")]
         public async Task OpenAll([Own] [Remainder] Crate crate)
         {
-            ReplyError("This command is temporarily disabled until the random issue is solved.");
-
             var quantity = Context.DbUser.Inventory[crate.Name].AsInt32;
 
             IReadOnlyDictionary<string,int> items = await _gameService.MassOpenCratesAsync(crate, quantity, Context.DbUser);

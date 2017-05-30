@@ -1,7 +1,6 @@
 ﻿using DEA.Common.Extensions;
 using DEA.Common.Preconditions;
 using DEA.Common.Utilities;
-using DEA.Services.Static;
 using Discord.Commands;
 using System.Threading.Tasks;
 
@@ -15,7 +14,7 @@ namespace DEA.Modules.Crime
         [Summary("Jump some random nigga in the hood.")]
         public async Task Jump()
         {
-            int roll = CryptoRandom.Next(100);
+            int roll = Config.Random.Next(1, 101);
             if (roll > Config.JUMP_ODDS)
             {
                 await _userRepo.EditCashAsync(Context, -Config.JUMP_FINE);
@@ -25,7 +24,7 @@ namespace DEA.Modules.Crime
             }
             else
             {
-                decimal moneyJumped = CryptoRandom.NextDecimal(Config.MIN_JUMP, Config.MAX_JUMP);
+                decimal moneyJumped = (decimal)Config.Random.NextDouble((double)Config.MIN_JUMP, (double)Config.MAX_JUMP);
                 await _userRepo.EditCashAsync(Context, moneyJumped);
 
                 await ReplyAsync($"You jump some random nigga on the streets and manage to get {moneyJumped.USD()}. Balance: {Context.Cash.USD()}.");

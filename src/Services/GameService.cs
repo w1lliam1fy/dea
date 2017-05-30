@@ -9,7 +9,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using DEA.Common.Items;
-using DEA.Services.Static;
 
 namespace DEA.Services
 {
@@ -46,7 +45,7 @@ namespace DEA.Services
                 throw new DEAException("There are no trivia questions yet!");
             }
 
-            int roll = CryptoRandom.Next(dbGuild.Trivia.ElementCount) - 1;
+            int roll = Config.Random.Next(dbGuild.Trivia.ElementCount);
 
             var element = dbGuild.Trivia.GetElement(roll);
             var answer = element.Value.AsString.ToLower();
@@ -63,7 +62,7 @@ namespace DEA.Services
             if (response != null)
             {
                 var user = response.Author as IGuildUser;
-                var winnings = CryptoRandom.NextDecimal(Config.TRIVIA_PAYOUT_MIN, Config.TRIVIA_PAYOUT_MAX);
+                var winnings = (decimal)Config.Random.NextDouble((double)Config.TRIVIA_PAYOUT_MIN, (double)Config.TRIVIA_PAYOUT_MAX);
                 await _userRepo.EditCashAsync(user, dbGuild, await _userRepo.GetUserAsync(user), winnings);
                 await channel.SendAsync($"{user.Boldify()}, Congrats! You just won {winnings.USD()} for correctly answering \"{element.Value.AsString}\".");
             }
@@ -91,7 +90,7 @@ namespace DEA.Services
                 throw new DEAException($"You do not have enough money. Balance: {context.Cash.USD()}.");
             }
 
-            decimal roll = CryptoRandom.NextDecimal(1, 100);
+            decimal roll = (decimal)Config.Random.NextDouble(1, 101);
             if (roll >= odds)
             {
                 await _userRepo.EditCashAsync(context, bet * payoutMultiplier);
@@ -143,9 +142,9 @@ namespace DEA.Services
         public async Task<Item> OpenCrateAsync(Crate crate, User dbUser = null)
         {
             int cumulative = 0;
-            int roll = CryptoRandom.Next(_crateOdds);
+            int roll = Config.Random.Next(1, _crateOdds);
 
-            if (crate.ItemOdds >= CryptoRandom.Next(100))
+            if (crate.ItemOdds >= Config.Random.Next(1, 101))
             {
                 foreach (var item in _crateItems)
                 {
@@ -181,11 +180,11 @@ namespace DEA.Services
                 throw new Exception("Invalid food type.");
             }
 
-            if (CryptoRandom.Next(100) <= weaponAccuracy)
+            if (Config.Random.Next(1, 101) <= weaponAccuracy)
             {
                 int cumulative = 0;
                 int sum = type == typeof(Meat) ? _meatOdds : _fishOdds;
-                int roll = CryptoRandom.Next(sum);
+                int roll = Config.Random.Next(1, sum + 1);
 
                 foreach (var item in type == typeof(Meat) ? (Food[])_meat : _fish)
                 {

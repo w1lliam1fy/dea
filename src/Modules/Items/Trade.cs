@@ -6,7 +6,6 @@ using DEA.Common.Extensions.DiscordExtensions;
 using DEA.Common.Extensions;
 using DEA.Common.Items;
 using DEA.Common.Preconditions;
-using DEA.Services.Static;
 
 namespace DEA.Modules.Items
 {
@@ -27,7 +26,7 @@ namespace DEA.Modules.Items
             }
 
             var userDM = await userToTrade.CreateDMChannelAsync();
-            var key = CryptoRandom.Next();
+            var key = Config.Random.Next();
             var firstS = exchangeItemQuantity == 1 ? string.Empty : "s";
             var secondS = requestedItemQuantity == 1 ? string.Empty : "s";
 

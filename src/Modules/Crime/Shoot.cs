@@ -8,7 +8,6 @@ using DEA.Common.Preconditions;
 using DEA.Common.Utilities;
 using DEA.Common.Items;
 using System.Linq;
-using DEA.Services.Static;
 
 namespace DEA.Modules.Crime
 {
@@ -27,7 +26,7 @@ namespace DEA.Modules.Crime
 
             var dbUser = await _userRepo.GetUserAsync(userToShoot);
 
-            if (CryptoRandom.Next(100) < gun.Accuracy)
+            if (Config.Random.Next(1, 101) < gun.Accuracy)
             {
                 var invData = _gameService.InventoryData(dbUser);
                 var damage = invData.Any(x => x is Armour) ? (int)(gun.Damage * 0.8) : gun.Damage;
