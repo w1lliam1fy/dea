@@ -6,6 +6,8 @@ using Discord.WebSocket;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using DEA.Database.Models;
 
 namespace DEA.Services.Timers
 {
@@ -41,9 +43,27 @@ namespace DEA.Services.Timers
             {
                 Logger.Log(LogSeverity.Debug, $"Timers", "Auto Unmute");
 
-                var collection = await _muteRepo.AllAsync();
+                List<Mute> collection = null;
 
-                Logger.Log(LogSeverity.Debug, "Passed the AllAsync() line", $"Collection count: {collection.Count}");
+                try
+                {
+                    collection = await _muteRepo.AllAsync();
+                }
+                catch (Exception e)
+                {
+                    Logger.Log(LogSeverity.Error, "Attempting to all async the mute repo.", e.StackTrace);
+                }
+                finally
+                {
+                    Logger.Log(LogSeverity.Debug, "Passed the AllAsync() line", $"Slightly mediocre");
+                }
+
+                if (collection == null)
+                {
+                    return;
+                }
+
+                Logger.Log(LogSeverity.Debug, "Successfully loaded collection", $"Collection count: {collection.Count}");
 
                 foreach (var mute in collection)
                 {
@@ -64,9 +84,9 @@ namespace DEA.Services.Timers
                         await _moderationService.TryModLogAsync(dbGuild, guild, "Automatic Unmute", new Color(12, 255, 129), string.Empty, null, user);
                         await Task.Delay(500);
                     }
-                    catch
+                    catch (Exception e)
                     {
-                        // Ignored.
+                        Logger.Log(LogSeverity.Error, "Auto Unmute role removal", e.StackTrace);
                     }
                     finally
                     {
