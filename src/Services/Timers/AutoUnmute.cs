@@ -41,7 +41,11 @@ namespace DEA.Services.Timers
             {
                 Logger.Log(LogSeverity.Debug, $"Timers", "Auto Unmute");
 
-                foreach (var mute in await _muteRepo.AllAsync())
+                var collection = await _muteRepo.AllAsync();
+
+                Logger.Log(LogSeverity.Debug, "Passed the AllAsync() line", $"Collection count: {collection.Count}");
+
+                foreach (var mute in collection)
                 {
                     if (DateTime.UtcNow.Subtract(mute.MutedAt).TotalMilliseconds <= mute.MuteLength)
                     {
@@ -56,6 +60,7 @@ namespace DEA.Services.Timers
                         var mutedRole = guild.GetRole(dbGuild.MutedRoleId);
 
                         await user.RemoveRoleAsync(mutedRole);
+                        Logger.Log(LogSeverity.Debug, "Successfully removed a role", $"Mute: {mute}");
                         await _moderationService.TryModLogAsync(dbGuild, guild, "Automatic Unmute", new Color(12, 255, 129), string.Empty, null, user);
                         await Task.Delay(500);
                     }
