@@ -1,6 +1,7 @@
 ﻿using DEA.Common.Extensions;
 using DEA.Common.Preconditions;
 using DEA.Common.Utilities;
+using DEA.Services.Static;
 using Discord.Commands;
 using System.Threading.Tasks;
 
@@ -13,7 +14,7 @@ namespace DEA.Modules.Crime
         [Summary("Sell your body for some quick cash.")]
         public async Task Whore()
         {
-            int roll = Config.RAND.Next(1, 101);
+            int roll = CryptoRandom.Next(100);
             if (roll > Config.WHORE_ODDS)
             {
                 await _userRepo.EditCashAsync(Context, -Config.WHORE_FINE);
@@ -23,7 +24,7 @@ namespace DEA.Modules.Crime
             }
             else
             {
-                decimal moneyWhored = (Config.RAND.Next((int)(Config.MIN_WHORE) * 100, (int)(Config.MAX_WHORE) * 100)) / 100m;
+                decimal moneyWhored = CryptoRandom.NextDecimal(Config.MIN_WHORE,Config.MAX_WHORE);
                 await _userRepo.EditCashAsync(Context, moneyWhored);
 
                 await ReplyAsync($"You whip it out and manage to rake in {moneyWhored.USD()}. Balance: {Context.Cash.USD()}.");

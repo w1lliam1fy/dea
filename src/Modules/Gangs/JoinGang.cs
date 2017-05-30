@@ -1,6 +1,7 @@
 ﻿using DEA.Common.Extensions;
 using DEA.Common.Extensions.DiscordExtensions;
 using DEA.Common.Preconditions;
+using DEA.Services.Static;
 using Discord;
 using Discord.Commands;
 using System;
@@ -28,7 +29,7 @@ namespace DEA.Modules.Gangs
             {
                 var leaderDM = await leader.CreateDMChannelAsync();
 
-                var key = Config.RAND.Next();
+                var key = CryptoRandom.Next();
                 await leaderDM.SendAsync($"{Context.User.Boldify()} has requested to join your gang. Please respond with \"{key}\" within 5 minutes to add this user to your gang.");
 
                 await ReplyAsync($"The leader of {gang.Name} has been informed of your request to join their gang.");

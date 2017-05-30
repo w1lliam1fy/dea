@@ -1,6 +1,7 @@
 ﻿using DEA.Common.Extensions;
 using DEA.Common.Preconditions;
 using DEA.Common.Utilities;
+using DEA.Services.Static;
 using Discord;
 using Discord.Commands;
 using System;
@@ -39,7 +40,7 @@ namespace DEA.Modules.Crime
 
             var stolen = resources * 2;
 
-            int roll = Config.RAND.Next(1, 101);
+            int roll = CryptoRandom.Next(100);
 
             var successOdds = await _gangRepo.InGangAsync(Context.GUser) ? Config.ROB_SUCCESS_ODDS - 5 : Config.ROB_SUCCESS_ODDS;
 

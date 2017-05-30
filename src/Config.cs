@@ -1,4 +1,4 @@
-﻿using DEA.Common.Utilities;
+﻿using DEA.Services.Static;
 using Discord;
 using System;
 using System.Text.RegularExpressions;
@@ -9,17 +9,15 @@ internal static class Config
 
     public const int MIN_CHAR_LENGTH = 7, LEADERBOARD_CAP = 10, WHORE_ODDS = 90, JUMP_ODDS = 85, STEAL_ODDS = 80, MIN_CLEAR = 2,
         MAX_CLEAR = 1000, GANG_NAME_CHAR_LIMIT = 24, GANGSLB_CAP = 10, DEA_CUT = 10, RAID_SUCCESS_ODDS = 80, ROB_SUCCESS_ODDS = 60,
-        MAX_POLL_SIZE = 100, TRIVIA_PAYOUT_MIN = 25, TRIVIA_PAYOUT_MAX = 150, CASH_PER_MSG = 5, MSG_COOLDOWN = 30, ENSLAVE_HEALTH = 15,
-        COMMAND_LB_CAP = 10, MAX_CRATE_OPEN = 100000;
+        MAX_POLL_SIZE = 100, CASH_PER_MSG = 5, MSG_COOLDOWN = 30, ENSLAVE_HEALTH = 15, COMMAND_LB_CAP = 10, MAX_CRATE_OPEN = 100000;
 
     public const decimal LINE_COST = 250, POUND_COST = 1000, KILO_COST = 2500, POUND_MULTIPLIER = 2, KILO_MULTIPLIER = 4,
         RESET_REWARD = 10000, MAX_WHORE = 100, MIN_WHORE = 50, WHORE_FINE = 200, MAX_JUMP = 250, JUMP_FINE = 500, MIN_JUMP = 100,
         MAX_STEAL = 500, MIN_STEAL = 250, STEAL_FINE = 1000, MAX_RESOURCES = 1000, MIN_RESOURCES = 25, DONATE_MIN = 5, BET_MIN = 5,
         GANG_CREATION_COST = 1000, GANG_NAME_CHANGE_COST = 250, WITHDRAW_CAP = 0.20m, MIN_WITHDRAW = 50, MIN_DEPOSIT = 50,
         JUMP_REQUIREMENT = 500, STEAL_REQUIREMENT = 2500, ROB_REQUIREMENT = 5000, BULLY_REQUIREMENT = 10000, FIFTYX2_REQUIREMENT = 25000,
-        MAX_ROB_PERCENTAGE = 0.20m, MAX_RAID_PERCENTAGE = 0.20m, SLAVE_COLLECT_VALUE = 0.8m, MIN_BOUNTY = 500, SUICIDE_COST = 500;
-
-    public static readonly CryptoRandom RAND = new CryptoRandom();
+        MAX_ROB_PERCENTAGE = 0.20m, MAX_RAID_PERCENTAGE = 0.20m, SLAVE_COLLECT_VALUE = 0.8m, MIN_BOUNTY = 500, SUICIDE_COST = 500,
+        TRIVIA_PAYOUT_MIN = 25, TRIVIA_PAYOUT_MAX = 150;
 
     public static readonly Regex ALPHANUMERICAL = new Regex(@"^[a-zA-Z0-9\s]*$"), ANWITHQUESTIONMARK = new Regex(@"^[a-zA-Z0-9\s\?]*$");
 
@@ -30,7 +28,7 @@ internal static class Config
         new Color(150, 36, 237), new Color(168, 237, 0)
     };
 
-    public static Color Color() { return _colors[RAND.Next(1, _colors.Length) - 1]; }
+    public static Color Color() { return _colors[CryptoRandom.Next(_colors.Length) - 1]; }
 
     public static readonly Color ERROR_COLOR = new Color(255, 0, 0);
 

@@ -8,6 +8,7 @@ using MongoDB.Driver;
 using DEA.Common.Preconditions;
 using DEA.Common.Utilities;
 using DEA.Common.Items;
+using DEA.Services.Static;
 
 namespace DEA.Modules.Crime
 {
@@ -26,7 +27,7 @@ namespace DEA.Modules.Crime
 
             var dbUser = await _userRepo.GetUserAsync(userToStab);
 
-            if (Config.RAND.Next(1, 101) < knife.Accuracy)
+            if (CryptoRandom.Next(100) < knife.Accuracy)
             {
                 var invData = _gameService.InventoryData(dbUser);
                 var damage = invData.Any(x => x is Armour) ? (int)(knife.Damage * 0.8) : knife.Damage;

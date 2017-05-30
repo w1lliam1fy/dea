@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Xml;
 using System.Net.Http;
+using DEA.Services.Static;
 
 namespace DEA.Modules.NSFW
 {
@@ -20,7 +21,7 @@ namespace DEA.Modules.NSFW
                 var doc = new XmlDocument();
                 doc.Load(data);
 
-                var node = doc.LastChild.ChildNodes[Config.RAND.Next(0, doc.LastChild.ChildNodes.Count)];
+                var node = doc.LastChild.ChildNodes[CryptoRandom.Next(doc.LastChild.ChildNodes.Count)];
                 if (node == null)
                 {
                     ReplyError("No result found.");

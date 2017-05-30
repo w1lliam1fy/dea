@@ -3,6 +3,7 @@ using DEA.Common.Extensions.DiscordExtensions;
 using DEA.Common.Items;
 using DEA.Common.Preconditions;
 using DEA.Common.Utilities;
+using DEA.Services.Static;
 using Discord;
 using Discord.Commands;
 using System.Threading.Tasks;
@@ -35,7 +36,7 @@ namespace DEA.Modules.Crime
                 ReplyError($"The user must be under {Config.ENSLAVE_HEALTH} health to enslave.");
             }
 
-            if (weapon.Accuracy >= Config.RAND.Next(1, 101))
+            if (weapon.Accuracy >= CryptoRandom.Next(100))
             {
                 await _userRepo.ModifyAsync(user, x => x.SlaveOf = Context.User.Id);
                 await ReplyAsync($"You have successfully enslaved {userToEnslave.Boldify()}. {Config.SLAVE_COLLECT_VALUE.ToString("P")} of all cash earned by all your slaves will go straight to you when you use `{Context.DbGuild.Prefix}Collect`.");
