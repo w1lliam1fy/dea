@@ -27,14 +27,22 @@ namespace DEA.Database.Repositories
             return _collection.Find(filter).Limit(1).FirstOrDefaultAsync();
         }
 
-        public Task<List<T>> AllAsync(Expression<Func<T, bool>> filter)
+        public async Task<List<T>> AllAsync(Expression<Func<T, bool>> filter = null)
         {
-            return _collection.Find(filter).ToListAsync();
-        }
+            var list = new List<T>();
 
-        public Task<List<T>> AllAsync()
-        {
-            return _collection.Find(Builders<T>.Filter.Empty).ToListAsync();
+            using (var cursor = await _collection.Find(filter ?? Builders<T>.Filter.Empty).ToCursorAsync())
+            {
+                while (await cursor.MoveNextAsync())
+                {
+                    foreach (var document in cursor.Current)
+                    {
+                        list.Add(document);
+                    }
+                }
+            }
+
+            return list;
         }
 
         public Task UpdateAsync(T entity)
@@ -42,9 +50,9 @@ namespace DEA.Database.Repositories
             return _collection.ReplaceOneAsync(y => y.Id == entity.Id, entity);
         }
         
-        public Task<bool> AnyAsync(Expression<Func<T, bool>> filter)
+        public async Task<bool> AnyAsync(Expression<Func<T, bool>> filter)
         {
-            return _collection.Find(filter).Limit(1).AnyAsync();
+            return (await _collection.Find(filter).Limit(1).CountAsync()) == 0;
         }
 
         public Task ModifyAsync(T entity, Action<T> function)
