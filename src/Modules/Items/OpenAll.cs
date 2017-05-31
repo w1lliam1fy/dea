@@ -17,6 +17,11 @@ namespace DEA.Modules.Items
         {
             var quantity = Context.DbUser.Inventory[crate.Name].AsInt32;
 
+            if (quantity > Config.MAX_CRATE_OPEN)
+            {
+                ReplyError($"You may not open more than {Config.MAX_CRATE_OPEN.ToString("N0")} crates.");
+            }
+
             IReadOnlyDictionary<string,int> items = await _gameService.MassOpenCratesAsync(crate, quantity, Context.DbUser);
 
             var reply = string.Empty;
