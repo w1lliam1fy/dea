@@ -13,8 +13,9 @@ namespace DEA.Modules.Owners
         public async Task ResetUser([Remainder] IGuildUser user = null)
         {
             user = user ?? Context.GUser;
+            var dbUser = user.Id == Context.User.Id ? Context.DbUser : await _userRepo.GetUserAsync(user);
 
-            await _userRepo.DeleteAsync(Context.DbUser);
+            await _userRepo.DeleteAsync(dbUser);
             await _RankHandler.HandleAsync(user, Context.DbGuild, await _userRepo.GetUserAsync(user));
 
             await SendAsync($"Successfully reset {user.Boldify()}'s data.");
