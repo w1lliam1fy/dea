@@ -134,6 +134,8 @@ namespace DEA.Services
                 {
                     await ModifyInventoryAsync(dbUser, item.Key, item.Value);
                 }
+
+                await ModifyInventoryAsync(dbUser, crate.Name, -quantity);
             }
 
             return itemsToAdd;

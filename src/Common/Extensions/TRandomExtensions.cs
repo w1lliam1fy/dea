@@ -4,9 +4,9 @@ namespace DEA.Common.Extensions
 {
     public static class TRandomExtensions
     {
-        public static decimal NextDecimal(this TRandom random, decimal minValue, decimal maxValue)
+        public static decimal NextDecimal(this TRandom random, double minValue, double maxValue)
         {
-            return (decimal)random.NextDouble((double)minValue, (double)maxValue);
+            return (decimal)random.NextDouble(minValue, maxValue);
         }
 
         public static int Roll(this TRandom random)

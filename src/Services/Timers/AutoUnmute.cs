@@ -53,13 +53,10 @@ namespace DEA.Services.Timers
                 {
                     Logger.Log(LogSeverity.Error, "Attempting to all async the mute repo.", e.StackTrace);
                 }
-                finally
-                {
-                    Logger.Log(LogSeverity.Debug, "Passed the AllAsync() line", $"Slightly mediocre");
-                }
 
                 if (collection == null)
                 {
+                    Logger.Log(LogSeverity.Error, "Collection is null", $"Stopping Auto Unmute");
                     return;
                 }
 
@@ -72,16 +69,34 @@ namespace DEA.Services.Timers
                         return;
                     }
 
+                    Logger.Log(LogSeverity.Debug, "Mute is passed it's length", $"More information soon...");
+
                     try
                     {
                         var guild = await (_client as IDiscordClient).GetGuildAsync(mute.GuildId);
+
+                        Logger.Log(LogSeverity.Debug, "Mute Guild:", guild.Name + $" ({mute.GuildId})");
+
                         var user = await guild.GetUserAsync(mute.UserId);
+
+                        Logger.Log(LogSeverity.Debug, "Mute User:", $"{user} ({mute.UserId})");
+
                         var dbGuild = await _guildRepo.GetGuildAsync(guild.Id);
+
+                        Logger.Log(LogSeverity.Debug, "DbGuild Fetched", $"Mod Log Channel Id: {dbGuild.ModLogChannelId}");
+
                         var mutedRole = guild.GetRole(dbGuild.MutedRoleId);
 
+                        Logger.Log(LogSeverity.Debug, "Muted role fetched", mutedRole.Name + $" ({mutedRole.Id})");
+
                         await user.RemoveRoleAsync(mutedRole);
+
                         Logger.Log(LogSeverity.Debug, "Successfully removed a role", $"Mute: {mute}");
-                        await _moderationService.TryModLogAsync(dbGuild, guild, "Automatic Unmute", new Color(12, 255, 129), string.Empty, null, user);
+
+                        var result = await _moderationService.TryModLogAsync(dbGuild, guild, "Automatic Unmute", new Color(12, 255, 129), string.Empty, null, user);
+
+                        Logger.Log(LogSeverity.Debug, "Mod log attempt", $"Succes: {result}");
+
                         await Task.Delay(500);
                     }
                     catch (Exception e)
@@ -91,6 +106,7 @@ namespace DEA.Services.Timers
                     finally
                     {
                         await _muteRepo.DeleteAsync(mute);
+                        Logger.Log(LogSeverity.Debug, "Mute entry deleted", "Passed it's length");
                     }
                 }
             });

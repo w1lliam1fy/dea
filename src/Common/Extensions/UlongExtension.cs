@@ -8,17 +8,15 @@ namespace DEA.Common.Extensions
     {
         public static async Task<bool> TryDMAsync(this ulong userId, IDiscordClient client, string description, string title = null, Color color = default(Color))
         {
-            try
-            {
-                var user = await client.GetUserAsync(userId);
-                var channel = await user.CreateDMChannelAsync();
+            var user = await client.GetUserAsync(userId);
 
-                await channel.SendAsync(description, title, color);
-                return true;
-            }
-            catch
+            if (user == null)
             {
                 return false;
+            }
+            else
+            {
+                return await user.TryDMAsync(description, title, color);
             }
         }
     }

@@ -2,7 +2,7 @@
 
 namespace DEA.Common.Utilities
 {
-    public class Statistics
+    public sealed class Statistics
     {
         public uint MessagesRecieved { get; set; } = 0;
 

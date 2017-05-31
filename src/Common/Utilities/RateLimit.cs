@@ -2,7 +2,7 @@
 
 namespace DEA.Common.Utilities
 {
-    public class RateLimit
+    public sealed class RateLimit
     {
         public RateLimit(ulong userId, bool global, TimeSpan cooldown)
         {
