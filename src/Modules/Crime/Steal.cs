@@ -14,8 +14,7 @@ namespace DEA.Modules.Crime
         [Summary("Snipe some goodies from your local stores.")]
         public async Task Steal()
         {
-            int roll = Config.Random.Next(1, 101);
-            if (roll > Config.STEAL_ODDS)
+            if (Config.Random.Roll() > Config.STEAL_ODDS)
             {
                 await _userRepo.EditCashAsync(Context, -Config.STEAL_FINE);
                 await ReplyAsync($"You were on your way out with the cash, but then some hot chick asked you if you " +
@@ -25,7 +24,7 @@ namespace DEA.Modules.Crime
             }
             else
             {
-                decimal moneyStolen = (decimal)Config.Random.NextDouble((double)Config.MIN_STEAL, (double)Config.MAX_STEAL);
+                decimal moneyStolen = Config.Random.NextDecimal(Config.MIN_STEAL, Config.MAX_STEAL);
                 await _userRepo.EditCashAsync(Context, moneyStolen);
 
                 string randomStore = Config.STORES[Config.Random.Next(Config.STORES.Length)];

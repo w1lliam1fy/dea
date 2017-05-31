@@ -34,7 +34,7 @@ namespace DEA.Modules.Gangs
 
             var stolen = resources * 2;
 
-            int roll = Config.Random.Next(1, 101);
+            int roll = Config.Random.Roll();
             var membersDeduction = raidedGang.Members.Length * 5;
 
             if (Config.RAID_SUCCESS_ODDS - membersDeduction > roll)

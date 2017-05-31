@@ -13,8 +13,7 @@ namespace DEA.Modules.Crime
         [Summary("Sell your body for some quick cash.")]
         public async Task Whore()
         {
-            int roll = Config.Random.Next(1, 101);
-            if (roll > Config.WHORE_ODDS)
+            if (Config.Random.Roll() > Config.WHORE_ODDS)
             {
                 await _userRepo.EditCashAsync(Context, -Config.WHORE_FINE);
 
@@ -23,7 +22,7 @@ namespace DEA.Modules.Crime
             }
             else
             {
-                decimal moneyWhored = (decimal)Config.Random.NextDouble((double)Config.MIN_WHORE,(double)Config.MAX_WHORE);
+                decimal moneyWhored = Config.Random.NextDecimal(Config.MIN_WHORE,Config.MAX_WHORE);
                 await _userRepo.EditCashAsync(Context, moneyWhored);
 
                 await ReplyAsync($"You whip it out and manage to rake in {moneyWhored.USD()}. Balance: {Context.Cash.USD()}.");

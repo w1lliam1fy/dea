@@ -90,7 +90,7 @@ namespace DEA.Services
                 throw new DEAException($"You do not have enough money. Balance: {context.Cash.USD()}.");
             }
 
-            decimal roll = (decimal)Config.Random.NextDouble(1, 101);
+            decimal roll = (decimal)Config.Random.NextDouble(0, 100);
             if (roll >= odds)
             {
                 await _userRepo.EditCashAsync(context, bet * payoutMultiplier);
@@ -144,7 +144,7 @@ namespace DEA.Services
             int cumulative = 0;
             int roll = Config.Random.Next(1, _crateOdds);
 
-            if (crate.ItemOdds >= Config.Random.Next(1, 101))
+            if (crate.ItemOdds >= Config.Random.Roll())
             {
                 foreach (var item in _crateItems)
                 {
@@ -180,7 +180,7 @@ namespace DEA.Services
                 throw new Exception("Invalid food type.");
             }
 
-            if (Config.Random.Next(1, 101) <= weaponAccuracy)
+            if (Config.Random.Roll() <= weaponAccuracy)
             {
                 int cumulative = 0;
                 int sum = type == typeof(Meat) ? _meatOdds : _fishOdds;

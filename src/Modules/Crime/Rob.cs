@@ -39,7 +39,7 @@ namespace DEA.Modules.Crime
 
             var stolen = resources * 2;
 
-            int roll = Config.Random.Next(1, 101);
+            int roll = Config.Random.Roll();
 
             var successOdds = await _gangRepo.InGangAsync(Context.GUser) ? Config.ROB_SUCCESS_ODDS - 5 : Config.ROB_SUCCESS_ODDS;
 

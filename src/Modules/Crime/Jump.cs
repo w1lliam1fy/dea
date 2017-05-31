@@ -14,17 +14,16 @@ namespace DEA.Modules.Crime
         [Summary("Jump some random nigga in the hood.")]
         public async Task Jump()
         {
-            int roll = Config.Random.Next(1, 101);
-            if (roll > Config.JUMP_ODDS)
+            if (Config.Random.Roll() > Config.JUMP_ODDS)
             {
                 await _userRepo.EditCashAsync(Context, -Config.JUMP_FINE);
 
                 await ReplyAsync($"Turns out the nigga was a black belt, whooped your ass, and brought you in. " +
-                            $"Court's final ruling was a {Config.JUMP_FINE.USD()} fine. Balance: {Context.Cash.USD()}.");
+                                 $"Court's final ruling was a {Config.JUMP_FINE.USD()} fine. Balance: {Context.Cash.USD()}.");
             }
             else
             {
-                decimal moneyJumped = (decimal)Config.Random.NextDouble((double)Config.MIN_JUMP, (double)Config.MAX_JUMP);
+                decimal moneyJumped = Config.Random.NextDecimal(Config.MIN_JUMP, Config.MAX_JUMP);
                 await _userRepo.EditCashAsync(Context, moneyJumped);
 
                 await ReplyAsync($"You jump some random nigga on the streets and manage to get {moneyJumped.USD()}. Balance: {Context.Cash.USD()}.");

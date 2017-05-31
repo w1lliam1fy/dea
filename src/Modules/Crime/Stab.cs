@@ -26,7 +26,7 @@ namespace DEA.Modules.Crime
 
             var dbUser = await _userRepo.GetUserAsync(userToStab);
 
-            if (Config.Random.Next(1, 101) < knife.Accuracy)
+            if (Config.Random.Roll() < knife.Accuracy)
             {
                 var invData = _gameService.InventoryData(dbUser);
                 var damage = invData.Any(x => x is Armour) ? (int)(knife.Damage * 0.8) : knife.Damage;
@@ -38,7 +38,7 @@ namespace DEA.Modules.Crime
                 {
                     foreach (var item in dbUser.Inventory.Elements)
                     {
-                        await _gameService.ModifyInventoryAsync(Context.DbUser, item.Name);
+                        await _gameService.ModifyInventoryAsync(Context.DbUser, item.Name, item.Value.AsInt32);
                     }
 
                     await _userRepo.DeleteAsync(dbUser);

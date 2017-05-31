@@ -3,6 +3,7 @@ using System;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Troschuetz.Random;
+using Troschuetz.Random.Generators;
 
 internal static class Config
 {
@@ -29,9 +30,10 @@ internal static class Config
         new Color(150, 36, 237), new Color(168, 237, 0)
     };
 
-    private static int _seed = Environment.TickCount;
-
-    private static readonly ThreadLocal<TRandom> _random = new ThreadLocal<TRandom>(() => new TRandom(Interlocked.Increment(ref _seed)));
+    private static readonly ThreadLocal<TRandom> _random = new ThreadLocal<TRandom>(() =>
+    {
+        return new TRandom(new XorShift128Generator(new Guid().GetHashCode()));
+    });
 
     public static TRandom Random => _random.Value;
 
