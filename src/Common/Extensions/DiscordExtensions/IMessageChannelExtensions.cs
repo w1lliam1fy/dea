@@ -8,22 +8,7 @@ namespace DEA.Common.Extensions.DiscordExtensions
     {
         public static Task<IUserMessage> ReplyAsync(this IMessageChannel channel, IUser user, string description, string title = null, Color color = default(Color))
         {
-            var builder = new EmbedBuilder()
-            {
-                Description = $"{user.Boldify()}, {description}",
-                Color = Config.Color()
-            };
-            if (title != null)
-            {
-                builder.Title = title;
-            }
-
-            if (color.RawValue != default(Color).RawValue)
-            {
-                builder.Color = color;
-            }
-
-            return channel.SendMessageAsync(string.Empty, embed: builder);
+            return channel.SendAsync($"{user.Boldify()}, {description}", title, color);
         }
 
         public static Task<IUserMessage> SendAsync(this IMessageChannel channel, string description, string title = null, Color color = default(Color))
@@ -46,9 +31,9 @@ namespace DEA.Common.Extensions.DiscordExtensions
             return channel.SendMessageAsync(string.Empty, embed: builder);
         }
 
-        public static Task<IUserMessage> SendErrorAsync(this IMessageChannel channel, string message)
+        public static Task<IUserMessage> SendErrorAsync(this IMessageChannel channel, string message, string title = null)
         {
-            return channel.SendAsync(message, null, Config.ERROR_COLOR);
+            return channel.SendAsync(message, title, Config.ERROR_COLOR);
         }
 
         public static async Task SendCodeAsync(this IMessageChannel channel, IReadOnlyCollection<string> elements, string title = "")
