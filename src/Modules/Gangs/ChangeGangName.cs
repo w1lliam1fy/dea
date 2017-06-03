@@ -31,6 +31,10 @@ namespace DEA.Modules.Gangs
             {
                 ReplyError("Gang names may not contain any non alphanumeric characters.");
             }
+            else if (newName.Length > Config.GANG_NAME_CHAR_LIMIT)
+            {
+                ReplyError($"The length of a gang name may not be longer than {Config.GANG_NAME_CHAR_LIMIT} characters.");
+            }
 
             await _userRepo.EditCashAsync(Context, -Config.GANG_NAME_CHANGE_COST);
             await _gangRepo.ModifyAsync(Context.Gang, x => x.Name = newName);
