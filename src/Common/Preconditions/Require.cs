@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
 using System.Threading.Tasks;
 using MongoDB.Driver;
+using DEA.Services.Static;
 
 namespace DEA.Common.Preconditions
 {
@@ -15,7 +16,6 @@ namespace DEA.Common.Preconditions
     internal sealed class Require : PreconditionAttribute
     {
         private IServiceProvider _serviceProvider;
-        private Credentials _credentials;
         private UserRepository _userRepo;
         private GameService _gameService;
         private ModerationService _moderationService;
@@ -32,7 +32,6 @@ namespace DEA.Common.Preconditions
             {
                 _serviceProvider = serviceProvider;
                 _userRepo = _serviceProvider.GetService<UserRepository>();
-                _credentials = _serviceProvider.GetService<Credentials>();
                 _moderationService = _serviceProvider.GetService<ModerationService>();
                 _gameService = _serviceProvider.GetService<GameService>();
 
@@ -46,7 +45,7 @@ namespace DEA.Common.Preconditions
                     switch (attribute)
                     {
                         case Attributes.BotOwner:
-                            if (!_credentials.OwnerIds.Any(x => x == context.User.Id))
+                            if (!Data.Credentials.OwnerIds.Any(x => x == context.User.Id))
                             {
                                 return PreconditionResult.FromError("Only an owner of this bot may use this command.");
                             }
