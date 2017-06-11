@@ -17,7 +17,7 @@ namespace DEA.Modules.Items
         {
             var item = await _gameService.OpenCrateAsync(crate, Context.DbUser);
             await ReplyAsync($"Congrats! You just won: {item.Name}");
-            _rateLimitService.TryAdd(new RateLimit(Context.User.Id, Context.Guild.Id, "OpenCrate", Config.OpenCrateCooldown));
+            _cooldownService.TryAdd(new CommandCooldown(Context.User.Id, Context.Guild.Id, "OpenCrate", Config.OpenCrateCooldown));
         }
     }
 }

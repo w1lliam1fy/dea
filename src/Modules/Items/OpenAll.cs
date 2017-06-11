@@ -32,7 +32,7 @@ namespace DEA.Modules.Items
 
             await SendAsync(reply, $"Items {Context.User} has won");
 
-            _rateLimitService.TryAdd(new RateLimit(Context.User.Id, Context.Guild.Id, "OpenAll", Config.OpenCrateCooldown));
+            _cooldownService.TryAdd(new CommandCooldown(Context.User.Id, Context.Guild.Id, "OpenAll", Config.OpenCrateCooldown));
         }
     }
 }

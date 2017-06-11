@@ -33,7 +33,7 @@ namespace DEA.Modules.Gangs
                              $"{Context.Gang.Name}'s Wealth: {Context.Gang.Wealth.USD()}.");
 
             await Context.Gang.LeaderId.TryDMAsync(Context.Client, $"{Context.User.Boldify()} has withdrawn {cash.USD()} from your gang's wealth.");
-            _rateLimitService.TryAdd(new RateLimit(Context.User.Id, Context.Guild.Id, "Withdraw", Config.WithdrawCooldown));
+            _cooldownService.TryAdd(new CommandCooldown(Context.User.Id, Context.Guild.Id, "Withdraw", Config.WithdrawCooldown));
         }
     }
 }

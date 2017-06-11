@@ -16,7 +16,7 @@ namespace DEA.Modules.General
         {
             user = user ?? Context.GUser;
 
-            var cooldowns = _rateLimitService.RateLimits.Where(x => x.UserId == user.Id && x.GuildId == user.GuildId);
+            var cooldowns = _cooldownService.Cooldowns.Where(x => x.UserId == user.Id && x.GuildId == user.GuildId);
 
             if (cooldowns.Count() == 0)
             {

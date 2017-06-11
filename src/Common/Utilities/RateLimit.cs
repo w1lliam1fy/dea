@@ -4,33 +4,16 @@ namespace DEA.Common.Utilities
 {
     public sealed class RateLimit
     {
-        public RateLimit(ulong userId, bool global, TimeSpan cooldown)
+        public RateLimit(TimeSpan length)
         {
-            UserId = userId;
-            Global = global;
-            Cooldown = cooldown;
-            ExpiresAt = DateTime.UtcNow.Add(cooldown);
+            Length = length;
+            ExpiresAt = DateTime.UtcNow.Add(length);
         }
 
-        public RateLimit(ulong userId, ulong guildId, string commandId, TimeSpan cooldown)
-        {
-            UserId = userId;
-            GuildId = guildId;
-            CommandId = commandId;
-            Cooldown = cooldown;
-            ExpiresAt = DateTime.UtcNow.Add(cooldown);
-        }
+        public int Uses { get; set; }
 
         public DateTime ExpiresAt { get; }
 
-        public TimeSpan Cooldown { get; }
-
-        public ulong UserId { get; set; }
-
-        public ulong GuildId { get; set; }
-
-        public string CommandId { get; set; }
-
-        public bool Global { get; set; } = false;
+        public TimeSpan Length { get; }
     }
 }

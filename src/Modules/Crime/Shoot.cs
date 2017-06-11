@@ -63,7 +63,7 @@ namespace DEA.Modules.Crime
                 await ReplyAsync($"The nigga fucking dodged the bullet, literally. What in the sac of nuts.");
             }
             await _gameService.ModifyInventoryAsync(Context.DbUser, "Bullet", -1);
-            _rateLimitService.TryAdd(new RateLimit(Context.User.Id, Context.Guild.Id, "Shoot", Config.ShootCooldown));
+            _cooldownService.TryAdd(new CommandCooldown(Context.User.Id, Context.Guild.Id, "Shoot", Config.ShootCooldown));
         }
     }
 }

@@ -62,7 +62,7 @@ namespace DEA.Modules.Crime
                 await ReplyAsync($"With a {successOdds}.00% chance of success, you failed to steal {stolen.USD()} " +
                                  $"and lost all resources in the process. Balance: {Context.Cash.USD()}.");
             }
-            _rateLimitService.TryAdd(new RateLimit(Context.User.Id, Context.Guild.Id, "Rob", Config.RobCooldown));
+            _cooldownService.TryAdd(new CommandCooldown(Context.User.Id, Context.Guild.Id, "Rob", Config.RobCooldown));
         }
     }
 }

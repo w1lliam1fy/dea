@@ -12,7 +12,7 @@ namespace DEA.Common.Preconditions
     internal sealed class Cooldown : PreconditionAttribute
     {
         private IServiceProvider _serviceProvider;
-        private RateLimitService _rateLimitService;
+        private CooldownService _cooldownService;
         private TimeSpan _cooldown;
 
         public override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider serviceProvider)
@@ -20,17 +20,15 @@ namespace DEA.Common.Preconditions
             return Task.Run(async () =>
             {
                 _serviceProvider = serviceProvider;
-                _rateLimitService = _serviceProvider.GetService<RateLimitService>();
+                _cooldownService = _serviceProvider.GetService<CooldownService>();
 
-                if (!_rateLimitService.TryGet(x => x.UserId == context.User.Id && x.GuildId == context.Guild.Id && x.CommandId == command.Name, out _cooldown))
-                {
-                    return PreconditionResult.FromSuccess();
-                }
-                else
+                if (_cooldownService.TryGet(x => x.UserId == context.User.Id && x.GuildId == context.Guild.Id && x.CommandId == command.Name, out _cooldown))
                 {
                     await context.Channel.SendErrorAsync($"Hours: {_cooldown.Hours}\nMinutes: {_cooldown.Minutes}\nSeconds: {_cooldown.Seconds}", $"{command.Name.UpperFirstChar()} cooldown for {context.User}");
                     return PreconditionResult.FromError(string.Empty);
                 }
+
+                return PreconditionResult.FromSuccess();
             });
         }
     }

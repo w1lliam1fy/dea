@@ -46,6 +46,7 @@ namespace DEA.Services
                 .AddSingleton<InteractiveService>()
                 .AddSingleton<GameService>()
                 .AddSingleton<ModerationService>()
+                .AddSingleton<CooldownService>()
                 .AddSingleton<RateLimitService>()
                 .AddSingleton<ErrorHandler>()
                 .AddSingleton<GangRepository>()

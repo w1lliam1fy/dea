@@ -62,7 +62,7 @@ namespace DEA.Modules.Gangs
                 await ReplyAsync($"With a {Config.RaidOdds}.00% chance of success, you failed to steal {stolen.USD()} " +
                                  $"and lost all resources in the process.");
             }
-            _rateLimitService.TryAdd(new RateLimit(Context.User.Id, Context.Guild.Id, "Raid", Config.RaidCooldown));
+            _cooldownService.TryAdd(new CommandCooldown(Context.User.Id, Context.Guild.Id, "Raid", Config.RaidCooldown));
         }
     }
 }

@@ -1,47 +1,45 @@
 ﻿using DEA.Common.Utilities;
 using System;
 using System.Collections.Concurrent;
-using System.Linq;
 using System.Threading;
 
 namespace DEA.Services
 {
     public sealed class RateLimitService
     {
-        private readonly ConcurrentDictionary<RateLimit, Timer> _rateLimits = new ConcurrentDictionary<RateLimit, Timer>();
+        private readonly ConcurrentDictionary<ulong, Tuple<RateLimit, Timer>> _rateLimits = new ConcurrentDictionary<ulong, Tuple<RateLimit, Timer>>();
 
-        public RateLimit[] RateLimits => _rateLimits.Keys.ToArray();
-
-        public bool TryAdd(RateLimit rateLimit)
+        public bool TryAdd(ulong id, RateLimit rateLimit)
         {
-            var timer = new Timer(Expire, rateLimit, rateLimit.Cooldown, rateLimit.Cooldown);
+            var timer = new Timer(Expire, id, rateLimit.Length, rateLimit.Length);
 
-            return _rateLimits.TryAdd(rateLimit, timer);
+            return _rateLimits.TryAdd(id, new Tuple<RateLimit, Timer>(rateLimit, timer));
         }
 
-        public bool TryGet(Func<RateLimit, bool> filter, out TimeSpan remaining)
+        public void Update(ulong id, Func<ulong, Tuple<RateLimit, Timer>, Tuple<RateLimit, Timer>> updateValueFactory)
         {
-            remaining = TimeSpan.Zero;
+            _rateLimits.AddOrUpdate(id, new Tuple<RateLimit, Timer>(null, null), updateValueFactory);
+        }
 
-            var entry = _rateLimits.Keys.FirstOrDefault(filter);
-            if (entry == null)
-            {
-                return false;
-            }
-            
-            remaining = entry.ExpiresAt.Subtract(DateTime.UtcNow);
-            return true;
+        public bool TryGet(ulong id)
+        {
+            return _rateLimits.TryGetValue(id, out Tuple<RateLimit,Timer> ignored);
+        }
+
+        public bool TryGet(ulong id, out Tuple<RateLimit, Timer> pair)
+        {
+            return _rateLimits.TryGetValue(id, out pair);
         }
 
         private void Expire(object state)
         {
-            var entry = (RateLimit)state;
+            var id = (ulong)state;
 
-            var timer = _rateLimits[entry];
+            var timer = _rateLimits[id];
 
-            timer.Dispose();
+            timer.Item2.Dispose();
 
-            _rateLimits.TryRemove(entry, out Timer value);
+            _rateLimits.TryRemove(id, out Tuple<RateLimit, Timer> ignored);
         }
     }
 }

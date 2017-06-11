@@ -5,6 +5,8 @@ namespace DEA.Services.Static
 {
     internal static class Logger
     {
+        private static Object _locker = new Object();
+
         public static void Log(LogSeverity severity, string source, string message)
         {
             ConsoleColor centerColor;
@@ -23,10 +25,13 @@ namespace DEA.Services.Static
                     break;
             }
 
-            Append($"{DateTime.Now.ToString("hh:mm:ss")} ", ConsoleColor.DarkBlue, ConsoleColor.White);
-            Append($"[{severity}] ", centerColor);
-            Append($"{source}: ", ConsoleColor.White);
-            NewLine(message, ConsoleColor.Cyan);
+            lock (_locker)
+            {
+                Append($"{DateTime.Now.ToString("hh:mm:ss")} ", ConsoleColor.DarkBlue, ConsoleColor.White);
+                Append($"[{severity}] ", centerColor);
+                Append($"{source}: ", ConsoleColor.White);
+                NewLine(message, ConsoleColor.Cyan);
+            } 
         }
 
         public static void NewLine(string text = "", ConsoleColor foreground = ConsoleColor.White, ConsoleColor background = ConsoleColor.Black)

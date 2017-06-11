@@ -1,5 +1,4 @@
 ﻿using DEA.Common.Extensions;
-using DEA.Common.Utilities;
 using DEA.Database.Repositories;
 using DEA.Services;
 using Discord.Commands;

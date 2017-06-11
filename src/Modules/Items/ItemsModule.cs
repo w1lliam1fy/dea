@@ -9,14 +9,14 @@ namespace DEA.Modules.Items
         private readonly UserRepository _userRepo;
         private readonly InteractiveService _interactiveService;
         private readonly GameService _gameService;
-        private readonly RateLimitService _rateLimitService;
+        private readonly CooldownService _cooldownService;
 
-        public Items(UserRepository userRepo, InteractiveService interactiveService, GameService gameService, RateLimitService rateLimitService)
+        public Items(UserRepository userRepo, InteractiveService interactiveService, GameService gameService, CooldownService cooldownService)
         {
             _userRepo = userRepo;
             _interactiveService = interactiveService;
             _gameService = gameService;
-            _rateLimitService = rateLimitService;
+            _cooldownService = cooldownService;
         }
     }
 }

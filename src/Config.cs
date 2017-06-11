@@ -10,7 +10,8 @@ internal static class Config
     // Minimums and maximums.
     public const int MinCharLength = 7, MinClear = 2, MaxClear = 1000, MaxPollSize = 100, MaxEnslaveHealth = 15, MaxCrateOpen = 100000,
         MaxWhore = 100, MinWhore = 50, MaxJump = 250, MinJump = 100, MaxSteal = 500, MinSteal = 250, MinResources = 25, MinDonate = 5,
-        MinBet = 5, MinWithdraw = 50, MinDeposit = 50, MinBounty = 500, MinTriviaPayout = 25, MaxTriviaPayout = 150, MaxGangNameChar = 24;
+        MinBet = 5, MinWithdraw = 50, MinDeposit = 50, MinBounty = 500, MinTriviaPayout = 25, MaxTriviaPayout = 150, MaxGangNameChar = 24,
+        MaxChannelRateLimitUses = 4;
 
     // Leaderboard caps.
     public const int LeaderboardCap = 10, GangsLbCap = 10, CommandLbCap = 10, BountyLbCap = 10;
@@ -22,7 +23,7 @@ internal static class Config
     public const int RaidOdds = 80, RobOdds = 60, WhoreOdds = 90, JumpOdds = 85, StealOdds = 80;
 
     // Miscellaneous integers.
-    public const int CashPerMsg = 100, JumpRequirement = 500, StealRequirement = 2500, RobRequirement = 5000, BullyRequirement = 10000, 
+    public const int CashPerMsg = 100, JumpRequirement = 500, StealRequirement = 2500, RobRequirement = 5000, BullyRequirement = 10000,
         FiftyX2Requirement = 25000;
 
     // Percentages
@@ -43,7 +44,7 @@ internal static class Config
     public static readonly TimeSpan DefaultWaitForMessage = TimeSpan.FromSeconds(30), DefaultPollLength = TimeSpan.FromDays(1), 
         MaxPollLength = TimeSpan.FromDays(7), MessageCooldown = TimeSpan.FromSeconds(30), ElderTimeRequired = TimeSpan.FromDays(2), 
         MinChill = TimeSpan.FromSeconds(5), MaxChill = TimeSpan.FromHours(1), UserRateLimit = TimeSpan.FromMilliseconds(750), 
-        ChannelRateLimit = TimeSpan.FromSeconds(1);
+        ChannelRateLimit = TimeSpan.FromSeconds(5);
 
     // Base directory of the solution.
     public static readonly string MainDirectory = AppContext.BaseDirectory.Substring(0, AppContext.BaseDirectory.IndexOf("src"));

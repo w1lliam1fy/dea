@@ -49,7 +49,7 @@ namespace DEA.Modules.Crime
 
                 await userToEnslave.TryDMAsync($"{Context.User.Boldify()} tried to enslave you but accidentally got pregnant and now he can't move :joy: :joy: :joy:.");
             }
-            _rateLimitService.TryAdd(new RateLimit(Context.User.Id, Context.Guild.Id, "Enslave", Config.EnslaveCooldown));
+            _cooldownService.TryAdd(new CommandCooldown(Context.User.Id, Context.Guild.Id, "Enslave", Config.EnslaveCooldown));
         }
     }
 }

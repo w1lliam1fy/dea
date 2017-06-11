@@ -32,7 +32,7 @@ namespace DEA.Modules.Crime
                 await ReplyAsync($"You walk in to your local {randomStore}, point a fake gun at the clerk, and manage to walk away " +
                                  $"with {moneyStolen.USD()}. Balance: {Context.Cash.USD()}.");
             }
-            _rateLimitService.TryAdd(new RateLimit(Context.User.Id, Context.Guild.Id, "Steal", Config.StealCooldown));
+            _cooldownService.TryAdd(new CommandCooldown(Context.User.Id, Context.Guild.Id, "Steal", Config.StealCooldown));
         }
     }
 }
