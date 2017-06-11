@@ -32,14 +32,20 @@ namespace DEA.Events
         {
             return Task.Run(async () =>
             {
-                Logger.Log(log.Severity, log.Source, log.Message);
+                if (!string.IsNullOrWhiteSpace(log.Message))
+                {
+                    Logger.Log(log.Severity, log.Source, log.Message);
+                }
 
                 if (log.Exception == null)
                 {
                     return;
                 }
 
-                Logger.Log(log.Severity, log.Exception.Message, log.Exception.StackTrace);
+                if (!(log.Exception.InnerException is FriendlyException))
+                {
+                    Logger.Log(log.Severity, log.Exception.Message, log.Exception.StackTrace);
+                }
 
                 if (log.Exception is CommandException cmdEx)
                 {
