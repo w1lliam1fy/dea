@@ -32,8 +32,6 @@ namespace DEA.Database.Models
 
         //Options
 
-        public bool AutoTrivia { get; set; } = false;
-
         public string Prefix { get; set; } = Config.DefaultPrefix;
 
         public decimal GlobalChattingMultiplier { get; set; } = 1m;

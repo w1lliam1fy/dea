@@ -179,7 +179,6 @@ WorstCommands|The least popular DEA commands.|`$WorstCommands`
 Command | Description | Usage
 ---------------- | --------------| -------
 AddQuestion|Adds a trivia question.|`$AddQuestion <question> <answer>`
-ChangeAutoTriviaSettings|Enables/disables the auto trivia feature: Sends a trivia question in the default text channel every 2 minutes.|`$ChangeAutoTriviaSettings`
 ModifyAnswer|Modify a trivia answer.|`$ModifyAnswer <question> <answer>`
 ModifyQuestion|Modify a trivia question.|`$ModifyQuestion <question> <newQuestion>`
 RemoveQuestion|Removes a trivia question.|`$RemoveQuestion <question>`

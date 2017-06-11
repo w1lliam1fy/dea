@@ -46,6 +46,7 @@ namespace DEA
             _serviceManager = new ServiceManager(_client, _commandService);
 
             _serviceProvider = _serviceManager.ServiceProvider;
+            _serviceProvider.GetService<IMongoCollection<Guild>>().UpdateMany(Builders<Guild>.Filter.Empty, Builders<Guild>.Update.Unset("AutoTrivia"));
         }
 
         private async Task RunAsync()
