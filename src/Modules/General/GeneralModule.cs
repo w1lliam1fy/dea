@@ -1,14 +1,11 @@
 ﻿using DEA.Common;
-using DEA.Common.Items;
-using DEA.Common.Preconditions;
 using DEA.Database.Repositories;
 using DEA.Services;
 using DEA.Services.Handlers;
 
 namespace DEA.Modules.General
-{
-    [Global]
-    public partial class General : DEAModule
+{ 
+    public partial class General : Module
     {
         private readonly UserRepository _userRepo;
         private readonly GuildRepository _guildRepo;
@@ -16,9 +13,8 @@ namespace DEA.Modules.General
         private readonly RankHandler _RankHandler;
         private readonly GameService _gameService;
         private readonly RateLimitService _rateLimitService;
-        private readonly Item[] _items;
 
-        public General(UserRepository userRepo, GuildRepository guildRepo, GangRepository gangRepo, RankHandler rankHandler, GameService gameService, RateLimitService rateLimitService, Item[] items)
+        public General(UserRepository userRepo, GuildRepository guildRepo, GangRepository gangRepo, RankHandler rankHandler, GameService gameService, RateLimitService rateLimitService)
         {
             _userRepo = userRepo;
             _guildRepo = guildRepo;
@@ -26,7 +22,6 @@ namespace DEA.Modules.General
             _RankHandler = rankHandler;
             _gameService = gameService;
             _rateLimitService = rateLimitService;
-            _items = items;
         }
     }
 }

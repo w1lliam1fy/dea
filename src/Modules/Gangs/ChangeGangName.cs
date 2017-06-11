@@ -16,9 +16,9 @@ namespace DEA.Modules.Gangs
         [Summary("Changes the name of your gang.")]
         public async Task ChangeGangName([Remainder] string newName)
         {
-            if (Context.Cash < Config.GANG_NAME_CHANGE_COST)
+            if (Context.Cash < Config.GangNameChangeCost)
             {
-                ReplyError($"You do not have {Config.GANG_NAME_CHANGE_COST.USD()}. Balance: {Context.Cash.USD()}.");
+                ReplyError($"You do not have {Config.GangNameChangeCost.USD()}. Balance: {Context.Cash.USD()}.");
             }
 
             var gangs = await _gangRepo.AllAsync();
@@ -27,19 +27,19 @@ namespace DEA.Modules.Gangs
             {
                 ReplyError($"There is already a gang by the name {newName}.");
             }
-            else if (!Config.ALPHANUMERICAL.IsMatch(newName))
+            else if (!Config.AlphaNumerical.IsMatch(newName))
             {
                 ReplyError("Gang names may not contain any non alphanumeric characters.");
             }
-            else if (newName.Length > Config.GANG_NAME_CHAR_LIMIT)
+            else if (newName.Length > Config.MaxGangNameChar)
             {
-                ReplyError($"The length of a gang name may not be longer than {Config.GANG_NAME_CHAR_LIMIT} characters.");
+                ReplyError($"The length of a gang name may not be longer than {Config.MaxGangNameChar} characters.");
             }
 
-            await _userRepo.EditCashAsync(Context, -Config.GANG_NAME_CHANGE_COST);
+            await _userRepo.EditCashAsync(Context, -Config.GangNameChangeCost);
             await _gangRepo.ModifyAsync(Context.Gang, x => x.Name = newName);
 
-            await ReplyAsync($"You have successfully changed your gang name to {newName} at the cost of {Config.GANG_NAME_CHANGE_COST.USD()}.");
+            await ReplyAsync($"You have successfully changed your gang name to {newName} at the cost of {Config.GangNameChangeCost.USD()}.");
         }
     }
 }

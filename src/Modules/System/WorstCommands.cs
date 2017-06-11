@@ -20,7 +20,7 @@ namespace DEA.Modules.System
             {
                 message += $"{position}. **{element.Key}:** {element.Value} uses\n";
 
-                if (position >= Config.COMMAND_LB_CAP)
+                if (position >= Config.CommandLbCap)
                 {
                     break;
                 }

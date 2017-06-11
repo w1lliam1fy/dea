@@ -28,25 +28,24 @@ namespace DEA
 
         public Program()
         {
-            _serviceManager = new ServiceManager();
-
-            _serviceManager.InitiliazeData();
-
             _client = new DiscordSocketClient(new DiscordSocketConfig()
             {
                 MessageCacheSize = 10,
-                TotalShards = _serviceManager.Credentials.ShardCount,
+                TotalShards = Data.Credentials.ShardCount,
                 AlwaysDownloadUsers = true,
+                LogLevel = LogSeverity.Warning,
             });
 
             _commandService = new CommandService(new CommandServiceConfig()
             {
                 CaseSensitiveCommands = false,
-                LogLevel = LogSeverity.Error,
+                LogLevel = LogSeverity.Warning,
                 DefaultRunMode = RunMode.Async,
             });
 
-            _serviceProvider = _serviceManager.ConfigureServices(_client, _commandService);
+            _serviceManager = new ServiceManager(_client, _commandService);
+
+            _serviceProvider = _serviceManager.ServiceProvider;
         }
 
         private async Task RunAsync()
@@ -57,7 +56,7 @@ namespace DEA
             var sw = Stopwatch.StartNew();
             try
             {
-                await _client.LoginAsync(TokenType.Bot, _serviceManager.Credentials.Token);
+                await _client.LoginAsync(TokenType.Bot, Data.Credentials.Token);
             }
             catch (HttpException httpEx)
             {
@@ -76,10 +75,10 @@ namespace DEA
             sw.Stop();
             Logger.Log(LogSeverity.Info, "Test connection has succeeded", $"Elapsed time: {sw.Elapsed.TotalSeconds.ToString("N3")} seconds.");
 
-            _serviceManager.AddTypeReaders(_commandService, _serviceProvider);
+            _serviceManager.AddTypeReaders();
             Logger.Log(LogSeverity.Info, "Addition of custom Type Readers", $"Successfully initialized.");
 
-            _serviceManager.InitializeTimersAndEvents(_serviceProvider);
+            _serviceManager.InitializeTimersAndEvents();
             await new CommandHandler(_commandService, _serviceProvider).InitializeAsync();
             Logger.Log(LogSeverity.Info, "Events and command handler successfully initialized", $"Client ready.");
 

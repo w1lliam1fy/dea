@@ -8,13 +8,13 @@ namespace DEA.Modules.Crime
     public partial class Crime
     {
         [Command("AddBounty")]
-        [Remarks("\"Sexy John#0007\" 50")]
+        [Remarks("\"Sexy John#0007\" 500")]
         [Summary("Add a bounty of any user.")]
         public async Task SetBounty(IGuildUser userToSet, decimal bounty)
         {
-            if (bounty < Config.MIN_BOUNTY)
+            if (bounty < Config.MinBounty)
             {
-                ReplyError($"You cannot set a bounty less than {Config.MIN_BOUNTY.USD()}.");
+                ReplyError($"You cannot set a bounty less than {Config.MinBounty.USD()}.");
             }
             else if (userToSet.Id == Context.User.Id)
             {

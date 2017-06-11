@@ -1,12 +1,10 @@
 ﻿using DEA.Common;
-using DEA.Common.Preconditions;
 using DEA.Database.Repositories;
 using DEA.Services;
 
 namespace DEA.Modules.Trivia
 {
-    [Global]
-    public partial class Trivia : DEAModule
+    public partial class Trivia : Module
     {
         private readonly GuildRepository _guildRepo;
         private readonly UserRepository _userRepo;

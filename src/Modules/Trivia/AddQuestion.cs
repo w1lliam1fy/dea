@@ -16,11 +16,11 @@ namespace DEA.Modules.Trivia
             {
                 ReplyError("That question already exists.");
             }
-            else if (!Config.ALPHANUMERICAL.IsMatch(answer))
+            else if (!Config.AlphaNumerical.IsMatch(answer))
             {
                 ReplyError("Trivia answers may only contain alphanumerical characters.");
             }
-            else if (!Config.ANWITHQUESTIONMARK.IsMatch(question))
+            else if (!Config.TriviaQuestionRegex.IsMatch(question))
             {
                 ReplyError("Trivia questions may only contain alphanumerical characters excluding the question mark.");
             }

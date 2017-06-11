@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using DEA.Common.Items;
+using DEA.Services.Static;
 
 namespace DEA.Services
 {
@@ -16,36 +17,21 @@ namespace DEA.Services
     {
         private readonly InteractiveService _interactiveService;
         private readonly UserRepository _userRepo;
-        private readonly Item[] _items;
-        private readonly CrateItem[] _crateItems;
-        private readonly Fish[] _fish;
-        private readonly Meat[] _meat;
-        private readonly int _crateOdds;
-        private readonly int _fishOdds;
-        private readonly int _meatOdds;
 
-        public GameService(InteractiveService interactiveService, UserRepository userRepo, Item[] items, CrateItem[] crateItems, Fish[] fish, Meat[] meat)
+        public GameService(InteractiveService interactiveService, UserRepository userRepo)
         {
             _interactiveService = interactiveService;
             _userRepo = userRepo;
-            _items = items;
-            _crateItems = crateItems;
-            _fish = fish;
-            _meat = meat;
-
-            _crateOdds = _crateItems.Sum(x => x.CrateOdds);
-            _fishOdds = _fish.Sum(x => x.AcquireOdds);
-            _meatOdds = _meat.Sum(x => x.AcquireOdds);
         }
 
         public async Task TriviaAsync(IMessageChannel channel, Guild dbGuild)
         {
             if (dbGuild.Trivia.ElementCount == 0)
             {
-                throw new DEAException("There are no trivia questions yet!");
+                throw new FriendlyException("There are no trivia questions yet!");
             }
 
-            int roll = Config.Random.Next(dbGuild.Trivia.ElementCount);
+            int roll = CryptoRandom.Next(dbGuild.Trivia.ElementCount);
 
             var element = dbGuild.Trivia.GetElement(roll);
             var answer = element.Value.AsString.ToLower();
@@ -62,7 +48,7 @@ namespace DEA.Services
             if (response != null)
             {
                 var user = response.Author as IGuildUser;
-                var winnings = (decimal)Config.Random.NextDouble((double)Config.TRIVIA_PAYOUT_MIN, (double)Config.TRIVIA_PAYOUT_MAX);
+                var winnings = CryptoRandom.NextDecimal(Config.MinTriviaPayout, Config.MaxTriviaPayout);
                 await _userRepo.EditCashAsync(user, dbGuild, await _userRepo.GetUserAsync(user), winnings);
                 await channel.SendAsync($"{user.Boldify()}, Congrats! You just won {winnings.USD()} for correctly answering \"{element.Value.AsString}\".");
             }
@@ -73,24 +59,24 @@ namespace DEA.Services
             }
         }
 
-        public async Task GambleAsync(DEAContext context, decimal bet, decimal odds, decimal payoutMultiplier)
+        public async Task GambleAsync(Context context, decimal bet, decimal odds, decimal payoutMultiplier)
         {
             var gambleChannel = context.Guild.GetTextChannel(context.DbGuild.GambleChannelId);
 
             if (gambleChannel != null && context.Channel.Id != context.DbGuild.GambleChannelId)
             {
-                throw new DEAException($"You may only gamble in {gambleChannel.Mention}.");
+                throw new FriendlyException($"You may only gamble in {gambleChannel.Mention}.");
             }
-            else if (bet < Config.BET_MIN)
+            else if (bet < Config.MinBet)
             {
-                throw new DEAException($"Lowest bet is {Config.BET_MIN}$.");
+                throw new FriendlyException($"The lowest bet is {Config.MinBet}$.");
             }
             else if (bet > context.Cash)
             {
-                throw new DEAException($"You do not have enough money. Balance: {context.Cash.USD()}.");
+                throw new FriendlyException($"You do not have enough money. Balance: {context.Cash.USD()}.");
             }
 
-            decimal roll = (decimal)Config.Random.NextDouble(0, 100);
+            decimal roll = CryptoRandom.NextDecimal(0, 100);
             if (roll >= odds)
             {
                 await _userRepo.EditCashAsync(context, bet * payoutMultiplier);
@@ -107,9 +93,9 @@ namespace DEA.Services
 
         public async Task<IReadOnlyDictionary<string, int>> MassOpenCratesAsync(Crate crate, int quantity, User dbUser = null)
         {
-            if (quantity > Config.MAX_CRATE_OPEN)
+            if (quantity > Config.MaxCrateOpen)
             {
-                throw new DEAException($"You may not be open more than {Config.MAX_CRATE_OPEN.ToString("N0")} crates.");
+                throw new FriendlyException($"You may not be open more than {Config.MaxCrateOpen.ToString("N0")} crates.");
             }
 
             var itemsToAdd = new Dictionary<string, int>();
@@ -144,11 +130,11 @@ namespace DEA.Services
         public async Task<Item> OpenCrateAsync(Crate crate, User dbUser = null)
         {
             int cumulative = 0;
-            int roll = Config.Random.Next(1, _crateOdds);
+            int roll = CryptoRandom.Next(1, Data.CrateItemOdds);
 
-            if (crate.ItemOdds >= Config.Random.Roll())
+            if (crate.ItemOdds >= CryptoRandom.Roll())
             {
-                foreach (var item in _crateItems)
+                foreach (var item in Data.CrateItems)
                 {
                     cumulative += item.CrateOdds;
 
@@ -170,7 +156,7 @@ namespace DEA.Services
                     await ModifyInventoryAsync(dbUser, crate.Name, -1);
                     await ModifyInventoryAsync(dbUser, "Bullet");
                 }
-                return _items.First(x => x.Name == "Bullet");
+                return Data.Items.First(x => x.Name == "Bullet");
             }
             return null;
         }
@@ -182,13 +168,13 @@ namespace DEA.Services
                 throw new Exception("Invalid food type.");
             }
 
-            if (Config.Random.Roll() <= weaponAccuracy)
+            if (CryptoRandom.Roll() <= weaponAccuracy)
             {
                 int cumulative = 0;
-                int sum = type == typeof(Meat) ? _meatOdds : _fishOdds;
-                int roll = Config.Random.Next(1, sum + 1);
+                int sum = type == typeof(Meat) ? Data.MeatAcquireOdds : Data.FishAcquireOdds;
+                int roll = CryptoRandom.Next(1, sum + 1);
 
-                foreach (var item in type == typeof(Meat) ? (Food[])_meat : _fish)
+                foreach (var item in type == typeof(Meat) ? (Food[])Data.Meat : Data.Fish)
                 {
                     cumulative += item.AcquireOdds;
                     if (roll < cumulative)
@@ -227,7 +213,7 @@ namespace DEA.Services
 
         public IEnumerable<Item> InventoryData(User dbUser)
         {
-            return _items.Where(x => dbUser.Inventory.Names.Any(y => y == x.Name));
+            return Data.Items.Where(x => dbUser.Inventory.Names.Any(y => y == x.Name));
         }
     }
 }

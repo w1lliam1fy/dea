@@ -16,7 +16,7 @@ namespace DEA.Common.Preconditions
                 {
                     return Task.FromResult(PreconditionResult.FromError("ERROR: The own attribute may not be used on a parameter that is not an item."));
                 }
-                else if ((context as DEAContext).DbUser.Inventory.Elements.Any(x => x.Name == item.Name))
+                else if ((context as Context).DbUser.Inventory.Elements.Any(x => x.Name == item.Name))
                 {
                     return Task.FromResult(PreconditionResult.FromSuccess());
                 }

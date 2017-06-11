@@ -7,7 +7,7 @@ using DEA.Common.Utilities;
 
 namespace DEA.Common.Preconditions
 {
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
     internal sealed class Global : PreconditionAttribute
     {
         private IServiceProvider _serviceProvider;
@@ -25,11 +25,11 @@ namespace DEA.Common.Preconditions
 
                 if (!_rateLimitService.TryGet(x => x.UserId == context.User.Id && x.Global, out _cooldown))
                 {
-                    _rateLimitService.TryAdd(new RateLimit(context.User.Id, true, Config.USER_RATE_LIMIT));
+                    _rateLimitService.TryAdd(new RateLimit(context.User.Id, true, Config.UserRateLimit));
 
                     _statistics.CommandUsage.AddOrUpdate(command.Name, 0, (key, value) => value + 1);
 
-                    (context as DEAContext).Command = command;
+                    (context as Context).Command = command;
 
                     return Task.FromResult(PreconditionResult.FromSuccess());
                 }

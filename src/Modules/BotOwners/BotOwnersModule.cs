@@ -5,10 +5,9 @@ using Discord.Commands;
 
 namespace DEA.Modules.BotOwners
 {
-    [Global]
     [Require(Attributes.BotOwner)]
     [Summary("These commands may only be used by the bot owners provided by the Owner Ids in the Credentials.json file.")]
-    public partial class BotOwners : DEAModule
+    public partial class BotOwners : Module
     {
         private readonly GuildRepository _guildRepo;
         private readonly BlacklistRepository _blacklistRepo;

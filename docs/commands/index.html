@@ -248,11 +248,6 @@
 <td><code>$LeaveGuild &lt;guildId&gt;</code></td>
 </tr>
 <tr>
-<td>SendGlobalUpdate</td>
-<td>Sends a global update message into all DEA Update channels.</td>
-<td><code>$SendGlobalUpdate &lt;updateMessage&gt;</code></td>
-</tr>
-<tr>
 <td>SetGame</td>
 <td>Sets the game of DEA.</td>
 <td><code>$SetGame &lt;game&gt;</code></td>
@@ -641,9 +636,9 @@
 <td><code>$AddModRole &lt;@modRole&gt; [permissionLevel]</code></td>
 </tr>
 <tr>
-<td>AddTo</td>
-<td>Add cash to every users balance in a specific role.</td>
-<td><code>$AddTo &lt;@role&gt; &lt;money&gt;</code></td>
+<td>DeleteGang</td>
+<td>Deletes a gang.</td>
+<td><code>$DeleteGang &lt;gangName&gt;</code></td>
 </tr>
 <tr>
 <td>ModifyCash</td>
@@ -666,19 +661,14 @@
 <td><code>$ModifyModRole &lt;@modRole&gt; &lt;permissionLevel&gt;</code></td>
 </tr>
 <tr>
-<td>RemoveFrom</td>
-<td>Remove cash to every users balance in a specific role.</td>
-<td><code>$RemoveFrom &lt;@role&gt; &lt;money&gt;</code></td>
-</tr>
-<tr>
 <td>RemoveModRole</td>
 <td>Removes a moderator role.</td>
 <td><code>$RemoveModRole &lt;@modRole&gt;</code></td>
 </tr>
 <tr>
 <td>Reset</td>
-<td>Resets all user data for the entire server or a specific role.</td>
-<td><code>$Reset [@role]</code></td>
+<td>Resets all user and gang data in your server.</td>
+<td><code>$Reset</code></td>
 </tr>
 <tr>
 <td>ResetUser</td>

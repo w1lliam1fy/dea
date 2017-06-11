@@ -11,9 +11,9 @@ namespace DEA.Modules.Crime
         [Summary("Kill yourself.")]
         public async Task Suicide()
         {
-            if (Context.Cash < Config.SUICIDE_COST)
+            if (Context.Cash < Config.SuicideCost)
             {
-                ReplyError($"You need {Config.SUICIDE_COST.USD()} to be able to buy a high quality noose. Balance: {Context.Cash.USD()}.");
+                ReplyError($"You need {Config.SuicideCost.USD()} to be able to buy a high quality noose. Balance: {Context.Cash.USD()}.");
             }
             
             if (Context.DbUser.SlaveOf != 0)
@@ -25,6 +25,7 @@ namespace DEA.Modules.Crime
                     await _gameService.ModifyInventoryAsync(dbUser, item.Name);
                 }
             }
+
             await _userRepo.DeleteAsync(Context.DbUser);
 
             await ReplyAsync($"You have successfully killed yourself.");

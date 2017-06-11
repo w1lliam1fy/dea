@@ -1,5 +1,4 @@
 ﻿using DEA.Common;
-using DEA.Common.Items;
 using DEA.Database.Models;
 using DEA.Services.Handlers;
 using Discord;
@@ -12,12 +11,10 @@ namespace DEA.Database.Repositories
     public sealed class UserRepository : BaseRepository<User>
     {
         private readonly RankHandler _RankHandler;
-        private readonly Item[] _items;
 
-        public UserRepository(IMongoCollection<User> users, RankHandler rankHandler, Item[] items) : base (users)
+        public UserRepository(IMongoCollection<User> users, RankHandler rankHandler) : base (users)
         {
             _RankHandler = rankHandler;
-            _items = items;
         }
 
         public Task<User> GetUserAsync(IGuildUser user)
@@ -43,7 +40,7 @@ namespace DEA.Database.Repositories
             await ModifyAsync(await GetUserAsync(user), function);
         }
 
-        public async Task EditCashAsync(DEAContext context, decimal change)
+        public async Task EditCashAsync(Context context, decimal change)
         {
             decimal newCash = Math.Round(context.Cash + change, 2);
             context.Cash = newCash;

@@ -12,8 +12,7 @@ internal static class LevenshteinDistance
         {
             return m;
         }
-
-        if (m == 0)
+        else if (m == 0)
         {
             return n;
         }
@@ -32,9 +31,7 @@ internal static class LevenshteinDistance
             {
                 int cost = (t[j - 1] == s[i - 1]) ? 0 : 1;
 
-                d[i, j] = Math.Min(
-                    Math.Min(d[i - 1, j] + 1, d[i, j - 1] + 1),
-                    d[i - 1, j - 1] + cost);
+                d[i, j] = Math.Min(Math.Min(d[i - 1, j] + 1, d[i, j - 1] + 1), d[i - 1, j - 1] + cost);
             }
         }
 

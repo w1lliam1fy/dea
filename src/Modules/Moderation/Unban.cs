@@ -43,7 +43,7 @@ namespace DEA.Modules.Moderation
             await SendAsync($"{Context.User.Boldify()} has successfully unbanned {user.Boldify()}.");
 
             await _moderationService.TryInformSubjectAsync(Context.User, "Unban", user, reason);
-            await _moderationService.TryModLogAsync(Context.DbGuild, Context.Guild, "Unban", new Color(0, 255, 0), reason, Context.User, user);
+            await _moderationService.TryModLogAsync(Context.DbGuild, Context.Guild, "Unban", Config.UnbanColor, reason, Context.User, user);
         }
     }
 }

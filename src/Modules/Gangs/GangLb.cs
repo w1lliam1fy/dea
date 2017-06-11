@@ -25,7 +25,7 @@ namespace DEA.Modules.Gangs
 
             for (int i = 0; i < sortedGangs.Count(); i++)
             {
-                if (i + 1 > Config.GANGSLB_CAP)
+                if (i + 1 > Config.GangsLbCap)
                 {
                     break;
                 }

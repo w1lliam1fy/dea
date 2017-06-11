@@ -5,7 +5,7 @@ using DEA.Common;
 
 namespace DEA.Modules.Gambling
 {
-    public partial class Gambling : DEAModule
+    public partial class Gambling : Module
     {
         [Command("50x2")]
         [Require(Attributes.FiftyX2)]

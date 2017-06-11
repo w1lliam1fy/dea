@@ -18,7 +18,7 @@ namespace DEA.Modules.Owners
             await _userRepo.DeleteAsync(dbUser);
             await _RankHandler.HandleAsync(user, Context.DbGuild, await _userRepo.GetUserAsync(user));
 
-            await SendAsync($"Successfully reset {user.Boldify()}'s data.");
+            await SendAsync($"You have successfully reset {user.Boldify()}'s data.");
         }
     }
 }

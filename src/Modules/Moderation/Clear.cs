@@ -12,13 +12,13 @@ namespace DEA.Modules.Moderation
         [Summary("Deletes x amount of messages.")]
         public async Task CleanAsync(int quantity = 25, [Remainder] string reason = null)
         {
-            if (quantity < Config.MIN_CLEAR)
+            if (quantity < Config.MinClear)
             {
-                ReplyError($"You may not clear less than {Config.MIN_CLEAR} messages.");
+                ReplyError($"You may not clear less than {Config.MinClear} messages.");
             }
-            else if (quantity > Config.MAX_CLEAR)
+            else if (quantity > Config.MaxClear)
             {
-                ReplyError($"You may not clear more than {Config.MAX_CLEAR} messages.");
+                ReplyError($"You may not clear more than {Config.MaxClear} messages.");
             }
             else if (Context.Channel.Id == Context.DbGuild.ModLogChannelId)
             {
@@ -30,7 +30,7 @@ namespace DEA.Modules.Moderation
 
             var msg = await ReplyAsync($"Messages deleted: **{quantity}**.");
 
-            await _moderationService.TryModLogAsync(Context.DbGuild, Context.Guild, "Clear", new Color(34, 59, 255), reason, Context.User, null, "Quantity", $"{quantity}");
+            await _moderationService.TryModLogAsync(Context.DbGuild, Context.Guild, "Clear", Config.ClearColor, reason, Context.User, null, "Quantity", $"{quantity}");
 
             await Task.Delay(2500);
             await msg.DeleteAsync();

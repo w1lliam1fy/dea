@@ -16,14 +16,14 @@ namespace DEA.Modules.Gangs
         [Summary("Withdraw cash from your gang's funds.")]
         public async Task Withdraw(decimal cash)
         {
-            if (cash < Config.MIN_WITHDRAW)
+            if (cash < Config.MinWithdraw)
             {
-                ReplyError($"The minimum withdrawal is {Config.MIN_WITHDRAW.USD()}.");
+                ReplyError($"The minimum withdrawal is {Config.MinWithdraw.USD()}.");
             }
-            else if (cash > Math.Round(Context.Gang.Wealth * Config.WITHDRAW_CAP, 2))
+            else if (cash > Math.Round(Context.Gang.Wealth * Config.WithdrawCap, 2))
             {
-                ReplyError($"You may only withdraw {Config.WITHDRAW_CAP.ToString("P")} of your gang's wealth, " +
-                           $"that is {(Context.Gang.Wealth * Config.WITHDRAW_CAP).USD()}.");
+                ReplyError($"You may only withdraw {Config.WithdrawCap.ToString("P")} of your gang's wealth, " +
+                           $"that is {(Context.Gang.Wealth * Config.WithdrawCap).USD()}.");
             }
 
             await _gangRepo.ModifyAsync(Context.Gang, x => x.Wealth = Context.Gang.Wealth - cash);
@@ -33,7 +33,7 @@ namespace DEA.Modules.Gangs
                              $"{Context.Gang.Name}'s Wealth: {Context.Gang.Wealth.USD()}.");
 
             await Context.Gang.LeaderId.TryDMAsync(Context.Client, $"{Context.User.Boldify()} has withdrawn {cash.USD()} from your gang's wealth.");
-            _rateLimitService.TryAdd(new RateLimit(Context.User.Id, Context.Guild.Id, "Withdraw", Config.WITHDRAW_COOLDOWN));
+            _rateLimitService.TryAdd(new RateLimit(Context.User.Id, Context.Guild.Id, "Withdraw", Config.WithdrawCooldown));
         }
     }
 }

@@ -32,7 +32,7 @@ namespace DEA.Modules.Moderation
             await SendAsync($"{Context.User.Boldify()} has successfully muted {userToMute.Boldify()}.");
 
             await _moderationService.TryInformSubjectAsync(Context.User, "Mute", userToMute, reason);
-            await _moderationService.TryModLogAsync(Context.DbGuild, Context.Guild, "Mute", new Color(255, 114, 14), reason, Context.User, userToMute);
+            await _moderationService.TryModLogAsync(Context.DbGuild, Context.Guild, "Mute", Config.MuteColor, reason, Context.User, userToMute);
         }
     }
 }

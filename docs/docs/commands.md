@@ -48,7 +48,6 @@ Command | Description | Usage
 ---------------- | --------------| -------
 Blacklist|Blacklist a user from DEA entirely to the fullest extent.|`$Blacklist <userId>`
 LeaveGuild|Leaves any guild by guild ID.|`$LeaveGuild <guildId>`
-SendGlobalUpdate|Sends a global update message into all DEA Update channels.|`$SendGlobalUpdate <updateMessage>`
 SetGame|Sets the game of DEA.|`$SetGame <game>`
 
 ### Crime
@@ -145,14 +144,13 @@ Command | Description | Usage
 ---------------- | --------------| -------
 100k|Sets the user's balance to $100,000.00.|`$100k [@user]`
 AddModRole|Adds a moderator role.|`$AddModRole <@modRole> [permissionLevel]`
-AddTo|Add cash to every users balance in a specific role.|`$AddTo <@role> <money>`
+DeleteGang|Deletes a gang.|`$DeleteGang <gangName>`
 ModifyCash|Modify a user's balance.|`$ModifyCash <money> [@user]`
 ModifyHealth|Modify a user's health.|`$ModifyHealth <modifyHealth> [@user]`
 ModifyInventory|Modify a user's inventory.|`$ModifyInventory <quantity> <item> [@user]`
 ModifyModRole|Modfies a moderator role.|`$ModifyModRole <@modRole> <permissionLevel>`
-RemoveFrom|Remove cash to every users balance in a specific role.|`$RemoveFrom <@role> <money>`
 RemoveModRole|Removes a moderator role.|`$RemoveModRole <@modRole>`
-Reset|Resets all user data for the entire server or a specific role.|`$Reset [@role]`
+Reset|Resets all user and gang data in your server.|`$Reset`
 ResetUser|Resets all data for a specific user.|`$ResetUser [@user]`
 SetGlobalMultiplier|Sets the global chatting multiplier.|`$SetGlobalMultiplier <globalMultiplier>`
 

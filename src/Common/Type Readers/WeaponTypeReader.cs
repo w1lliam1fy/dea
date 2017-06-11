@@ -1,30 +1,19 @@
-﻿using DEA.Common.Items;
-using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using Discord.Commands;
+using DEA.Services.Static;
 
 namespace DEA.Common.TypeReaders
 {
     internal sealed class WeaponTypeReader : TypeReader
     {
-        private readonly IServiceProvider _serviceProvider;
-        private readonly Weapon[] _weapons;
-
-        public WeaponTypeReader(IServiceProvider serviceProvider)
-        {
-            _serviceProvider = serviceProvider;
-            _weapons = _serviceProvider.GetService<Weapon[]>();
-        }
-
         public override Task<TypeReaderResult> Read(ICommandContext context, string input)
         {
             return Task.Run(() =>
             {
                 input = input.ToLower();
 
-                var weapon = _weapons.FirstOrDefault(x => x.Name.ToLower() == input);
+                var weapon = Data.Weapons.FirstOrDefault(x => x.Name.ToLower() == input);
 
                 if (weapon != null)
                 {

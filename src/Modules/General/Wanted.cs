@@ -35,7 +35,7 @@ namespace DEA.Modules.General
                 }
 
                 description += $"{position}. {user.Boldify()}: {dbUser.Bounty.USD()}\n";
-                if (position >= Config.LEADERBOARD_CAP)
+                if (position >= Config.BountyLbCap)
                 {
                     break;
                 }

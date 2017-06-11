@@ -4,6 +4,7 @@ using System;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Diagnostics;
+using DEA.Services.Static;
 
 namespace DEA.Modules.System
 {
@@ -27,7 +28,7 @@ namespace DEA.Modules.System
                 .AddInlineField("Uptime", $"Days: {uptime.Days}\nHours: {uptime.Hours}\nMinutes: {uptime.Minutes}")
                 .AddInlineField("Messages", $"{_statistics.MessagesRecieved} ({(_statistics.MessagesRecieved / uptime.TotalSeconds).ToString("N2")}/sec)")
                 .AddInlineField("Commands Run", _statistics.CommandsRun)
-                .WithColor(Config.Color());
+                .WithColor(Config.Colors[CryptoRandom.Next(Config.Colors.Length)]);
             }
 
             var channel = await Context.User.CreateDMChannelAsync();

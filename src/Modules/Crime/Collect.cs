@@ -37,7 +37,7 @@ namespace DEA.Modules.Crime
 
             await _userRepo.EditCashAsync(Context, totalCashGain);
             await ReplyAsync($"You have successfully collected {totalCashGain.USD()} in slave money.");
-            _rateLimitService.TryAdd(new RateLimit(Context.User.Id, Context.Guild.Id, "Collect", Config.COLLECT_COOLDOWN));
+            _rateLimitService.TryAdd(new RateLimit(Context.User.Id, Context.Guild.Id, "Collect", Config.CollectCooldown));
         }
     }
 }

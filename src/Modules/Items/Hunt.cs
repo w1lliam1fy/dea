@@ -24,7 +24,7 @@ namespace DEA.Modules.Items
             {
                 await ReplyAsync("Nigga you just about had that deer but then he did that hoof kick thing and fucked up your buddy Chuck, so then you had to go bust a nut all over him and the GODDAMN deer got away.");
             }
-            _rateLimitService.TryAdd(new RateLimit(Context.User.Id, Context.Guild.Id, "Hunt", Config.HUNT_COOLDOWN));
+            _rateLimitService.TryAdd(new RateLimit(Context.User.Id, Context.Guild.Id, "Hunt", Config.HuntCooldown));
         }
     }
 }

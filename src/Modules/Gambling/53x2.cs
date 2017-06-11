@@ -4,7 +4,7 @@ using DEA.Common;
 
 namespace DEA.Modules.Gambling
 {
-    public partial class Gambling : DEAModule
+    public partial class Gambling : Module
     {
         [Command("53x2")]
         [Remarks("50")]

@@ -17,9 +17,9 @@ namespace DEA.Modules.General
             {
                 ReplyError("Hey kids! Look at that retard, he is trying to give money to himself!");
             }
-            else if (money < Config.DONATE_MIN)
+            else if (money < Config.MinDonate)
             {
-                ReplyError($"Lowest donation is {Config.DONATE_MIN}$.");
+                ReplyError($"Lowest donation is {Config.MinDonate}$.");
             }
             else if (Context.Cash < money)
             {
@@ -27,7 +27,7 @@ namespace DEA.Modules.General
             }
 
             await _userRepo.EditCashAsync(Context, -money);
-            decimal deaMoney = money * Config.DEA_CUT / 100;
+            decimal deaMoney = money * Config.DeaCut;
 
             var otherDbUser = await _userRepo.GetUserAsync(user);
             await _userRepo.EditCashAsync(user, Context.DbGuild, otherDbUser, money - deaMoney);

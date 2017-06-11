@@ -13,9 +13,9 @@ namespace DEA.Modules.Gangs
         [Summary("Deposit cash into your gang's funds.")]
         public async Task Deposit(decimal cash)
         {
-            if (cash < Config.MIN_DEPOSIT)
+            if (cash < Config.MinDeposit)
             {
-                ReplyError($"The lowest deposit is {Config.MIN_DEPOSIT.USD()}.");
+                ReplyError($"The lowest deposit is {Config.MinDeposit.USD()}.");
             }
             else if (Context.Cash < cash)
             {
@@ -26,7 +26,7 @@ namespace DEA.Modules.Gangs
             await _gangRepo.ModifyAsync(Context.Gang, x => x.Wealth = Context.Gang.Wealth + cash);
 
             await ReplyAsync($"You have successfully deposited {cash.USD()}. " +
-                        $"{Context.Gang.Name}'s Wealth: {Context.Gang.Wealth.USD()}");
+                             $"{Context.Gang.Name}'s Wealth: {Context.Gang.Wealth.USD()}");
 
             await Context.Gang.LeaderId.TryDMAsync(Context.Client, $"{Context.User.Boldify()} deposited {cash.USD()} into your gang's wealth.");
         }

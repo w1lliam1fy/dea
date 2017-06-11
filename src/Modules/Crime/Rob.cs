@@ -1,6 +1,7 @@
 ﻿using DEA.Common.Extensions;
 using DEA.Common.Preconditions;
 using DEA.Common.Utilities;
+using DEA.Services.Static;
 using Discord;
 using Discord.Commands;
 using System;
@@ -21,9 +22,9 @@ namespace DEA.Modules.Crime
             {
                 ReplyError("Only the *retards* try to rob themselves. Are you a retard?");
             }
-            else if (resources < Config.MIN_RESOURCES)
+            else if (resources < Config.MinResources)
             {
-                ReplyError($"The minimum amount of money to spend on resources for a robbery is {Config.MIN_RESOURCES.USD()}.");
+                ReplyError($"The minimum amount of money to spend on resources for a robbery is {Config.MinResources.USD()}.");
             }
             else if (Context.Cash < resources)
             {
@@ -31,17 +32,17 @@ namespace DEA.Modules.Crime
             }
 
             var raidedDbUser = await _userRepo.GetUserAsync(user);
-            if (resources > Math.Round(raidedDbUser.Cash * Config.MAX_ROB_PERCENTAGE / 2, 2))
+            if (resources > Math.Round(raidedDbUser.Cash * Config.RobCap / 2, 2))
             {
-                ReplyError($"You are overkilling it. You only need {(raidedDbUser.Cash * Config.MAX_ROB_PERCENTAGE / 2).USD()} " +
-                           $"to rob {Config.MAX_ROB_PERCENTAGE.ToString("P")} of their cash, that is {(raidedDbUser.Cash * Config.MAX_ROB_PERCENTAGE).USD()}.");
+                ReplyError($"You are overkilling it. You only need {(raidedDbUser.Cash * Config.RobCap / 2).USD()} " +
+                           $"to rob {Config.RobCap.ToString("P")} of their cash, that is {(raidedDbUser.Cash * Config.RobCap).USD()}.");
             }
 
             var stolen = resources * 2;
 
-            int roll = Config.Random.Roll();
+            int roll = CryptoRandom.Roll();
 
-            var successOdds = await _gangRepo.InGangAsync(Context.GUser) ? Config.ROB_SUCCESS_ODDS - 5 : Config.ROB_SUCCESS_ODDS;
+            var successOdds = await _gangRepo.InGangAsync(Context.GUser) ? Config.RobOdds - 5 : Config.RobOdds;
 
             if (successOdds > roll)
             {
@@ -61,7 +62,7 @@ namespace DEA.Modules.Crime
                 await ReplyAsync($"With a {successOdds}.00% chance of success, you failed to steal {stolen.USD()} " +
                                  $"and lost all resources in the process. Balance: {Context.Cash.USD()}.");
             }
-            _rateLimitService.TryAdd(new RateLimit(Context.User.Id, Context.Guild.Id, "Rob", Config.ROB_COOLDOWN));
+            _rateLimitService.TryAdd(new RateLimit(Context.User.Id, Context.Guild.Id, "Rob", Config.RobCooldown));
         }
     }
 }

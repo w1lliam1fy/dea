@@ -36,7 +36,7 @@ namespace DEA.Common.Preconditions
                 _moderationService = _serviceProvider.GetService<ModerationService>();
                 _gameService = _serviceProvider.GetService<GameService>();
 
-                DEAContext deaContext = context as DEAContext;
+                Context deaContext = context as Context;
 
                 var permLevel = _moderationService.GetPermLevel(deaContext.DbGuild, deaContext.GUser);
                 var invData = _gameService.InventoryData(deaContext.DbUser);
@@ -88,33 +88,33 @@ namespace DEA.Common.Preconditions
                             }
                             break;
                         case Attributes.Jump:
-                            if (deaContext.Cash < Config.JUMP_REQUIREMENT)
+                            if (deaContext.Cash < Config.JumpRequirement)
                             {
-                                return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.JUMP_REQUIREMENT.USD()}.");
+                                return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.JumpRequirement.USD()}.");
                             }
                             break;
                         case Attributes.Steal:
-                            if (deaContext.Cash < Config.STEAL_REQUIREMENT)
+                            if (deaContext.Cash < Config.StealRequirement)
                             {
-                                return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.STEAL_REQUIREMENT.USD()}.");
+                                return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.StealRequirement.USD()}.");
                             }
                             break;
                         case Attributes.Rob:
-                            if (deaContext.Cash < Config.ROB_REQUIREMENT)
+                            if (deaContext.Cash < Config.RobRequirement)
                             {
-                                return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.ROB_REQUIREMENT.USD()}.");
+                                return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.RobRequirement.USD()}.");
                             }
                             break;
                         case Attributes.Bully:
-                            if (deaContext.Cash < Config.BULLY_REQUIREMENT)
+                            if (deaContext.Cash < Config.BullyRequirement)
                             {
-                                return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.BULLY_REQUIREMENT.USD()}.");
+                                return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.BullyRequirement.USD()}.");
                             }
                             break;
                         case Attributes.FiftyX2:
-                            if (deaContext.Cash < Config.FIFTYX2_REQUIREMENT)
+                            if (deaContext.Cash < Config.FiftyX2Requirement)
                             {
-                                return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.FIFTYX2_REQUIREMENT.USD()}.");
+                                return PreconditionResult.FromError($"You do not have the permission to use this command.\nRequired cash: {Config.FiftyX2Requirement.USD()}.");
                             }
                             break;
                         default:

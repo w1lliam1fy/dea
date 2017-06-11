@@ -1,23 +1,12 @@
-﻿using DEA.Common.Items;
-using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using Discord.Commands;
+using DEA.Services.Static;
 
 namespace DEA.Common.TypeReaders
 {
     internal sealed class CrateTypeReader : TypeReader
     {
-        private readonly IServiceProvider _serviceProvider;
-        private readonly Crate[] _crates;
-
-        public CrateTypeReader(IServiceProvider serviceProvider)
-        {
-            _serviceProvider = serviceProvider;
-            _crates = _serviceProvider.GetService<Crate[]>();
-        }
-
         public override Task<TypeReaderResult> Read(ICommandContext context, string input)
         {
             return Task.Run(() =>
@@ -26,7 +15,7 @@ namespace DEA.Common.TypeReaders
 
                 input = input.EndsWith("crate") ? input : input + " crate";
 
-                var crate = _crates.FirstOrDefault(x => x.Name.ToLower() == input);
+                var crate = Data.Crates.FirstOrDefault(x => x.Name.ToLower() == input);
 
                 if (crate != null)
                 {

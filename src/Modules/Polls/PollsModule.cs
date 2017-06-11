@@ -1,12 +1,10 @@
 ﻿using DEA.Common;
-using DEA.Common.Preconditions;
 using DEA.Database.Repositories;
 using DEA.Services;
 
 namespace DEA.Modules.Polls
 {
-    [Global]
-    public partial class Polls : DEAModule
+    public partial class Polls : Module
     {
         private readonly ModerationService _moderationService;
         private readonly PollRepository _pollRepo;

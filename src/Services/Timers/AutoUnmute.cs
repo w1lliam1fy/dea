@@ -32,7 +32,7 @@ namespace DEA.Services.Timers
 
             TimerCallback TimerDelegate = new TimerCallback(Unmute);
 
-            _timer = new Timer(TimerDelegate, StateObj, TimeSpan.FromMilliseconds(1000), Config.AUTO_UNMUTE_COOLDOWN);
+            _timer = new Timer(TimerDelegate, StateObj, TimeSpan.Zero, Config.AutoUnmuteCooldown);
 
             StateObj.TimerReference = _timer;
         }

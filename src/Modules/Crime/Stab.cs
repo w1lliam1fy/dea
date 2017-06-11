@@ -8,6 +8,7 @@ using MongoDB.Driver;
 using DEA.Common.Preconditions;
 using DEA.Common.Utilities;
 using DEA.Common.Items;
+using DEA.Services.Static;
 
 namespace DEA.Modules.Crime
 {
@@ -15,7 +16,7 @@ namespace DEA.Modules.Crime
     {
         [Command("Stab")]
         [Cooldown]
-        [Remarks("Sexy John#0007 Huntsman Knife")]
+        [Remarks("\"Sexy John#0007\" Huntsman Knife")]
         [Summary("Attempt to stab a user.")]
         public async Task Stab(IGuildUser userToStab, [Own] [Remainder] Knife knife)
         {
@@ -26,7 +27,7 @@ namespace DEA.Modules.Crime
 
             var dbUser = await _userRepo.GetUserAsync(userToStab);
 
-            if (Config.Random.Roll() < knife.Accuracy)
+            if (CryptoRandom.Roll() < knife.Accuracy)
             {
                 var invData = _gameService.InventoryData(dbUser);
                 var damage = invData.Any(x => x is Armour) ? (int)(knife.Damage * 0.8) : knife.Damage;
@@ -57,7 +58,7 @@ namespace DEA.Modules.Crime
             {
                 await ReplyAsync($"This nigga actually did some acrobatics shit and bounced out of the way before you stabbed him.");
             }
-            _rateLimitService.TryAdd(new RateLimit(Context.User.Id, Context.Guild.Id, "Stab", Config.STAB_COOLDOWN));
+            _rateLimitService.TryAdd(new RateLimit(Context.User.Id, Context.Guild.Id, "Stab", Config.StabCooldown));
         }
     }
 }

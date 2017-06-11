@@ -34,7 +34,7 @@ namespace DEA.Modules.General
                 }
 
                 description += $"{position}. {user.Boldify()}: {dbUser.Cash.USD()}\n";
-                if (position >= Config.LEADERBOARD_CAP)
+                if (position >= Config.LeaderboardCap)
                 {
                     break;
                 }

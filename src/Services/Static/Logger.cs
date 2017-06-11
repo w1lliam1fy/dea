@@ -7,10 +7,26 @@ namespace DEA.Services.Static
     {
         public static void Log(LogSeverity severity, string source, string message)
         {
-            Append($"{DateTime.Now.ToString("hh:mm:ss")} ", ConsoleColor.DarkGray);
-            Append($"[{severity}] ", ConsoleColor.Red);
-            Append($"{source}: ", ConsoleColor.DarkGreen);
-            NewLine(message);
+            ConsoleColor centerColor;
+
+            switch (severity)
+            {
+                case LogSeverity.Critical:
+                case LogSeverity.Error:
+                    centerColor = ConsoleColor.Red;
+                    break;
+                case LogSeverity.Warning:
+                    centerColor = ConsoleColor.Yellow;
+                    break;
+                default:
+                    centerColor = ConsoleColor.Magenta;
+                    break;
+            }
+
+            Append($"{DateTime.Now.ToString("hh:mm:ss")} ", ConsoleColor.DarkBlue, ConsoleColor.White);
+            Append($"[{severity}] ", centerColor);
+            Append($"{source}: ", ConsoleColor.White);
+            NewLine(message, ConsoleColor.Cyan);
         }
 
         public static void NewLine(string text = "", ConsoleColor foreground = ConsoleColor.White, ConsoleColor background = ConsoleColor.Black)

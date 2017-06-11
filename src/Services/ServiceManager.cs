@@ -5,113 +5,39 @@ using DEA.Database.Models;
 using DEA.Database.Repositories;
 using DEA.Events;
 using DEA.Services.Handlers;
-using DEA.Services.Static;
 using DEA.Services.Timers;
-using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
-using Newtonsoft.Json;
 using System;
-using System.IO;
-using System.Linq;
+using DEA.Services.Static;
 
 namespace DEA.Services
 {
     public sealed class ServiceManager
     {
-        private Credentials _credentials;
-        
-        private Armour[] _armour;
-        private Crate[] _crates;
-        private CrateItem[] _crateItems;
-        private Fish[] _fish;
-        private Food[] _food;
-        private Gun[] _guns;
-        private Item[] _items;
-        private Knife[] _knives;
-        private Meat[] _meat;
-        private Weapon[] _weapons;
+        private readonly DiscordSocketClient _client;
+        private readonly CommandService _commandService;
 
-        public Credentials Credentials => _credentials;
+        public IServiceProvider ServiceProvider { get; }
 
-        public void InitiliazeData()
+        public ServiceManager(DiscordSocketClient client, CommandService commandService)
         {
-            try
-            {
-                JsonSerializer serializer = new JsonSerializer();
+            _client = client;
+            _commandService = commandService;
 
-                using (StreamReader file = File.OpenText(Config.MAIN_DIRECTORY + @"src\Credentials.json"))
-                {
-                    _credentials = (Credentials)serializer.Deserialize(file, typeof(Credentials));
-                }
-                using (StreamReader file = File.OpenText(Config.MAIN_DIRECTORY + @"src\Data\Items\Armour.json"))
-                {
-                    _armour = (Armour[])serializer.Deserialize(file, typeof(Armour[]));
-                }
-                using (StreamReader file = File.OpenText(Config.MAIN_DIRECTORY + @"src\Data\Items\Crates.json"))
-                {
-                    _crates = ((Crate[])serializer.Deserialize(file, typeof(Crate[]))).OrderBy(x => x.Price).ToArray();
-                }
-                using (StreamReader file = File.OpenText(Config.MAIN_DIRECTORY + @"src\Data\Items\Fish.json"))
-                {
-                    _fish = ((Fish[])serializer.Deserialize(file, typeof(Fish[]))).OrderByDescending(x => x.AcquireOdds).ToArray();
-                }
-                using (StreamReader file = File.OpenText(Config.MAIN_DIRECTORY + @"src\Data\Items\Guns.json"))
-                {
-                    _guns = (Gun[])serializer.Deserialize(file, typeof(Gun[]));
-                }
-                using (StreamReader file = File.OpenText(Config.MAIN_DIRECTORY + @"src\Data\Items\Knives.json"))
-                {
-                    _knives = (Knife[])serializer.Deserialize(file, typeof(Knife[]));
-                }
-                using (StreamReader file = File.OpenText(Config.MAIN_DIRECTORY + @"src\Data\Items\Meat.json"))
-                {
-                    _meat = ((Meat[])serializer.Deserialize(file, typeof(Meat[]))).OrderByDescending(x => x.AcquireOdds).ToArray();
-                }
-                using (StreamReader file = File.OpenText(Config.MAIN_DIRECTORY + @"src\Data\Items\Miscellanea.json"))
-                {
-                    _items = (Item[])serializer.Deserialize(file, typeof(Item[]));
-                }
-            }
-            catch (IOException e)
-            {
-                Logger.Log(LogSeverity.Critical, "Error while loading up data, please fix this issue and restart the bot", e.Message);
-                Console.ReadLine();
-                Environment.Exit(0);
-            }
-
-            _food = (_fish as Food[]).Concat(_meat).ToArray();
-            _weapons = (_guns as Weapon[]).Concat(_knives).ToArray();
-            _crateItems = (_weapons as CrateItem[]).Concat(_armour).OrderByDescending(x => x.CrateOdds).ToArray();
-            _items = _items.Concat(_crates).Concat(_crateItems).Concat(_food).ToArray();
-        }
-
-        public IServiceProvider ConfigureServices(DiscordSocketClient client, CommandService commandService)
-        {
             var database = ConfigureDatabase();
 
             var services = new ServiceCollection()
-                .AddSingleton(client)
-                .AddSingleton(commandService)
-                .AddSingleton(_credentials)
+                .AddSingleton(_client)
+                .AddSingleton(_commandService)
                 .AddSingleton(database.GetCollection<User>("users"))
                 .AddSingleton(database.GetCollection<Guild>("guilds"))
                 .AddSingleton(database.GetCollection<Gang>("gangs"))
                 .AddSingleton(database.GetCollection<Mute>("mutes"))
                 .AddSingleton(database.GetCollection<Blacklist>("blacklists"))
                 .AddSingleton(database.GetCollection<Poll>("polls"))
-                .AddSingleton(_items)
-                .AddSingleton(_crates)
-                .AddSingleton(_crateItems)
-                .AddSingleton(_armour)
-                .AddSingleton(_weapons)
-                .AddSingleton(_guns)
-                .AddSingleton(_knives)
-                .AddSingleton(_food)
-                .AddSingleton(_fish)
-                .AddSingleton(_meat)
                 .AddSingleton<PollRepository>()
                 .AddSingleton<GuildRepository>()
                 .AddSingleton<BlacklistRepository>()
@@ -126,35 +52,35 @@ namespace DEA.Services
                 .AddSingleton<MuteRepository>()
                 .AddSingleton<Statistics>();
 
-            return new DefaultServiceProviderFactory().CreateServiceProvider(services);
+            ServiceProvider = new DefaultServiceProviderFactory().CreateServiceProvider(services);
         }
 
-        public void InitializeTimersAndEvents(IServiceProvider serviceProvider)
+        public void InitializeTimersAndEvents()
         {
-            new JoinedGuild(serviceProvider);
-            new GuildUpdated(serviceProvider);
-            new UserJoined(serviceProvider);
-            new AutoIntrestRate(serviceProvider);
-            new AutoDeletePolls(serviceProvider);
-            new AutoTrivia(serviceProvider);
-            new AutoUnmute(serviceProvider);
-            new Ready(serviceProvider);
+            new JoinedGuild(ServiceProvider);
+            new GuildUpdated(ServiceProvider);
+            new UserJoined(ServiceProvider);
+            new AutoIntrestRate(ServiceProvider);
+            new AutoDeletePolls(ServiceProvider);
+            new AutoUnmute(ServiceProvider);
+            new Log(ServiceProvider);
+            new Ready(ServiceProvider);
         }
 
-        public void AddTypeReaders(CommandService commandService, IServiceProvider serviceProvider)
+        public void AddTypeReaders()
         {
-            commandService.AddTypeReader<Crate>(new CrateTypeReader(serviceProvider));
-            commandService.AddTypeReader<Food>(new FoodTypeReader(serviceProvider));
-            commandService.AddTypeReader<Gun>(new GunTypeReader(serviceProvider));
-            commandService.AddTypeReader<Item>(new ItemTypeReader(serviceProvider));
-            commandService.AddTypeReader<Knife>(new KnifeTypeReader(serviceProvider));
-            commandService.AddTypeReader<Weapon>(new WeaponTypeReader(serviceProvider));
+            _commandService.AddTypeReader<Crate>(new CrateTypeReader());
+            _commandService.AddTypeReader<Food>(new FoodTypeReader());
+            _commandService.AddTypeReader<Gun>(new GunTypeReader());
+            _commandService.AddTypeReader<Item>(new ItemTypeReader());
+            _commandService.AddTypeReader<Knife>(new KnifeTypeReader());
+            _commandService.AddTypeReader<Weapon>(new WeaponTypeReader());
         }
 
         private IMongoDatabase ConfigureDatabase()
         {
-            var dbClient = new MongoClient(_credentials.MongoDBConnectionString);
-            return dbClient.GetDatabase(_credentials.DatabaseName);
+            var dbClient = new MongoClient(Data.Credentials.MongoDBConnectionString);
+            return dbClient.GetDatabase(Data.Credentials.DatabaseName);
         }
     }
 }

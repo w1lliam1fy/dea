@@ -17,9 +17,9 @@ namespace DEA.Modules.Items
         {
             var quantity = Context.DbUser.Inventory[crate.Name].AsInt32;
 
-            if (quantity > Config.MAX_CRATE_OPEN)
+            if (quantity > Config.MaxCrateOpen)
             {
-                ReplyError($"You may not open more than {Config.MAX_CRATE_OPEN.ToString("N0")} crates.");
+                ReplyError($"You may not open more than {Config.MaxCrateOpen.ToString("N0")} crates.");
             }
 
             IReadOnlyDictionary<string,int> items = await _gameService.MassOpenCratesAsync(crate, quantity, Context.DbUser);
@@ -32,7 +32,7 @@ namespace DEA.Modules.Items
 
             await SendAsync(reply, $"Items {Context.User} has won");
 
-            _rateLimitService.TryAdd(new RateLimit(Context.User.Id, Context.Guild.Id, "OpenAll", Config.OPEN_CRATE_COOLDOWN));
+            _rateLimitService.TryAdd(new RateLimit(Context.User.Id, Context.Guild.Id, "OpenAll", Config.OpenCrateCooldown));
         }
     }
 }

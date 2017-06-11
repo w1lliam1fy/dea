@@ -26,7 +26,7 @@ namespace DEA.Database.Models
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public double Length { get; set; } = Config.DEFAULT_POLL_LENGTH.TotalMilliseconds;
+        public double Length { get; set; } = Config.DefaultPollLength.TotalMilliseconds;
 
         public bool ElderOnly { get; set; } = false;
 

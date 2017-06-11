@@ -1,4 +1,5 @@
-﻿using Discord;
+﻿using DEA.Services.Static;
+using Discord;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -16,7 +17,7 @@ namespace DEA.Common.Extensions.DiscordExtensions
             var builder = new EmbedBuilder()
             {
                 Description = description,
-                Color = Config.Color()
+                Color = Config.Colors[CryptoRandom.Next(Config.Colors.Length)]
             };
             if (title != null)
             {
@@ -33,7 +34,7 @@ namespace DEA.Common.Extensions.DiscordExtensions
 
         public static Task<IUserMessage> SendErrorAsync(this IMessageChannel channel, string message, string title = null)
         {
-            return channel.SendAsync(message, title, Config.ERROR_COLOR);
+            return channel.SendAsync(message, title, Config.ErrorColor);
         }
 
         public static async Task SendCodeAsync(this IMessageChannel channel, IReadOnlyCollection<string> elements, string title = "")

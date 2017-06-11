@@ -8,6 +8,7 @@ using DEA.Common.Preconditions;
 using DEA.Common.Utilities;
 using DEA.Common.Items;
 using System.Linq;
+using DEA.Services.Static;
 
 namespace DEA.Modules.Crime
 {
@@ -15,7 +16,7 @@ namespace DEA.Modules.Crime
     {
         [Command("Shoot")]
         [Cooldown]
-        [Remarks("Sexy John#0007 Revolver")]
+        [Remarks("\"Sexy John#0007\" Revolver")]
         [Summary("Attempt to shoot a user.")]
         public async Task Shoot(IGuildUser userToShoot, [Own] [Remainder] Gun gun)
         {
@@ -26,7 +27,7 @@ namespace DEA.Modules.Crime
 
             var dbUser = await _userRepo.GetUserAsync(userToShoot);
 
-            if (Config.Random.Roll() < gun.Accuracy)
+            if (CryptoRandom.Roll() < gun.Accuracy)
             {
                 var invData = _gameService.InventoryData(dbUser);
                 var damage = invData.Any(x => x is Armour) ? (int)(gun.Damage * 0.8) : gun.Damage;
@@ -62,7 +63,7 @@ namespace DEA.Modules.Crime
                 await ReplyAsync($"The nigga fucking dodged the bullet, literally. What in the sac of nuts.");
             }
             await _gameService.ModifyInventoryAsync(Context.DbUser, "Bullet", -1);
-            _rateLimitService.TryAdd(new RateLimit(Context.User.Id, Context.Guild.Id, "Shoot", Config.SHOOT_COOLDOWN));
+            _rateLimitService.TryAdd(new RateLimit(Context.User.Id, Context.Guild.Id, "Shoot", Config.ShootCooldown));
         }
     }
 }

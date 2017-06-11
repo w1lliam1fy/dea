@@ -23,7 +23,7 @@ namespace DEA.Modules.Moderation
 
             await SendAsync($"{Context.User.Boldify()} has successfully banned {userToBan.Boldify()}.");
 
-            await _moderationService.TryModLogAsync(Context.DbGuild, Context.Guild, "Ban", Config.ERROR_COLOR, reason, Context.User, userToBan);
+            await _moderationService.TryModLogAsync(Context.DbGuild, Context.Guild, "Ban", Config.ErrorColor, reason, Context.User, userToBan);
         }
     }
 }

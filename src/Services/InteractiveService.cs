@@ -19,7 +19,7 @@ namespace DEA.Services
         {
             if (timeout == null)
             {
-                timeout = Config.DEFAULT_WAIT_FOR_MESSAGE;
+                timeout = Config.DefaultWaitForMessage;
             }
 
             var blockToken = new CancellationTokenSource();

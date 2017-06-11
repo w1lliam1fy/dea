@@ -23,7 +23,7 @@ namespace DEA.Modules.Moderation
 
             await SendAsync($"{Context.User.Boldify()} has successfully kicked {userToKick.Boldify()}.");
 
-            await _moderationService.TryModLogAsync(Context.DbGuild, Context.Guild, "Kick", new Color(255, 114, 14), reason, Context.User, userToKick);
+            await _moderationService.TryModLogAsync(Context.DbGuild, Context.Guild, "Kick", Config.KickColor, reason, Context.User, userToKick);
         }
     }
 }

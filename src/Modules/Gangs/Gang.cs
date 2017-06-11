@@ -28,6 +28,10 @@ namespace DEA.Modules.Gangs
             {
                 ReplyError("You are not in a gang.");
             }
+            else if (gang == null)
+            {
+                ReplyError("This gang does not exist.");
+            }
 
             var members = string.Empty;
             var guildInterface = Context.Guild as IGuild;

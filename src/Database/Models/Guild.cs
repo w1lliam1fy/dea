@@ -13,6 +13,7 @@ namespace DEA.Database.Models
         public ulong GuildId { get; set; }
 
         //Roles
+
         public BsonDocument ModRoles { get; set; } = new BsonDocument();
 
         public BsonDocument RankRoles { get; set; } = new BsonDocument();
@@ -33,7 +34,7 @@ namespace DEA.Database.Models
 
         public bool AutoTrivia { get; set; } = false;
 
-        public string Prefix { get; set; } = Config.DEFAULT_PREFIX;
+        public string Prefix { get; set; } = Config.DefaultPrefix;
 
         public decimal GlobalChattingMultiplier { get; set; } = 1m;
 

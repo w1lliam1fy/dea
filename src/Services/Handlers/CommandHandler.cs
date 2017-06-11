@@ -58,7 +58,7 @@ namespace DEA.Services.Handlers
                     return;
                 }
 
-                var context = new DEAContext(_client, msg, _serviceProvider);
+                var context = new Context(_client, msg, _serviceProvider);
 
                 if (context.Guild == null)
                 {
@@ -96,14 +96,14 @@ namespace DEA.Services.Handlers
                         _statistics.CommandsRun++;
                     }
                 }
-                else if (msg.Content.Length >= Config.MIN_CHAR_LENGTH)
+                else if (msg.Content.Length >= Config.MinCharLength)
                 {
-                    if (DateTime.UtcNow.Subtract(context.DbUser.LastMessage).TotalMilliseconds > Config.MSG_COOLDOWN * 1000)
+                    if (DateTime.UtcNow.Subtract(context.DbUser.LastMessage).TotalMilliseconds > Config.MessageCooldown.TotalMilliseconds)
                     {
                         await _userRepo.ModifyAsync(context.DbUser, x =>
                         {
                             x.LastMessage = DateTime.UtcNow;
-                            x.Cash += context.DbGuild.GlobalChattingMultiplier * Config.CASH_PER_MSG;
+                            x.Cash += context.DbGuild.GlobalChattingMultiplier * Config.CashPerMsg;
                         });
                         await _RankHandler.HandleAsync(context.GUser, context.DbGuild, context.DbUser);
                     }

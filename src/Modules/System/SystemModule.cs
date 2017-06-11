@@ -1,12 +1,10 @@
 ﻿using DEA.Common;
-using DEA.Common.Preconditions;
 using DEA.Common.Utilities;
 using Discord.Commands;
 
 namespace DEA.Modules.System
 {
-    [Global]
-    public partial class System : DEAModule
+    public partial class System : Module
     {
         private readonly CommandService _commandService;
         private readonly Statistics _statistics;

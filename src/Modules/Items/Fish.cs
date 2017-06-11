@@ -24,7 +24,7 @@ namespace DEA.Modules.Items
             {
                 await ReplyAsync("You had the fucking fish in your pocket on the way to the supermarket to get some spices, and the nigga flipping fish jumped into the sink and pulled some goddamn Finding Nemo shit and bounced.");
             }
-            _rateLimitService.TryAdd(new RateLimit(Context.User.Id, Context.Guild.Id, "Fish", Config.FISH_COOLDOWN));
+            _rateLimitService.TryAdd(new RateLimit(Context.User.Id, Context.Guild.Id, "Fish", Config.FishCooldown));
         }
     }
 }

@@ -28,7 +28,7 @@ namespace DEA.Common.Preconditions
                 }
                 else
                 {
-                    await context.Channel.SendAsync($"Hours: {_cooldown.Hours}\nMinutes: {_cooldown.Minutes}\nSeconds: {_cooldown.Seconds}", $"{command.Name.UpperFirstChar()} cooldown for {context.User}", Config.ERROR_COLOR);
+                    await context.Channel.SendErrorAsync($"Hours: {_cooldown.Hours}\nMinutes: {_cooldown.Minutes}\nSeconds: {_cooldown.Seconds}", $"{command.Name.UpperFirstChar()} cooldown for {context.User}");
                     return PreconditionResult.FromError(string.Empty);
                 }
             });

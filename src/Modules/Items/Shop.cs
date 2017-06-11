@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using DEA.Common.Extensions;
 using DEA.Common.Items;
+using DEA.Services.Static;
 
 namespace DEA.Modules.Items
 {
@@ -16,7 +17,7 @@ namespace DEA.Modules.Items
             if (crate == null)
             {
                 string description = string.Empty;
-                foreach (var item in _crates)
+                foreach (var item in Data.Crates)
                 {
                     description += $"**Cost:** {item.Price.USD()} | **Command:** `{Context.Prefix}shop {item.Name}` | **Description:** {item.Description}\n";
                 }

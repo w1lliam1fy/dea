@@ -20,9 +20,9 @@ namespace DEA.Modules.Polls
                 ReplyError("You have already voted on this poll.");
             }
             else if (poll.ElderOnly && DateTime.UtcNow.Subtract((Context.GUser).JoinedAt.Value.UtcDateTime).TotalMilliseconds <
-                Config.ELDER_TIME_REQUIRED.TotalMilliseconds)
+                Config.ElderTimeRequired.TotalMilliseconds)
             {
-                ReplyError($"You must have been in this server for more than {Config.ELDER_TIME_REQUIRED.TotalDays} days to vote on this poll.");
+                ReplyError($"You must have been in this server for more than {Config.ElderTimeRequired.TotalDays} days to vote on this poll.");
             }
             else if (poll.ModOnly && _moderationService.GetPermLevel(Context.DbGuild, Context.GUser) == 0)
             {

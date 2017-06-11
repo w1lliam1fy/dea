@@ -1,12 +1,10 @@
 ﻿using DEA.Common;
-using DEA.Common.Preconditions;
 using DEA.Database.Repositories;
 using DEA.Services;
 
 namespace DEA.Modules.Gangs
 {
-    [Global]
-    public partial class Gangs : DEAModule
+    public partial class Gangs : Module
     {
         private readonly GangRepository _gangRepo;
         private readonly UserRepository _userRepo;

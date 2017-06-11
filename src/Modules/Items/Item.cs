@@ -4,6 +4,7 @@ using DEA.Common.Extensions;
 using DEA.Common.Items;
 using System.Reflection;
 using System;
+using DEA.Services.Static;
 
 namespace DEA.Modules.Items
 {
@@ -18,7 +19,9 @@ namespace DEA.Modules.Items
 
             foreach (var property in item.GetType().GetProperties())
             {
-                if (property.Name == "Description" || property.Name == "Name")
+                var name = property.Name.SplitCamelCase();
+
+                if (name == "Description" || name == "Name")
                 {
                     continue;
                 }
@@ -27,19 +30,23 @@ namespace DEA.Modules.Items
 
                 if (value is decimal newValue)
                 {
-                    message += $"**{property.Name.SplitCamelCase()}:** {newValue.USD()}\n";
+                    message += $"**{name}:** {newValue.USD()}\n";
                 }
-                else if (property.Name == "CrateOdds")
+                else if (name == "Crate Odds")
                 {
-                    message += $"**{property.Name.SplitCamelCase()}:** {(Convert.ToSingle(value) / _crateItemOdds).ToString("P")}\n";
+                    message += $"**{name}:** {(Convert.ToSingle(value) / Data.CrateItemOdds).ToString("P")}\n";
                 }
-                else if (property.Name == "AcquireOdds")
+                else if (name == "Acquire Odds" && property.PropertyType == typeof(Fish))
                 {
-                    message += $"**{property.Name.SplitCamelCase()}:** {(Convert.ToSingle(value) / _foodAcquireOdds).ToString("P")}\n";
+                    message += $"**{name}:** {(Convert.ToSingle(value) / Data.FishAcquireOdds).ToString("P")}\n";
+                }
+                else if (name == "Acquire Odds" && property.PropertyType == typeof(Meat))
+                {
+                    message += $"**{name}:** {(Convert.ToSingle(value) / Data.MeatAcquireOdds).ToString("P")}\n";
                 }
                 else
                 {
-                    message += $"**{property.Name.SplitCamelCase()}:** {value.ToString()}\n";
+                    message += $"**{name}:** {value.ToString()}\n";
                 } 
             }
 

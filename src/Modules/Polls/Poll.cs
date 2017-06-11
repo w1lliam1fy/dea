@@ -44,7 +44,7 @@ namespace DEA.Modules.Polls
             }
             else if (poll.ElderOnly)
             {
-                description += $"\n\n**Only users that have been in this server for at least {Config.ELDER_TIME_REQUIRED.TotalHours} hours may vote on this poll.**";
+                description += $"\n\n**Only users that have been in this server for at least {Config.ElderTimeRequired.TotalHours} hours may vote on this poll.**";
             }
 
             var creator = await (Context.Guild as IGuild).GetUserAsync(poll.CreatorId);

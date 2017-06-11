@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DEA.Common
 {
-    public class DEAContext : SocketCommandContext
+    public sealed class Context : SocketCommandContext
     {
         public IGuildUser GUser { get; }
         public CommandInfo Command { get; internal set; }
@@ -26,7 +26,7 @@ namespace DEA.Common
         private readonly GangRepository _gangRepo;
         private readonly GameService _gameService;
 
-        public DEAContext(DiscordSocketClient client, SocketUserMessage msg, IServiceProvider serviceProvider) : base(client, msg)
+        public Context(DiscordSocketClient client, SocketUserMessage msg, IServiceProvider serviceProvider) : base(client, msg)
         {
             _serviceProvider = serviceProvider;
             _userRepo = _serviceProvider.GetService<UserRepository>();
@@ -41,10 +41,7 @@ namespace DEA.Common
         {
             DbUser = await _userRepo.GetUserAsync(GUser);
             DbGuild = await _guildRepo.GetGuildAsync(Guild.Id);
-            if (await _gangRepo.InGangAsync(GUser))
-            {
-                Gang = await _gangRepo.GetGangAsync(GUser);
-            }
+            Gang = await _gangRepo.GetGangAsync(GUser);
             Prefix = DbGuild.Prefix;
             Cash = DbUser.Cash;
         }

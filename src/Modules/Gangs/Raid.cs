@@ -1,6 +1,7 @@
 ﻿using DEA.Common.Extensions;
 using DEA.Common.Preconditions;
 using DEA.Common.Utilities;
+using DEA.Services.Static;
 using Discord.Commands;
 using System;
 using System.Threading.Tasks;
@@ -16,9 +17,9 @@ namespace DEA.Modules.Gangs
         [Summary("Raid another gang in attempt to steal some of their wealth.")]
         public async Task Raid(string gangName, decimal resources)
         {
-            if (resources < Config.MIN_RESOURCES)
+            if (resources < Config.MinResources)
             {
-                ReplyError($"The minimum amount of money to spend on resources for a raid is {Config.MIN_RESOURCES.USD()}.");
+                ReplyError($"The minimum amount of money to spend on resources for a raid is {Config.MinResources.USD()}.");
             }
             else if (Context.Gang.Wealth < resources)
             {
@@ -26,25 +27,30 @@ namespace DEA.Modules.Gangs
             }
 
             var raidedGang = await _gangRepo.GetGangAsync(gangName, Context.Guild.Id);
-            if (Math.Round(resources, 2) > Math.Round(raidedGang.Wealth * Config.MAX_RAID_PERCENTAGE / 2, 2))
+
+            if (raidedGang == null)
             {
-                ReplyError($"You are overkilling it. You only need {(raidedGang.Wealth * Config.MAX_RAID_PERCENTAGE / 2).USD()} " +
-                           $"to steal {Config.MAX_RAID_PERCENTAGE.ToString("P")} of their cash, that is {(raidedGang.Wealth * Config.MAX_RAID_PERCENTAGE).USD()}.");
+                ReplyError("This gang does not exist.");
+            }
+            else if (Math.Round(resources, 2) > Math.Round(raidedGang.Wealth * Config.RaidCap / 2, 2))
+            {
+                ReplyError($"You are overkilling it. You only need {(raidedGang.Wealth * Config.RaidCap / 2).USD()} " +
+                           $"to steal {Config.RaidCap.ToString("P")} of their cash, that is {(raidedGang.Wealth * Config.RaidCap).USD()}.");
             }
 
             var stolen = resources * 2;
 
-            int roll = Config.Random.Roll();
+            int roll = CryptoRandom.Roll();
             var membersDeduction = raidedGang.Members.Length * 5;
 
-            if (Config.RAID_SUCCESS_ODDS - membersDeduction > roll)
+            if (Config.RaidOdds - membersDeduction > roll)
             {
                 await _gangRepo.ModifyGangAsync(gangName, Context.Guild.Id, x => x.Wealth = raidedGang.Wealth - stolen);
                 await _gangRepo.ModifyAsync(Context.Gang, x => x.Wealth = Context.Gang.Wealth + stolen);
 
                 await raidedGang.LeaderId.TryDMAsync(Context.Client, $"{Context.Gang.Name} just raided your gang's wealth and managed to walk away with {stolen.USD()}.");
 
-                await ReplyAsync($"With a {Config.RAID_SUCCESS_ODDS}.00% chance of success, you successfully stole {stolen.USD()}. " +
+                await ReplyAsync($"With a {Config.RaidOdds}.00% chance of success, you successfully stole {stolen.USD()}. " +
                                  $"{Context.Gang.Name}'s Wealth {Context.Gang.Wealth.USD()}.");
             }
             else
@@ -53,10 +59,10 @@ namespace DEA.Modules.Gangs
 
                 await raidedGang.LeaderId.TryDMAsync(Context.Client, $"{Context.Gang.Name} tried to raid your gang's stash, but one of your loyal sicarios gunned them out.");
 
-                await ReplyAsync($"With a {Config.RAID_SUCCESS_ODDS}.00% chance of success, you failed to steal {stolen.USD()} " +
+                await ReplyAsync($"With a {Config.RaidOdds}.00% chance of success, you failed to steal {stolen.USD()} " +
                                  $"and lost all resources in the process.");
             }
-            _rateLimitService.TryAdd(new RateLimit(Context.User.Id, Context.Guild.Id, "Raid", Config.RAID_COOLDOWN));
+            _rateLimitService.TryAdd(new RateLimit(Context.User.Id, Context.Guild.Id, "Raid", Config.RaidCooldown));
         }
     }
 }

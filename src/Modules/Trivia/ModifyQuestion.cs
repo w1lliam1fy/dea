@@ -17,7 +17,7 @@ namespace DEA.Modules.Trivia
             {
                 ReplyError($"That question does not exist.");
             }
-            else if (!Config.ANWITHQUESTIONMARK.IsMatch(newQuestion))
+            else if (!Config.TriviaQuestionRegex.IsMatch(newQuestion))
             {
                 ReplyError("Trivia questions may only contain alphanumerical characters excluding the question mark.");
             }

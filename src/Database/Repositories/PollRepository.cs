@@ -23,23 +23,23 @@ namespace DEA.Database.Repositories
             }
             catch (ArgumentOutOfRangeException)
             {
-                throw new DEAException("This poll index does not exist.");
+                throw new FriendlyException("This poll index does not exist.");
             }
         }
 
-        public async Task<Poll> CreatePollAsync(DEAContext context, string name, string[] choices, TimeSpan? length = null, bool elderOnly = false, bool modOnly = false, bool createdByMod = false)
+        public async Task<Poll> CreatePollAsync(Context context, string name, string[] choices, TimeSpan? length = null, bool elderOnly = false, bool modOnly = false, bool createdByMod = false)
         {
             if (await AnyAsync(x => x.Name.ToLower() == name.ToLower() && x.GuildId == context.Guild.Id))
             {
-                throw new DEAException($"There is already a poll by the name \"{name}\".");
+                throw new FriendlyException($"There is already a poll by the name \"{name}\".");
             }
-            else if (name.Length > Config.MAX_POLL_SIZE)
+            else if (name.Length > Config.MaxPollSize)
             {
-                throw new DEAException($"The poll name may not be larger than {Config.MAX_POLL_SIZE} characters.");
+                throw new FriendlyException($"The poll name may not be larger than {Config.MaxPollSize} characters.");
             }
-            else if (length.HasValue && length.Value.TotalMilliseconds > Config.MAX_POLL_LENGTH.TotalMilliseconds)
+            else if (length.HasValue && length.Value.TotalMilliseconds > Config.MaxPollLength.TotalMilliseconds)
             {
-                throw new DEAException($"The poll length may not be longer than one week.");
+                throw new FriendlyException($"The poll length may not be longer than one week.");
             }
 
             var createdPoll = new Poll(context.User.Id, context.Guild.Id, name, choices)
@@ -69,7 +69,7 @@ namespace DEA.Database.Repositories
             }
             catch (ArgumentOutOfRangeException)
             {
-                throw new DEAException("This poll index does not exist.");
+                throw new FriendlyException("This poll index does not exist.");
             }
         }
 
