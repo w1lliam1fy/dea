@@ -27,27 +27,30 @@ namespace DEA.Services
 
             Func<IMessage, Task> isValid = (messageParameter) =>
             {
-                var message = messageParameter as IUserMessage;
-                if (message == null)
+                return Task.Run(() =>
                 {
-                    return Task.CompletedTask;
-                }
-                else if (message.Author.IsBot)
-                {
-                    return Task.CompletedTask;
-                }
-                else if (!filter(message))
-                {
-                    return Task.CompletedTask;
-                }
-                else if (message.Channel.Id != channel.Id)
-                {
-                    return Task.CompletedTask;
-                }
+                    var message = messageParameter as IUserMessage;
+                    if (message == null)
+                    {
+                        return Task.CompletedTask;
+                    }
+                    else if (message.Author.IsBot)
+                    {
+                        return Task.CompletedTask;
+                    }
+                    else if (!filter(message))
+                    {
+                        return Task.CompletedTask;
+                    }
+                    else if (message.Channel.Id != channel.Id)
+                    {
+                        return Task.CompletedTask;
+                    }
 
-                response = message;
-                blockToken.Cancel(true);
-                return Task.CompletedTask;
+                    response = message;
+                    blockToken.Cancel(true);
+                    return Task.CompletedTask;
+                });
             };
 
             _client.MessageReceived += isValid;
