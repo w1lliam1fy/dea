@@ -27,7 +27,7 @@ internal static class Config
         FiftyX2Requirement = 25000;
 
     // Percentages
-    public const decimal WithdrawCap = 0.20m, RobCap = 0.20m, RaidCap = 0.20m, SlaveCollection = 0.8m, DeaCut = 0.1m;
+    public const decimal WithdrawCap = 0.20m, RobCap = 0.20m, RaidCap = 0.40m, SlaveCollection = 0.8m, DeaCut = 0.1m;
 
     // Command cooldowns.
     public static readonly TimeSpan WhoreCooldown = TimeSpan.FromHours(2), JumpCooldown = TimeSpan.FromHours(4),
