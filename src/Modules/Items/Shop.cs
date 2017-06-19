@@ -12,7 +12,7 @@ namespace DEA.Modules.Items
         [Alias("Buy")]
         [Remarks("Gold Crate")]
         [Summary("List of available shop items.")]
-        public async Task Shop([Remainder] Crate crate = null)
+        public async Task Shop(Crate crate = null, int quantity = 1)
         {
             if (crate == null)
             {
@@ -26,15 +26,19 @@ namespace DEA.Modules.Items
             }
             else
             {
-                if (crate.Price > Context.Cash)
+                if (quantity < 1)
+                {
+                    ReplyError("You may not purchase less than one item.");
+                }
+                else if (crate.Price * quantity > Context.Cash)
                 {
                     ReplyError($"You do not have enough money. Balance: {Context.Cash.USD()}.");
                 }
 
-                await _gameService.ModifyInventoryAsync(Context.DbUser, crate.Name);
-                await _userRepo.EditCashAsync(Context, -crate.Price);
+                await _gameService.ModifyInventoryAsync(Context.DbUser, crate.Name, quantity);
+                await _userRepo.EditCashAsync(Context, -crate.Price * quantity);
 
-                await ReplyAsync($"You have successfully purchased: {crate.Name}!");
+                await ReplyAsync($"You have successfully purchased: {quantity} {crate.Name}{(quantity == 1 ? string.Empty : "s")}!");
             }
         }
     }

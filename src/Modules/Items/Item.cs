@@ -32,6 +32,10 @@ namespace DEA.Modules.Items
                 {
                     message += $"**{name}:** {newValue.USD()}\n";
                 }
+                else if (name == "Item Odds")
+                {
+                    message += $"**{name}:** {(Convert.ToSingle(value) / 100).ToString("P")}\n";
+                }
                 else if (name == "Crate Odds")
                 {
                     message += $"**{name}:** {(Convert.ToSingle(value) / Data.CrateItemOdds).ToString("P")}\n";

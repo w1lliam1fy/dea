@@ -40,12 +40,7 @@ namespace DEA.Events
                     await _blaclistRepo.AddGuildAsync(guildAfter.OwnerId, guildAfter.Id);
                     await guildAfter.LeaveAsync();
                 }
-                else if (isBlacklistedGuild && !isBlacklistedOwner)
-                {
-                    await _blaclistRepo.InsertAsync(new Blacklist(guildAfter.OwnerId, guildAfter.Owner.Username, guildAfter.Owner.GetAvatarUrl()));
-                    await guildAfter.LeaveAsync();
-                }
-                else if (isBlacklistedOwner && isBlacklistedGuild)
+                else if (isBlacklistedGuild)
                 {
                     await guildAfter.LeaveAsync();
                 }

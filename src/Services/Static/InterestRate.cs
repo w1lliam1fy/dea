@@ -4,18 +4,18 @@
     {
         public static decimal Calculate (decimal wealth)
         {
-            var InterestRate = 0.01m + ((wealth / 100) * .00008m);
-            if (InterestRate > 0.05m)
+            var interestRate = 0.01m + ((wealth / 100) * .00008m);
+            if (interestRate > 0.05m)
             {
-                InterestRate = 0.05m;
+                interestRate = 0.05m;
             }
 
-            if (InterestRate * wealth > 2500)
+            if (interestRate * wealth > 2500)
             {
-                InterestRate = 2500 / wealth;
+                interestRate = 2500 / wealth;
             }
 
-            return InterestRate;
+            return interestRate;
         }
     }
 }

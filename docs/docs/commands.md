@@ -111,7 +111,7 @@ Inventory|View the inventory of any user.|`$Inventory [@user]`
 Item|Get all the information on any item.|`$Item <item>`
 OpenAll|Open a crate!|`$OpenAll <crate>`
 OpenCrate|Open a crate!|`$OpenCrate <crate>`
-Shop|List of available shop items.|`$Shop [crate]`
+Shop|List of available shop items.|`$Shop [crate] [quantity]`
 Trade|Request to trade with any user.|`$Trade <@userToTrade> <exchangeItemQuantity> <itemInExchange> <requestedItemQuantity> <requestedItem>`
 
 ### Moderation
