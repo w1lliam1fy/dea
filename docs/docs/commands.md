@@ -173,6 +173,7 @@ Help|All command information.|`$Help [commandOrModule]`
 Invite|Invite DEA to your server!|`$Invite`
 Modules|All command modules.|`$Modules`
 Statistics|All the statistics about DEA.|`$Statistics`
+Support|Join our Official DEA Support Server!|`$Support`
 WorstCommands|The least popular DEA commands.|`$WorstCommands`
 
 ### Trivia

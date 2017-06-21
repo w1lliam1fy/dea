@@ -31,7 +31,7 @@ namespace DEA.Events
             {
                 Logger.Log(LogSeverity.Debug, $"Event", "Ready");
 
-                await _client.SetGameAsync("USE $help");
+                await _client.SetGameAsync("Type $support");
 
                 Documentation.CreateAndSave(_commandService);
 

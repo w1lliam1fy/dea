@@ -45,8 +45,8 @@ namespace DEA.Modules.General
                               $"**Position:** #{sorted.FindIndex(x => x.UserId == user.Id) + 1}\n" +
                               (rank == null ? string.Empty : $"**Rank:** {rank.Mention}\n") +
                               (slaveOwner == null ? string.Empty : $"**Slave Owner:** {slaveOwner}\n") +
-                              (dbUser.Bounty == 0 ? string.Empty : $"**Bounty:** {dbUser.Bounty.USD()}") +
-                              (ownedSlaves.Any() ? slaveInfo.Remove(slaveInfo.Length - 2) : string.Empty);
+                              (dbUser.Bounty == 0 ? string.Empty : $"**Bounty:** {dbUser.Bounty.USD()}\n") +
+                              (ownedSlaves.Any() ? slaveInfo.Remove(slaveInfo.Length - 2) + "\n" : string.Empty);
 
             await SendAsync(description, $"Ranking of {user}");
         }
