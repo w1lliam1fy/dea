@@ -44,7 +44,7 @@ namespace DEA.Events
 
                 if (!(log.Exception.InnerException is FriendlyException))
                 {
-                    Logger.Log(log.Severity, log.Exception.Message, log.Exception.StackTrace);
+                    Logger.Log(log.Severity, log.Message + ":" + log.Exception.Message, log.Exception.StackTrace);
                 }
 
                 if (log.Exception is CommandException cmdEx)
