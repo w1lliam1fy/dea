@@ -51,7 +51,7 @@ namespace DEA.Modules.Polls
                 }
             }
 
-            var channel = await Context.User.CreateDMChannelAsync();
+            var channel = await Context.User.GetOrCreateDMChannelAsync();
             await channel.SendCodeAsync(elements, "Poll Indexes");
 
             await ReplyAsync("You have been DMed with all polls in progress.");

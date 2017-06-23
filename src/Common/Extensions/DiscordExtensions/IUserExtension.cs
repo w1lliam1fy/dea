@@ -9,7 +9,7 @@ namespace DEA.Common.Extensions.DiscordExtensions
         {
             try
             {
-                var channel = await user.CreateDMChannelAsync();
+                var channel = await user.GetOrCreateDMChannelAsync();
 
                 await channel.SendAsync(description, title, color);
                 return true;

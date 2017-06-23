@@ -2,6 +2,7 @@
 using DEA.Database.Models;
 using DEA.Database.Repositories;
 using Discord;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -46,7 +47,7 @@ namespace DEA.Services
         {
             try
             {
-                var channel = await subject.CreateDMChannelAsync();
+                var channel = await subject.GetOrCreateDMChannelAsync();
                 var message = $"{moderator} has attempted to {action.ToLower()} you.";
                 if (!string.IsNullOrWhiteSpace(reason))
                 {
@@ -75,7 +76,7 @@ namespace DEA.Services
                 .WithColor(color)
                 .WithFooter(x =>
                 {
-                    x.IconUrl = "http://i.imgur.com/BQZJAqT.png";
+                    x.IconUrl = new Uri("http://i.imgur.com/BQZJAqT.png");
                     x.Text = $"Case #{dbGuild.CaseNumber}";
                 })
                 .WithCurrentTimestamp();
@@ -84,7 +85,7 @@ namespace DEA.Services
             {
                 builder.WithAuthor(x =>
                 {
-                    x.IconUrl = moderator.GetAvatarUrl();
+                    x.IconUrl = new Uri(moderator.GetAvatarUrl());
                     x.Name = $"{moderator}";
                 });
             }

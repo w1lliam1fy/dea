@@ -22,7 +22,7 @@ namespace DEA.Modules.Trivia
                 ReplyError("There are no trivia questions yet!");
             }
 
-            var channel = await Context.User.CreateDMChannelAsync();
+            var channel = await Context.User.GetOrCreateDMChannelAsync();
 
             if (question == null)
             {

@@ -13,7 +13,7 @@ namespace DEA.Modules.System
         {
             string p = Context.Prefix;
 
-            var channel = await Context.User.CreateDMChannelAsync();
+            var channel = await Context.User.GetOrCreateDMChannelAsync();
 
             await channel.SendAsync($@"In order to gain money, you must send a message that is at least {Config.MinCharLength} characters in length. There is a 30 second cooldown between each message that will give you exactly {Config.CashPerMsg.ToString("C")}.");
 

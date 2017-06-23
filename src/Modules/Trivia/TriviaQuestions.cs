@@ -27,7 +27,7 @@ namespace DEA.Modules.Trivia
                 elements.Add($"{i + 1}. {triviaElements[i].Name}\n");
             }
 
-            var channel = await Context.User.CreateDMChannelAsync();
+            var channel = await Context.User.GetOrCreateDMChannelAsync();
             await channel.SendCodeAsync(elements, "Trivia Questions");
 
             await ReplyAsync("You have been DMed with a list of all the trivia questions!");

@@ -26,7 +26,7 @@ namespace DEA.Modules.Items
                 ReplyError("You may not trade negative items.");
             }
 
-            var userDM = await userToTrade.CreateDMChannelAsync();
+            var userDM = await userToTrade.GetOrCreateDMChannelAsync();
             var key = CryptoRandom.Next();
             var firstS = exchangeItemQuantity == 1 ? string.Empty : "s";
             var secondS = requestedItemQuantity == 1 ? string.Empty : "s";

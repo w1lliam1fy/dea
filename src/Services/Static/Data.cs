@@ -30,14 +30,14 @@ namespace DEA.Services.Static
         {
             try
             {
-                Credentials = JsonConvert.DeserializeObject<Credentials>(File.ReadAllText(Config.MainDirectory + @"src\Credentials.json"));
-                Armour = JsonConvert.DeserializeObject<Armour[]>(File.ReadAllText(Config.MainDirectory + @"src\Data\Items\Armour.json"));
-                Crates = JsonConvert.DeserializeObject<Crate[]>(File.ReadAllText(Config.MainDirectory + @"src\Data\Items\Crates.json"));
-                Fish = JsonConvert.DeserializeObject<Fish[]>(File.ReadAllText(Config.MainDirectory + @"src\Data\Items\Fish.json"));
-                Guns = JsonConvert.DeserializeObject<Gun[]>(File.ReadAllText(Config.MainDirectory + @"src\Data\Items\Guns.json"));
-                Knives = JsonConvert.DeserializeObject<Knife[]>(File.ReadAllText(Config.MainDirectory + @"src\Data\Items\Knives.json"));
-                Meat = JsonConvert.DeserializeObject<Meat[]>(File.ReadAllText(Config.MainDirectory + @"src\Data\Items\Meat.json"));
-                Miscellanea = JsonConvert.DeserializeObject<Item[]>(File.ReadAllText(Config.MainDirectory + @"src\Data\Items\Miscellanea.json"));
+                Credentials = JsonConvert.DeserializeObject<Credentials>(File.ReadAllText(Config.MainDirectory + "src/Credentials.json"));
+                Armour = JsonConvert.DeserializeObject<Armour[]>(File.ReadAllText(Config.MainDirectory + "src/Data/Items/Armour.json"));
+                Crates = JsonConvert.DeserializeObject<Crate[]>(File.ReadAllText(Config.MainDirectory + "src/Data/Items/Crates.json"));
+                Fish = JsonConvert.DeserializeObject<Fish[]>(File.ReadAllText(Config.MainDirectory + "src/Data/Items/Fish.json"));
+                Guns = JsonConvert.DeserializeObject<Gun[]>(File.ReadAllText(Config.MainDirectory + "src/Data/Items/Guns.json"));
+                Knives = JsonConvert.DeserializeObject<Knife[]>(File.ReadAllText(Config.MainDirectory + "src/Data/Items/Knives.json"));
+                Meat = JsonConvert.DeserializeObject<Meat[]>(File.ReadAllText(Config.MainDirectory + "src/Data/Items/Meat.json"));
+                Miscellanea = JsonConvert.DeserializeObject<Item[]>(File.ReadAllText(Config.MainDirectory + "src/Data/Items/Miscellanea.json"));
             }
             catch (IOException e)
             {

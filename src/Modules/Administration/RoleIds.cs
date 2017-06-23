@@ -16,7 +16,7 @@ namespace DEA.Modules.Administration
                 message += $"{role.Name}: {role.Id}\n";
             }
 
-            var channel = await Context.User.CreateDMChannelAsync();
+            var channel = await Context.User.GetOrCreateDMChannelAsync();
             await channel.SendAsync(message);
 
             await ReplyAsync("All Role IDs have been DMed to you.");

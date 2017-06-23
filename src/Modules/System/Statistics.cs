@@ -31,7 +31,7 @@ namespace DEA.Modules.System
                 .WithColor(Config.Colors[CryptoRandom.Next(Config.Colors.Length)]);
             }
 
-            var channel = await Context.User.CreateDMChannelAsync();
+            var channel = await Context.User.GetOrCreateDMChannelAsync();
             await channel.SendMessageAsync(string.Empty, embed: builder);
 
             await ReplyAsync($"You have been DMed with all the statistics!");

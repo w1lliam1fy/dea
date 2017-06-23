@@ -63,7 +63,7 @@ namespace DEA.Modules.System
             }
             else
             {
-                var channel = await Context.User.CreateDMChannelAsync();
+                var channel = await Context.User.GetOrCreateDMChannelAsync();
 
                 string modules = string.Empty;
                 foreach (var module in _commandService.Modules)

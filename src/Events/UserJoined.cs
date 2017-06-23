@@ -82,7 +82,7 @@ namespace DEA.Events
                     {
                         try
                         {
-                            var dmChannel = await u.CreateDMChannelAsync();
+                            var dmChannel = await u.GetOrCreateDMChannelAsync();
                             await dmChannel.SendAsync(dbGuild.WelcomeMessage);
                         }
                         catch

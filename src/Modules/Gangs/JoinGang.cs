@@ -32,7 +32,7 @@ namespace DEA.Modules.Gangs
 
             if (leader != null)
             {
-                var leaderDM = await leader.CreateDMChannelAsync();
+                var leaderDM = await leader.GetOrCreateDMChannelAsync();
 
                 var key = CryptoRandom.Next();
                 await leaderDM.SendAsync($"{Context.User.Boldify()} has requested to join your gang. Please respond with \"{key}\" within 5 minutes to add this user to your gang.");
