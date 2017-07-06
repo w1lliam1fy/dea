@@ -1,0 +1,37 @@
+{
+  "name": "dea",
+  "version": "1.0.0",
+  "description": "The cleanest Discord Bot around.",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RealBlazeIt/dea-util.git"
+  },
+  "keywords": [
+    "dea",
+    "discord",
+    "bot",
+    "nodejs",
+    "discord.js"
+  ],
+  "author": "John#0969",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/RealBlazeIt/dea/issues"
+  },
+  "homepage": "https://github.com/RealBlazeIt/dea#readme",
+  "dependencies": {
+    "bufferutil": "^3.0.1",
+    "discord.js": "^11.1.0",
+    "erlpack": "github:hammerandchisel/erlpack",
+    "mongodb": "^2.2.29",
+    "patron": "github:RealBlazeIt/patron",
+    "uws": "^8.14.0"
+  },
+  "eslintIgnore": [
+    "**/*.json"
+  ]
+}
