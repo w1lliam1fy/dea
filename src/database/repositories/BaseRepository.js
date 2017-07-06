@@ -6,7 +6,7 @@ class BaseRepository {
   }
 
   async any(filter) {
-    const result = await this.collection.count(filter, { limit: 1 });
+    const result = await this.collection.count(filter);
     
     return result !== 0;
   }
