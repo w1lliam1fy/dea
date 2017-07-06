@@ -1,5 +1,3 @@
-const config = require('../../config.json');
-
 class Guild {
   constructor(guildId) {
     this.guildId = guildId;
@@ -14,7 +12,6 @@ class Guild {
       welcome: null
     };
     this.settings = {
-      prefix: config.defaultPrefix,
       globalChattingMultiplier: 1,
       welcomeMessage: null
     };

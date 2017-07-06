@@ -3,7 +3,7 @@ const config = require('../config.json');
 
 class ChatService {
   static async applyCash(msg, lastMessage) {
-    const statsWithPrefix = msg.content.startsWith(config.defaultPrefix);
+    const statsWithPrefix = msg.content.startsWith(config.prefix);
     const isLongEnough = msg.content.length >= config.minCharLength;
     const isMessageCooldownOver = Date.now() - lastMessage > config.messageCooldown;
 
