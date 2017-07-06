@@ -1,6 +1,5 @@
 const patron = require('patron');
 const config = require('../config.json');
-const db = require('../database');
 const util = require('../utility');
 
 class CommandService {
@@ -23,17 +22,7 @@ const execute = async function(msg, handler) {
 
   const context = new patron.Context(msg);
 
-  if (context.guild !== null) {
-    context.dbGuild = await db.guildRepo.getGuild(context.guild.id);
-
-    if (!context.channel.permissionsFor(context.guild.me).has(['SEND_MESSAGES', 'EMBED_LINKS'])) {
-      return;
-    }
-  }
-
-  const prefix = context.dbGuild ? context.dbGuild.settings.prefix : config.defaultPrefix;
-
-  const result = await handler.run(context, prefix);
+  const result = await handler.run(context, config.prefix);
 
   if (!result.isSuccess) {
     let message;
@@ -61,7 +50,7 @@ const execute = async function(msg, handler) {
         }
         break;
       case patron.CommandError.InvalidArgCount:
-        message = 'You are incorrectly using this command.\n**Usage:** `' + prefix + result.command.getUsage() + '`\n**Example:** `' + prefix + result.command.getExample() + '`';
+        message = 'You are incorrectly using this command.\n**Usage:** `' + config.prefix + result.command.getUsage() + '`\n**Example:** `' + config.prefix + result.command.getExample() + '`';
         break;
       default:
         message = result.errorReason;

@@ -14,7 +14,7 @@ class Guild {
       welcome: null
     };
     this.settings = {
-      prefix: config.defaultPrefix,
+      prefix: config.prefix,
       globalChattingMultiplier: 1,
       welcomeMessage: null
     };
