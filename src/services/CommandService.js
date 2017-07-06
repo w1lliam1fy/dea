@@ -26,8 +26,8 @@ class CommandService {
           case patron.CommandError.CommandNotFound:
             return;
           case patron.CommandError.Exception:
-            if (result.error !== undefined) {
-              if (result.error.code === 400) { // TODO: Check if instance of DiscordApiError when 12.0 is stable.
+            if (result.error !== undefined) { // TODO: Check if instance of DiscordApiError when 12.0 is stable.
+              if (result.error.code === 400) { 
                 message = 'There seems to have been a bad request. Please report this issue with context to John#0969.';
               } else if (result.error.code === 404 || result.error.code === 50013) {
                 message = 'DEA does not have permission to do that. This issue may be fixed by moving the DEA role to the top of the roles list, and giving DEA the "Administrator" server permission.';
