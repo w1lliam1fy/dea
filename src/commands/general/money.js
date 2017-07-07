@@ -1,5 +1,5 @@
 const db = require('../../database');
-const patron = require('patron');
+const patron = require('patron.js');
 const util = require('../../utility');
 
 class Money extends patron.Command {

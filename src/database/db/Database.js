@@ -71,7 +71,7 @@ class Database {
         }
       }));
 
-    this.muteRepp = new MuteRepository(await db.createCollection('mutes', 
+    this.muteRepo = new MuteRepository(await db.createCollection('mutes', 
       {
         validator: { $or:
     [

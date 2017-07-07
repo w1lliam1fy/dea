@@ -54,20 +54,6 @@ class GangRepository extends BaseRepository {
   removeGangMember(memberId, guildId, memberIdToRemove) {
     return this.updateGang(memberId, guildId, new PullUpdate('guildIds', memberIdToRemove));
   }
-
-  static isFull(gang) {
-    return gang.length === 4;
-  }
-
-  static memberOf(gang, userId) {
-    if (gang.leaderId === userId) {
-      return true;
-    } else if (gang.memberIds.some((value) => value === userId)) {
-      return true;
-    } else {
-      return false;
-    }
-  }	
 }
 
 module.exports = GangRepository;

@@ -1,23 +1,20 @@
-const patron = require('patron');
+const patron = require('patron.js');
 const config = require('../config.json');
 const util = require('../utility');
 const ChatService = require('./ChatService.js');
 
 class CommandService {
-  constructor(client, registry) {
-    this.client = client;
-    this.handler = new patron.Handler(registry);
-  }
-
-  async run() {
-    this.client.on('message', async (msg) => {
-      if (msg.author.bot) {
+  async run(client, handler) {
+    client.on('message', async (msg) => {
+      if (!msg.content.startsWith(config.prefix)) {
+        return;
+      } else if (msg.author.bot) {
         return;
       }
 
       const context = new patron.Context(msg);
 
-      const result = await this.handler.run(context, config.prefix);
+      const result = await handler.run(context, config.prefix);
 
       if (!result.isSuccess) {
         let message;
@@ -60,4 +57,4 @@ class CommandService {
   }
 }
 
-module.exports = CommandService;
+module.exports = new CommandService();

@@ -1,11 +1,11 @@
 const path = require('path');
-const patron = require('patron');
+const patron = require('patron.js');
 const discord = require('discord.js');
 const db = require('./database');
 const EventService = require('./services/EventService.js');
 const CommandService = require('./services/CommandService.js');
 const config = require('./config.json');
-const credentials = require('./credentials.json');
+const credentials = require('./credentials_beta.json');
 
 const client = new discord.Client({ fetchAllMembers: true, messageCacheMaxSize: 5, messageCacheLifetime: 10, messageSweepInterval:1800, disabledEvents: config.disabledEvents, restTimeOffset: 150 });
 
@@ -15,9 +15,9 @@ registry.registerDefaultTypeReaders();
 registry.registerGroupsIn(path.join(__dirname, 'groups'));
 registry.registerCommandsIn(path.join(__dirname, 'commands'));
 
-new EventService(client).initiate();
+EventService.initiate(client);
 
-new CommandService(client, registry).run().catch(console.error);
+CommandService.run(client, new patron.Handler(registry));
 
 db.connect(credentials.mongodbConnectionUrl)
   .then(() => {

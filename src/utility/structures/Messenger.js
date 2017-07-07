@@ -4,6 +4,15 @@ const Random = require('./Random.js');
 const StringUtil = require('./StringUtil.js');
 
 class Messenger {
+  static async trySendEmbed(channel, embed) {
+    try {
+      await channel.send({ embed: embed });
+      return true;
+    } catch (err) {
+      return false;
+    }
+  }
+
   static send(channel, description, title = '', color = null) {
     const embed = new discord.RichEmbed()
       .setColor(color || Random.arrayElement(config.embedColors))
@@ -28,13 +37,25 @@ class Messenger {
     return this.reply(channel, user, description, title, config.errorColor);
   }
 
-  static DM(user, description, title = '', color = null) {
-    return this.send(user, description, title, color);
+  static DM(user, description, guild = null, title = '', color = null) {
+    const embed = new discord.RichEmbed()
+      .setColor(color || Random.arrayElement(config.embedColors))
+      .setDescription(description);
+
+    if (!StringUtil.isNullOrWhiteSpace(title)) {
+      embed.setTitle(title);
+    }
+
+    if (guild !== null) {
+      embed.setFooter(guild.name, guild.iconURL);
+    }
+
+    return user.send({ embed: embed});
   }
 
-  static async tryDM(user, description, title = '', color = null) {
+  static async tryDM(user, description, guild = null, title = '', color = null) {
     try {
-      await this.DM(user, description, title, color);
+      await this.DM(user, description, guild, title, color);
       return true;
     } catch (err) {
       return false;

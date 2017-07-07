@@ -1,6 +1,6 @@
 const db = require('../../database');
 const config = require('../../config.json');
-const patron = require('patron');
+const patron = require('patron.js');
 const util = require('../../utility');
 
 class Leaderboards extends patron.Command {

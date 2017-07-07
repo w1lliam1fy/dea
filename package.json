@@ -24,11 +24,11 @@
   },
   "homepage": "https://github.com/RealBlazeIt/dea#readme",
   "dependencies": {
-    "bufferutil": "^3.0.1",
+    "bufferutil": "^3.0.2",
     "discord.js": "^11.1.0",
     "erlpack": "github:hammerandchisel/erlpack",
-    "mongodb": "^2.2.29",
-    "patron": "github:RealBlazeIt/patron",
+    "mongodb": "^2.2.30",
+    "patron.js": "github:RealBlazeIt/patron",
     "uws": "^8.14.0"
   },
   "eslintIgnore": [

@@ -1,4 +1,4 @@
-const patron = require('patron');
+const patron = require('patron.js');
 const gambling = require('../../services/GamblingService.js');
 
 class TwentyOnePlus extends patron.Command {

@@ -16,6 +16,14 @@ class NumberUtil {
   static format(input) {
     return this.USD(input / 100);
   }
+
+  static hoursToMs(input) {
+    return input * 3600000;
+  }
+
+  static daysToMs(input) {
+    return input * 86400000;
+  }
 }
 
 module.exports = NumberUtil;

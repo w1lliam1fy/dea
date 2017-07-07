@@ -1,4 +1,4 @@
-const patron = require('patron');
+const patron = require('patron.js');
 const db = require('../../database');
 const util = require('../../utility');
 const config = require('../../config.json');

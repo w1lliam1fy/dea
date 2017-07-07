@@ -57,5 +57,6 @@ typings/
 # dotenv environment variables file
 .env
 
+.vscode/
 credentials.json
 credentials_beta.json

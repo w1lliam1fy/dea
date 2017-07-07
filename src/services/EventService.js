@@ -1,15 +1,11 @@
 class EventService {
-  constructor(client) {
-    this.client = client;
-  }
-
-  initiate() {
-    require('../events/disconnect.js')(this.client);
-    require('../events/error.js')(this.client);
-    require('../events/ready.js')(this.client);
-    require('../events/reconnect.js')(this.client);
-    require('../events/warn.js')(this.client);
+  initiate(client) {
+    require('../events/disconnect.js')(client);
+    require('../events/error.js')(client);
+    require('../events/ready.js')(client);
+    require('../events/reconnect.js')(client);
+    require('../events/warn.js')(client);
   }
 }
 
-module.exports = EventService;
+module.exports = new EventService();

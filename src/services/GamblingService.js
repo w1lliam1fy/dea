@@ -3,7 +3,7 @@ const config = require('../config.json');
 const util = require('../utility');
 
 class GamblingService {
-  static async gamble(context, bet, odds, payoutMultiplier) {
+  async gamble(context, bet, odds, payoutMultiplier) {
     if (bet < config.minBet) {
       return util.Messenger.replyError(context.channel, context.author, 'The minimum bet is ' + util.NumberUtil.USD(config.minBet) + '.');
     }
@@ -30,4 +30,4 @@ class GamblingService {
   }
 }
 
-module.exports = GamblingService;
+module.exports = new GamblingService();
