@@ -50,7 +50,7 @@ class ModerationService {
     }
 
     if (subject != null) {
-      description += '**User:** ' + util.StringUtil.boldify(subject.tag) + ' (' + subject.id + ')\n';
+      description += '**User:** ' + subject.tag + ' (' + subject.id + ')\n';
     }
 
     if (!util.StringUtil.isNullOrWhiteSpace(reason)) {
