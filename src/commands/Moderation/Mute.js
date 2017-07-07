@@ -51,11 +51,13 @@ class Mute extends patron.Command {
       return util.Messenger.replyError(context.channel, context.author, 'The set muted role has been deleted. Please set a new one with the `' + config.prefix + 'setmute @Role` command.');
     }
     
+    const formattedHours =  + args.hours + ' hour' + (args.hours === 1 ? '' : 's');
+
     await args.member.addRole(role);
     await db.muteRepo.insertMute(args.member.id, context.guild.id, util.NumberUtil.hoursToMs(args.hours));
-    await util.Messenger.reply(context.channel, context.author, 'You have successfully muted ' + args.member.user.tag + ' for ' + Math.round(args.hours) + ' hour' + (args.hours === 1 ? '' : 's') + '.');
+    await util.Messenger.reply(context.channel, context.author, 'You have successfully muted ' + args.member.user.tag + ' for ' + formattedHours + '.');
     await ModerationService.tryInformUser(context.guild, context.author, 'mute', args.member.user, args.reason);
-    await ModerationService.tryMogLog(dbGuild, context.guild, 'Mute', config.muteColor, args.reason, context.author, args.member.user);
+    await ModerationService.tryMogLog(dbGuild, context.guild, 'Mute', config.muteColor, args.reason, context.author, args.member.user, 'Length', formattedHours);
   }
 }
 
