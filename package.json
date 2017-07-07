@@ -29,7 +29,7 @@
     "erlpack": "github:hammerandchisel/erlpack",
     "mongodb": "^2.2.30",
     "patron.js": "github:RealBlazeIt/patron",
-    "uws": "^8.14.0"
+    "uws": "^0.14.5"
   },
   "eslintIgnore": [
     "**/*.json"
