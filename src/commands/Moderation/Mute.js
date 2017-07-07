@@ -8,7 +8,7 @@ class Mute extends patron.Command {
   constructor() {
     super({
       name: 'mute',
-      group: 'general',
+      group: 'moderation',
       description: 'Mute any user.',
       args: [
         new patron.Argument({
