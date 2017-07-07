@@ -10,7 +10,7 @@ class ModerationService {
 
     let permLevel = 0;
 
-    for (const modRole of dbGuild.roles.modRoles.sort((a, b) => b.permissionLevel - a.permissionLevel)) {
+    for (const modRole of dbGuild.roles.mods.sort((a, b) => b.permissionLevel - a.permissionLevel)) {
       if (member.guild.roles.has(modRole.id) && member.roles.has(modRole.id)) {
         permLevel = modRole.permissionLevel;
       }
