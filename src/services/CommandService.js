@@ -7,7 +7,7 @@ class CommandService {
   async run(client, handler) {
     client.on('message', async (msg) => {
       if (!msg.content.startsWith(config.prefix)) {
-        return;
+        return ChatService.applyCash(msg);
       } else if (msg.author.bot) {
         return;
       }
@@ -20,9 +20,6 @@ class CommandService {
         let message;
 
         switch (result.commandError) {
-          case patron.CommandError.InvalidPrefix:
-            await ChatService.applyCash(msg);
-            return;
           case patron.CommandError.CommandNotFound:
             return;
           case patron.CommandError.Exception:
