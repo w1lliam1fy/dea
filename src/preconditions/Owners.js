@@ -6,7 +6,7 @@ class Owners extends patron.Precondition {
   async run(command, context, args) {
     const dbGuild = db.guildRepo.getGuild(context.guild.id);
 
-    if (ModerationService.getPermLevel(dbGuild, context.guild.member(context.author)) == 3) {
+    if (ModerationService.getPermLevel(dbGuild, context.guild.member(context.author)) === 3) {
       return patron.PreconditionResult.fromSuccess();
     }
 
