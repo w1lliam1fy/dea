@@ -5,7 +5,7 @@ const db = require('./database');
 const EventService = require('./services/EventService.js');
 const CommandService = require('./services/CommandService.js');
 const config = require('./config.json');
-const credentials = require('./credentials_beta.json');
+const credentials = require('./credentials.json');
 
 const client = new discord.Client({ fetchAllMembers: true, messageCacheMaxSize: 5, messageCacheLifetime: 10, messageSweepInterval:1800, disabledEvents: config.disabledEvents, restTimeOffset: 150 });
 
