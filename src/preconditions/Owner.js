@@ -3,7 +3,7 @@ const db = require('../database');
 const ModerationService = require('../services/ModerationService.js');
 
 class Owner extends patron.Precondition {
-  async run(command, context, args) {
+  async run(command, context) {
     const dbGuild = db.guildRepo.getGuild(context.guild.id);
 
     if (ModerationService.getPermLevel(dbGuild, context.guild.member(context.author)) === 3) {
