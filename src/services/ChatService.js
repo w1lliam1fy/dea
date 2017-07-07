@@ -10,8 +10,9 @@ class ChatService {
     const lastMessage = this.messages.get(msg.author.id);
     const isMessageCooldownOver = lastMessage === undefined || Date.now() - lastMessage > config.messageCooldown;
     const isLongEnough = msg.content.length >= config.minCharLength;
+    const inGuild = msg.content.guild !== null;
 
-    if (isMessageCooldownOver && isLongEnough) {
+    if (isMessageCooldownOver && isLongEnough && inGuild) {
       await db.userRepo.modifyCash(msg.author.id, msg.guild.id, config.cashPerMessage);
       this.messages.set(msg.author.id, Date.now());
     }

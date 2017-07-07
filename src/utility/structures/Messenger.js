@@ -37,6 +37,15 @@ class Messenger {
     return this.reply(channel, user, description, title, config.errorColor);
   }
 
+  static async tryReplyError(channel, user, description, title = '') {
+    try {
+      await this.replyError(channel, user, description, title);
+      return true;
+    } catch (err) {
+      return false;
+    }
+  }
+
   static DM(user, description, guild = null, title = '', color = null) {
     const embed = new discord.RichEmbed()
       .setColor(color || Random.arrayElement(config.embedColors))

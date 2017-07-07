@@ -51,7 +51,7 @@ class CommandService {
             break;
         }
 
-        return util.Messenger.replyError(context.channel, context.author, message);
+        return util.Messenger.tryReplyError(context.channel, context.author, message);
       }
     });
   }
