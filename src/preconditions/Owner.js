@@ -2,7 +2,7 @@ const patron = require('patron.js');
 const db = require('../database');
 const ModerationService = require('../services/ModerationService.js');
 
-class Owners extends patron.Precondition {
+class Owner extends patron.Precondition {
   async run(command, context, args) {
     const dbGuild = db.guildRepo.getGuild(context.guild.id);
 
@@ -14,4 +14,4 @@ class Owners extends patron.Precondition {
   }
 }
 
-module.exports = new Owners();
+module.exports = new Owner();
