@@ -1,6 +1,7 @@
 const patron = require('patron');
 const config = require('../config.json');
 const util = require('../utility');
+const ChatService = require('./ChatService.js');
 
 class CommandService {
   constructor(client, registry) {
@@ -23,6 +24,8 @@ class CommandService {
 
         switch (result.commandError) {
           case patron.CommandError.InvalidPrefix:
+            await ChatService.applyCash(msg);
+            return;
           case patron.CommandError.CommandNotFound:
             return;
           case patron.CommandError.Exception:
