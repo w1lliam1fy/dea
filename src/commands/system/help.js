@@ -6,9 +6,9 @@ class Help extends patron.Command {
   constructor() {
     super({
       name: 'help',
-      aliases: ['info', 'information'],
+      aliases: ['commands', 'command', 'cmd', 'cmds', 'info', 'support', 'docs'],
       group: 'system',
-      description: 'Information about the recent lack of commands.',
+      description: 'All command information.',
       guildOnly: false,
       args: [
         new patron.Argument({
@@ -30,7 +30,9 @@ class Help extends patron.Command {
         'The `' + config.prefix +  'help <command>` command may be used for view the usage and an example of any command.\n\n' + 
         'If you have **ANY** questions, you may join the **Official DEA Discord Server:** ' + config.serverInviteLink + ' for instant support along with a great community.');
 
-      return util.Messenger.reply(context.channel, context.author, 'You have been DMed with all the command information!');
+      if (context.channel.type !== 'dm') {
+        return util.Messenger.reply(context.channel, context.author, 'You have been DMed with all the command information!');
+      }
     } else {
       args.command = args.command.startsWith(config.prefix) ? args.command.slice(config.prefix.length) : args.command;
 

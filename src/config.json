@@ -27,7 +27,7 @@
     [168, 237, 0]
   ],
   "prefix": "$",
-  "readyMessage": "$info",
+  "readyMessage": "$help",
   "inviteLink": "https://discordapp.com/oauth2/authorize?client_id=290823959669374987&scope=bot&permissions=8",
   "serverInviteLink": "https://discord.gg/gvyma7H",
   "documentationLink": "https://realblazeit.github.io/dea/",

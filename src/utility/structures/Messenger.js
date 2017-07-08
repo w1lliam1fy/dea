@@ -2,6 +2,7 @@ const config = require('../../config.json');
 const discord = require('discord.js');
 const Random = require('./Random.js');
 const StringUtil = require('./StringUtil.js');
+const NumberUtil = require('./NumberUtil.js');
 
 class Messenger {
   static async trySendEmbed(channel, embed) {
@@ -22,7 +23,7 @@ class Messenger {
       embed.setTitle(title);
     }
 
-    return channel.send({ embed: embed });
+    return channel.send({ embed });
   }
 
   static async trySend(channel, description, title = '', color = null) {
@@ -36,6 +37,27 @@ class Messenger {
 
   static reply(channel, user, description, title = '', color = null) {
     return this.send(channel, StringUtil.boldify(user.tag) + ', ' + description, title, color);
+  }
+
+  static sendFields(channel, fieldsAndValues, inline = true, color = null) {
+    const embed = new discord.RichEmbed()
+      .setColor(color || Random.arrayElement(config.embedColors));
+
+    if (!NumberUtil.isEven(fieldsAndValues.length)) {
+      throw new TypeError('The fieldsAndValues length must be even.');
+    }
+
+    for (let i = 0; i < fieldsAndValues.length - 1; i++) {
+      if (NumberUtil.isEven(i)) {
+        embed.addField(fieldsAndValues[i], fieldsAndValues[i + 1], inline);
+      }
+    }
+
+    return channel.send({ embed });
+  }
+
+  static DMFields(user, fieldsAndValues, inline = true, color = null) {
+    return this.sendFields(user, fieldsAndValues, inline, color);
   }
 
   static sendError(channel, description, title = '') {
