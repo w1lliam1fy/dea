@@ -59,6 +59,10 @@ class UserRepository extends BaseRepository {
   findAndModifyBounty(userId, guildId, change) {
     return this.findUserAndUpsert(userId, guildId, new IncMoneyUpdate('bounty', change));
   }
+
+  deleteUser(userId, guildId) {
+    return this.deleteOne(new UserQuery(userId, guildId));
+  }
 }
 
 module.exports = UserRepository;
