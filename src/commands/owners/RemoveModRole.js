@@ -7,7 +7,7 @@ class RemoveModRole extends patron.Command {
     super({
       name: 'removemodrole',
       aliases: ['removemod'],
-      group: 'general',
+      group: 'owners',
       description: 'Remove a mod role.',
       args: [
         new patron.Argument({
