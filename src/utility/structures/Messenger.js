@@ -25,6 +25,15 @@ class Messenger {
     return channel.send({ embed: embed });
   }
 
+  static async trySend(channel, description, title = '', color = null) {
+    try {
+      await this.send(channel, description, title, color);
+      return true;
+    } catch (err) {
+      return false;
+    }
+  }
+
   static reply(channel, user, description, title = '', color = null) {
     return this.send(channel, StringUtil.boldify(user.tag) + ', ' + description, title, color);
   }

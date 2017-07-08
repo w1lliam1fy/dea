@@ -6,12 +6,12 @@ class SetModLog extends patron.Command {
   constructor() {
     super({
       name: 'setmodlogchannel',
-      aliases: ['setmodlog', 'setmodlogs', 'setlog', 'setlogs'],
+      aliases: ['modlog', 'logs', 'setmodlog', 'setmodlogs', 'setlog', 'setlogs'],
       group: 'administration',
       description: 'Sets the mod log channel.',
       args: [
         new patron.Argument({
-          name: 'Mod Log Channel',
+          name: 'mod log channel',
           key: 'channel',
           type: 'channel',
           example: 'Mod Log',

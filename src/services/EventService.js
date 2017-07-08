@@ -5,6 +5,8 @@ class EventService {
     require('../events/ready.js')(client);
     require('../events/reconnect.js')(client);
     require('../events/warn.js')(client);
+    require('../events/guildCreate.js')(client);
+    require('../events/guildMemberAdd.js')(client);
   }
 }
 

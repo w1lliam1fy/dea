@@ -1,6 +1,7 @@
 const discord = require('discord.js');
 const util = require('../utility');
 const config = require('../config.json');
+const db = require('../database');
 
 class ModerationService {
   getPermLevel(dbGuild, member) {
@@ -23,7 +24,7 @@ class ModerationService {
     return util.Messenger.tryDM(user, util.StringUtil.boldify(moderator.tag) + ' has attempted to ' + action + ' you' + (util.StringUtil.isNullOrWhiteSpace(reason) ? '.' : ' for the following reason: ' + reason + '.'), guild);
   }
 
-  tryMogLog(dbGuild, guild, action, color, reason = '', moderator = null, subject = null, extraInfoType = '', extraInfo = '') {
+  async tryMogLog(dbGuild, guild, action, color, reason = '', moderator = null, subject = null, extraInfoType = '', extraInfo = '') {
     if (dbGuild.channels.modLog === null) {
       return;
     }
@@ -36,7 +37,7 @@ class ModerationService {
 
     var embed = new discord.RichEmbed()
       .setColor(color)
-      .setFooter('Case ' + dbGuild.CaseNumber, 'http://i.imgur.com/BQZJAqT.png')
+      .setFooter('Case #' + dbGuild.misc.caseNumber, 'http://i.imgur.com/BQZJAqT.png')
       .setTimestamp();
 
     if (moderator !== null) {
@@ -59,7 +60,8 @@ class ModerationService {
 
     embed.setDescription(description);
 
-    return util.Messenger.trySendEmbed(channel, embed);
+    await util.Messenger.trySendEmbed(channel, embed);
+    await db.guildRepo.updateGuild(dbGuild.guildId, { $inc: { 'misc.caseNumber': 1 } });
   }
 }
 

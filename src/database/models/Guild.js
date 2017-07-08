@@ -2,8 +2,8 @@ class Guild {
   constructor(guildId) {
     this.guildId = guildId;
     this.roles = {
-      mods: [],
-      ranks: [],
+      mod: [],
+      rank: [],
       muted: null
     };
     this.channels = {
