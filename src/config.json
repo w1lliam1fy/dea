@@ -33,9 +33,6 @@
   "documentationLink": "https://realblazeit.github.io/dea/",
   "disabledEvents": [
     "GUILD_SYNC",
-    "GUILD_ROLE_CREATE",
-    "GUILD_ROLE_DELETE",
-    "GUILD_ROLE_UPDATE",
     "GUILD_BAN_ADD",
     "GUILD_BAN_REMOVE",
     "CHANNEL_DELETE",
