@@ -7,6 +7,3 @@ cache:
 install: npm install
 sudo: enabled
 dist: trusty
-dd:
-- openssl aes-256-cbc -K $encrypted_2d374cd4b54f_key -iv $encrypted_2d374cd4b54f_iv
-  -in credentials.json.enc -out credentials.json -d
