@@ -7,7 +7,7 @@ class AddModRole extends patron.Command {
     super({
       name: 'addmodrole',
       aliases: ['addmod', 'setmod'],
-      group: 'general',
+      group: 'owners',
       description: 'Add a mod role.',
       args: [
         new patron.Argument({
