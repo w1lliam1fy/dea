@@ -16,7 +16,7 @@ class Money extends patron.Command {
           type: 'user',
           default: patron.Default.Author,
           example:'Supa Hot Fire#0911',
-          remainder: true
+          isRemainder: true
         })
       ]
     });
