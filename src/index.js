@@ -25,6 +25,5 @@ initiate();
 
 async function initiate() {
   await db.connect(credentials.mongodbConnectionUrl);
-  await db.guildRepo.updateMany({}, { $rename: { 'roles.ranks': 'roles.rank' } });
   await client.login(credentials.token);
 }
