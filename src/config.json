@@ -30,7 +30,7 @@
   "readyMessage": "$info",
   "inviteLink": "https://discordapp.com/oauth2/authorize?client_id=290823959669374987&scope=bot&permissions=8",
   "serverInviteLink": "https://discord.gg/gvyma7H",
-  "documentationLink": "https://realblazeit.github.io/DEA/",
+  "documentationLink": "https://realblazeit.github.io/dea/",
   "disabledEvents": [
     "GUILD_SYNC",
     "GUILD_ROLE_CREATE",
