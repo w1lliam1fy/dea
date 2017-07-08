@@ -44,7 +44,7 @@ class Mute extends patron.Command {
     } else if (args.member.roles.has(dbGuild.roles.muted)) {
       return util.Messenger.replyError(context.channel, context.author, 'This user is already muted.');
     }
-
+    
     const role = context.guild.roles.get(dbGuild.roles.muted);
 
     if (role === undefined) {
