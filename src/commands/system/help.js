@@ -26,7 +26,7 @@ class Help extends patron.Command {
     if (util.StringUtil.isNullOrWhiteSpace(args.command)) {
       await util.Messenger.DM(context.author,
         'DEA is **THE** cleanest bot around, and you can have it in **YOUR** server simply by clicking here: ' + config.inviteLink + '.\n\n' +
-        'For all information about command usage and setup on your Discord Sever, view the official documentation: https://realblazeit.github.io/DEA/.\n\n' +
+        'For all information about command usage and setup on your Discord Sever, view the official documentation: ' + config.documentationLink + '.\n\n' +
         'The `' + config.prefix +  'help <command>` command may be used for view the usage and an example of any command.\n\n' + 
         'If you have **ANY** questions, you may join the **Official DEA Discord Server:** ' + config.serverInviteLink + ' for instant support along with a great community.');
 
