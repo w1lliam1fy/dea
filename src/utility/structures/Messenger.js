@@ -39,6 +39,15 @@ class Messenger {
     return this.send(channel, StringUtil.boldify(user.tag) + ', ' + description, title, color);
   }
 
+  static async tryReply(channel, user, description, title = '', color = null) {
+    try {
+      await this.reply(channel, user, description, title, color);
+      return true;
+    } catch (err) {
+      return false;
+    }
+  }
+
   static sendFields(channel, fieldsAndValues, inline = true, color = null) {
     const embed = new discord.RichEmbed()
       .setColor(color || Random.arrayElement(config.embedColors));
