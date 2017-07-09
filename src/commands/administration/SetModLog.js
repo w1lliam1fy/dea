@@ -21,10 +21,10 @@ class SetModLog extends patron.Command {
     });
   }
 
-  async run(context, args) {
-    await db.guildRepo.upsertGuild(context.guild.id, new db.updates.Set('channels.modLog', args.channel.id));
+  async run(msg, args) {
+    await db.guildRepo.upsertGuild(msg.guild.id, new db.updates.Set('channels.modLog', args.channel.id));
 
-    return util.Messenger.reply(context.channel, context.author, 'You have successfully set the mod log channel to ' + args.channel + '.');
+    return util.Messenger.reply(msg.channel, msg.author, 'You have successfully set the mod log channel to ' + args.channel + '.');
   }
 }
 

@@ -21,10 +21,10 @@ class SetWelcome extends patron.Command {
     });
   }
 
-  async run(context, args) {
-    await db.guildRepo.upsertGuild(context.guild.id, new db.updates.Set('settings.welcomeMessage', args.message));
+  async run(msg, args) {
+    await db.guildRepo.upsertGuild(msg.guild.id, new db.updates.Set('settings.welcomeMessage', args.message));
 
-    return util.Messenger.reply(context.channel, context.author, 'You have successfully set the welcome message to "' + args.message + '".');
+    return util.Messenger.reply(msg.channel, msg.author, 'You have successfully set the welcome message to "' + args.message + '".');
   }
 }
 

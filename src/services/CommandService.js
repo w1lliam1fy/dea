@@ -12,9 +12,7 @@ class CommandService {
         return;
       }
 
-      const context = new patron.Context(msg);
-
-      const result = await handler.run(context, config.prefix);
+      const result = await handler.run(msg, config.prefix);
 
       if (!result.isSuccess) {
         let message;
@@ -25,7 +23,7 @@ class CommandService {
           case patron.CommandError.Exception:
             if (result.error.code !== undefined) { // TODO: Check if instance of DiscordApiError when 12.0 is stable.
               if (result.error.code === 400) { 
-                message = 'There seems to have been a bad request. Please report this issue with context to John#0969.';
+                message = 'There seems to have been a bad request. Please report this issue with msg to John#0969.';
               } else if (result.error.code === 404 || result.error.code === 50013) {
                 message = 'DEA does not have permission to do that. This issue may be fixed by moving the DEA role to the top of the roles list, and giving DEA the "Administrator" server permission.';
               } else if (result.error.code === 50007) {
@@ -48,7 +46,7 @@ class CommandService {
             break;
         }
 
-        return util.Messenger.tryReplyError(context.channel, context.author, message);
+        return util.Messenger.tryReplyError(msg.channel, msg.author, message);
       }
     });
   }

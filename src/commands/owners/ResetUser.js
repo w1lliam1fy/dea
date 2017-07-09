@@ -20,10 +20,10 @@ class ResetUser extends patron.Command {
     });
   }
 
-  async run(context, args) {
-    await db.userRepo.deleteUser(args.user.id, context.guild.id);
+  async run(msg, args){
+    await db.userRepo.deleteUser(args.user.id, msg.guild.id);
   
-    return util.Messenger.reply(context.channel, context.author, 'You have successfully reset all of ' + (args.user.id === context.author.id ? 'your' : util.StringUtil.boldify(args.user.tag) + '\'s') + ' data.');
+    return util.Messenger.reply(msg.channel, msg.author, 'You have successfully reset all of ' + (args.user.id === msg.author.id ? 'your' : util.StringUtil.boldify(args.user.tag) + '\'s') + ' data.');
   }
 }
 

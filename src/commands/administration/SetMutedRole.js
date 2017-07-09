@@ -21,10 +21,10 @@ class SetMutedRole extends patron.Command {
     });
   }
 
-  async run(context, args) {
-    await db.guildRepo.upsertGuild(context.guild.id, new db.updates.Set('roles.muted', args.role.id));
+  async run(msg, args) {
+    await db.guildRepo.upsertGuild(msg.guild.id, new db.updates.Set('roles.muted', args.role.id));
 
-    return util.Messenger.reply(context.channel, context.author, 'You have successfully set the muted role to ' + args.role + '.');
+    return util.Messenger.reply(msg.channel, msg.author, 'You have successfully set the muted role to ' + args.role + '.');
   }
 }
 

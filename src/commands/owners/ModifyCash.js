@@ -28,10 +28,10 @@ class ModifyCash extends patron.Command {
     });
   }
 
-  async run(context, args) {
-    const newDbUser = await db.userRepo.findAndModifyCash(args.user.id, context.guild.id, args.amount);
+  async run(msg, args) {
+    const newDbUser = await db.userRepo.findAndModifyCash(args.user.id, msg.guild.id, args.amount);
     
-    return util.Messenger.reply(context.channel, context.author, 'You have successfully modifed ' + (args.user.id === context.author.id ? 'your' : util.StringUtil.boldify(args.user.tag) + '\'s') 
+    return util.Messenger.reply(msg.channel, msg.author, 'You have successfully modifed ' + (args.user.id === msg.author.id ? 'your' : util.StringUtil.boldify(args.user.tag) + '\'s') 
       + ' balance to ' + util.NumberUtil.format(newDbUser.cash));
   }
 }

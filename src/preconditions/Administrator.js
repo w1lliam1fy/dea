@@ -3,10 +3,10 @@ const db = require('../database');
 const ModerationService = require('../services/ModerationService.js');
 
 class Administrator extends patron.Precondition {
-  async run(command, context) {
-    const dbGuild = await db.guildRepo.getGuild(context.guild.id);
+  async run(command, msg) {
+    const dbGuild = await db.guildRepo.getGuild(msg.guild.id);
 
-    if (ModerationService.getPermLevel(dbGuild, context.guild.member(context.author)) >= 2) {
+    if (ModerationService.getPermLevel(dbGuild, msg.guild.member(msg.author)) >= 2) {
       return patron.PreconditionResult.fromSuccess();
     }
 

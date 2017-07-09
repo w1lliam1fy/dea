@@ -13,8 +13,8 @@ class Leaderboards extends patron.Command {
     });
   }
 
-  async run(context) {
-    const users = await db.userRepo.findMany({ guildId: context.guild.id });
+  async run(msg) {
+    const users = await db.userRepo.findMany({ guildId: msg.guild.id });
 		
     users.sort((a, b) => b.cash - a.cash);
 
@@ -26,7 +26,7 @@ class Leaderboards extends patron.Command {
         break;
       }
 
-      const user = context.client.users.get(users[i].userId);
+      const user = msg.client.users.get(users[i].userId);
 
       if (user === undefined) {
         continue;
@@ -36,10 +36,10 @@ class Leaderboards extends patron.Command {
     }
 
     if (util.StringUtil.isNullOrWhiteSpace(message)) {
-      return util.Messenger.replyError(context.channel, context.author, 'There is nobody on the leaderboards.');
+      return util.Messenger.replyError(msg.channel, msg.author, 'There is nobody on the leaderboards.');
     }
 
-    return util.Messenger.send(context.channel, message, 'The Richest Traffickers');
+    return util.Messenger.send(msg.channel, message, 'The Richest Traffickers');
   }
 }
 

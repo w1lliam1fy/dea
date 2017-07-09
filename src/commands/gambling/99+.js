@@ -18,8 +18,8 @@ class NinetyNinePlus extends patron.Command {
     });
   }
 
-  async run(context, args) {
-    return gambling.gamble(context, args.bet, 99, 90);
+  async run(msg, args) {
+    return gambling.gamble(msg, args.bet, 99, 90);
   }
 }
 
