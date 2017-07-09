@@ -26,7 +26,7 @@ class ModRoles extends patron.Command {
       description+= rank + ': ' + (modRoleList[i].permissionLevel) + '\n';
     }
 
-    return util.Messenger.send(context.channel, description + '\n**Permission Levels:**\n1: Moderator\n2: Administrator\n3: Owner', 'Mod Roles.');
+    return util.Messenger.send(context.channel, description + '\n**Permission Levels:**\n1: Moderator\n2: Administrator\n3: Owner', 'Mod Roles');
   }
 }
 
