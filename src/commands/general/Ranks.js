@@ -20,14 +20,13 @@ class Ranks extends patron.Command {
     }
 
     let description = '';
-    for(let i = 0; i < rankList.length; i++) {
+    for (let i = 0; i < rankList.length; i++) {
       const rank = msg.guild.roles.find((x) => x.id === rankList[i].id);
-      console.log(rankList[i]);
-
-      description+= util.StringUtil.boldify(rank.name) + ': ' + util.NumberUtil.USD(rankList[i].cashRequired) + '.\n';
+      
+      description+= rank + ': ' + util.NumberUtil.USD(rankList[i].cashRequired) + '\n';
     }
 
-    return util.Messenger.reply(msg.channel, msg.author, description);
+    return util.Messenger.send(context.channel, description, 'Ranks');
   }
 }
 
