@@ -6,7 +6,7 @@ class Help extends patron.Command {
   constructor() {
     super({
       name: 'help',
-      aliases: ['commands', 'command', 'cmd', 'cmds', 'info', 'support', 'docs'],
+      aliases: ['commands', 'command', 'cmd', 'cmds', 'support', 'docs'],
       group: 'system',
       description: 'All command information.',
       guildOnly: false,

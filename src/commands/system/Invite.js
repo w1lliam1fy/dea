@@ -2,7 +2,7 @@ const patron = require('patron.js');
 const util = require('../../utility');
 const config = require('../../config.json');
 
-class Help extends patron.Command {
+class Invite extends patron.Command {
   constructor() {
     super({
       name: 'invite',
@@ -19,4 +19,4 @@ class Help extends patron.Command {
   }
 }
 
-module.exports = new Help();
+module.exports = new Invite();

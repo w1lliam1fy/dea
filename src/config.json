@@ -1,5 +1,16 @@
 {
-  "cashPerMessage": 100,
+  "lotteryOdds": 3,
+  "lotteryMin": 2500,
+  "lotteryMax": 10000,
+  "lotteryResponse": [
+    "CONGRATS MY MAN, you just won {0} in the goddamn lottery! Use `$info` for more information.",
+    "Hot fucking pockets, you just won {0} in the lottery! Use `$info` for more information.",
+    "Well sonny, looks like today is your goddamn lucky day, you just won {0} in the lottery! Use `$info` for more information.",
+    "Jiminy Crickets, you made some bank! You just won {0} from the lottery! Use `$info` for more information.",
+    "Sweet Baby Jesus you just won {0} in the fucking lottery! Use `$info` for more information.",
+    "Well I'll be damned, you just won {0} in the goddamn lottery! Use `$info` for more information."
+  ],
+  "cashPerMessage": 50,
   "minTransfer": 5,
   "transactionCut": 0.1,
   "minBet": 5,

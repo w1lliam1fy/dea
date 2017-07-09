@@ -1,7 +1,7 @@
 const patron = require('patron.js');
 const util = require('../../utility');
 
-class Help extends patron.Command {
+class Statistics extends patron.Command {
   constructor() {
     super({
       name: 'statistics',
@@ -27,4 +27,4 @@ class Help extends patron.Command {
   }
 }
 
-module.exports = new Help();
+module.exports = new Statistics();

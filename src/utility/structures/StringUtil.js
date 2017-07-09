@@ -10,6 +10,19 @@ class StringUtil {
   static upperFirstChar(input) {
     return input.charAt(0).toUpperCase() + input.slice(1);
   }
+
+  static format(input) {
+    const args = arguments;
+
+    return input.replace(/(\{\{\d\}\}|\{\d\})/g, function (b) {
+      if (input.substring(0, 2) == '{{') {
+        return input;
+      } 
+
+      const c = parseInt(input.match(/\d/)[0]);
+      return args[c + 1];
+    });
+  }
 }
 
 module.exports = StringUtil;
