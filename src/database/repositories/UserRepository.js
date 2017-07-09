@@ -63,6 +63,10 @@ class UserRepository extends BaseRepository {
   deleteUser(userId, guildId) {
     return this.deleteOne(new UserQuery(userId, guildId));
   }
+
+  deleteUsers(guildId){
+    return this.deleteMany({ guildId: guildId });
+  }
 }
 
 module.exports = UserRepository;
