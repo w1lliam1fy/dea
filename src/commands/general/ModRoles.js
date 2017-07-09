@@ -20,13 +20,13 @@ class ModRoles extends patron.Command {
     }
 
     let description = '';
-    for(let i = 0; i < modRoleList.length; i++) {
+    for (let i = 0; i < modRoleList.length; i++) {
       const rank = msg.guild.roles.find((x) => x.id === modRoleList[i].id);
-      console.log(modRoleList[i]);
-      description+= util.StringUtil.boldify(rank.name) + ', Permission Level: ' + (modRoleList[i].permissionLevel) + '.\n';
+
+      description+= rank + ': ' + (modRoleList[i].permissionLevel) + '\n';
     }
 
-    return util.Messenger.reply(msg.channel, msg.author, description);
+    return util.Messenger.send(context.channel, description + '\n**Permission Levels:**\n1: Moderator\n2: Administrator\n3: Owner', 'Mod Roles.');
   }
 }
 
