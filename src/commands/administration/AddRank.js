@@ -26,20 +26,20 @@ class AddRank extends patron.Command {
     });
   }
 
-  async run(context, args) {
-    const dbGuild = await db.guildRepo.getGuild(context.guild.id);
+  async run(msg, args) {
+    const dbGuild = await db.guildRepo.getGuild(msg.guild.id);
 
-    if (args.role.comparePositionTo(context.guild.me.highestRole) > 0) {
-      return util.Messenger.replyError(context.channel, context.author, 'DEA must be higher in the heigharhy than ' + args.role);
+    if (args.role.comparePositionTo(msg.guild.me.highestRole) > 0) {
+      return util.Messenger.replyError(msg.channel, msg.author, 'DEA must be higher in the heigharhy than ' + args.role);
     }
 
     if (dbGuild.roles.rank.some((role) => role.id === args.role.id)) {
-      return util.Messenger.replyError(context.channel, context.author, 'This rank role has already been set.');
+      return util.Messenger.replyError(msg.channel, msg.author, 'This rank role has already been set.');
     }
 
-    await db.guildRepo.upsertGuild(context.guild.id, new db.updates.Push('roles.rank', { id: args.role.id, cashRequired: Math.round(args.cashRequired) }));
+    await db.guildRepo.upsertGuild(msg.guild.id, new db.updates.Push('roles.rank', { id: args.role.id, cashRequired: Math.round(args.cashRequired) }));
 
-    return util.Messenger.reply(context.channel, context.author, 'You have successfully added the rank role ' + args.role + ' with a cash required amount of ' + args.cashRequired + '.');
+    return util.Messenger.reply(msg.channel, msg.author, 'You have successfully added the rank role ' + args.role + ' with a cash required amount of ' + args.cashRequired + '.');
   }
 }
 
