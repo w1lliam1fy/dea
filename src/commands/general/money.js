@@ -22,10 +22,10 @@ class Money extends patron.Command {
     });
   }
 
-  async run(context, args) {
-    const dbUser = await db.userRepo.getUser(args.user.id, context.guild.id);
+  async run(msg, args) {
+    const dbUser = await db.userRepo.getUser(args.user.id, msg.guild.id);
 
-    return util.Messenger.send(context.channel, util.StringUtil.boldify(args.user.tag) + '\'s balance: ' + util.NumberUtil.format(dbUser.cash));
+    return util.Messenger.send(msg.channel, util.StringUtil.boldify(args.user.tag) + '\'s balance: ' + util.NumberUtil.format(dbUser.cash));
   }
 }
 

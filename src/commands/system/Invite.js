@@ -13,8 +13,8 @@ class Help extends patron.Command {
     });
   }
 
-  async run(context) {
-    return util.Messenger.reply(context.channel, context.author, 'You may add cleanest bot around by clicking here: ' + config.inviteLink + 
+  async run(msg) {
+    return util.Messenger.reply(msg.channel, msg.author, 'You may add cleanest bot around by clicking here: ' + config.inviteLink + 
       '.\n\nIf you have any questions or concerns, you may always join the **Official DEA Support Server:** ' + config.serverInviteLink);
   }
 }

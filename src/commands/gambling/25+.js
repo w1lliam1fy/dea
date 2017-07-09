@@ -18,8 +18,8 @@ class TwentyOnePlus extends patron.Command {
     });
   }
 
-  async run(context, args) {
-    return gambling.gamble(context, args.bet, 25, 0.2);
+  async run(msg, args) {
+    return gambling.gamble(msg, args.bet, 25, 0.2);
   }
 }
 

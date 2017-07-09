@@ -3,15 +3,15 @@ const config = require('../config.json');
 const util = require('../utility');
 
 class GamblingService {
-  async gamble(context, bet, odds, payoutMultiplier) {
+  async gamble(msg, bet, odds, payoutMultiplier) {
     if (bet < config.minBet) {
-      return util.Messenger.replyError(context.channel, context.author, 'The minimum bet is ' + util.NumberUtil.USD(config.minBet) + '.');
+      return util.Messenger.replyError(msg.channel, msg.author, 'The minimum bet is ' + util.NumberUtil.USD(config.minBet) + '.');
     }
 
-    const dbUser = await db.userRepo.getUser(context.author.id, context.guild.id);
+    const dbUser = await db.userRepo.getUser(msg.author.id, msg.guild.id);
 
     if (bet > util.NumberUtil.realValue(dbUser.cash)) {
-      return util.Messenger.replyError(context.channel, context.author, 'You do not have enough money. Balance: ' + util.NumberUtil.format(dbUser.cash) + '.');
+      return util.Messenger.replyError(msg.channel, msg.author, 'You do not have enough money. Balance: ' + util.NumberUtil.format(dbUser.cash) + '.');
     }
 
     const roll = util.Random.roll();
@@ -19,13 +19,13 @@ class GamblingService {
     if (roll >= odds) {
       const winnings = bet * payoutMultiplier;
 
-      const newDbUser = await db.userRepo.findAndModifyCash(context.author.id, context.guild.id, winnings);
+      const newDbUser = await db.userRepo.findAndModifyCash(msg.author.id, msg.guild.id, winnings);
 			
-      return util.Messenger.reply(context.channel, context.author, 'You rolled: ' + roll.toFixed(2) + '. Congrats, you won ' + util.NumberUtil.USD(winnings) + '. Balance: ' + util.NumberUtil.format(newDbUser.cash));
+      return util.Messenger.reply(msg.channel, msg.author, 'You rolled: ' + roll.toFixed(2) + '. Congrats, you won ' + util.NumberUtil.USD(winnings) + '. Balance: ' + util.NumberUtil.format(newDbUser.cash));
     } else {
-      const newDbUser = await db.userRepo.findAndModifyCash(context.author.id, context.guild.id, -bet);
+      const newDbUser = await db.userRepo.findAndModifyCash(msg.author.id, msg.guild.id, -bet);
 			
-      return util.Messenger.reply(context.channel, context.author, 'You rolled: ' + roll.toFixed(2) + '. Unfortunately, you lost ' + util.NumberUtil.USD(bet) + '. Balance: ' + util.NumberUtil.format(newDbUser.cash));
+      return util.Messenger.reply(msg.channel, msg.author, 'You rolled: ' + roll.toFixed(2) + '. Unfortunately, you lost ' + util.NumberUtil.USD(bet) + '. Balance: ' + util.NumberUtil.format(newDbUser.cash));
     }
   }
 }

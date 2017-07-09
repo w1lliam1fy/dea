@@ -12,17 +12,17 @@ class Help extends patron.Command {
     });
   }
 
-  async run(context, args) {
-    const uptime = util.NumberUtil.msToTime(context.client.uptime);
+  async run(msg, args) {
+    const uptime = util.NumberUtil.msToTime(msg.client.uptime);
 
-    await util.Messenger.DMFields(context.author, 
+    await util.Messenger.DMFields(msg.author, 
       [
-        'Author', 'John#0969', 'Framework', 'patron.js', 'Memory', (process.memoryUsage().rss / 1000000).toFixed(2) + ' MB', 'Servers', context.client.guilds.size,
-        'Users', context.client.users.size, 'Uptime', 'Days: ' + uptime.days + '\nHours: '+ uptime.hours + '\nMinutes: ' + uptime.minutes
+        'Author', 'John#0969', 'Framework', 'patron.js', 'Memory', (process.memoryUsage().rss / 1000000).toFixed(2) + ' MB', 'Servers', msg.client.guilds.size,
+        'Users', msg.client.users.size, 'Uptime', 'Days: ' + uptime.days + '\nHours: '+ uptime.hours + '\nMinutes: ' + uptime.minutes
       ]);
 
-    if (context.channel.type !== 'dm') {
-      return util.Messenger.reply(context.channel, context.author, 'You have been DMed with all DEA Statistics!');
+    if (msg.channel.type !== 'dm') {
+      return util.Messenger.reply(msg.channel, msg.author, 'You have been DMed with all DEA Statistics!');
     }
   }
 }
