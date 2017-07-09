@@ -11,7 +11,7 @@ class Reset extends patron.Command {
     });
   }
 
-  async run(context, args){
+  async run(context, args) {
     await util.Messenger.reply(context.channel, context.author, 'Are you sure you wish to reset all DEA related data within your server? Reply with "yes" to continue.');
 
     const filter = x => x.content.toLowerCase() === 'yes' && x.author.id === context.author.id;
