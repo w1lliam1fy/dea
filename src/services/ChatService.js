@@ -39,22 +39,15 @@ class ChatService {
       if (result) {
         const filter = m => m.content.toLowerCase().startsWith(config.prefix + 'gangbang');
 
-        const collection = await msg.channel.awaitMessages(filter, { limit: 3, time: 10000 });
+        const collection = await msg.channel.awaitMessages(filter, { max: 3, time: 10000 });
 
         if (collection.size >= 3) {
-          console.log(collection.size);
           let gangBangers = '';
 
           const stolen = cash * config.gangBangSteal;
           const split = stolen / 6;
 
-          let current = 1;
           for (const message of collection.values()) {
-            if (current >= 3) {
-              console.log('D.JS BROKE!!!!');
-              break;
-            }
-            current++;
             await db.userRepo.findAndModifyCash(msg.dbGuild, msg.guild.member(message.author), split);
 
             gangBangers += util.StringUtil.boldify(message.author.tag) + ', ';
