@@ -10,7 +10,7 @@
     "Sweet Baby Jesus you just won {0} in the fucking lottery! Use `$info` for more information.",
     "Well I'll be damned, you just won {0} in the goddamn lottery! Use `$info` for more information."
   ],
-  "gangBangOdds": 5,
+  "gangBangOdds": 7,
   "gangBangMin": 10000,
   "gangBangSteal": 0.25,
   "cashPerMessage": 50,
