@@ -2,7 +2,7 @@ const BaseRepository = require('./BaseRepository.js');
 const IncMoneyUpdate = require('../updates/IncMoneyUpdate.js');
 const UserQuery = require('../queries/UserQuery.js');
 const User = require('../models/User.js');
-const RankService = require ('../../Services/RankService.js');
+const RankService = require ('../../services/RankService.js');
 
 class UserRepository extends BaseRepository {
   constructor(collection) { 
