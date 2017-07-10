@@ -19,7 +19,7 @@ client.registry = Object.freeze(registry);
 
 EventService.initiate(client);
 
-CommandService.run(client, new patron.Handler(registry));
+CommandService.run(client, new patron.Handler(registry)).catch(console.error);
 
 initiate();
 
