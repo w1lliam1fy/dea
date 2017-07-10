@@ -28,7 +28,7 @@ class AddRank extends patron.Command {
 
   async run(msg, args) {
     if (args.role.comparePositionTo(msg.guild.me.highestRole) > 0) {
-      return util.Messenger.replyError(msg.channel, msg.author, 'DEA must be higher in the heigharhy than ' + args.role);
+      return util.Messenger.replyError(msg.channel, msg.author, 'DEA must be higher in hierarchy than ' + args.role + '.');
     }
 
     if (msg.dbGuild.roles.rank.some((role) => role.id === args.role.id)) {
