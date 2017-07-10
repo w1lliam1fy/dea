@@ -1,8 +1,8 @@
 class Blacklist {
-  constructor(userId, username, avatarUrl) {
+  constructor(userId, username, avatarURL) {
     this.userId = userId;
     this.username = username;
-    this.avatarUrl = avatarUrl;
+    this.avatarURL = avatarURL;
     this.guildIds = [];
   }
 }

@@ -25,8 +25,8 @@ class Database {
     };
   }
 
-  async connect(connectionUrl) {
-    const db = await MongoClient.connect(connectionUrl);
+  async connect(connectionURL) {
+    const db = await MongoClient.connect(connectionURL);
 		
     this.userRepo = new UserRepository(await db.createCollection('users',
       {
@@ -91,7 +91,7 @@ class Database {
       { userId: { $type: 'string', $exists: true } },
       { guildIds: { $type: 'array', $exists: true } },
       { username: { $type: 'string', $exists: true } },
-      { avatarUrl: {$type: 'string', $exists: true } }
+      { avatarURL: {$type: 'string', $exists: true } }
     ]
         }
       }));

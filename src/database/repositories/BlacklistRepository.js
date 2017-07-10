@@ -16,8 +16,8 @@ class BlacklistRepository extends BaseRepository {
     return this.findOne(new BlacklistQuery(userId));
   }
 
-  insertBlacklist(userId, username, avatarUrl) {
-    return this.insertOne(new Blacklist(userId, username, avatarUrl));
+  insertBlacklist(userId, username, avatarURL) {
+    return this.insertOne(new Blacklist(userId, username, avatarURL));
   }
 
   addGuild(userId, newGuildId) {

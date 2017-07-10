@@ -24,6 +24,6 @@ CommandService.run(client, new patron.Handler(registry));
 initiate();
 
 async function initiate() {
-  await db.connect(credentials.mongodbConnectionUrl);
+  await db.connect(credentials.mongodbConnectionURL);
   await client.login(credentials.token);
 }

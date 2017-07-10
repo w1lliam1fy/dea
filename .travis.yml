@@ -4,11 +4,11 @@ node_js:
 cache:
   directories:
   - node_modules
-install: 
-   - npm install node-gyp -g
-   - npm cache verify
-   - rm -rf node_modules
-   - npm install
+install:
+- npm install node-gyp -g
+- npm cache verify
+- rm -rf node_modules
+- npm install
 sudo: enabled
 dist: trusty
 before_install:
