@@ -12,7 +12,7 @@ class ChatService {
   async applyCash(msg) {
     const lastMessage = this.messages.get(msg.author.id);
     const isMessageCooldownOver = lastMessage === undefined || Date.now() - lastMessage > config.messageCooldown;
-    const isLongEnough = msg.content.length >= config.minCharLength;
+    const isLongEnough = msg.content.length <= config.minCharLength;
 
     if (isMessageCooldownOver && isLongEnough) {
       this.messages.set(msg.author.id, Date.now());
