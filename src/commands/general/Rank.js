@@ -29,7 +29,7 @@ class Rank extends patron.Command {
 
     return util.Messenger.send(msg.channel, '**Balance:** ' + util.NumberUtil.format(dbUser.cash) + '\n' +
                               '**Position:** ' + (sortedUsers.findIndex((v) => v.userId === dbUser.userId) + 1) + '\n' +
-                              (rank !== undefined ? '**Rank:** ' + rank + '\n' : ''), args.user.tag + '\'s Rank');
+                              (rank !== undefined ? '**Rank:** #' + rank + '\n' : ''), args.user.tag + '\'s Rank');
   }
 }
 

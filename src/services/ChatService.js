@@ -13,7 +13,7 @@ class ChatService {
     const lastMessage = this.messages.get(msg.author.id);
     const isMessageCooldownOver = lastMessage === undefined || Date.now() - lastMessage > config.messageCooldown;
     const isLongEnough = msg.content.length >= config.minCharLength;
-    const inGuild = msg.content.guild !== null;
+    const inGuild = msg.guild !== null;
 
     if (isMessageCooldownOver && isLongEnough && inGuild) {
       this.messages.set(msg.author.id, Date.now());
