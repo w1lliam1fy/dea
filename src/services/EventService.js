@@ -7,6 +7,8 @@ class EventService {
     require('../events/warn.js')(client);
     require('../events/guildCreate.js')(client);
     require('../events/guildMemberAdd.js')(client);
+    require('../events/guildMemberUpdate.js')(client);
+    require('../events/roleDelete.js')(client);
   }
 }
 
