@@ -48,7 +48,7 @@ class ChatService {
           const split = stolen / 6;
 
           for (const message of collection.values()) {
-            console.log(message.author);
+            console.log(message.author.tag);
             await db.userRepo.findAndModifyCash(msg.dbGuild, msg.guild.member(message.author), split);
 
             gangBangers += util.StringUtil.boldify(message.author.tag) + ', ';
