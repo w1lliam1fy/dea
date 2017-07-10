@@ -6,7 +6,7 @@ cache:
   - node_modules
 install: 
    - npm install node-gyp -g
-   - npm cache clean
+   - npm cache verify
    - rm -rf node_modules
    - npm install
 sudo: enabled
