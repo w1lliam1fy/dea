@@ -15,10 +15,16 @@ class Statistics extends patron.Command {
   async run(msg, args) {
     const uptime = util.NumberUtil.msToTime(msg.client.uptime);
 
+    let users = 0;
+
+    for (const guild of msg.client.guilds.values()) {
+      users += guild.memberCount;
+    }
+
     await util.Messenger.DMFields(msg.author, 
       [
         'Author', 'John#0969', 'Framework', 'patron.js', 'Memory', (process.memoryUsage().rss / 1000000).toFixed(2) + ' MB', 'Servers', msg.client.guilds.size,
-        'Users', msg.client.users.size, 'Uptime', 'Days: ' + uptime.days + '\nHours: '+ uptime.hours + '\nMinutes: ' + uptime.minutes
+        'Users', users, 'Uptime', 'Days: ' + uptime.days + '\nHours: '+ uptime.hours + '\nMinutes: ' + uptime.minutes
       ]);
 
     if (msg.channel.type !== 'dm') {
