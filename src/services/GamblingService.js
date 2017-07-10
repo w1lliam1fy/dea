@@ -8,10 +8,8 @@ class GamblingService {
       return util.Messenger.replyError(msg.channel, msg.author, 'The minimum bet is ' + util.NumberUtil.USD(config.minBet) + '.');
     }
 
-    const dbUser = await db.userRepo.getUser(msg.author.id, msg.guild.id);
-
-    if (bet > util.NumberUtil.realValue(dbUser.cash)) {
-      return util.Messenger.replyError(msg.channel, msg.author, 'You do not have enough money. Balance: ' + util.NumberUtil.format(dbUser.cash) + '.');
+    if (bet > util.NumberUtil.realValue(msg.dbUser.cash)) {
+      return util.Messenger.replyError(msg.channel, msg.author, 'You do not have enough money. Balance: ' + util.NumberUtil.format(msg.dbUser.cash) + '.');
     }
 
     const roll = util.Random.roll();
@@ -19,11 +17,11 @@ class GamblingService {
     if (roll >= odds) {
       const winnings = bet * payoutMultiplier;
 
-      const newDbUser = await db.userRepo.findAndModifyCash(msg.author.id, msg.guild.id, winnings);
+      const newDbUser = await db.userRepo.findAndModifyCash(msg.dbGuild, msg.member, winnings);
 			
       return util.Messenger.reply(msg.channel, msg.author, 'You rolled: ' + roll.toFixed(2) + '. Congrats, you won ' + util.NumberUtil.USD(winnings) + '. Balance: ' + util.NumberUtil.format(newDbUser.cash));
     } else {
-      const newDbUser = await db.userRepo.findAndModifyCash(msg.author.id, msg.guild.id, -bet);
+      const newDbUser = await db.userRepo.findAndModifyCash(msg.dbGuild, msg.member, -bet);
 			
       return util.Messenger.reply(msg.channel, msg.author, 'You rolled: ' + roll.toFixed(2) + '. Unfortunately, you lost ' + util.NumberUtil.USD(bet) + '. Balance: ' + util.NumberUtil.format(newDbUser.cash));
     }

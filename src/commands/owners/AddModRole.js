@@ -27,13 +27,11 @@ class AddModRole extends patron.Command {
   }
 
   async run(msg, args){
-    const dbGuild = await db.guildRepo.getGuild(msg.guild.id);
-
     if (args.permissionLevel < 1 || args.permissionLevel > 3) {
       return util.Messenger.replyError(msg.channel, msg.author, 'Permission levels:\nModerator: 1\nAdministrator: 2\nOwner: 3');
     }
 
-    if (dbGuild.roles.mod.some((role) =>  role.id === args.role.id)) {
+    if (msg.dbGuild.roles.mod.some((role) =>  role.id === args.role.id)) {
       return util.Messenger.replyError(msg.channel, msg.author, 'This moderation role has already been set.');
     }
 

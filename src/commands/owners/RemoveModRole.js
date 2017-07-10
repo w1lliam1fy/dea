@@ -22,9 +22,7 @@ class RemoveModRole extends patron.Command {
   }
 
   async run(msg, args){
-    const dbGuild = await db.guildRepo.getGuild(msg.guild.id);
-
-    if (!dbGuild.roles.mod.some((role) =>  role.id === args.role.id)) {
+    if (!msg.dbGuild.roles.mod.some((role) =>  role.id === args.role.id)) {
       return util.Messenger.replyError(msg.channel, msg.author, 'You may not remove a moderation role that has no been set.');
     }
 

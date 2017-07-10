@@ -1,4 +1,3 @@
-const db = require('../../database');
 const patron = require('patron.js');
 const util = require('../../utility');
 
@@ -12,21 +11,20 @@ class Ranks extends patron.Command {
   }
 
   async run(msg, args) {
-    const dbGuild = await db.guildRepo.getGuild(msg.guild.id);
-    const rankList = dbGuild.roles.rank.sort((a, b) => a.cashRequired - b.cashRequired);
-
-    if (dbGuild.roles.rank.length === 0) {
+    if (msg.dbGuild.roles.rank.length === 0) {
       return util.Messenger.replyError(msg.channel, msg.author, 'There are no rank roles yet!');
     }
 
+    const sortedRanks = msg.dbGuild.roles.rank.sort((a, b) => a.cashRequired - b.cashRequired);
+
     let description = '';
-    for (let i = 0; i < rankList.length; i++) {
-      const rank = msg.guild.roles.find((x) => x.id === rankList[i].id);
+    for (let i = 0; i < sortedRanks.length; i++) {
+      const rank = msg.guild.roles.find((x) => x.id === sortedRanks[i].id);
       
-      description+= rank + ': ' + util.NumberUtil.USD(rankList[i].cashRequired) + '\n';
+      description+= rank + ': ' + util.NumberUtil.USD(sortedRanks[i].cashRequired) + '\n';
     }
 
-    return util.Messenger.send(context.channel, description, 'Ranks');
+    return util.Messenger.send(msg.channel, description, 'Ranks');
   }
 }
 

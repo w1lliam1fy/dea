@@ -39,13 +39,8 @@ class Messenger {
     return this.send(channel, StringUtil.boldify(user.tag) + ', ' + description, title, color);
   }
 
-  static async tryReply(channel, user, description, title = '', color = null) {
-    try {
-      await this.reply(channel, user, description, title, color);
-      return true;
-    } catch (err) {
-      return false;
-    }
+  static tryReply(channel, user, description, title = '', color = null) {
+    return this.trySend(channel, StringUtil.boldify(user.tag) + ', ' + description, title, color);
   }
 
   static sendFields(channel, fieldsAndValues, inline = true, color = null) {
@@ -73,17 +68,16 @@ class Messenger {
     return this.send(channel, description, title, config.errorColor);
   }
 
+  static trySendError(channel, description, title = '') {
+    return this.trySend(channel, description, title, config.errorColor);
+  }
+
   static replyError(channel, user, description, title = '') {
     return this.reply(channel, user, description, title, config.errorColor);
   }
 
-  static async tryReplyError(channel, user, description, title = '') {
-    try {
-      await this.replyError(channel, user, description, title);
-      return true;
-    } catch (err) {
-      return false;
-    }
+  static tryReplyError(channel, user, description, title = '') {
+    return this.tryReply(channel, user, description, title, config.errorColor);
   }
 
   static DM(user, description, guild = null, title = '', color = null) {

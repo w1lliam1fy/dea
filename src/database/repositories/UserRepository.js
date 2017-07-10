@@ -2,6 +2,7 @@ const BaseRepository = require('./BaseRepository.js');
 const IncMoneyUpdate = require('../updates/IncMoneyUpdate.js');
 const UserQuery = require('../queries/UserQuery.js');
 const User = require('../models/User.js');
+const RankService = require ('../../Services/RankService.js');
 
 class UserRepository extends BaseRepository {
   constructor(collection) { 
@@ -44,16 +45,16 @@ class UserRepository extends BaseRepository {
     }
   }
 
-  modifyCash(userId, guildId, change) {
-    return this.upsertUser(userId, guildId, new IncMoneyUpdate('cash', change));
-  }
-
   modifyBounty(userId, guildId, change) {
     return this.upsertUser(userId, guildId, new IncMoneyUpdate('bounty', change));
   }
 
-  findAndModifyCash(userId, guildId, change) {
-    return this.findUserAndUpsert(userId, guildId, new IncMoneyUpdate('cash', change));
+  async findAndModifyCash(dbGuild, member, change) {
+    const newDbUser = await this.findUserAndUpsert(member.id, dbGuild.guildId, new IncMoneyUpdate('cash', change));
+
+    RankService.handle(newDbUser, dbGuild, member);
+
+    return newDbUser;
   }
 
   findAndModifyBounty(userId, guildId, change) {

@@ -1,3 +1,4 @@
+const db = require('../database');
 const patron = require('patron.js');
 const config = require('../config.json');
 const util = require('../utility');
@@ -6,6 +7,12 @@ const ChatService = require('./ChatService.js');
 class CommandService {
   async run(client, handler) {
     client.on('message', async (msg) => {
+      const inGuild = msg.guild !== null;
+
+      msg.dbUser = inGuild ? await db.userRepo.getUser(msg.author.id, msg.guild.id) : null;
+      msg.dbGuild = inGuild ? await db.guildRepo.getGuild(msg.guild.id) : null;
+      msg.member = inGuild ? msg.guild.member(msg.author) : null;
+
       if (!msg.content.startsWith(config.prefix)) {
         return ChatService.applyCash(msg);
       } else if (msg.author.bot) {
@@ -20,6 +27,11 @@ class CommandService {
         switch (result.commandError) {
           case patron.CommandError.CommandNotFound:
             return;
+          case patron.CommandError.Cooldown: {
+            const cooldown = util.NumberUtil.msToTime(result.remaining);
+            return util.Messenger.trySendError(msg.channel, 'Hours: ' + cooldown.hours + '\nMinutes: ' + cooldown.minutes + '\nSeconds: ' + cooldown.seconds, 
+              util.StringUtil.upperFirstChar(result.command.name) + ' Cooldown');
+          }
           case patron.CommandError.Exception:
             if (result.error.code !== undefined) { // TODO: Check if instance of DiscordApiError when 12.0 is stable.
               if (result.error.code === 400) { 

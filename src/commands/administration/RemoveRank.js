@@ -21,9 +21,7 @@ class RemoveRank extends patron.Command {
   }
 
   async run(msg, args) {
-    const dbGuild = await db.guildRepo.getGuild(msg.guild.id);
-
-    if (!dbGuild.roles.rank.some((role) =>  role.id === args.role.id)) {
+    if (!msg.dbGuild.roles.rank.some((role) =>  role.id === args.role.id)) {
       return util.Messenger.replyError(msg.channel, msg.author, 'You may not remove a rank role that has no been set.');
     }
 

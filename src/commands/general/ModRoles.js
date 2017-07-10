@@ -1,4 +1,3 @@
-const db = require('../../database');
 const patron = require('patron.js');
 const util = require('../../utility');
 
@@ -12,10 +11,9 @@ class ModRoles extends patron.Command {
   }
 
   async run(msg, args) {
-    const dbGuild = await db.guildRepo.getGuild(msg.guild.id);
-    const modRoleList = dbGuild.roles.mod.sort((a, b) => a.permissionLevel - b.permissionLevel);
+    const modRoleList = msg.dbGuild.roles.mod.sort((a, b) => a.permissionLevel - b.permissionLevel);
 
-    if (dbGuild.roles.mod.length === 0) {
+    if (msg.dbGuild.roles.mod.length === 0) {
       return util.Messenger.replyError(msg.channel, msg.author, 'There are no mod roles yet!');
     }
 
@@ -26,7 +24,7 @@ class ModRoles extends patron.Command {
       description+= rank + ': ' + (modRoleList[i].permissionLevel) + '\n';
     }
 
-    return util.Messenger.send(context.channel, description + '\n**Permission Levels:**\n1: Moderator\n2: Administrator\n3: Owner', 'Mod Roles');
+    return util.Messenger.send(msg.channel, description + '\n**Permission Levels:**\n1: Moderator\n2: Administrator\n3: Owner', 'Mod Roles');
   }
 }
 

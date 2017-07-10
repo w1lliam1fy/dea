@@ -37,15 +37,13 @@ class Mute extends patron.Command {
   }
 
   async run(msg, args) {
-    const dbGuild = await db.guildRepo.getGuild(msg.guild.id);
-
-    if (dbGuild.roles.muted === null) {
+    if (msg.dbGuild.roles.muted === null) {
       return util.Messenger.replyError(msg.channel, msg.author, 'You must set a muted role with the `' + config.prefix + 'setmute @Role` command before you can mute users.');
-    } else if (args.member.roles.has(dbGuild.roles.muted)) {
+    } else if (args.member.roles.has(msg.dbGuild.roles.muted)) {
       return util.Messenger.replyError(msg.channel, msg.author, 'This user is already muted.');
     }
 
-    const role = msg.guild.roles.get(dbGuild.roles.muted);
+    const role = msg.guild.roles.get(msg.dbGuild.roles.muted);
 
     if (role === undefined) {
       return util.Messenger.replyError(msg.channel, msg.author, 'The set muted role has been deleted. Please set a new one with the `' + config.prefix + 'setmute @Role` command.');
@@ -57,7 +55,7 @@ class Mute extends patron.Command {
     await db.muteRepo.insertMute(args.member.id, msg.guild.id, util.NumberUtil.hoursToMs(args.hours));
     await util.Messenger.reply(msg.channel, msg.author, 'You have successfully muted ' + args.member.user.tag + ' for ' + formattedHours + '.');
     await ModerationService.tryInformUser(msg.guild, msg.author, 'mute', args.member.user, args.reason);
-    await ModerationService.tryMogLog(dbGuild, msg.guild, 'Mute', config.muteColor, args.reason, msg.author, args.member.user, 'Length', formattedHours);
+    await ModerationService.tryMogLog(msg.dbGuild, msg.guild, 'Mute', config.muteColor, args.reason, msg.author, args.member.user, 'Length', formattedHours);
   }
 }
 

@@ -9,12 +9,12 @@ class Transfer extends patron.Command {
       name: 'transfer',
       aliases: ['sauce'],
       group: 'general',
-      description: 'Transfer money to any user.',
+      description: 'Transfer money to any member.',
       args: [
         new patron.Argument({
-          name: 'user',
-          key: 'user',
-          type: 'user',
+          name: 'member',
+          key: 'member',
+          type: 'member',
           example: '"Nilly Nonka#6969"'
         }), 
         new patron.Argument({
@@ -40,10 +40,10 @@ class Transfer extends patron.Command {
 
     const transactionFee = args.transfer * config.transactionCut;
     const received = args.transfer - transactionFee;
-    const newDbUser = await db.userRepo.findAndModifyCash(msg.author.id, msg.guild.id, -args.transfer);
-    await db.userRepo.modifyCash(args.user.id, msg.guild.id, received);
+    const newDbUser = await db.userRepo.findAndModifyCash(msg.dbGuild, msg.member, -args.transfer);
+    await db.userRepo.findAndModifyCash(msg.dbGuild, args.member, received);
 
-    return util.Messenger.reply(msg.channel, msg.author, 'You have successfully transfered ' + util.NumberUtil.USD(received) + ' to '+ util.StringUtil.boldify(args.user.tag) + 
+    return util.Messenger.reply(msg.channel, msg.author, 'You have successfully transfered ' + util.NumberUtil.USD(received) + ' to '+ util.StringUtil.boldify(args.member.user.tag) + 
       '. Transaction fee: ' + util.NumberUtil.USD(transactionFee) + '. Balance: ' + util.NumberUtil.format(newDbUser.cash) + '.');
   }
 }

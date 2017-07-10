@@ -8,7 +8,7 @@ class ModifyCash extends patron.Command {
       name: 'modifycash',
       aliases: ['give'],
       group: 'owners',
-      description: 'Allows you to modify the cash of any user.',
+      description: 'Allows you to modify the cash of any member.',
       args: [
         new patron.Argument({
           name: 'amount',
@@ -17,10 +17,10 @@ class ModifyCash extends patron.Command {
           example: '500'
         }),
         new patron.Argument({
-          name: 'user',
-          key: 'user',
-          type: 'user',
-          default: patron.Default.Author,
+          name: 'member',
+          key: 'member',
+          type: 'member',
+          default: patron.Default.Member,
           example:'Supa Hot Fire#0911',
           remainder: true
         })
@@ -29,9 +29,9 @@ class ModifyCash extends patron.Command {
   }
 
   async run(msg, args) {
-    const newDbUser = await db.userRepo.findAndModifyCash(args.user.id, msg.guild.id, args.amount);
+    const newDbUser = await db.userRepo.findAndModifyCash(msg.dbGuild, args.member, args.amount);
     
-    return util.Messenger.reply(msg.channel, msg.author, 'You have successfully modifed ' + (args.user.id === msg.author.id ? 'your' : util.StringUtil.boldify(args.user.tag) + '\'s') 
+    return util.Messenger.reply(msg.channel, msg.author, 'You have successfully modifed ' + (args.member.id === msg.author.id ? 'your' : util.StringUtil.boldify(args.member.user.tag) + '\'s') 
       + ' balance to ' + util.NumberUtil.format(newDbUser.cash));
   }
 }
