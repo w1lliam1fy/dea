@@ -13,7 +13,7 @@ async function initiate() {
   registry.registerGroupsIn(path.join(__dirname, '../src/groups'));
   registry.registerCommandsIn(path.join(__dirname, '../src/commands'));
 
-  await db.connect(credentials.mongodbConnectionUrl);
+  await db.connect(credentials.mongodbConnectionURL);
   await client.login(credentials.token);
 }
 
