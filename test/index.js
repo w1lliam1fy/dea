@@ -1,8 +1,8 @@
 const path = require('path');
 const patron = require('patron.js');
 const discord = require('discord.js');
-const db = require('./database');
-const config = require('./config.json');
+const db = require('../src/database');
+const config = require('../src/config.json');
 const credentials = require('./credentials.json');
 
 async function initiate() {
