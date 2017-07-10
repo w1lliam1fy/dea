@@ -15,15 +15,17 @@ class CommandService {
 module.exports = new CommandService();
 
 const handle = async function(msg, handler) {
+  if (msg.author.bot) {
+    return;
+  }
+  
   const inGuild = msg.guild !== null;
   
   msg.member = inGuild ? msg.guild.member(msg.author) : null;
   msg.dbUser = inGuild ? await db.userRepo.getUser(msg.author.id, msg.guild.id) : null;
   msg.dbGuild = inGuild ? await db.guildRepo.getGuild(msg.guild.id) : null;
   
-  if (msg.author.bot) {
-    return;
-  } else if (!msg.content.startsWith(config.prefix) && msg.member !== null) {
+  if (!msg.content.startsWith(config.prefix) && msg.member !== null) {
     return ChatService.applyCash(msg);
   } 
 

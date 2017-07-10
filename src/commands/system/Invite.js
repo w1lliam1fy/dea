@@ -14,8 +14,7 @@ class Invite extends patron.Command {
   }
 
   async run(msg) {
-    return util.Messenger.reply(msg.channel, msg.author, 'You may add cleanest bot around by clicking here: ' + config.inviteLink + 
-      '.\n\nIf you have any questions or concerns, you may always join the **Official DEA Support Server:** ' + config.serverInviteLink);
+    return util.Messenger.reply(msg.channel, msg.author, 'You may add cleanest bot around by clicking here: ' + config.inviteLink + '.\n\nIf you have any questions or concerns, you may always join the **Official DEA Support Server:** ' + config.serverInviteLink);
   }
 }
 

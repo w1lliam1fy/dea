@@ -10,7 +10,7 @@ class RemoveReputation extends patron.Command {
     super({
       name: 'unrep',
       aliases: ['removereputation', 'removerep'],
-      group: 'general',
+      group: 'reputation',
       description: 'Remove reputation from any user.',
       cooldown: 21600000,
       preconditions: [new Reputation(config.minRepForRemove)],
@@ -20,8 +20,8 @@ class RemoveReputation extends patron.Command {
           key: 'user',
           type: 'user',
           example:'Blast My Ass#6969',
-          preconditions: [NoSelf],
-          isRemainder: true
+          isRemainder: true,
+          preconditions: [NoSelf]
         })
       ]
     });

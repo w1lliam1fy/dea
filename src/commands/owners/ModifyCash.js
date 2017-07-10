@@ -31,8 +31,7 @@ class ModifyCash extends patron.Command {
   async run(msg, args) {
     const newDbUser = await db.userRepo.findAndModifyCash(msg.dbGuild, args.member, args.amount);
     
-    return util.Messenger.reply(msg.channel, msg.author, 'You have successfully modifed ' + (args.member.id === msg.author.id ? 'your' : util.StringUtil.boldify(args.member.user.tag) + '\'s') 
-      + ' balance to ' + util.NumberUtil.format(newDbUser.cash));
+    return util.Messenger.reply(msg.channel, msg.author, 'You have successfully modifed ' + (args.member.id === msg.author.id ? 'your' : util.StringUtil.boldify(args.member.user.tag) + '\'s') + ' balance to ' + util.NumberUtil.format(newDbUser.cash));
   }
 }
 

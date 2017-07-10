@@ -25,10 +25,7 @@ class Help extends patron.Command {
   async run(msg, args) {
     if (util.StringUtil.isNullOrWhiteSpace(args.command)) {
       await util.Messenger.DM(msg.author,
-        'DEA is **THE** cleanest bot around, and you can have it in **YOUR** server simply by clicking here: ' + config.inviteLink + '.\n\n' +
-        'For all information about command usage and setup on your Discord Sever, view the official documentation: ' + config.documentationLink + '.\n\n' +
-        'The `' + config.prefix +  'help <command>` command may be used for view the usage and an example of any command.\n\n' + 
-        'If you have **ANY** questions, you may join the **Official DEA Discord Server:** ' + config.serverInviteLink + ' for instant support along with a great community.');
+        'DEA is **THE** cleanest bot around, and you can have it in **YOUR** server simply by clicking here: ' + config.inviteLink + '.\n\nFor all information about command usage and setup on your Discord Sever, view the official documentation: ' + config.documentationLink + '.\n\nThe `' + config.prefix +  'help <command>` command may be used for view the usage and an example of any command.\n\nIf you have **ANY** questions, you may join the **Official DEA Discord Server:** ' + config.serverInviteLink + ' for instant support along with a great community.');
 
       if (msg.channel.type !== 'dm') {
         return util.Messenger.reply(msg.channel, msg.author, 'You have been DMed with all the command information!');
@@ -50,8 +47,7 @@ class Help extends patron.Command {
         }
       }
 
-      return util.Messenger.send(msg.channel, '**Description:** ' + command.description + '\n**Usage:** `' + config.prefix + command.getUsage() + '`\n**Example:** `' + 
-        config.prefix + command.getExample() + '`', util.StringUtil.upperFirstChar(command.name));
+      return util.Messenger.send(msg.channel, '**Description:** ' + command.description + '\n**Usage:** `' + config.prefix + command.getUsage() + '`\n**Example:** `' + config.prefix + command.getExample() + '`', util.StringUtil.upperFirstChar(command.name));
     }  
   }
 }

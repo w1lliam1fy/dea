@@ -7,8 +7,8 @@ class RepLeaderboards extends patron.Command {
   constructor() {
     super({
       name: 'repleaderboards',
-      aliases: ['replb', 'highreps', 'highrep'],
-      group: 'general',
+      aliases: ['reps', 'replb', 'highreps', 'highrep'],
+      group: 'reputation',
       description: 'View the users with the highest reputation.'
     });
   }

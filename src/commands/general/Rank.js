@@ -27,8 +27,7 @@ class Rank extends patron.Command {
     const sortedUsers = (await db.userRepo.findMany({ guildId: msg.guild.id })).sort((a, b) => b.cash - a.cash);
     const rank = RankService.getRank(dbUser, msg.dbGuild, msg.guild);
 
-    return util.Messenger.send(msg.channel, '**Balance:** ' + util.NumberUtil.format(dbUser.cash) + '\n**Reputation:** ' + dbUser.reputation + '\n**Position:** #' + 
-                              (sortedUsers.findIndex((v) => v.userId === dbUser.userId) + 1) + '\n' + (rank !== undefined ? '**Rank:** ' + rank + '\n' : ''), args.user.tag + '\'s Rank');
+    return util.Messenger.send(msg.channel, '**Balance:** ' + util.NumberUtil.format(dbUser.cash) + '\n**Reputation:** ' + dbUser.reputation + '\n**Position:** #' + (sortedUsers.findIndex((v) => v.userId === dbUser.userId) + 1) + '\n' + (rank !== undefined ? '**Rank:** ' + rank + '\n' : ''), args.user.tag + '\'s Rank');
   }
 }
 

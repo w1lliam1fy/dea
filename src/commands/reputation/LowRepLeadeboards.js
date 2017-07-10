@@ -8,7 +8,7 @@ class LowRepLeaderboards extends patron.Command {
     super({
       name: 'lowrepleaderboards',
       aliases: ['lowredlb', 'lowreps', 'lowrep'],
-      group: 'general',
+      group: 'reputation',
       description: 'View the users with the lowest reputation.'
     });
   }

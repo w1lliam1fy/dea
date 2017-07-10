@@ -8,7 +8,7 @@ class GiveReputation extends patron.Command {
     super({
       name: 'rep',
       aliases: ['givereputation', 'giverep'],
-      group: 'general',
+      group: 'reputation',
       description: 'Give reputation to any user.',
       cooldown: 21600000,
       args: [
@@ -17,8 +17,8 @@ class GiveReputation extends patron.Command {
           key: 'user',
           type: 'user',
           example:'Cheese Burger Hours#6666',
-          preconditions: [NoSelf],
-          isRemainder: true
+          isRemainder: true,
+          preconditions: [NoSelf]
         })
       ]
     });
