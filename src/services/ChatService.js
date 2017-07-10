@@ -40,7 +40,7 @@ class ChatService {
         const filter = m => m.content.toLowerCase().startsWith(config.prefix + 'gangbang');
 
         const collection = await msg.channel.awaitMessages(filter, { limit: 3, time: 10000 });
-
+        console.log(collection);
         if (collection.size === 3) {
           let gangBangers = '';
 
