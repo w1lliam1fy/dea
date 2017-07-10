@@ -35,6 +35,7 @@ class Database {
       { userId: { $type: 'string', $exists: true } },
       { guildId: { $type: 'string', $exists: true } },
       { cash: { $type: 'int', $exists: true } },
+      { reputation: { $type: 'int', $exists: true } },
       { bounty: { $type: 'int', $exists: true, $gte: 0 } },
       { health: { $type: 'int', $exists: true, $gt: 0 } },
       { slaveOwnerId: { $type: 'string', $exists: true } },

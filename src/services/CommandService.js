@@ -21,12 +21,11 @@ const handle = async function(msg, handler) {
   msg.dbUser = inGuild ? await db.userRepo.getUser(msg.author.id, msg.guild.id) : null;
   msg.dbGuild = inGuild ? await db.guildRepo.getGuild(msg.guild.id) : null;
   
-
-  if (!msg.content.startsWith(config.prefix) && msg.member !== null) {
-    return ChatService.applyCash(msg);
-  } else if (msg.author.bot) {
+  if (msg.author.bot) {
     return;
-  }
+  } else if (!msg.content.startsWith(config.prefix) && msg.member !== null) {
+    return ChatService.applyCash(msg);
+  } 
 
   const result = await handler.run(msg, config.prefix);
 

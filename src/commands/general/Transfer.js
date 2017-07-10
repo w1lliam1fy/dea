@@ -2,12 +2,13 @@ const patron = require('patron.js');
 const db = require('../../database');
 const util = require('../../utility');
 const config = require('../../config.json');
+const NoSelf = require('../../preconditions/NoSelf.js');
 
 class Transfer extends patron.Command {
   constructor() {
     super({
       name: 'transfer',
-      aliases: ['sauce'],
+      aliases: ['sauce', 'donate'],
       group: 'general',
       description: 'Transfer money to any member.',
       args: [
@@ -15,6 +16,7 @@ class Transfer extends patron.Command {
           name: 'member',
           key: 'member',
           type: 'member',
+          preconditions: [NoSelf],
           example: '"Nilly Nonka#6969"'
         }), 
         new patron.Argument({
