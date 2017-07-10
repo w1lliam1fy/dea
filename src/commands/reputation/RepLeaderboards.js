@@ -6,8 +6,8 @@ const util = require('../../utility');
 class RepLeaderboards extends patron.Command {
   constructor() {
     super({
-      name: 'repleaderboards',
-      aliases: ['reps', 'replb', 'highreps', 'highrep'],
+      name: 'reps',
+      aliases: ['repleaderboards', 'reps', 'replb', 'highreps', 'highrep'],
       group: 'reputation',
       description: 'View the users with the highest reputation.'
     });

@@ -68,29 +68,17 @@
         
             <li><a class="toctree-l3" href="#administration">Administration</a></li>
         
-            <li><a class="toctree-l3" href="#botowners">BotOwners</a></li>
-        
-            <li><a class="toctree-l3" href="#crime">Crime</a></li>
-        
             <li><a class="toctree-l3" href="#gambling">Gambling</a></li>
-        
-            <li><a class="toctree-l3" href="#gangs">Gangs</a></li>
         
             <li><a class="toctree-l3" href="#general">General</a></li>
         
-            <li><a class="toctree-l3" href="#items">Items</a></li>
-        
             <li><a class="toctree-l3" href="#moderation">Moderation</a></li>
-        
-            <li><a class="toctree-l3" href="#nsfw">NSFW</a></li>
         
             <li><a class="toctree-l3" href="#owners">Owners</a></li>
         
-            <li><a class="toctree-l3" href="#polls">Polls</a></li>
+            <li><a class="toctree-l3" href="#reputation">Reputation</a></li>
         
             <li><a class="toctree-l3" href="#system">System</a></li>
-        
-            <li><a class="toctree-l3" href="#trivia">Trivia</a></li>
         
         </ul>
     
@@ -133,25 +121,19 @@
           <div role="main">
             <div class="section">
               
-                <p>All commands are catagorized by modules. Each of the following sections is a module, and to gain more information about a specific module, you may use the <code>$help [Module name]</code> command, or simply read below.</p>
+                <p>All commands are catagorized by groups. Each of the following sections is a group.</p>
 <p>The syntax of the command usage is:</p>
 <p><code>Optional paramater: []</code></p>
 <p><code>Required paramater: &lt;&gt;</code></p>
 <h2 id="table-of-contents">Table Of Contents</h2>
 <ul>
 <li><a href="#administration">Administration</a></li>
-<li><a href="#botowners">BotOwners</a></li>
-<li><a href="#crime">Crime</a></li>
 <li><a href="#gambling">Gambling</a></li>
-<li><a href="#gangs">Gangs</a></li>
 <li><a href="#general">General</a></li>
-<li><a href="#items">Items</a></li>
 <li><a href="#moderation">Moderation</a></li>
-<li><a href="#nsfw">NSFW</a></li>
 <li><a href="#owners">Owners</a></li>
-<li><a href="#polls">Polls</a></li>
+<li><a href="#reputation">Reputation</a></li>
 <li><a href="#system">System</a></li>
-<li><a href="#trivia">Trivia</a></li>
 </ul>
 <h3 id="administration">Administration</h3>
 <p>These commands may only be used by a user with the set mod role with a permission level of 2, the Administrator permission.</p>
@@ -165,159 +147,34 @@
 </thead>
 <tbody>
 <tr>
-<td>AddRank</td>
-<td>Adds a rank role for the DEA cash system.</td>
-<td><code>$AddRank &lt;@rankRole&gt; &lt;cashRequired&gt;</code></td>
+<td>Addrank</td>
+<td>Add a rank.</td>
+<td><code>$addrank &lt;@role&gt; &lt;cashRequired&gt;</code></td>
 </tr>
 <tr>
-<td>DisableWelcomeMessage</td>
-<td>Disables the welcome message from being sent in direct messages and in the welcome channel.</td>
-<td><code>$DisableWelcomeMessage</code></td>
+<td>Disablewelcome</td>
+<td>Disables the welcome message.</td>
+<td><code>$disablewelcome</code></td>
 </tr>
 <tr>
-<td>ModifyRank</td>
-<td>Modfies a rank role for the DEA cash system.</td>
-<td><code>$ModifyRank &lt;@rankRole&gt; &lt;newCashRequired&gt;</code></td>
+<td>Removerank</td>
+<td>Remove a rank role.</td>
+<td><code>$removerank &lt;@role&gt;</code></td>
 </tr>
 <tr>
-<td>RemoveRank</td>
-<td>Removes a rank role for the DEA cash system.</td>
-<td><code>$RemoveRank &lt;@rankRole&gt;</code></td>
+<td>Setmodlogchannel</td>
+<td>Sets the mod log channel.</td>
+<td><code>$setmodlogchannel &lt;mod log channel&gt;</code></td>
 </tr>
 <tr>
-<td>RoleIDs</td>
-<td>Gets the ID of all roles in the guild.</td>
-<td><code>$RoleIDs</code></td>
-</tr>
-<tr>
-<td>SetGambleChannel</td>
-<td>Sets the gambling channel.</td>
-<td><code>$SetGambleChannel &lt;#gambleChannel&gt;</code></td>
-</tr>
-<tr>
-<td>SetModLog</td>
-<td>Sets the moderation log.</td>
-<td><code>$SetModLog &lt;#modLogChannel&gt;</code></td>
-</tr>
-<tr>
-<td>SetMutedRole</td>
+<td>Setmutedrole</td>
 <td>Sets the muted role.</td>
-<td><code>$SetMutedRole &lt;@mutedRole&gt;</code></td>
+<td><code>$setmutedrole &lt;@Muted Role&gt;</code></td>
 </tr>
 <tr>
-<td>SetPrefix</td>
-<td>Sets the guild specific prefix.</td>
-<td><code>$SetPrefix &lt;prefix&gt;</code></td>
-</tr>
-<tr>
-<td>SetUpdateChannel</td>
-<td>Sets the channel where DEA will send messages informing you of its most recent updates and new features.</td>
-<td><code>$SetUpdateChannel &lt;#channel&gt;</code></td>
-</tr>
-<tr>
-<td>SetWelcomeChannel</td>
-<td>Set the channel where DEA will send a welcome message to all new users that join.</td>
-<td><code>$SetWelcomeChannel &lt;#channel&gt;</code></td>
-</tr>
-<tr>
-<td>SetWelcomeMessage</td>
-<td>Sets the welcome message that DEA will send in either the Welcome Channel or the users DM's.</td>
-<td><code>$SetWelcomeMessage &lt;message&gt;</code></td>
-</tr>
-</tbody>
-</table>
-<h3 id="botowners">BotOwners</h3>
-<p>These commands may only be used by the bot owners provided by the Owner Ids in the Credentials.json file.</p>
-<table>
-<thead>
-<tr>
-<th>Command</th>
-<th>Description</th>
-<th>Usage</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Blacklist</td>
-<td>Blacklist a user from DEA entirely to the fullest extent.</td>
-<td><code>$Blacklist &lt;userId&gt;</code></td>
-</tr>
-<tr>
-<td>LeaveGuild</td>
-<td>Leaves any guild by guild ID.</td>
-<td><code>$LeaveGuild &lt;guildId&gt;</code></td>
-</tr>
-<tr>
-<td>SetGame</td>
-<td>Sets the game of DEA.</td>
-<td><code>$SetGame &lt;game&gt;</code></td>
-</tr>
-</tbody>
-</table>
-<h3 id="crime">Crime</h3>
-<table>
-<thead>
-<tr>
-<th>Command</th>
-<th>Description</th>
-<th>Usage</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>AddBounty</td>
-<td>Add a bounty of any user.</td>
-<td><code>$AddBounty &lt;@userToSet&gt; &lt;bounty&gt;</code></td>
-</tr>
-<tr>
-<td>Bully</td>
-<td>Bully anyone's nickname to whatever you please.</td>
-<td><code>$Bully &lt;@userToBully&gt; &lt;nickname&gt;</code></td>
-</tr>
-<tr>
-<td>Collect</td>
-<td>Collect a portion from your slaves.</td>
-<td><code>$Collect</code></td>
-</tr>
-<tr>
-<td>Enslave</td>
-<td>Enslave any users at low health.</td>
-<td><code>$Enslave &lt;@userToEnslave&gt; &lt;weapon&gt;</code></td>
-</tr>
-<tr>
-<td>Jump</td>
-<td>Jump some random nigga in the hood.</td>
-<td><code>$Jump</code></td>
-</tr>
-<tr>
-<td>Rob</td>
-<td>Slam anyone's bank account.</td>
-<td><code>$Rob &lt;@user&gt; &lt;resources&gt;</code></td>
-</tr>
-<tr>
-<td>Shoot</td>
-<td>Attempt to shoot a user.</td>
-<td><code>$Shoot &lt;@userToShoot&gt; &lt;gun&gt;</code></td>
-</tr>
-<tr>
-<td>Stab</td>
-<td>Attempt to stab a user.</td>
-<td><code>$Stab &lt;@userToStab&gt; &lt;knife&gt;</code></td>
-</tr>
-<tr>
-<td>Steal</td>
-<td>Snipe some goodies from your local stores.</td>
-<td><code>$Steal</code></td>
-</tr>
-<tr>
-<td>Suicide</td>
-<td>Kill yourself.</td>
-<td><code>$Suicide</code></td>
-</tr>
-<tr>
-<td>Whore</td>
-<td>Sell your body for some quick cash.</td>
-<td><code>$Whore</code></td>
+<td>Setwelcome</td>
+<td>Sets the welcome message.</td>
+<td><code>$setwelcome &lt;message&gt;</code></td>
 </tr>
 </tbody>
 </table>
@@ -332,96 +189,24 @@
 </thead>
 <tbody>
 <tr>
-<td>100x9500</td>
-<td>Roll 100.00 on a 100.00 sided die, win 9500X your bet.</td>
-<td><code>$100x9500 &lt;bet&gt;</code></td>
+<td>25+</td>
+<td>Roll 25.00 or higher on a 100.00 sided die to win 0.2X your bet.</td>
+<td><code>$25+ &lt;bet&gt;</code></td>
 </tr>
 <tr>
-<td>21+</td>
-<td>Roll 20.84 or higher on a 100.00 sided die, win 0.2X your bet.</td>
-<td><code>$21+ &lt;bet&gt;</code></td>
-</tr>
-<tr>
-<td>50x2</td>
-<td>Roll 50.01 or higher on a 100.00 sided die, win your bet.</td>
-<td><code>$50x2 &lt;bet&gt;</code></td>
-</tr>
-<tr>
-<td>53x2</td>
-<td>Roll 52.50 or higher on a 100.00 sided die, win your bet.</td>
-<td><code>$53x2 &lt;bet&gt;</code></td>
+<td>55x2</td>
+<td>Roll 55.0 or higher on a 100.00 sided die to win your bet.</td>
+<td><code>$55x2 &lt;bet&gt;</code></td>
 </tr>
 <tr>
 <td>75+</td>
-<td>Roll 75.01 or higher on a 100.00 sided die, win 2.8X your bet.</td>
+<td>Roll 75.00 or higher on a 100.00 sided die to win 2.6X your bet.</td>
 <td><code>$75+ &lt;bet&gt;</code></td>
 </tr>
-</tbody>
-</table>
-<h3 id="gangs">Gangs</h3>
-<table>
-<thead>
 <tr>
-<th>Command</th>
-<th>Description</th>
-<th>Usage</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ChangeGangName</td>
-<td>Changes the name of your gang.</td>
-<td><code>$ChangeGangName &lt;newName&gt;</code></td>
-</tr>
-<tr>
-<td>CreateGang</td>
-<td>Allows you to create a gang at a hefty price.</td>
-<td><code>$CreateGang &lt;name&gt;</code></td>
-</tr>
-<tr>
-<td>Deposit</td>
-<td>Deposit cash into your gang's funds.</td>
-<td><code>$Deposit &lt;cash&gt;</code></td>
-</tr>
-<tr>
-<td>DestroyGang</td>
-<td>Destroys a gang entirely taking down all funds with it.</td>
-<td><code>$DestroyGang</code></td>
-</tr>
-<tr>
-<td>Gang</td>
-<td>Gives you all the info about any gang.</td>
-<td><code>$Gang [gangName]</code></td>
-</tr>
-<tr>
-<td>GangLb</td>
-<td>Shows the wealthiest gangs.</td>
-<td><code>$GangLb</code></td>
-</tr>
-<tr>
-<td>JoinGang</td>
-<td>Sends a request to join a gang.</td>
-<td><code>$JoinGang &lt;gangName&gt;</code></td>
-</tr>
-<tr>
-<td>KickGangMember</td>
-<td>Kicks a user from your gang.</td>
-<td><code>$KickGangMember &lt;@gangMember&gt;</code></td>
-</tr>
-<tr>
-<td>LeaveGang</td>
-<td>Allows you to break all ties with a gang.</td>
-<td><code>$LeaveGang</code></td>
-</tr>
-<tr>
-<td>Raid</td>
-<td>Raid another gang in attempt to steal some of their wealth.</td>
-<td><code>$Raid &lt;gangName&gt; &lt;resources&gt;</code></td>
-</tr>
-<tr>
-<td>Withdraw</td>
-<td>Withdraw cash from your gang's funds.</td>
-<td><code>$Withdraw &lt;cash&gt;</code></td>
+<td>99+</td>
+<td>Roll 99.00 or higher on a 100.00 sided die to win 90X your bet.</td>
+<td><code>$99+ &lt;bet&gt;</code></td>
 </tr>
 </tbody>
 </table>
@@ -436,101 +221,34 @@
 </thead>
 <tbody>
 <tr>
-<td>Cooldowns</td>
-<td>View all your command cooldowns.</td>
-<td><code>$Cooldowns [@user]</code></td>
-</tr>
-<tr>
-<td>Donate</td>
-<td>Sauce some cash to one of your mates.</td>
-<td><code>$Donate &lt;@user&gt; &lt;money&gt;</code></td>
+<td>Bal</td>
+<td>View the wealth of anyone.</td>
+<td><code>$bal [@user]</code></td>
 </tr>
 <tr>
 <td>Leaderboards</td>
 <td>View the richest Drug Traffickers.</td>
-<td><code>$Leaderboards</code></td>
+<td><code>$leaderboards</code></td>
 </tr>
 <tr>
-<td>ModRoles</td>
-<td>View all the moderator roles.</td>
-<td><code>$ModRoles</code></td>
-</tr>
-<tr>
-<td>Money</td>
-<td>View the wealth of anyone.</td>
-<td><code>$Money [@user]</code></td>
+<td>Modroles</td>
+<td>View all mod roles in this guild.</td>
+<td><code>$modroles</code></td>
 </tr>
 <tr>
 <td>Rank</td>
-<td>View the detailed ranking information of any user.</td>
-<td><code>$Rank [@user]</code></td>
+<td>View the rank of anyone.</td>
+<td><code>$rank [@user]</code></td>
 </tr>
 <tr>
 <td>Ranks</td>
-<td>View all ranks.</td>
-<td><code>$Ranks</code></td>
+<td>View all ranks in this guild.</td>
+<td><code>$ranks</code></td>
 </tr>
 <tr>
-<td>Wanted</td>
-<td>View the most targeted traffickers.</td>
-<td><code>$Wanted</code></td>
-</tr>
-</tbody>
-</table>
-<h3 id="items">Items</h3>
-<table>
-<thead>
-<tr>
-<th>Command</th>
-<th>Description</th>
-<th>Usage</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Eat</td>
-<td>Eat a chosen food in your inventory to gain health.</td>
-<td><code>$Eat &lt;food&gt;</code></td>
-</tr>
-<tr>
-<td>Fish</td>
-<td>Go fishing for some food.</td>
-<td><code>$Fish &lt;weapon&gt;</code></td>
-</tr>
-<tr>
-<td>Hunt</td>
-<td>Go hunting for some food.</td>
-<td><code>$Hunt &lt;weapon&gt;</code></td>
-</tr>
-<tr>
-<td>Inventory</td>
-<td>View the inventory of any user.</td>
-<td><code>$Inventory [@user]</code></td>
-</tr>
-<tr>
-<td>Item</td>
-<td>Get all the information on any item.</td>
-<td><code>$Item &lt;item&gt;</code></td>
-</tr>
-<tr>
-<td>OpenAll</td>
-<td>Open a crate!</td>
-<td><code>$OpenAll &lt;crate&gt;</code></td>
-</tr>
-<tr>
-<td>OpenCrate</td>
-<td>Open a crate!</td>
-<td><code>$OpenCrate &lt;crate&gt;</code></td>
-</tr>
-<tr>
-<td>Shop</td>
-<td>List of available shop items.</td>
-<td><code>$Shop [crate] [quantity]</code></td>
-</tr>
-<tr>
-<td>Trade</td>
-<td>Request to trade with any user.</td>
-<td><code>$Trade &lt;@userToTrade&gt; &lt;exchangeItemQuantity&gt; &lt;itemInExchange&gt; &lt;requestedItemQuantity&gt; &lt;requestedItem&gt;</code></td>
+<td>Transfer</td>
+<td>Transfer money to any member.</td>
+<td><code>$transfer &lt;@member&gt; &lt;transfer&gt;</code></td>
 </tr>
 </tbody>
 </table>
@@ -546,71 +264,9 @@
 </thead>
 <tbody>
 <tr>
-<td>Ban</td>
-<td>Bans a user.</td>
-<td><code>$Ban &lt;@userToBan&gt; [reason]</code></td>
-</tr>
-<tr>
-<td>Chill</td>
-<td>Prevents users from talking in a specific channel for x amount of seconds.</td>
-<td><code>$Chill [seconds] [reason]</code></td>
-</tr>
-<tr>
-<td>Clear</td>
-<td>Deletes x amount of messages.</td>
-<td><code>$Clear [quantity] [reason]</code></td>
-</tr>
-<tr>
-<td>CustomMute</td>
-<td>Temporarily mutes a user for x amount of hours.</td>
-<td><code>$CustomMute &lt;hours&gt; &lt;@userToMute&gt; [reason]</code></td>
-</tr>
-<tr>
-<td>Kick</td>
-<td>Kicks a user.</td>
-<td><code>$Kick &lt;@userToKick&gt; [reason]</code></td>
-</tr>
-<tr>
 <td>Mute</td>
-<td>Permanently mutes a user.</td>
-<td><code>$Mute &lt;@userToMute&gt; [reason]</code></td>
-</tr>
-<tr>
-<td>Unban</td>
-<td>Unban a user.</td>
-<td><code>$Unban &lt;username&gt; [reason]</code></td>
-</tr>
-<tr>
-<td>Unmute</td>
-<td>Unmutes a muted user.</td>
-<td><code>$Unmute &lt;@userToUnmute&gt; [reason]</code></td>
-</tr>
-</tbody>
-</table>
-<h3 id="nsfw">NSFW</h3>
-<table>
-<thead>
-<tr>
-<th>Command</th>
-<th>Description</th>
-<th>Usage</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Ass</td>
-<td>Sauce me some booty how about that.</td>
-<td><code>$Ass</code></td>
-</tr>
-<tr>
-<td>Hentai</td>
-<td>The real shit goes down with custom hentai tags.</td>
-<td><code>$Hentai [tag]</code></td>
-</tr>
-<tr>
-<td>Tits</td>
-<td>Motorboat that shit.</td>
-<td><code>$Tits</code></td>
+<td>Mute any user.</td>
+<td><code>$mute &lt;@member&gt; [number of hours] [reason]</code></td>
 </tr>
 </tbody>
 </table>
@@ -626,63 +282,34 @@
 </thead>
 <tbody>
 <tr>
-<td>100k</td>
-<td>Sets the user's balance to $100,000.00.</td>
-<td><code>$100k [@user]</code></td>
+<td>Addmodrole</td>
+<td>Add a mod role.</td>
+<td><code>$addmodrole &lt;@role&gt; &lt;permissonLevel&gt;</code></td>
 </tr>
 <tr>
-<td>AddModRole</td>
-<td>Adds a moderator role.</td>
-<td><code>$AddModRole &lt;@modRole&gt; [permissionLevel]</code></td>
+<td>Modifycash</td>
+<td>Allows you to modify the cash of any member.</td>
+<td><code>$modifycash &lt;amount&gt; [@member]</code></td>
 </tr>
 <tr>
-<td>DeleteGang</td>
-<td>Deletes a gang.</td>
-<td><code>$DeleteGang &lt;gangName&gt;</code></td>
-</tr>
-<tr>
-<td>ModifyCash</td>
-<td>Modify a user's balance.</td>
-<td><code>$ModifyCash &lt;money&gt; [@user]</code></td>
-</tr>
-<tr>
-<td>ModifyHealth</td>
-<td>Modify a user's health.</td>
-<td><code>$ModifyHealth &lt;modifyHealth&gt; [@user]</code></td>
-</tr>
-<tr>
-<td>ModifyInventory</td>
-<td>Modify a user's inventory.</td>
-<td><code>$ModifyInventory &lt;quantity&gt; &lt;item&gt; [@user]</code></td>
-</tr>
-<tr>
-<td>ModifyModRole</td>
-<td>Modfies a moderator role.</td>
-<td><code>$ModifyModRole &lt;@modRole&gt; &lt;permissionLevel&gt;</code></td>
-</tr>
-<tr>
-<td>RemoveModRole</td>
-<td>Removes a moderator role.</td>
-<td><code>$RemoveModRole &lt;@modRole&gt;</code></td>
+<td>Removemodrole</td>
+<td>Remove a mod role.</td>
+<td><code>$removemodrole &lt;@role&gt;</code></td>
 </tr>
 <tr>
 <td>Reset</td>
-<td>Resets all user and gang data in your server.</td>
-<td><code>$Reset</code></td>
+<td>Resets all user data in your server.</td>
+<td><code>$reset</code></td>
 </tr>
 <tr>
-<td>ResetUser</td>
-<td>Resets all data for a specific user.</td>
-<td><code>$ResetUser [@user]</code></td>
-</tr>
-<tr>
-<td>SetGlobalMultiplier</td>
-<td>Sets the global chatting multiplier.</td>
-<td><code>$SetGlobalMultiplier &lt;globalMultiplier&gt;</code></td>
+<td>Resetuser</td>
+<td>Reset any users data.</td>
+<td><code>$resetuser [@user]</code></td>
 </tr>
 </tbody>
 </table>
-<h3 id="polls">Polls</h3>
+<h3 id="reputation">Reputation</h3>
+<p>The repuration group has been added in order to show you have gained a certain status and respect in a server, which will allow you access to more commands and features with a higher reputation.</p>
 <table>
 <thead>
 <tr>
@@ -693,29 +320,24 @@
 </thead>
 <tbody>
 <tr>
-<td>CreatePoll</td>
-<td>Creates a poll.</td>
-<td><code>$CreatePoll &lt;poll&gt; &lt;choices&gt; [daysToLast] [elderOnly] [modOnly]</code></td>
+<td>Lowreps</td>
+<td>View the users with the lowest reputation.</td>
+<td><code>$lowreps</code></td>
 </tr>
 <tr>
-<td>Poll</td>
-<td>View the information of any poll.</td>
-<td><code>$Poll &lt;index&gt;</code></td>
+<td>Rep</td>
+<td>Give reputation to any user.</td>
+<td><code>$rep &lt;@user&gt;</code></td>
 </tr>
 <tr>
-<td>Polls</td>
-<td>Sends you a list of all polls in progress.</td>
-<td><code>$Polls</code></td>
+<td>Reps</td>
+<td>View the users with the highest reputation.</td>
+<td><code>$reps</code></td>
 </tr>
 <tr>
-<td>RemovePoll</td>
-<td>Removes a poll.</td>
-<td><code>$RemovePoll &lt;index&gt;</code></td>
-</tr>
-<tr>
-<td>Vote</td>
-<td>Vote on any poll.</td>
-<td><code>$Vote &lt;pollIndex&gt; &lt;choiceIndex&gt;</code></td>
+<td>Unrep</td>
+<td>Remove reputation from any user.</td>
+<td><code>$unrep &lt;@user&gt;</code></td>
 </tr>
 </tbody>
 </table>
@@ -730,96 +352,24 @@
 </thead>
 <tbody>
 <tr>
-<td>BestCommands</td>
-<td>The most popular DEA commands.</td>
-<td><code>$BestCommands</code></td>
-</tr>
-<tr>
-<td>CashInfo</td>
-<td>Information about the DEA Cash System.</td>
-<td><code>$CashInfo</code></td>
-</tr>
-<tr>
-<td>Cleanup</td>
-<td>Deletes DEA's most recent messages to prevent chat flood.</td>
-<td><code>$Cleanup</code></td>
-</tr>
-<tr>
 <td>Help</td>
 <td>All command information.</td>
-<td><code>$Help [commandOrModule]</code></td>
+<td><code>$help [command]</code></td>
+</tr>
+<tr>
+<td>Info</td>
+<td>All the information about the DEA cash system.</td>
+<td><code>$info</code></td>
 </tr>
 <tr>
 <td>Invite</td>
-<td>Invite DEA to your server!</td>
-<td><code>$Invite</code></td>
-</tr>
-<tr>
-<td>Modules</td>
-<td>All command modules.</td>
-<td><code>$Modules</code></td>
+<td>Add DEA to your server.</td>
+<td><code>$invite</code></td>
 </tr>
 <tr>
 <td>Statistics</td>
-<td>All the statistics about DEA.</td>
-<td><code>$Statistics</code></td>
-</tr>
-<tr>
-<td>Support</td>
-<td>Join our Official DEA Support Server!</td>
-<td><code>$Support</code></td>
-</tr>
-<tr>
-<td>WorstCommands</td>
-<td>The least popular DEA commands.</td>
-<td><code>$WorstCommands</code></td>
-</tr>
-</tbody>
-</table>
-<h3 id="trivia">Trivia</h3>
-<table>
-<thead>
-<tr>
-<th>Command</th>
-<th>Description</th>
-<th>Usage</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>AddQuestion</td>
-<td>Adds a trivia question.</td>
-<td><code>$AddQuestion &lt;question&gt; &lt;answer&gt;</code></td>
-</tr>
-<tr>
-<td>ModifyAnswer</td>
-<td>Modify a trivia answer.</td>
-<td><code>$ModifyAnswer &lt;question&gt; &lt;answer&gt;</code></td>
-</tr>
-<tr>
-<td>ModifyQuestion</td>
-<td>Modify a trivia question.</td>
-<td><code>$ModifyQuestion &lt;question&gt; &lt;newQuestion&gt;</code></td>
-</tr>
-<tr>
-<td>RemoveQuestion</td>
-<td>Removes a trivia question.</td>
-<td><code>$RemoveQuestion &lt;question&gt;</code></td>
-</tr>
-<tr>
-<td>Trivia</td>
-<td>Randomly select a trivia question to be asked, and reward whoever answers it correctly.</td>
-<td><code>$Trivia</code></td>
-</tr>
-<tr>
-<td>TriviaAnswers</td>
-<td>Sends you a list of all trivia answers.</td>
-<td><code>$TriviaAnswers [question]</code></td>
-</tr>
-<tr>
-<td>TriviaQuestions</td>
-<td>Sends you a list of all trivia questions.</td>
-<td><code>$TriviaQuestions</code></td>
+<td>Statistics about DEA.</td>
+<td><code>$statistics</code></td>
 </tr>
 </tbody>
 </table>

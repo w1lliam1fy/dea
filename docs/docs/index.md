@@ -1,18 +1,13 @@
-#Welcome to DEA
+# Welcome to DEA
 
-To invite DEA to your Discord Server, click the image below.
+[Add DEA to your Server](https://discordapp.com/oauth2/authorize?client_id=290823959669374987&scope=bot&permissions=8)
 
-[![img][img]](https://discordapp.com/oauth2/authorize?client_id=290823959669374987&scope=bot&permissions=410119182)
+[Official Support Server](https://discord.gg/gvyma7H)
 
-DEA is a multi-purpose Discord Bot mainly known for it's infamous Cash AND Item System, allowing you to buy crates and win prizes such as rare weapons or knives, and trade them with other users. 
+DEA is a multi-purpose Discord Bot mainly known for it's infamous Cash & Reputation System, allowing you to compete with your friends to become the richest in the server, or the most respected.
 
-This bot is also capable of being an excellent moderation bot for all needs. Multiple commands such as kick, ban, mute are available at your disposition. One of the most acclaimed features of DEA is the automatic unmutes after the specified amount of time with mute evasion prevention. 
+This bot is also capable of being an excellent moderation bot for all needs. Multiple commands such as kick, ban, mute are available at your disposition. DEA automatically unmutes users after their mute is over, AND will prevent mute evasion (users leaving and rejoining to lose their Muted role).
 
-Contrary to nearly all public bots, almost everything is customizable. You may set a custom prefix, moderator role and even things such as mod log channels.
+For information on how to setup this bot in your server, click [here](https://realblazeit.github.io/dea/setup/).
 
-If you have any issues when setting up the bot, do not hesitate to join the official DEA support channel by clicking on the link below:
-
-[![dea][dea]](https://discord.gg/gvyma7H)
-
-[img]: https://cdn.discordapp.com/attachments/202743183774318593/210580315381563392/discord.png
-[dea]: http://i.imgur.com/ejsCJwI.jpg
+If you want to view all the command information, click [here](https://realblazeit.github.io/dea/commands/).

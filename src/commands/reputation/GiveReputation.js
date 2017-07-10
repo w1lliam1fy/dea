@@ -1,6 +1,7 @@
 const patron = require('patron.js');
 const db = require('../../database');
 const util = require('../../utility');
+const config = require('../../config.json');
 const NoSelf = require('../../preconditions/NoSelf.js');
 
 class GiveReputation extends patron.Command {
@@ -16,7 +17,7 @@ class GiveReputation extends patron.Command {
           name: 'user',
           key: 'user',
           type: 'user',
-          example:'Cheese Burger Hours#6666',
+          example:'Cheese Burger#6666',
           isRemainder: true,
           preconditions: [NoSelf]
         })
@@ -25,9 +26,13 @@ class GiveReputation extends patron.Command {
   }
 
   async run(msg, args) {
-    const newDbUser = await db.userRepo.findUserAndUpsert(args.user.id, msg.guild.id, { $inc: { reputation: 1 } });
+    const reppedDbUser = await db.userRepo.findUserAndUpsert(args.user.id, msg.guild.id, { $inc: { reputation: 1 } });
 
-    return util.Messenger.reply(msg.channel, msg.author, 'You have successfully given reputation to ' + util.StringUtil.boldify(args.user.tag) + ' raising it to ' + newDbUser.reputation + '.');
+    const reward = util.Random.nextFloat(config.repRewardMin, config.repRewardMax);
+
+    const newDbUser = await db.userRepo.findAndModifyCash(msg.dbGuild, msg.member, reward);
+
+    return util.Messenger.reply(msg.channel, msg.author, 'You have successfully given reputation to ' + util.StringUtil.boldify(args.user.tag) + ' raising it to ' + reppedDbUser.reputation + '.\n\nIn exchange for having contributed to this community, you have been awarded ' + util.NumberUtil.USD(reward) + '. Balance: ' + util.NumberUtil.format(newDbUser.cash) + '.');
   }
 }
 

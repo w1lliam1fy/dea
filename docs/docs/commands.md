@@ -1,4 +1,4 @@
-All commands are catagorized by modules. Each of the following sections is a module, and to gain more information about a specific module, you may use the `$help [Module name]` command, or simply read below.
+All commands are catagorized by groups. Each of the following sections is a group.
 
 The syntax of the command usage is:
 
@@ -8,18 +8,12 @@ The syntax of the command usage is:
 
 ##Table Of Contents
 - [Administration](#administration)
-- [BotOwners](#botowners)
-- [Crime](#crime)
 - [Gambling](#gambling)
-- [Gangs](#gangs)
 - [General](#general)
-- [Items](#items)
 - [Moderation](#moderation)
-- [NSFW](#nsfw)
 - [Owners](#owners)
-- [Polls](#polls)
+- [Reputation](#reputation)
 - [System](#system)
-- [Trivia](#trivia)
 
 ### Administration
 
@@ -27,92 +21,30 @@ These commands may only be used by a user with the set mod role with a permissio
 
 Command | Description | Usage
 ---------------- | --------------| -------
-AddRank|Adds a rank role for the DEA cash system.|`$AddRank <@rankRole> <cashRequired>`
-DisableWelcomeMessage|Disables the welcome message from being sent in direct messages and in the welcome channel.|`$DisableWelcomeMessage`
-ModifyRank|Modfies a rank role for the DEA cash system.|`$ModifyRank <@rankRole> <newCashRequired>`
-RemoveRank|Removes a rank role for the DEA cash system.|`$RemoveRank <@rankRole>`
-RoleIDs|Gets the ID of all roles in the guild.|`$RoleIDs`
-SetGambleChannel|Sets the gambling channel.|`$SetGambleChannel <#gambleChannel>`
-SetModLog|Sets the moderation log.|`$SetModLog <#modLogChannel>`
-SetMutedRole|Sets the muted role.|`$SetMutedRole <@mutedRole>`
-SetPrefix|Sets the guild specific prefix.|`$SetPrefix <prefix>`
-SetUpdateChannel|Sets the channel where DEA will send messages informing you of its most recent updates and new features.|`$SetUpdateChannel <#channel>`
-SetWelcomeChannel|Set the channel where DEA will send a welcome message to all new users that join.|`$SetWelcomeChannel <#channel>`
-SetWelcomeMessage|Sets the welcome message that DEA will send in either the Welcome Channel or the users DM's.|`$SetWelcomeMessage <message>`
-
-### BotOwners
-
-These commands may only be used by the bot owners provided by the Owner Ids in the Credentials.json file.
-
-Command | Description | Usage
----------------- | --------------| -------
-Blacklist|Blacklist a user from DEA entirely to the fullest extent.|`$Blacklist <userId>`
-LeaveGuild|Leaves any guild by guild ID.|`$LeaveGuild <guildId>`
-SetGame|Sets the game of DEA.|`$SetGame <game>`
-
-### Crime
-Command | Description | Usage
----------------- | --------------| -------
-AddBounty|Add a bounty of any user.|`$AddBounty <@userToSet> <bounty>`
-Bully|Bully anyone's nickname to whatever you please.|`$Bully <@userToBully> <nickname>`
-Collect|Collect a portion from your slaves.|`$Collect`
-Enslave|Enslave any users at low health.|`$Enslave <@userToEnslave> <weapon>`
-Jump|Jump some random nigga in the hood.|`$Jump`
-Rob|Slam anyone's bank account.|`$Rob <@user> <resources>`
-Shoot|Attempt to shoot a user.|`$Shoot <@userToShoot> <gun>`
-Stab|Attempt to stab a user.|`$Stab <@userToStab> <knife>`
-Steal|Snipe some goodies from your local stores.|`$Steal`
-Suicide|Kill yourself.|`$Suicide`
-Whore|Sell your body for some quick cash.|`$Whore`
+Addrank|Add a rank.|`$addrank <@role> <cashRequired>`
+Disablewelcome|Disables the welcome message.|`$disablewelcome`
+Removerank|Remove a rank role.|`$removerank <@role>`
+Setmodlogchannel|Sets the mod log channel.|`$setmodlogchannel <mod log channel>`
+Setmutedrole|Sets the muted role.|`$setmutedrole <@Muted Role>`
+Setwelcome|Sets the welcome message.|`$setwelcome <message>`
 
 ### Gambling
 Command | Description | Usage
 ---------------- | --------------| -------
-100x9500|Roll 100.00 on a 100.00 sided die, win 9500X your bet.|`$100x9500 <bet>`
-21+|Roll 20.84 or higher on a 100.00 sided die, win 0.2X your bet.|`$21+ <bet>`
-50x2|Roll 50.01 or higher on a 100.00 sided die, win your bet.|`$50x2 <bet>`
-53x2|Roll 52.50 or higher on a 100.00 sided die, win your bet.|`$53x2 <bet>`
-75+|Roll 75.01 or higher on a 100.00 sided die, win 2.8X your bet.|`$75+ <bet>`
-
-### Gangs
-Command | Description | Usage
----------------- | --------------| -------
-ChangeGangName|Changes the name of your gang.|`$ChangeGangName <newName>`
-CreateGang|Allows you to create a gang at a hefty price.|`$CreateGang <name>`
-Deposit|Deposit cash into your gang's funds.|`$Deposit <cash>`
-DestroyGang|Destroys a gang entirely taking down all funds with it.|`$DestroyGang`
-Gang|Gives you all the info about any gang.|`$Gang [gangName]`
-GangLb|Shows the wealthiest gangs.|`$GangLb`
-JoinGang|Sends a request to join a gang.|`$JoinGang <gangName>`
-KickGangMember|Kicks a user from your gang.|`$KickGangMember <@gangMember>`
-LeaveGang|Allows you to break all ties with a gang.|`$LeaveGang`
-Raid|Raid another gang in attempt to steal some of their wealth.|`$Raid <gangName> <resources>`
-Withdraw|Withdraw cash from your gang's funds.|`$Withdraw <cash>`
+25+|Roll 25.00 or higher on a 100.00 sided die to win 0.2X your bet.|`$25+ <bet>`
+55x2|Roll 55.0 or higher on a 100.00 sided die to win your bet.|`$55x2 <bet>`
+75+|Roll 75.00 or higher on a 100.00 sided die to win 2.6X your bet.|`$75+ <bet>`
+99+|Roll 99.00 or higher on a 100.00 sided die to win 90X your bet.|`$99+ <bet>`
 
 ### General
 Command | Description | Usage
 ---------------- | --------------| -------
-Cooldowns|View all your command cooldowns.|`$Cooldowns [@user]`
-Donate|Sauce some cash to one of your mates.|`$Donate <@user> <money>`
-Leaderboards|View the richest Drug Traffickers.|`$Leaderboards`
-ModRoles|View all the moderator roles.|`$ModRoles`
-Money|View the wealth of anyone.|`$Money [@user]`
-Rank|View the detailed ranking information of any user.|`$Rank [@user]`
-Ranks|View all ranks.|`$Ranks`
-Wanted|View the most targeted traffickers.|`$Wanted`
-
-### Items
-Command | Description | Usage
----------------- | --------------| -------
-Eat|Eat a chosen food in your inventory to gain health.|`$Eat <food>`
-Fish|Go fishing for some food.|`$Fish <weapon>`
-Hunt|Go hunting for some food.|`$Hunt <weapon>`
-Inventory|View the inventory of any user.|`$Inventory [@user]`
-Item|Get all the information on any item.|`$Item <item>`
-OpenAll|Open a crate!|`$OpenAll <crate>`
-OpenCrate|Open a crate!|`$OpenCrate <crate>`
-Shop|List of available shop items.|`$Shop [crate] [quantity]`
-Trade|Request to trade with any user.|`$Trade <@userToTrade> <exchangeItemQuantity> <itemInExchange> <requestedItemQuantity> <requestedItem>`
+Bal|View the wealth of anyone.|`$bal [@user]`
+Leaderboards|View the richest Drug Traffickers.|`$leaderboards`
+Modroles|View all mod roles in this guild.|`$modroles`
+Rank|View the rank of anyone.|`$rank [@user]`
+Ranks|View all ranks in this guild.|`$ranks`
+Transfer|Transfer money to any member.|`$transfer <@member> <transfer>`
 
 ### Moderation
 
@@ -120,21 +52,7 @@ These commands may only be used by a user with the set mod role with a permissio
 
 Command | Description | Usage
 ---------------- | --------------| -------
-Ban|Bans a user.|`$Ban <@userToBan> [reason]`
-Chill|Prevents users from talking in a specific channel for x amount of seconds.|`$Chill [seconds] [reason]`
-Clear|Deletes x amount of messages.|`$Clear [quantity] [reason]`
-CustomMute|Temporarily mutes a user for x amount of hours.|`$CustomMute <hours> <@userToMute> [reason]`
-Kick|Kicks a user.|`$Kick <@userToKick> [reason]`
-Mute|Permanently mutes a user.|`$Mute <@userToMute> [reason]`
-Unban|Unban a user.|`$Unban <username> [reason]`
-Unmute|Unmutes a muted user.|`$Unmute <@userToUnmute> [reason]`
-
-### NSFW
-Command | Description | Usage
----------------- | --------------| -------
-Ass|Sauce me some booty how about that.|`$Ass`
-Hentai|The real shit goes down with custom hentai tags.|`$Hentai [tag]`
-Tits|Motorboat that shit.|`$Tits`
+Mute|Mute any user.|`$mute <@member> [number of hours] [reason]`
 
 ### Owners
 
@@ -142,47 +60,27 @@ These commands may only be used by a user with the set mod role with a permissio
 
 Command | Description | Usage
 ---------------- | --------------| -------
-100k|Sets the user's balance to $100,000.00.|`$100k [@user]`
-AddModRole|Adds a moderator role.|`$AddModRole <@modRole> [permissionLevel]`
-DeleteGang|Deletes a gang.|`$DeleteGang <gangName>`
-ModifyCash|Modify a user's balance.|`$ModifyCash <money> [@user]`
-ModifyHealth|Modify a user's health.|`$ModifyHealth <modifyHealth> [@user]`
-ModifyInventory|Modify a user's inventory.|`$ModifyInventory <quantity> <item> [@user]`
-ModifyModRole|Modfies a moderator role.|`$ModifyModRole <@modRole> <permissionLevel>`
-RemoveModRole|Removes a moderator role.|`$RemoveModRole <@modRole>`
-Reset|Resets all user and gang data in your server.|`$Reset`
-ResetUser|Resets all data for a specific user.|`$ResetUser [@user]`
-SetGlobalMultiplier|Sets the global chatting multiplier.|`$SetGlobalMultiplier <globalMultiplier>`
+Addmodrole|Add a mod role.|`$addmodrole <@role> <permissonLevel>`
+Modifycash|Allows you to modify the cash of any member.|`$modifycash <amount> [@member]`
+Removemodrole|Remove a mod role.|`$removemodrole <@role>`
+Reset|Resets all user data in your server.|`$reset`
+Resetuser|Reset any users data.|`$resetuser [@user]`
 
-### Polls
+### Reputation
+
+The repuration group has been added in order to show you have gained a certain status and respect in a server, which will allow you access to more commands and features with a higher reputation.
+
 Command | Description | Usage
 ---------------- | --------------| -------
-CreatePoll|Creates a poll.|`$CreatePoll <poll> <choices> [daysToLast] [elderOnly] [modOnly]`
-Poll|View the information of any poll.|`$Poll <index>`
-Polls|Sends you a list of all polls in progress.|`$Polls`
-RemovePoll|Removes a poll.|`$RemovePoll <index>`
-Vote|Vote on any poll.|`$Vote <pollIndex> <choiceIndex>`
+Lowreps|View the users with the lowest reputation.|`$lowreps`
+Rep|Give reputation to any user.|`$rep <@user>`
+Reps|View the users with the highest reputation.|`$reps`
+Unrep|Remove reputation from any user.|`$unrep <@user>`
 
 ### System
 Command | Description | Usage
 ---------------- | --------------| -------
-BestCommands|The most popular DEA commands.|`$BestCommands`
-CashInfo|Information about the DEA Cash System.|`$CashInfo`
-Cleanup|Deletes DEA's most recent messages to prevent chat flood.|`$Cleanup`
-Help|All command information.|`$Help [commandOrModule]`
-Invite|Invite DEA to your server!|`$Invite`
-Modules|All command modules.|`$Modules`
-Statistics|All the statistics about DEA.|`$Statistics`
-Support|Join our Official DEA Support Server!|`$Support`
-WorstCommands|The least popular DEA commands.|`$WorstCommands`
-
-### Trivia
-Command | Description | Usage
----------------- | --------------| -------
-AddQuestion|Adds a trivia question.|`$AddQuestion <question> <answer>`
-ModifyAnswer|Modify a trivia answer.|`$ModifyAnswer <question> <answer>`
-ModifyQuestion|Modify a trivia question.|`$ModifyQuestion <question> <newQuestion>`
-RemoveQuestion|Removes a trivia question.|`$RemoveQuestion <question>`
-Trivia|Randomly select a trivia question to be asked, and reward whoever answers it correctly.|`$Trivia`
-TriviaAnswers|Sends you a list of all trivia answers.|`$TriviaAnswers [question]`
-TriviaQuestions|Sends you a list of all trivia questions.|`$TriviaQuestions`
+Help|All command information.|`$help [command]`
+Info|All the information about the DEA cash system.|`$info`
+Invite|Add DEA to your server.|`$invite`
+Statistics|Statistics about DEA.|`$statistics`

@@ -1,16 +1,11 @@
 ##Cash System Setup
-Once DEA is on your server, you need to use a few commands to get it working.
+The DEA Cash System is based around chatting. The more you chat, the more money you get, and what better way to show off how rich you are then to have a nice rank.
 
-* Assign a few rank roles using the `$AddRank` command so the members of your server have something to grind for.
-* After this you may now use the `$CashInfo` command for more information on the Cash System.
-* For all the item information, you may use the `$help items` command, and use the `$item <item name` for juicy details.
-* If you wish to prevent spam of gambling commands, you may set a gambling channel with the `$SetGambleChannel` command.
+You have add rank roles with the following command: `$addrank @Noob 500`. This will give any user that gets $500.00 the Noob role. You can add as many ranks as you like, with zero limitations. If you wish to remove a rank, you can do so with the `$removerank @Noob` command.
 
 ##Moderation Setup
-* Any user with the Administrator permission may already use any moderation commands, however, you may set a mod role aswell.
-* Use the command `$AddModRole <@ModRole> <Perm level>` to set a role that can use all DEA moderation commands.
-* In order to make the mute commands work properly, you must create a Muted role and disable the `Send Messages` permission in all text channels.
-* Then you may use the `$SetMutedRole <@MutedRole>` command to set this as the muted role.
-* The `$Mute` command acts as a permenant mute, if you wish to mute for a custom time, the `$CustomMute` command is for you!
-* All muted users will automatically be unmuted once the time is up, however you may manually unmute them earlier with the `$Unmute` command.
-* If you want DEA to log the use of any moderation commands in a channel, use the `$setmodlog <#mod_log>` command.
+Similar to the `$addrank` command, you may add moderator roles with the `$addmod @Moderators 1`. The number following the role was the permission level of that moderation role. 
+
+There are currently three permission levels: 1: Moderator, 2: Administrator, 3: Owner. Each permission level allows you access to a group of commands, Moderation, Administration and Owners, respectively.
+
+If you want DEA to log the use of any moderation commands in a channel, use the `$setmodlog #logs` command.

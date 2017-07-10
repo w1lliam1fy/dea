@@ -4,8 +4,9 @@ const discord = require('discord.js');
 const db = require('./database');
 const EventService = require('./services/EventService.js');
 const CommandService = require('./services/CommandService.js');
+const Documentation = require('./services/Documentation.js');
 const config = require('./config.json');
-const credentials = require('./credentials.json');
+const credentials = require('./credentials_beta.json');
 
 const client = new discord.Client({ fetchAllMembers: true, messageCacheMaxSize: 5, messageCacheLifetime: 30, messageSweepInterval: 1800, disabledEvents: config.disabledEvents, restTimeOffset: 150 });
 
@@ -26,4 +27,5 @@ initiate();
 async function initiate() {
   await db.connect(credentials.mongodbConnectionURL);
   await client.login(credentials.token);
+  await Documentation.createAndSave(registry);
 }

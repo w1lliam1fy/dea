@@ -1,5 +1,7 @@
 {
-  "minRepForRemove": 15,
+  "minRepForRemove": 5,
+  "repRewardMin": 100,
+  "repRewardMax": 400,
   "lotteryOdds": 1.5,
   "lotteryMin": 2500,
   "lotteryMax": 10000,

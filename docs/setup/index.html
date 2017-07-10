@@ -107,23 +107,12 @@
             <div class="section">
               
                 <h2 id="cash-system-setup">Cash System Setup</h2>
-<p>Once DEA is on your server, you need to use a few commands to get it working.</p>
-<ul>
-<li>Assign a few rank roles using the <code>$AddRank</code> command so the members of your server have something to grind for.</li>
-<li>After this you may now use the <code>$CashInfo</code> command for more information on the Cash System.</li>
-<li>For all the item information, you may use the <code>$help items</code> command, and use the <code>$item &lt;item name</code> for juicy details.</li>
-<li>If you wish to prevent spam of gambling commands, you may set a gambling channel with the <code>$SetGambleChannel</code> command.</li>
-</ul>
+<p>The DEA Cash System is based around chatting. The more you chat, the more money you get, and what better way to show off how rich you are then to have a nice rank.</p>
+<p>You have add rank roles with the following command: <code>$addrank @Noob 500</code>. This will give any user that gets $500.00 the Noob role. You can add as many ranks as you like, with zero limitations. If you wish to remove a rank, you can do so with the <code>$removerank @Noob</code> command.</p>
 <h2 id="moderation-setup">Moderation Setup</h2>
-<ul>
-<li>Any user with the Administrator permission may already use any moderation commands, however, you may set a mod role aswell.</li>
-<li>Use the command <code>$AddModRole &lt;@ModRole&gt; &lt;Perm level&gt;</code> to set a role that can use all DEA moderation commands.</li>
-<li>In order to make the mute commands work properly, you must create a Muted role and disable the <code>Send Messages</code> permission in all text channels.</li>
-<li>Then you may use the <code>$SetMutedRole &lt;@MutedRole&gt;</code> command to set this as the muted role.</li>
-<li>The <code>$Mute</code> command acts as a permenant mute, if you wish to mute for a custom time, the <code>$CustomMute</code> command is for you!</li>
-<li>All muted users will automatically be unmuted once the time is up, however you may manually unmute them earlier with the <code>$Unmute</code> command.</li>
-<li>If you want DEA to log the use of any moderation commands in a channel, use the <code>$setmodlog &lt;#mod_log&gt;</code> command.</li>
-</ul>
+<p>Similar to the <code>$addrank</code> command, you may add moderator roles with the <code>$addmod @Moderators 1</code>. The number following the role was the permission level of that moderation role. </p>
+<p>There are currently three permission levels: 1: Moderator, 2: Administrator, 3: Owner. Each permission level allows you access to a group of commands, Moderation, Administration and Owners, respectively.</p>
+<p>If you want DEA to log the use of any moderation commands in a channel, use the <code>$setmodlog #logs</code> command.</p>
               
             </div>
           </div>

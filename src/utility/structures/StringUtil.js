@@ -23,6 +23,10 @@ class StringUtil {
       return args[c + 1];
     });
   }
+
+  static alphabeticallySort(a, b) {
+    return a.name.localeCompare(b.name);
+  }
 }
 
 module.exports = StringUtil;
