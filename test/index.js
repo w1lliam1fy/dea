@@ -10,8 +10,8 @@ async function initiate() {
   const registry = new patron.Registry();
 
   registry.registerDefaultTypeReaders();
-  registry.registerGroupsIn(path.join(__dirname, 'groups'));
-  registry.registerCommandsIn(path.join(__dirname, 'commands'));
+  registry.registerGroupsIn(path.join(__dirname, '../src/groups'));
+  registry.registerCommandsIn(path.join(__dirname, '../src/commands'));
 
   await db.connect(credentials.mongodbConnectionUrl);
   await client.login(credentials.token);
