@@ -4,6 +4,7 @@ const util = require('../../utility');
 const config = require('../../config.json');
 const NoSelf = require('../../preconditions/NoSelf.js');
 const Cash = require('../../preconditions/Cash.js');
+const Minimum = require('../../preconditions/Minimum.js');
 
 class Transfer extends patron.Command {
   constructor() {
@@ -25,17 +26,13 @@ class Transfer extends patron.Command {
           key: 'transfer',
           type: 'float',
           example: '500',
-          preconditions: [Cash]
+          preconditions: [Cash, new Minimum(config.minTransfer)]
         })
       ]
     });
   }
 
   async run(msg, args) {
-    if (args.transfer < config.minTransfer) {
-      return util.Messenger.replyError(msg.channel, msg.author, 'The minimum transfer is ' + util.NumberUtil.USD(config.minTransfer) + '.');
-    }
-
     const transactionFee = args.transfer * config.transactionCut;
     const received = args.transfer - transactionFee;
     const newDbUser = await db.userRepo.findAndModifyCash(msg.dbGuild, msg.member, -args.transfer);
