@@ -6,8 +6,6 @@ class RankService {
       return;
     } else if (!member.guild.me.hasPermission('MANAGE_ROLES')) {
       return;
-    } else if (member.highestRole.id === member.guild.defaultRole.id) {
-      return;
     }
 
     const highsetRolePosition = member.guild.me.highestRole.position;
