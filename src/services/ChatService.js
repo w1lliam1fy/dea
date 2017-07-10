@@ -30,7 +30,7 @@ class ChatService {
   async gangBang(msg) {
     const cash = util.NumberUtil.realValue(msg.dbUser.cash);
 
-    if (cash >= config.gangBangMin && config.gangBangOdds <= util.Random.roll()) {
+    if (cash >= config.gangBangMin && config.gangBangOdds >= util.Random.roll()) {
       const boldifiedVictim = util.StringUtil.boldify(msg.author.tag);
 
       const result = await util.Messenger.trySend(msg.channel, 'GUYS, ' + boldifiedVictim + ' is a rich nigga who is vulnerable to a gang bang! '+ 
