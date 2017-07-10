@@ -34,15 +34,15 @@ Once this is done, you must create a credentials.json file, with the following f
 ```
 The connection URL will be provided to you when viewing the database. All you need to do is create a `Database User` and fill in the blanks. This file must be placed in the `src` folder and will by default be gitignored, to prevent any accidental commits of your token.
 
-Once this is done, follow the following steps:
+Once this is done, follow the these steps:
 
-    1. Install the current node.js: https://nodejs.org/
+1. Install the current node.js: https://nodejs.org/
     
-    2. Open command prompt inside of the DEA folder: http://bit.ly/2uIXO4p
+2. Open command prompt inside of the DEA folder: http://bit.ly/2uIXO4p
     
-    3. Enter `npm install --no-optional`
+3. Enter `npm install --no-optional`
     
-    4. Enter `node src/index.js`
+4. Enter `node src/index.js`
     
-    5. ENJOY!
+5. ENJOY!
 
