@@ -27,7 +27,7 @@ class GiveReputation extends patron.Command {
   async run(msg, args) {
     const newDbUser = await db.userRepo.findUserAndUpsert(args.user.id, msg.guild.id, { $inc: { reputation: 1 } });
 
-    return util.Messenger.reply(msg.channel, msg.author, 'You have successfully given reputation to ' + util.StringUtil.boldify(args.user.tag) + 'raising it to ' + newDbUser.reputation + '.');
+    return util.Messenger.reply(msg.channel, msg.author, 'You have successfully given reputation to ' + util.StringUtil.boldify(args.user.tag) + ' raising it to ' + newDbUser.reputation + '.');
   }
 }
 
