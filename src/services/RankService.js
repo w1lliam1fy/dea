@@ -9,6 +9,8 @@ class RankService {
     } else if (member.highestRole.id === member.guild.defaultRole.id) {
       return;
     }
+    
+    console.log('Rank handler got called for ' + member.user.tag);
 
     const highsetRolePosition = member.guild.me.highestRole.position;
     const rolesToAdd = [];
@@ -29,6 +31,8 @@ class RankService {
       }
     }
 
+    console.log('Roles to add: ' + rolesToAdd.length);
+    console.log('Roles to remove: ' + rolesToRemove.length);
     if (rolesToAdd.length > 0) {
       return member.addRoles(rolesToAdd);
     } else if (rolesToRemove.length > 0) {
