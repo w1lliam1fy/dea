@@ -13,8 +13,9 @@ class CommandService {
       msg.dbGuild = inGuild ? await db.guildRepo.getGuild(msg.guild.id) : null;
       msg.member = inGuild ? msg.guild.member(msg.author) : null;
 
-      if (!msg.content.startsWith(config.prefix)) {
-        return ChatService.applyCash(msg);
+      if (!msg.content.startsWith(config.prefix) && inGuild) {
+        await ChatService.applyCash(msg);
+        return ChatService.gangBang(msg);
       } else if (msg.author.bot) {
         return;
       }
