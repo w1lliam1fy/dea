@@ -23,8 +23,7 @@ const handle = async function(msg, handler) {
   
 
   if (!msg.content.startsWith(config.prefix) && msg.member !== null) {
-    await ChatService.applyCash(msg);
-    return ChatService.gangBang(msg);
+    return ChatService.applyCash(msg);
   } else if (msg.author.bot) {
     return;
   }
