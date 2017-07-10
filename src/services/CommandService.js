@@ -19,7 +19,7 @@ const handle = async function(msg, handler) {
 
   msg.dbUser = inGuild ? await db.userRepo.getUser(msg.author.id, msg.guild.id) : null;
   msg.dbGuild = inGuild ? await db.guildRepo.getGuild(msg.guild.id) : null;
-  msg.member = inGuild ? msg.guild.member(msg.author) : null;
+  msg.member = inGuild ? await msg.guild.fetchMember(msg.author) : null;
 
   if (!msg.content.startsWith(config.prefix) && inGuild) {
     await ChatService.applyCash(msg);
