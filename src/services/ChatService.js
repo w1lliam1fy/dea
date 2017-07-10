@@ -37,7 +37,9 @@ class ChatService {
                        'If three people use the `' + config.prefix + 'gangbang` command, you can clean this shady drug dealer\'s bank account!');
 
       if (result) {
-        const collection = await msg.channel.awaitMessages(m => m.content.toLowerCase().startsWith(config.prefix + 'gangbang'), { limit: 3, time: 10000 });
+        const filter = m => m.content.toLowerCase().startsWith(config.prefix + 'gangbang');
+
+        const collection = await msg.channel.awaitMessages(filter, { limit: 3, time: 10000 });
 
         if (collection.size === 3) {
           let gangBangers = '';
