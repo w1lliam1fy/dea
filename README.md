@@ -6,6 +6,7 @@
 
 # DEA
 DEA is a multi-purpose Discord Bot mainly known for it's infamous Cash System with multiple subtleties referencing to the show Narcos, which inspired the creation of this masterpiece. You can get all the information related to commands by viewing the links below.
+
 [Full documentation](https://realblazeit.github.io/dea/)
 
 [Add DEA to your Server](https://discordapp.com/oauth2/authorize?client_id=290823959669374987&scope=bot&permissions=8)
@@ -34,9 +35,14 @@ Once this is done, you must create a credentials.json file, with the following f
 The connection URL will be provided to you when viewing the database. All you need to do is create a `Database User` and fill in the blanks. This file must be placed in the `src` folder and will by default be gitignored, to prevent any accidental commits of your token.
 
 Once this is done, follow the following steps:
+
     1. Install the current node.js: https://nodejs.org/
+    
     2. Open command prompt inside of the DEA folder: http://bit.ly/2uIXO4p
+    
     3. Enter `npm install --no-optional`
+    
     4. Enter `node src/index.js`
+    
     5. ENJOY!
 
