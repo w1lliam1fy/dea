@@ -1,4 +1,6 @@
 {
+  "autoUmuteInterval": 30000,
+  "muteLengthDefault": 24,
   "minRepForRemove": 5,
   "repRewardMin": 100,
   "repRewardMax": 400,
@@ -27,6 +29,7 @@
   "messageCooldown": 30000,
   "errorColor": [255, 0, 0],
   "muteColor": [255, 114, 14],
+  "unmuteColor": [50, 237, 15],
   "embedColors": [
     [255, 38, 154],
     [0, 255, 0],

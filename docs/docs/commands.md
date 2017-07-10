@@ -53,6 +53,7 @@ These commands may only be used by a user with the set mod role with a permissio
 Command | Description | Usage
 ---------------- | --------------| -------
 Mute|Mute any user.|`$mute <@member> [number of hours] [reason]`
+Unmute|Unmute any user.|`$unmute <@member> [reason]`
 
 ### Owners
 

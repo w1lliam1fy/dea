@@ -24,7 +24,7 @@ class ModerationService {
     return util.Messenger.tryDM(user, util.StringUtil.boldify(moderator.tag) + ' has attempted to ' + action + ' you' + (util.StringUtil.isNullOrWhiteSpace(reason) ? '.' : ' for the following reason: ' + reason + '.'), guild);
   }
 
-  async tryMogLog(dbGuild, guild, action, color, reason = '', moderator = null, subject = null, extraInfoType = '', extraInfo = '') {
+  async tryModLog(dbGuild, guild, action, color, reason = '', moderator = null, user = null, extraInfoType = '', extraInfo = '') {
     if (dbGuild.channels.modLog === null) {
       return;
     }
@@ -50,8 +50,8 @@ class ModerationService {
       description += '**'+ extraInfoType + ':** ' + extraInfo + '\n';
     }
 
-    if (subject != null) {
-      description += '**User:** ' + subject.tag + ' (' + subject.id + ')\n';
+    if (user != null) {
+      description += '**User:** ' + user.tag + ' (' + user.id + ')\n';
     }
 
     if (!util.StringUtil.isNullOrWhiteSpace(reason)) {
