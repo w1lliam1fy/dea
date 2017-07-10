@@ -12,7 +12,7 @@ class RemoveReputation extends patron.Command {
       aliases: ['removereputation', 'removerep'],
       group: 'general',
       description: 'Remove reputation from any user.',
-      cooldown: 28800000,
+      cooldown: 21600000,
       preconditions: [new Reputation(config.minRepForRemove)],
       args: [
         new patron.Argument({

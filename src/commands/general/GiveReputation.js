@@ -10,7 +10,7 @@ class GiveReputation extends patron.Command {
       aliases: ['givereputation', 'giverep'],
       group: 'general',
       description: 'Give reputation to any user.',
-      cooldown: 28800000,
+      cooldown: 21600000,
       args: [
         new patron.Argument({
           name: 'user',
