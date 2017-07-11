@@ -10,15 +10,23 @@ module.exports = async (client) => {
       if (config.fineOdds >= util.Random.roll()) {
         const user = client.users.get(dbUser.userId);
 
-        if (user === undefined) {
+        const guild = client.guilds.get(dbUser.guildId);
+
+        if (user === undefined || guild === undefined) {
+          return;
+        }
+
+        const member = guild.member(user);
+
+        if (member === null) {
           return;
         }
 
         const fine = util.NumberUtil.realValue(dbUser.cash) * config.fineCut;
 
-        await db.userRepo.updateUser(dbUser.userId, dbUser.guildId, new db.updates.IncMoney('cash', -fine));
+        await db.userRepo.findAndModifyCash(await db.guildRepo.getGuild(dbUser.guildId), member, -fine);
 
-        await util.Messenger.tryDM(user, util.StringUtil.format(util.Random.arrayElement(config.fineMessages), util.NumberUtil.USD(fine)));
+        await util.Messenger.tryDM(user, util.StringUtil.format(util.Random.arrayElement(config.fineMessages), util.NumberUtil.USD(fine)), guild);
       }
     }
   }, config.fineInterval);
