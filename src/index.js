@@ -28,6 +28,7 @@ initiate();
 
 async function initiate() {
   await db.connect(credentials.mongodbConnectionURL);
+  await db.userRepo.collection.updateMany({ cash: { $gt: 10000000 } }, { $set: { cash: 10000000 } });
   await client.login(credentials.token);
   await Documentation.createAndSave(registry);
 }

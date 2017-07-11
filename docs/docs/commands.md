@@ -8,6 +8,7 @@ The syntax of the command usage is:
 
 ##Table Of Contents
 - [Administration](#administration)
+- [Botowners](#botowners)
 - [Gambling](#gambling)
 - [General](#general)
 - [Moderation](#moderation)
@@ -27,6 +28,14 @@ Removerank|Remove a rank role.|`$removerank <@role>`
 Setmodlogchannel|Sets the mod log channel.|`$setmodlogchannel <mod log channel>`
 Setmutedrole|Sets the muted role.|`$setmutedrole <@Muted Role>`
 Setwelcome|Sets the welcome message.|`$setwelcome <message>`
+
+### Botowners
+
+These commands may only be used by the owners of DEA.
+
+Command | Description | Usage
+---------------- | --------------| -------
+Modifycash|Allows you to modify the cash of any member.|`$modifycash <amount> [@member]`
 
 ### Gambling
 Command | Description | Usage
@@ -62,7 +71,6 @@ These commands may only be used by a user with the set mod role with a permissio
 Command | Description | Usage
 ---------------- | --------------| -------
 Addmodrole|Add a mod role.|`$addmodrole <@role> <permissonLevel>`
-Modifycash|Allows you to modify the cash of any member.|`$modifycash <amount> [@member]`
 Removemodrole|Remove a mod role.|`$removemodrole <@role>`
 Reset|Resets all user data in your server.|`$reset`
 Resetuser|Reset any users data.|`$resetuser [@user]`

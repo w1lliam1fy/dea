@@ -7,7 +7,7 @@ class ModifyCash extends patron.Command {
     super({
       name: 'modifycash',
       aliases: ['give'],
-      group: 'owners',
+      group: 'botowners',
       description: 'Allows you to modify the cash of any member.',
       args: [
         new patron.Argument({

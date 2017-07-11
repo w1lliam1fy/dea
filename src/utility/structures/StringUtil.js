@@ -12,15 +12,10 @@ class StringUtil {
   }
 
   static format(input) {
-    const args = arguments;
+    var args = Array.prototype.slice.call(arguments, 1);
 
-    return input.replace(/(\{\{\d\}\}|\{\d\})/g, function (b) {
-      if (input.substring(0, 2) == '{{') {
-        return input;
-      } 
-
-      const c = parseInt(input.match(/\d/)[0]);
-      return args[c + 1];
+    return input.replace(/{(\d+)}/g, function(match, number) { 
+      return typeof args[number] != 'undefined' ? args[number] : match;
     });
   }
 

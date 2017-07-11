@@ -18,7 +18,7 @@ class ChatService {
       if (config.lotteryOdds >= util.Random.roll()) {
         const winnings = util.Random.nextFloat(config.lotteryMin, config.lotteryMax);
         await db.userRepo.findAndModifyCash(msg.dbGuild, msg.member, winnings);
-        return util.Messenger.tryReply(msg.channel, msg.author, util.StringUtil.format(util.Random.arrayElement(config.lotteryResponses), util.NumberUtil.USD(winnings)));
+        return util.Messenger.tryReply(msg.channel, msg.author, util.StringUtil.format(util.Random.arrayElement(config.lotteryMessages), util.NumberUtil.USD(winnings)));
       } else {
         return db.userRepo.findAndModifyCash(msg.dbGuild, msg.member, config.cashPerMessage);
       }

@@ -1,4 +1,16 @@
 {
+  "minRich": 10000,
+  "fineInterval": 3600000,
+  "fineOdds": 5,
+  "fineCut": 0.25,
+  "fineMessages": [
+    "So you think you can get away with laundering thousands of dollars in dirty drug money, and the fucking DEA wouldn't know about it? I will let you off with a {0} fine this time, but next time you are behind bars pal.",
+    "Listen buddy, I have been watching you for a while, and I finally got everything I need to prove you are a drug smuggler. Lucky you the judge was a softie, so you are walking away with a {0} fine.",
+    "**FREEZE!** DON'T MOVE ONE GODDAMN MUSCLE OR YOU KNOW WHATS GONNA HAPPEN!\n\n*Steve, we need back up, just caught this nobody dealing some drugs. Was talking with Judge Hard Richard earlier, and he said next dealer I catch gets a {0} fine.*",
+    "Thinking you can hide thousands in drug money from a DEA agent? ***THINK AGAIN BUDDY!*** Here is a goddamn {0} fine.",
+    "Well, I got you right where I want you. Enough proof to lock you away for 15 years. Don't you worry sonny, I like you. I talked to Judge Stiffwood and he said we can let you off with a {0} fine.",
+    "Here's what pal, I would lock you away for 15 years for smuggling all those drugs, but me and Judge Woody made a deal to split your {0} fine."
+  ],
   "autoUmuteInterval": 30000,
   "muteLengthDefault": 24,
   "minRepForRemove": 5,
@@ -7,7 +19,7 @@
   "lotteryOdds": 1.5,
   "lotteryMin": 2500,
   "lotteryMax": 10000,
-  "lotteryResponses": [
+  "lotteryMessages": [
     "CONGRATS MY MAN, you just won {0} in the goddamn lottery! Use `$info` for more information.",
     "Hot fucking pockets, you just won {0} in the lottery! Use `$info` for more information.",
     "Well sonny, looks like today is your goddamn lucky day, you just won {0} in the lottery! Use `$info` for more information.",
