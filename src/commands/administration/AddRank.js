@@ -26,7 +26,14 @@ class AddRank extends patron.Command {
     });
   }
 
+  async run(msg, args) {
+    if (args.role.comparePositionTo(msg.guild.me.highestRole) > 0) {
+      return util.Messenger.replyError(msg.channel, msg.author, 'DEA must be higher in hierarchy than ' + args.role + '.');
+    }
 
+    if (msg.dbGuild.roles.rank.some((role) => role.id === args.role.id)) {
+      return util.Messenger.replyError(msg.channel, msg.author, 'This rank role has already been set.');
+    }
 
     await db.guildRepo.upsertGuild(msg.guild.id, new db.updates.Push('roles.rank', { id: args.role.id, cashRequired: Math.round(args.cashRequired) }));
 
