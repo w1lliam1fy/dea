@@ -18,7 +18,7 @@ module.exports = (client) => {
       return;
     }
       
-    if (!newMember.roles.has(role) && await db.muteRepo.anyMute(newMember.id, newMember.guild.id)) {
+    if (!newMember.roles.has(dbGuild.roles.muted) && await db.muteRepo.anyMute(newMember.id, newMember.guild.id)) {
       return db.muteRepo.deleteMute(newMember.id, newMember.guild.id);
     }
   });
