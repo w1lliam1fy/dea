@@ -8,17 +8,9 @@ module.exports = (client) => {
 
     const dbGuild = await db.guildRepo.getGuild(newMember.guild.id);
 
-    if (dbGuild.roles.muted === null) {
+    if (dbGuild.roles.muted === null || oldMember.roles.has(dbGuild.roles.muted)) {
       return;
-    }
-
-    const role = oldMember.roles.get(dbGuild.roles.muted);
-
-    if (role === undefined) {
-      return;
-    }
-      
-    if (!newMember.roles.has(dbGuild.roles.muted) && await db.muteRepo.anyMute(newMember.id, newMember.guild.id)) {
+    } else if (!newMember.roles.has(dbGuild.roles.muted) && await db.muteRepo.anyMute(newMember.id, newMember.guild.id)) {
       return db.muteRepo.deleteMute(newMember.id, newMember.guild.id);
     }
   });

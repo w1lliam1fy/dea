@@ -55,8 +55,7 @@ class Mute extends patron.Command {
 
     await args.member.addRole(role);
     await util.Messenger.reply(msg.channel, msg.author, 'You have successfully muted ' + args.member.user.tag + ' for ' + formattedHours + '.');
-    const result = await db.muteRepo.insertMute(args.member.id, msg.guild.id, util.NumberUtil.hoursToMs(args.hours));
-    console.log(result);
+    await db.muteRepo.insertMute(args.member.id, msg.guild.id, util.NumberUtil.hoursToMs(args.hours));
     await ModerationService.tryInformUser(msg.guild, msg.author, 'mute', args.member.user, args.reason);
     await ModerationService.tryModLog(msg.dbGuild, msg.guild, 'Mute', config.muteColor, args.reason, msg.author, args.member.user, 'Length', formattedHours);
   }
