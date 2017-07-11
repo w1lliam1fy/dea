@@ -29,7 +29,7 @@
   "messageCooldown": 30000,
   "errorColor": [255, 0, 0],
   "muteColor": [255, 114, 14],
-  "unmuteColor": [50, 237, 15],
+  "unmuteColor": [109, 237, 94],
   "embedColors": [
     [255, 38, 154],
     [0, 255, 0],
@@ -47,7 +47,7 @@
   "readyMessage": "$help",
   "inviteLink": "https://discordapp.com/oauth2/authorize?client_id=290823959669374987&scope=bot&permissions=8",
   "serverInviteLink": "https://discord.gg/gvyma7H",
-  "documentationLink": "https://realblazeit.github.io/dea/",
+  "documentationLink": "https://realblazeit.github.io/dea/commands/",
   "disabledEvents": [
     "GUILD_SYNC",
     "GUILD_BAN_ADD",
