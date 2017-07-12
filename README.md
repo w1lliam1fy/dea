@@ -29,7 +29,8 @@ Once this is done, you must create a credentials.json file, with the following f
 ```json
 {
   "token": "enter bot token here",
-  "mongodbConnectionURL": "mongodb://dbUsername:dbPassword@ConnectionURL/DatabaseName"
+  "mongodbConnectionURL": "mongodb://dbUsername:dbPassword@ConnectionURL/DatabaseName",
+  "ownerIds: ["290820869964431360"]
 }
 ```
 The connection URL will be provided to you when viewing the database. All you need to do is create a `Database User` and fill in the blanks. This file must be placed in the `src` folder and will by default be gitignored, to prevent any accidental commits of your token.
