@@ -11,21 +11,21 @@ class Money extends patron.Command {
       description: 'View the wealth of anyone.',
       args: [
         new patron.Argument({
-          name: 'user',
-          key: 'user',
-          type: 'user',
-          default: patron.Default.Author,
-          example:'Supa Hot Fire#0911',
-          isRemainder: true
+          name: 'member',
+          key: 'member',
+          type: 'member',
+          default: patron.Default.Member,
+          example:'Nibba You Cray#3333',
+          remainder: true
         })
       ]
     });
   }
 
   async run(msg, args) {
-    const dbUser = msg.author.id === args.user.id ? msg.dbUser : await db.userRepo.getUser(args.user.id, msg.guild.id);
+    const dbUser = msg.author.id === args.member.id ? msg.dbUser : await db.userRepo.getUser(args.member.id, msg.guild.id);
 
-    return util.Messenger.send(msg.channel, util.StringUtil.boldify(args.user.tag) + '\'s balance: ' + util.NumberUtil.format(dbUser.cash));
+    return util.Messenger.send(msg.channel, util.StringUtil.boldify(args.member.user.tag) + '\'s balance: ' + util.NumberUtil.format(dbUser.cash));
   }
 }
 

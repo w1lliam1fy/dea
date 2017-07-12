@@ -18,7 +18,7 @@ class Transfer extends patron.Command {
           name: 'member',
           key: 'member',
           type: 'member',
-          example: '"Nilly Nonka#6969"',
+          example:'Supa Hot Fire#1337',
           preconditions: [NoSelf]
         }), 
         new patron.Argument({
@@ -35,8 +35,8 @@ class Transfer extends patron.Command {
   async run(msg, args) {
     const transactionFee = args.transfer * config.transactionCut;
     const received = args.transfer - transactionFee;
-    const newDbUser = await db.userRepo.findAndModifyCash(msg.dbGuild, msg.member, -args.transfer);
-    await db.userRepo.findAndModifyCash(msg.dbGuild, args.member, received);
+    const newDbUser = await db.userRepo.modifyCash(msg.dbGuild, msg.member, -args.transfer);
+    await db.userRepo.modifyCash(msg.dbGuild, args.member, received);
 
     return util.Messenger.reply(msg.channel, msg.author, 'You have successfully transfered ' + util.NumberUtil.USD(received) + ' to '+ util.StringUtil.boldify(args.member.user.tag) + '. Transaction fee: ' + util.NumberUtil.USD(transactionFee) + '. Balance: ' + util.NumberUtil.format(newDbUser.cash) + '.');
   }

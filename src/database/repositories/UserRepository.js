@@ -14,11 +14,9 @@ class UserRepository extends BaseRepository {
   }
 
   async getUser(userId, guildId) {
-    if (await this.anyUser(userId, guildId)) {
-      return this.findOne(new UserQuery(userId, guildId));
-    } else {
-      return this.insertOne(new User(userId, guildId));
-    }
+    const fetchedUser = await this.findOne(new UserQuery(userId, guildId));
+
+    return fetchedUser !== null ? fetchedUser : this.insertOne(new User(userId, guildId));
   }
 
   updateUser(userId, guildId, update) {
@@ -45,20 +43,12 @@ class UserRepository extends BaseRepository {
     }
   }
 
-  modifyBounty(userId, guildId, change) {
-    return this.upsertUser(userId, guildId, new IncMoneyUpdate('bounty', change));
-  }
-
-  async findAndModifyCash(dbGuild, member, change) {
+  async modifyCash(dbGuild, member, change) {
     const newDbUser = await this.findUserAndUpsert(member.id, dbGuild.guildId, new IncMoneyUpdate('cash', change));
 
     RankService.handle(newDbUser, dbGuild, member);
 
     return newDbUser;
-  }
-
-  findAndModifyBounty(userId, guildId, change) {
-    return this.findUserAndUpsert(userId, guildId, new IncMoneyUpdate('bounty', change));
   }
 
   deleteUser(userId, guildId) {

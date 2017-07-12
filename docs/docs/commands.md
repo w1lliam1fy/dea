@@ -25,7 +25,7 @@ Command | Description | Usage
 Addrank|Add a rank.|`$addrank <@role> <cashRequired>`
 Disablewelcome|Disables the welcome message.|`$disablewelcome`
 Removerank|Remove a rank role.|`$removerank <@role>`
-Setmodlogchannel|Sets the mod log channel.|`$setmodlogchannel <mod log channel>`
+Setmodlogchannel|Sets the mod log channel.|`$setmodlogchannel <#mod log channel>`
 Setmutedrole|Sets the muted role.|`$setmutedrole <@Muted Role>`
 Setwelcome|Sets the welcome message.|`$setwelcome <message>`
 
@@ -48,10 +48,10 @@ Command | Description | Usage
 ### General
 Command | Description | Usage
 ---------------- | --------------| -------
-Bal|View the wealth of anyone.|`$bal [@user]`
+Bal|View the wealth of anyone.|`$bal [@member]`
 Leaderboards|View the richest Drug Traffickers.|`$leaderboards`
 Modroles|View all mod roles in this guild.|`$modroles`
-Rank|View the rank of anyone.|`$rank [@user]`
+Rank|View the rank of anyone.|`$rank [@member]`
 Ranks|View all ranks in this guild.|`$ranks`
 Transfer|Transfer money to any member.|`$transfer <@member> <transfer>`
 
@@ -61,8 +61,8 @@ These commands may only be used by a user with the set mod role with a permissio
 
 Command | Description | Usage
 ---------------- | --------------| -------
-Mute|Mute any user.|`$mute <@member> [number of hours] [reason]`
-Unmute|Unmute any user.|`$unmute <@member> [reason]`
+Mute|Mute any member.|`$mute <@member> [number of hours] [reason]`
+Unmute|Unmute any member.|`$unmute <@member> [reason]`
 
 ### Owners
 
@@ -73,7 +73,7 @@ Command | Description | Usage
 Addmodrole|Add a mod role.|`$addmodrole <@role> <permissonLevel>`
 Removemodrole|Remove a mod role.|`$removemodrole <@role>`
 Reset|Resets all user data in your server.|`$reset`
-Resetuser|Reset any users data.|`$resetuser [@user]`
+Resetuser|Reset any member's data.|`$resetuser [@member]`
 
 ### Reputation
 
@@ -82,9 +82,9 @@ The repuration group has been added in order to show you have gained a certain s
 Command | Description | Usage
 ---------------- | --------------| -------
 Lowreps|View the users with the lowest reputation.|`$lowreps`
-Rep|Give reputation to any user.|`$rep <@user>`
+Rep|Give reputation to any member.|`$rep <@member>`
 Reps|View the users with the highest reputation.|`$reps`
-Unrep|Remove reputation from any user.|`$unrep <@user>`
+Unrep|Remove reputation from any member.|`$unrep <@member>`
 
 ### System
 Command | Description | Usage

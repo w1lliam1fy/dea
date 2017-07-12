@@ -7,23 +7,24 @@ class ResetUser extends patron.Command {
     super({
       name: 'resetuser',
       group: 'owners',
-      description: 'Reset any users data.',
+      description: 'Reset any member\'s data.',
       args: [
         new patron.Argument({
-          name: 'user',
-          key: 'user',
-          type: 'user',
-          default: patron.Default.Author,
-          example: 'Supa Hot Fire#0911'
+          name: 'member',
+          key: 'member',
+          type: 'member',
+          default: patron.Default.Member,
+          example:'Jesus Christ#4444',
+          remainder: true
         })
       ]
     });
   }
 
   async run(msg, args){
-    await db.userRepo.deleteUser(args.user.id, msg.guild.id);
+    await db.userRepo.deleteUser(args.member.id, msg.guild.id);
   
-    return util.Messenger.reply(msg.channel, msg.author, 'You have successfully reset all of ' + (args.user.id === msg.author.id ? 'your' : util.StringUtil.boldify(args.user.tag) + '\'s') + ' data.');
+    return util.Messenger.reply(msg.channel, msg.author, 'You have successfully reset all of ' + (args.member.id === msg.author.id ? 'your' : util.StringUtil.boldify(args.member.user.tag) + '\'s') + ' data.');
   }
 }
 

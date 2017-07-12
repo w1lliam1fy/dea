@@ -9,7 +9,8 @@ class Mute extends patron.Command {
     super({
       name: 'mute',
       group: 'moderation',
-      description: 'Mute any user.',
+      description: 'Mute any member.',
+      botPermissions: ['MANAGE_ROLES'],
       args: [
         new patron.Argument({
           name: 'member',

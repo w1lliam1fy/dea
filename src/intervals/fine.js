@@ -24,7 +24,7 @@ module.exports = async (client) => {
 
         const fine = util.NumberUtil.realValue(dbUser.cash) * config.fineCut;
 
-        await db.userRepo.findAndModifyCash(await db.guildRepo.getGuild(dbUser.guildId), member, -fine);
+        await db.userRepo.modifyCash(await db.guildRepo.getGuild(dbUser.guildId), member, -fine);
 
         await util.Messenger.tryDM(user, util.StringUtil.format(util.Random.arrayElement(config.fineMessages), util.NumberUtil.USD(fine)), guild);
       }

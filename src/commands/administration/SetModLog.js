@@ -13,7 +13,7 @@ class SetModLog extends patron.Command {
         new patron.Argument({
           name: 'mod log channel',
           key: 'channel',
-          type: 'channel',
+          type: 'textchannel',
           example: 'Mod Log',
           isRemainder: true
         })

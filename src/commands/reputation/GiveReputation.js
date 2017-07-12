@@ -10,13 +10,13 @@ class GiveReputation extends patron.Command {
       name: 'rep',
       aliases: ['givereputation', 'giverep'],
       group: 'reputation',
-      description: 'Give reputation to any user.',
+      description: 'Give reputation to any member.',
       cooldown: 21600000,
       args: [
         new patron.Argument({
-          name: 'user',
-          key: 'user',
-          type: 'user',
+          name: 'member',
+          key: 'member',
+          type: 'member',
           example:'Cheese Burger#6666',
           isRemainder: true,
           preconditions: [NoSelf]
@@ -26,13 +26,13 @@ class GiveReputation extends patron.Command {
   }
 
   async run(msg, args) {
-    const reppedDbUser = await db.userRepo.findUserAndUpsert(args.user.id, msg.guild.id, { $inc: { reputation: 1 } });
+    const reppedDbUser = await db.userRepo.findUserAndUpsert(args.member.id, msg.guild.id, { $inc: { reputation: 1 } });
 
     const reward = util.Random.nextFloat(config.repRewardMin, config.repRewardMax);
 
-    const newDbUser = await db.userRepo.findAndModifyCash(msg.dbGuild, msg.member, reward);
+    const newDbUser = await db.userRepo.modifyCash(msg.dbGuild, msg.member, reward);
 
-    return util.Messenger.reply(msg.channel, msg.author, 'You have successfully given reputation to ' + util.StringUtil.boldify(args.user.tag) + ' raising it to ' + reppedDbUser.reputation + '.\n\nIn exchange for having contributed to this community, you have been awarded ' + util.NumberUtil.USD(reward) + '. Balance: ' + util.NumberUtil.format(newDbUser.cash) + '.');
+    return util.Messenger.reply(msg.channel, msg.author, 'You have successfully given reputation to ' + util.StringUtil.boldify(args.member.user.tag) + ' raising it to ' + reppedDbUser.reputation + '.\n\nIn exchange for having contributed to this community, you have been awarded ' + util.NumberUtil.USD(reward) + '. Balance: ' + util.NumberUtil.format(newDbUser.cash) + '.');
   }
 }
 

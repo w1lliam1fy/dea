@@ -12,11 +12,9 @@ class GuildRepository extends BaseRepository {
   }
 
   async getGuild(guildId) {
-    if (await this.anyGuild(guildId)) {
-      return this.findOne(new GuildQuery(guildId));
-    } else {
-      return this.insertOne(new Guild(guildId));
-    }
+    const fetchedGuild = await this.findOne(new GuildQuery(guildId));
+    
+    return fetchedGuild !== null ? fetchedGuild : this.insertOne(new Guild(guildId));
   }
 
   updateGuild(guildId, update) {

@@ -61,7 +61,7 @@ class ModerationService {
     embed.setDescription(description);
 
     await util.Messenger.trySendEmbed(channel, embed);
-    await db.guildRepo.updateGuild(dbGuild.guildId, { $inc: { 'misc.caseNumber': 1 } });
+    await db.guildRepo.upsertGuild(dbGuild.guildId, { $inc: { 'misc.caseNumber': 1 } });
   }
 }
 
