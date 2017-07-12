@@ -1,5 +1,7 @@
+const util = require('../utility');
+
 module.exports = (client) => {
   client.on('reconnect', () => {
-    console.log('Attempting to reconnect...');
+    util.Logger.log('Attempting to reconnect...');
   });
 };

@@ -24,7 +24,7 @@ class Mute extends patron.Command {
           type: 'string',
           default: '',
           example: 'bribed me 50k',
-          isRemainder: true
+          remainder: true
         })
       ]
     });

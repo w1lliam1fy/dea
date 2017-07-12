@@ -1,5 +1,7 @@
+const util = require('../utility');
+
 module.exports = (client) => {
   client.on('reconnect', () => {
-    console.log('DEA has disconnected.');
+    util.Logger.log('DEA has disconnected.');
   });
 };

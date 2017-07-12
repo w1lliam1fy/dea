@@ -15,7 +15,7 @@ class RemoveModRole extends patron.Command {
           key: 'role',
           type: 'role',
           example: 'Moderator',
-          isRemainder: true
+          remainder: true
         })
       ]
     });

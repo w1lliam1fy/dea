@@ -20,7 +20,7 @@ class RemoveReputation extends patron.Command {
           key: 'member',
           type: 'member',
           example:'Blast My Ass#6969',
-          isRemainder: true,
+          remainder: true,
           preconditions: [NoSelf]
         })
       ]

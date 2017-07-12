@@ -15,7 +15,7 @@ class SetMutedRole extends patron.Command {
           key: 'role',
           type: 'role',
           example: 'Muted',
-          isRemainder: true
+          remainder: true
         })
       ]
     });

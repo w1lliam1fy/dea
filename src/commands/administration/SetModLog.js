@@ -15,7 +15,7 @@ class SetModLog extends patron.Command {
           key: 'channel',
           type: 'textchannel',
           example: 'Mod Log',
-          isRemainder: true
+          remainder: true
         })
       ]
     });

@@ -31,7 +31,7 @@ class Mute extends patron.Command {
           type: 'string',
           default: '',
           example: 'was spamming like a chimney',
-          isRemainder: true
+          remainder: true
         })
       ]
     });

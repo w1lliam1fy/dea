@@ -1,5 +1,4 @@
 const util = require('../utility');
-const db = require('../database');
 const config = require('../config.json');
 
 module.exports = (client) => {

@@ -14,7 +14,7 @@ class RemoveRank extends patron.Command {
           key: 'role',
           type: 'role',
           example: 'Sicario',
-          isRemainder: true
+          remainder: true
         })
       ]
     });

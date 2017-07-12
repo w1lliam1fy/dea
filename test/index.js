@@ -3,7 +3,7 @@ const patron = require('patron.js');
 const discord = require('discord.js');
 const db = require('../src/database');
 const config = require('../src/config.json');
-const credentials = require('./credentials.json');
+const credentials = require('../src/credentials.json');
 const Documentation = require('../src/services/Documentation.js');
 
 async function initiate() {

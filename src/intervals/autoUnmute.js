@@ -1,35 +1,38 @@
 const db = require('../database');
+const util = require('../utility');
 const config = require('../config.json');
 const ModerationService = require('../services/ModerationService.js');
 
 module.exports = async (client) => {
   client.setInterval(async () => {
-    const date = new Date();
-    console.log(date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() + ' Auto unmute running...');
+    util.Logger.log('Auto unmute running...');
     const mutes = await db.muteRepo.findMany({});
 
     for (const mute of mutes)
     {
+      util.Logger.log(mute.mutedAt);
+      util.Logger.log(mute.muteLength);
+      util.Logger.log(mute.mutedAt + mute.muteLength > Date.now());
       if (mute.mutedAt + mute.muteLength > Date.now()) {
         return;
       }
-      console.log('Deleting mute by id...');
+      util.Logger.log('Deleting mute by id...');
       await db.muteRepo.deleteById(mute._id);
-      console.log('Fetching guild...');
+      util.Logger.log('Fetching guild...');
       const guild = client.guilds.get(mute.guildId);
 
       if (guild === undefined) {
         return;
       }
-      console.log('Fetching member...');
+      util.Logger.log('Fetching member...');
       const member = guild.member(mute.userId);
 
       if (member === null) {
         return;
       }
-      console.log('Fetching dbGuild...');
+      util.Logger.log('Fetching dbGuild...');
       const dbGuild = await db.guildRepo.getGuild(guild.id);
-      console.log('Fetching role...');
+      util.Logger.log('Fetching role...');
       const role = guild.roles.get(dbGuild.roles.muted);
 
       if (role === undefined) {
@@ -37,12 +40,12 @@ module.exports = async (client) => {
       }
       
       if (!guild.me.hasPermission('MANAGE_ROLES') && role.position >= guild.me.highestRole.position) {
-        console.log('Doesn\'t have role perms.');
+        util.Logger.log('Doesn\'t have role perms.');
         return;
       }
-      console.log('Removing role...');
+      util.Logger.log('Removing role...');
       await member.removeRole(role);
-      console.log('Mod logging...');
+      util.Logger.log('Mod logging...');
       await ModerationService.tryModLog(dbGuild, guild, 'Automatic Unmute', config.unmuteColor, '', null, member.user);
     }
   }, config.autoUmuteInterval);

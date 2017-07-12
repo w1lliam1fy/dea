@@ -15,7 +15,7 @@ class SetWelcome extends patron.Command {
           key: 'message',
           type: 'string',
           example: 'Hey! Welcome to our server!',
-          isRemainder: true
+          remainder: true
         })
       ]
     });
