@@ -38,12 +38,14 @@ The connection URL will be provided to you when viewing the database. All you ne
 Once this is done, follow the these steps:
 
 1. Install the current node.js: https://nodejs.org/
+
+2. Install git: https://git-scm.com/download/win
     
-2. Open command prompt inside of the DEA folder: http://bit.ly/2uIXO4p
+3. Open command prompt inside of the DEA folder: http://bit.ly/2uIXO4p
     
-3. Enter `npm install --no-optional`
+4. Enter `npm install --no-optional`
     
-4. Enter `node src/index.js`
+5. Enter `node src/index.js`
     
-5. ENJOY!
+6. ENJOY!
 
