@@ -4,6 +4,8 @@ const ModerationService = require('../services/ModerationService.js');
 
 module.exports = async (client) => {
   client.setInterval(async () => {
+    const date = new Date();
+    console.log(date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() + 'Auto Unmute Running:');
     const mutes = await db.muteRepo.findMany({});
 
     for (const mute of mutes)
