@@ -19,7 +19,7 @@ class CommandService {
         msg.dbGuild = dbGuild !== null ? dbGuild : await db.guildRepo.insertOne(new db.models.Guild(msg.guild.id));
         msg.member = msg.guild.member(msg.author);
 
-        if (!msg.content.startsWith(config.prefix) && msg.member !== null) {
+        if (!msg.content.startsWith(config.prefix)) {
           return ChatService.applyCash(msg);
         }
       }
