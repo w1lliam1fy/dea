@@ -21,7 +21,7 @@ class ModerationService {
   }
 
   tryInformUser(guild, moderator, action, user, reason = '') {
-    return util.Messenger.tryDM(user, util.StringUtil.boldify(moderator.tag) + ' has attempted to ' + action + ' you' + (util.StringUtil.isNullOrWhiteSpace(reason) ? '.' : ' for the following reason: ' + reason + '.'), guild);
+    return util.Messenger.tryDM(user, util.StringUtil.boldify(moderator.tag) + ' has ' + action + ' you' + (util.StringUtil.isNullOrWhiteSpace(reason) ? '.' : ' for the following reason: ' + reason + '.'), guild);
   }
 
   async tryModLog(dbGuild, guild, action, color, reason = '', moderator = null, user = null, extraInfoType = '', extraInfo = '') {
