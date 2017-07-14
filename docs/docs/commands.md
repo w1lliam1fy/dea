@@ -18,7 +18,7 @@ The syntax of the command usage is:
 
 ### Administration
 
-These commands may only be used by a user with the set mod role with a permission level of 2, the Administrator permission.
+These commands may only be used by a user with the set mod role with a permission level of 2 or the Administrator permission.
 
 Command | Description | Usage
 ---------------- | --------------| -------
@@ -57,7 +57,7 @@ Transfer|Transfer money to any member.|`$transfer <@member> <transfer>`
 
 ### Moderation
 
-These commands may only be used by a user with the set mod role with a permission level of 1, or the Administrator permission.
+These commands may only be used by a user with the set mod role with a permission level of 1 or the Administrator permission.
 
 Command | Description | Usage
 ---------------- | --------------| -------
@@ -70,7 +70,7 @@ Warn|Warn any member.|`$warn <@member> [reason]`
 
 ### Owners
 
-These commands may only be used by a user with the set mod role with a permission level of 3, or the ownership of the server.
+These commands may only be used by a user with the set mod role with a permission level of 3 or the ownership of the server.
 
 Command | Description | Usage
 ---------------- | --------------| -------
