@@ -93,7 +93,7 @@ class Messenger {
       embed.setFooter(guild.name, guild.iconURL);
     }
 
-    return user.send({ embed: embed});
+    return user.send({ embed: embed });
   }
 
   static async tryDM(user, description, guild = null, title = '', color = null) {

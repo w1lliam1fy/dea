@@ -7,7 +7,7 @@ class BaseRepository {
 
   async any(filter) {
     const result = await this.collection.count(filter);
-    
+
     return result !== 0;
   }
 
@@ -22,10 +22,10 @@ class BaseRepository {
   findById(id) {
     return this.findOne(new IdQuery(id));
   }
-	
+
   async insertMany(documents) {
     const result = await this.collection.insertMany(documents);
-		
+
     return result.ops;
   }
 

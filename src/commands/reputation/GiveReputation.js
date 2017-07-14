@@ -17,7 +17,7 @@ class GiveReputation extends patron.Command {
           name: 'member',
           key: 'member',
           type: 'member',
-          example:'Cheese Burger#6666',
+          example: 'Cheese Burger#6666',
           remainder: true,
           preconditions: [NoSelf]
         })

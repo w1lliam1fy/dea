@@ -15,7 +15,7 @@ class LowRepLeaderboards extends patron.Command {
 
   async run(msg) {
     const users = await db.userRepo.findMany({ guildId: msg.guild.id });
-		
+
     users.sort((a, b) => a.reputation - b.reputation);
 
     let message = '';

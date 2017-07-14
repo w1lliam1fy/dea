@@ -15,7 +15,7 @@ class Money extends patron.Command {
           key: 'member',
           type: 'member',
           default: patron.Default.Member,
-          example:'Nibba You Cray#3333',
+          example: 'Nibba You Cray#3333',
           remainder: true
         })
       ]

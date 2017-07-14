@@ -4,7 +4,7 @@
   "description": "The cleanest Discord Bot around.",
   "main": "src/index.js",
   "scripts": {
-    "run": "node src/index.js",
+    "start": "node src/index.js",
     "test": "node test/index.js",
     "lint": "eslint --fix src/**"
   },
@@ -28,7 +28,7 @@
   "dependencies": {
     "discord.js": "^11.1.0",
     "mongodb": "^2.2.30",
-    "patron.js": "github:RealBlazeIt/patron"
+    "patron.js": "^1.0.3"
   },
   "optionalDependencies": {
     "bufferutil": "^3.0.2",

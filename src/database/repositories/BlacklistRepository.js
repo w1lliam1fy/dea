@@ -4,10 +4,6 @@ const BlacklistQuery = require('../queries/BlacklistQuery.js');
 const Blacklist = require('../models/Blacklist.js');
 
 class BlacklistRepository extends BaseRepository {
-  constructor(collection) { 
-    super(collection);
-  }
-
   anyBlacklist(userId) {
     return this.any(new BlacklistQuery(userId));
   }

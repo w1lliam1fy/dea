@@ -1,7 +1,7 @@
 const formatter = Intl.NumberFormat('en-US', {
   style: 'currency',
   currency: 'USD',
-  minimumFractionDigits: 2,
+  minimumFractionDigits: 2
 });
 
 class NumberUtil {
@@ -18,7 +18,7 @@ class NumberUtil {
   }
 
   static isEven(input) {
-    return input % 2 == 0;
+    return input % 2 === 0;
   }
 
   static hoursToMs(input) {
@@ -28,7 +28,7 @@ class NumberUtil {
   static daysToMs(input) {
     return input * 86400000;
   }
-  
+
   static msToTime(input) {
     return {
       milliseconds: parseInt((input % 1000) / 100),
@@ -44,7 +44,7 @@ class NumberUtil {
 
     while (s.length < size) {
       s = '0' + s;
-    } 
+    }
 
     return s;
   }

@@ -19,7 +19,7 @@ async function initiate() {
   await client.login(credentials.token);
 }
 
-initiate()  
+initiate()
   .then(() => process.exit(0))
   .catch((err) => {
     console.error(err);

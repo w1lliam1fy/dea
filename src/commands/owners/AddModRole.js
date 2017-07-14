@@ -26,7 +26,7 @@ class AddModRole extends patron.Command {
     });
   }
 
-  async run(msg, args){
+  async run(msg, args) {
     if (args.permissionLevel < 1 || args.permissionLevel > 3) {
       return util.Messenger.replyError(msg.channel, msg.author, 'Permission levels:\nModerator: 1\nAdministrator: 2\nOwner: 3');
     } else if (msg.dbGuild.roles.mod.some((role) =>  role.id === args.role.id)) {

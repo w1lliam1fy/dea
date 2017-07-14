@@ -21,7 +21,7 @@ class Statistics extends patron.Command {
       users += guild.memberCount;
     }
 
-    await util.Messenger.DMFields(msg.author, 
+    await util.Messenger.DMFields(msg.author,
       [
         'Author', 'John#0969', 'Framework', 'patron.js', 'Memory', (process.memoryUsage().rss / 1000000).toFixed(2) + ' MB', 'Servers', msg.client.guilds.size,
         'Users', users, 'Uptime', 'Days: ' + uptime.days + '\nHours: '+ uptime.hours + '\nMinutes: ' + uptime.minutes

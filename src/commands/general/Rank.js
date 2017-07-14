@@ -15,7 +15,7 @@ class Rank extends patron.Command {
           key: 'member',
           type: 'member',
           default: patron.Default.Member,
-          example:'Blast It Baby#6969',
+          example: 'Blast It Baby#6969',
           remainder: true
         })
       ]

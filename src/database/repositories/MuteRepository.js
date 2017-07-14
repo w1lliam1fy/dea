@@ -3,10 +3,6 @@ const MuteQuery = require('../queries/MuteQuery.js');
 const Mute = require('../models/Mute.js');
 
 class MuteRepository extends BaseRepository {
-  constructor(collection) { 
-    super(collection);
-  }
-
   anyMute(userId, guildId) {
     return this.any(new MuteQuery(userId, guildId));
   }
