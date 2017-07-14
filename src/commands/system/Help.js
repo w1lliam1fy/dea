@@ -36,10 +36,10 @@ class Help extends patron.Command {
       const lowerInput = args.command.toLowerCase();
 
       let command = msg.client.registry.commands.get(lowerInput);
-		
+
       if (command === undefined) {
         const matches = msg.client.registry.commands.filterArray((value) => value.aliases.some((v) => v === lowerInput));
-        
+
         if (matches.length > 0) {
           command = matches[0];
         } else {
@@ -48,7 +48,7 @@ class Help extends patron.Command {
       }
 
       return util.Messenger.send(msg.channel, '**Description:** ' + command.description + '\n**Usage:** `' + config.prefix + command.getUsage() + '`\n**Example:** `' + config.prefix + command.getExample() + '`', util.StringUtil.upperFirstChar(command.name));
-    }  
+    }
   }
 }
 

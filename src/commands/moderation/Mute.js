@@ -51,8 +51,8 @@ class Mute extends patron.Command {
     if (role === undefined) {
       return util.Messenger.replyError(msg.channel, msg.author, 'The set muted role has been deleted. Please set a new one with the `' + config.prefix + 'setmute Role` command.');
     }
-    
-    const formattedHours =  + args.hours + ' hour' + (args.hours === 1 ? '' : 's');
+
+    const formattedHours =  args.hours + ' hour' + (args.hours === 1 ? '' : 's');
 
     await args.member.addRole(role);
     await util.Messenger.reply(msg.channel, msg.author, 'You have successfully muted ' + args.member.user.tag + ' for ' + formattedHours + '.');

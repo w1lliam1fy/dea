@@ -5,7 +5,7 @@ const MuteRepository = require('../repositories/MuteRepository.js');
 const BlacklistRepository = require('../repositories/BlacklistRepository.js');
 
 class Database {
-  constructor(){
+  constructor() {
     this.queries = {
       Blacklist: require('../queries/BlacklistQuery.js'),
       Guild: require('../queries/GuildQuery.js'),
@@ -25,21 +25,21 @@ class Database {
       Blacklist: require('../models/Blacklist.js'),
       Guild: require('../models/Guild.js'),
       Mute: require('../models/Mute.js'),
-      User: require('../models/User.js'),
+      User: require('../models/User.js')
     };
   }
 
   async connect(connectionURL) {
     const db = await MongoClient.connect(connectionURL);
-    
+
     this.blacklistRepo = new BlacklistRepository(await db.createCollection('blacklists',
       {
-        validator: { $or: 
+        validator: { $or:
           [
             { userId: { $type: 'string', $exists: true } },
             { guildIds: { $type: 'array', $exists: true } },
             { username: { $type: 'string', $exists: true } },
-            { avatarURL: {$type: 'string', $exists: true } }
+            { avatarURL: { $type: 'string', $exists: true } }
           ]
         }
       }));
@@ -61,14 +61,14 @@ class Database {
 
     await db.collection('guilds').createIndex('guildId', { unique: true });
 
-    this.muteRepo = new MuteRepository(await db.createCollection('mutes', 
+    this.muteRepo = new MuteRepository(await db.createCollection('mutes',
       {
         validator: { $or:
           [
             { userId: { $type: 'string', $exists: true } },
             { guildId: { $type: 'string', $exists: true } },
             { muteLength: { $type: 'int', $exists: true, $gte: 0 } },
-            { mutedAt: { $type: 'int', $exists: true, $gte: 0 } },
+            { mutedAt: { $type: 'int', $exists: true, $gte: 0 } }
           ]
         }
       }));
