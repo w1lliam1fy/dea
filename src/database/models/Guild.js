@@ -17,7 +17,7 @@ class Guild {
     };
     this.misc = {
       caseNumber: 1,
-      trivia: []
+      trivia:[]
     };
   }
 }

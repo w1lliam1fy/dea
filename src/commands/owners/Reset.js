@@ -11,7 +11,7 @@ class Reset extends patron.Command {
     });
   }
 
-  async run(msg, args) {
+  async run(msg, args){
     await util.Messenger.reply(msg.channel, msg.author, 'Are you sure you wish to reset all DEA related data within your server? Reply with "yes" to continue.');
 
     const filter = x => x.content.toLowerCase() === 'yes' && x.author.id === msg.author.id;
@@ -20,7 +20,7 @@ class Reset extends patron.Command {
     if (result.size === 1) {
       await db.userRepo.deleteUsers(msg.guild.id);
       return util.Messenger.reply(msg.channel, msg.author, 'You have successfully reset all data in your server.');
-    }
+    } 
   }
 }
 

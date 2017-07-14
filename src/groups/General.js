@@ -2,8 +2,8 @@ const patron = require('patron.js');
 
 class General extends patron.Group {
   constructor() {
-    super({
-      name: 'general'
+    super({ 
+      name: 'general' 
     });
   }
 }

@@ -6,7 +6,8 @@ module.exports = async (client) => {
   client.setInterval(async () => {
     const mutes = await db.muteRepo.findMany({});
 
-    for (const mute of mutes) {
+    for (const mute of mutes)
+    {
       if (mute.mutedAt + mute.muteLength > Date.now()) {
         continue;
       }
@@ -31,7 +32,7 @@ module.exports = async (client) => {
       if (role === undefined) {
         continue;
       }
-
+      
       if (!guild.me.hasPermission('MANAGE_ROLES') && role.position >= guild.me.highestRole.position) {
         continue;
       }

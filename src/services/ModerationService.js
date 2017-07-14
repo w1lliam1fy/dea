@@ -30,12 +30,12 @@ class ModerationService {
     }
 
     const channel = guild.channels.get(dbGuild.channels.modLog);
-
+    
     if (channel === undefined) {
       return;
     }
 
-    const embed = new discord.RichEmbed()
+    var embed = new discord.RichEmbed()
       .setColor(color)
       .setFooter('Case #' + dbGuild.misc.caseNumber, 'http://i.imgur.com/BQZJAqT.png')
       .setTimestamp();
@@ -50,7 +50,7 @@ class ModerationService {
       description += '**'+ extraInfoType + ':** ' + extraInfo + '\n';
     }
 
-    if (user !== null) {
+    if (user != null) {
       description += '**User:** ' + user.tag + ' (' + user.id + ')\n';
     }
 

@@ -20,7 +20,7 @@ class Ranks extends patron.Command {
     let description = '';
     for (let i = 0; i < sortedRanks.length; i++) {
       const rank = msg.guild.roles.find((x) => x.id === sortedRanks[i].id);
-
+      
       description+= rank + ': ' + util.NumberUtil.USD(sortedRanks[i].cashRequired) + '\n';
     }
 

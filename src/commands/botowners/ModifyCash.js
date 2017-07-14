@@ -21,7 +21,7 @@ class ModifyCash extends patron.Command {
           key: 'member',
           type: 'member',
           default: patron.Default.Member,
-          example: 'Supa Hot Fire#0911',
+          example:'Supa Hot Fire#0911',
           remainder: true
         })
       ]
@@ -30,7 +30,7 @@ class ModifyCash extends patron.Command {
 
   async run(msg, args) {
     const newDbUser = await db.userRepo.modifyCash(msg.dbGuild, args.member, args.amount);
-
+    
     return util.Messenger.reply(msg.channel, msg.author, 'You have successfully modifed ' + (args.member.id === msg.author.id ? 'your' : util.StringUtil.boldify(args.member.user.tag) + '\'s') + ' balance to ' + util.NumberUtil.format(newDbUser.cash) + '.');
   }
 }
