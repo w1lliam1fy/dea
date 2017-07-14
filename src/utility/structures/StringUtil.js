@@ -22,6 +22,16 @@ class StringUtil {
   static alphabeticallySort(a, b) {
     return a.name.localeCompare(b.name);
   }
+
+  static formatUsers(users) {
+    let formattedMembers = '';
+
+    for (const user of users) {
+      formattedMembers += user.tag + ', ';
+    }
+
+    return formattedMembers.slice(0, -2);
+  }
 }
 
 module.exports = StringUtil;

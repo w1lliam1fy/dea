@@ -1,5 +1,4 @@
 const patron = require('patron.js');
-const db = require('../../database');
 const util = require('../../utility');
 const config = require('../../config.json');
 const ModerationService = require('../../services/ModerationService.js');
@@ -45,8 +44,7 @@ class Mute extends patron.Command {
 
     await args.member.removeRole(role);
     await util.Messenger.reply(msg.channel, msg.author, 'You have successfully unmuted ' + args.member.user.tag + '.');
-    await db.muteRepo.deleteMute(args.member.id, msg.guild.id);
-    await ModerationService.tryInformUser(msg.guild, msg.author, 'unmute', args.member.user, args.reason);
+    await ModerationService.tryInformUser(msg.guild, msg.author, 'unmuted', args.member.user, args.reason);
     await ModerationService.tryModLog(msg.dbGuild, msg.guild, 'Unmute', config.unmuteColor, args.reason, msg.author, args.member.user);
   }
 }

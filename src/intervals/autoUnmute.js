@@ -38,7 +38,7 @@ module.exports = async (client) => {
 
       await member.removeRole(role);
       await ModerationService.tryModLog(dbGuild, guild, 'Automatic Unmute', config.unmuteColor, '', null, member.user);
-      await ModerationService.tryInformUser(guild, client.user, 'automatically unmute', member.user);
+      await ModerationService.tryInformUser(guild, client.user, 'automatically unmuted', member.user);
     }
   }, config.autoUmuteInterval);
 };

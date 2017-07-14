@@ -7,19 +7,21 @@ module.exports = async (client) => {
     const users = await db.userRepo.findMany({ cash: { $gte: config.minRich * 100 } });
 
     for (const dbUser of users) {
-      if (config.fineOdds >= util.Random.roll()) {
+      const additionalOdds = dbUser.cash * config.additionalFineOdds;
+
+      if (config.fineOdds + additionalOdds >= util.Random.roll()) {
         const user = client.users.get(dbUser.userId);
 
         const guild = client.guilds.get(dbUser.guildId);
 
         if (user === undefined || guild === undefined) {
-          return;
+          continue;
         }
 
         const member = guild.member(user);
 
         if (member === null) {
-          return;
+          continue;
         }
 
         const fine = util.NumberUtil.realValue(dbUser.cash) * config.fineCut;

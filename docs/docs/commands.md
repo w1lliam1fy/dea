@@ -61,8 +61,12 @@ These commands may only be used by a user with the set mod role with a permissio
 
 Command | Description | Usage
 ---------------- | --------------| -------
+Ban|Swing the ban hammer on any member.|`$ban <@user> [reason]`
+Kick|Kick any member.|`$kick <@member> [reason]`
 Mute|Mute any member.|`$mute <@member> [number of hours] [reason]`
+Unban|Lift the ban hammer on any member.|`$unban <username> [reason]`
 Unmute|Unmute any member.|`$unmute <@member> [reason]`
+Warn|Warn any member.|`$warn <@member> [reason]`
 
 ### Owners
 

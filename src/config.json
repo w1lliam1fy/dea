@@ -2,6 +2,7 @@
   "minRich": 10000,
   "fineInterval": 450000,
   "fineOdds": 0.40,
+  "additionalFineOdds": 0.000005,
   "fineCut": 0.35,
   "fineMessages": [
     "So you think you can get away with laundering thousands of dollars in dirty drug money, and the fucking DEA wouldn't know about it? I will let you off with a {0} fine this time, but next time you are behind bars pal.",
@@ -11,7 +12,7 @@
     "Well, I got you right where I want you. Enough proof to lock you away for 15 years. Don't you worry sonny, I like you. I talked to Judge Stiffwood and he said we can let you off with a {0} fine.",
     "Here's what pal, I would lock you away for 15 years for smuggling all those drugs, but me and Judge Woody made a deal to split your {0} fine."
   ],
-  "autoUmuteInterval": 30000,
+  "autoUmuteInterval": 60000,
   "muteLengthDefault": 24,
   "minRepForRemove": 5,
   "repRewardMin": 100,
@@ -42,6 +43,10 @@
   "errorColor": [255, 0, 0],
   "muteColor": [255, 114, 14],
   "unmuteColor": [109, 237, 94],
+  "kickColor": [232, 81, 31],
+  "banColor": [234, 12, 0],
+  "unbanColor": [19, 255, 25],
+  "warnColor": [255, 182, 32],
   "embedColors": [
     [255, 38, 154],
     [0, 255, 0],
