@@ -40,5 +40,5 @@ module.exports = async (client) => {
       await ModerationService.tryModLog(dbGuild, guild, 'Automatic Unmute', config.unmuteColor, '', null, member.user);
       await ModerationService.tryInformUser(guild, client.user, 'automatically unmuted', member.user);
     }
-  }, config.autoUmuteInterval);
+  }, config.autoUnmuteInterval);
 };

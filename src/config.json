@@ -1,9 +1,9 @@
 {
   "minRich": 25000,
   "fineInterval": 450000,
-  "fineOdds": 0.40,
+  "fineOdds": 0.35,
   "additionalFineOdds": 0.0000025,
-  "fineCut": 0.40,
+  "fineCut": 0.25,
   "fineMessages": [
     "So you think you can get away with laundering thousands of dollars in dirty drug money, and the fucking DEA wouldn't know about it? I will let you off with a {0} fine this time, but next time you are behind bars pal.",
     "Listen buddy, I have been watching you for a while, and I finally got everything I need to prove you are a drug smuggler. Lucky you Judge Red Forman was a softie, you are walking away with only a {0} fine.",
@@ -12,7 +12,7 @@
     "Well, I got you right where I want you. Enough proof to lock you away for 15 years. Don't you worry sonny, I like you. I talked to Judge Stiffwood and he said we can let you off with a {0} fine.",
     "Here's what pal, I would lock you away for 15 years for smuggling all those drugs, but me and Judge Woody made a deal to split your {0} fine."
   ],
-  "autoUmuteInterval": 60000,
+  "autoUnmuteInterval": 60000,
   "muteLengthDefault": 24,
   "minRepForRemove": 5,
   "repRewardMin": 100,

@@ -1,6 +1,6 @@
 const path = require('path');
-const patron = require('patron.js');
-const discord = require('discord.js');
+const { Registry, Handler } = require('patron.js');
+const { Client } = require('discord.js');
 const db = require('./database');
 const EventService = require('./services/EventService.js');
 const IntervalService = require('./services/IntervalService.js');
@@ -9,9 +9,9 @@ const Documentation = require('./services/Documentation.js');
 const config = require('./config.json');
 const credentials = require('./credentials.json');
 
-const client = new discord.Client({ fetchAllMembers: true, messageCacheMaxSize: 5, messageCacheLifetime: 30, messageSweepInterval: 1800, disabledEvents: config.disabledEvents, restTimeOffset: 150 });
+const client = new Client({ fetchAllMembers: true, messageCacheMaxSize: 5, messageCacheLifetime: 30, messageSweepInterval: 1800, disabledEvents: config.disabledEvents, restTimeOffset: 150 });
 
-const registry = new patron.Registry();
+const registry = new Registry();
 
 registry.registerDefaultTypeReaders();
 registry.registerGroupsIn(path.join(__dirname, 'groups'));
@@ -22,7 +22,7 @@ client.registry = Object.freeze(registry);
 EventService.initiate(client);
 IntervalService.initiate(client);
 
-CommandService.run(client, new patron.Handler(registry));
+CommandService.run(client, new Handler(registry));
 
 initiate();
 
