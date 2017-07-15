@@ -36,7 +36,7 @@ class Unban extends patron.Command {
     if (matches.length === 1) {
       const user = matches[0];
 
-      msg.guild.unban(user).catch(() => null);
+      await msg.guild.unban(user);
       await util.Messenger.reply(msg.channel, msg.author, 'You have successfully unbanned ' + user.tag + '.');
       await ModerationService.tryModLog(msg.dbGuild, msg.guild, 'Unban', config.unbanColor, args.reason, msg.author, user);
       return ModerationService.tryInformUser(msg.guild, msg.author, 'unbanned', user, args.reason);

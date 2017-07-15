@@ -66,8 +66,6 @@
   "serverInviteLink": "https://discord.gg/gvyma7H",
   "documentationLink": "https://realblazeit.github.io/dea/commands/",
   "disabledEvents": [
-    "GUILD_BAN_ADD",
-    "GUILD_BAN_REMOVE",
     "CHANNEL_DELETE",
     "CHANNEL_UPDATE",
     "CHANNEL_PINS_UPDATE",
