@@ -31,7 +31,7 @@ class Unban extends patron.Command {
 
   async run(msg, args) {
     const fetchedBans = await msg.guild.fetchBans();
-    const matches = fetchedBans.filterArray(x => (x.username + x.discriminator).toLowerCase().includes(args.username));
+    const matches = fetchedBans.filterArray(x => (x.username + '#' + x.discriminator).toLowerCase().includes(args.username));
 
     if (matches.length === 1) {
       const user = matches[0];
