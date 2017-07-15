@@ -37,7 +37,7 @@ class AddRank extends patron.Command {
 
     await db.guildRepo.upsertGuild(msg.guild.id, new db.updates.Push('roles.rank', { id: args.role.id, cashRequired: Math.round(args.cashRequired) }));
 
-    return util.Messenger.reply(msg.channel, msg.author, 'You have successfully added the rank role ' + args.role + ' with a cash required amount of ' + args.cashRequired + '.');
+    return util.Messenger.reply(msg.channel, msg.author, 'You have successfully added the rank role ' + args.role + ' with a cash required amount of ' + util.NumberUtil.USD(args.cashRequired) + '.');
   }
 }
 
