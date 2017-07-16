@@ -46,7 +46,7 @@ class CommandService {
               } else if (result.error.code === 50007) {
                 message = 'DEA does not have permission to DM this user. Enabling the DM Privacy Settings for this server may solve this issue.';
               } else if (result.error.code >= 500 && result.error.code < 600) {
-                message = 'Looks like Discord fucked up. An error has occured on Discord\'s part which is entirely unrelated with DEA. Sorry, nothing we can do.';
+                message = 'Looks like Discord fucked up. An error has occurred on Discord\'s part which is entirely unrelated with DEA. Sorry, nothing we can do.';
               } else {
                 message = result.errorReason;
               }
