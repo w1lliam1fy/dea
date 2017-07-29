@@ -13,9 +13,9 @@ class ChangeFineSettings extends patron.Command {
   }
 
   async run(msg) {
-    await db.guildRepo.upsertGuild(msg.guild.id, new db.updates.Set('settings.fines', (msg.dbGuild.settings.fines === false)));
+    await db.guildRepo.upsertGuild(msg.guild.id, new db.updates.Set('settings.fines', !msg.dbGuild.settings.fines));
 
-    return util.Messenger.reply(msg.channel, msg.author, 'You have successfully toggled this guilds fine settings.');
+    return util.Messenger.reply(msg.channel, msg.author, 'You have successfully ' + (msg.dbGuild.settings.fines ? 'dis' : 'en') + 'abled fines.');
   }
 }
 
