@@ -13,6 +13,7 @@ class Guild {
     };
     this.settings = {
       globalChattingMultiplier: 1,
+      fines: false,
       welcomeMessage: null
     };
     this.misc = {

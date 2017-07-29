@@ -4,7 +4,7 @@ const util = require('../../utility');
 const config = require('../../config.json');
 const NoSelf = require('../../preconditions/NoSelf.js');
 const Cash = require('../../preconditions/Cash.js');
-const Minimum = require('../../preconditions/Minimum.js');
+const MinimumCash = require('../../preconditions/MinimumCash.js');
 
 class Transfer extends patron.Command {
   constructor() {
@@ -26,7 +26,7 @@ class Transfer extends patron.Command {
           key: 'transfer',
           type: 'float',
           example: '500',
-          preconditions: [Cash, new Minimum(config.minTransfer)]
+          preconditions: [Cash, new MinimumCash(config.minTransfer)]
         })
       ]
     });

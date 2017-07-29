@@ -23,6 +23,7 @@ These commands may only be used by a user with the set mod role with a permissio
 Command | Description | Usage
 ---------------- | --------------| -------
 Addrank|Add a rank.|`$addrank <@role> <cashRequired>`
+Changefinesettings|Toggles the fine settings.|`$changefinesettings`
 Disablewelcome|Disables the welcome message.|`$disablewelcome`
 Removerank|Remove a rank role.|`$removerank <@role>`
 Setmodlogchannel|Sets the mod log channel.|`$setmodlogchannel <#mod log channel>`
@@ -62,6 +63,7 @@ These commands may only be used by a user with the set mod role with a permissio
 Command | Description | Usage
 ---------------- | --------------| -------
 Ban|Swing the ban hammer on any member.|`$ban <@user> [reason]`
+Clear|Prune an amount of messages in a text channel.|`$clear <messages to clear> [reason]`
 Kick|Kick any member.|`$kick <@member> [reason]`
 Mute|Mute any member.|`$mute <@member> [number of hours] [reason]`
 Unban|Lift the ban hammer on any member.|`$unban <username> [reason]`

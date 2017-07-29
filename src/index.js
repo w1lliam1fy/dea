@@ -28,6 +28,7 @@ initiate();
 
 async function initiate() {
   await db.connect(credentials.mongodbConnectionURL);
+  await db.guildRepo.updateMany({}, new db.updates.Set('settings.fines', false));
   await client.login(credentials.token);
   await Documentation.createAndSave(registry);
 }

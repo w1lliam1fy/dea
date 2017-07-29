@@ -1,5 +1,4 @@
 const patron = require('patron.js');
-const util = require('../utility');
 
 class Minimum extends patron.ArgumentPrecondition {
   constructor(minimum) {
@@ -12,7 +11,7 @@ class Minimum extends patron.ArgumentPrecondition {
       return patron.PreconditionResult.fromSuccess();
     }
 
-    return patron.PreconditionResult.fromError(command, 'The minimum '+ argument.name +' is '+ util.NumberUtil.USD(this.minimum) +'.');
+    return patron.PreconditionResult.fromError(command, 'The minimum ' + argument.name + ' is ' + this.minimum + '.');
   }
 }
 
