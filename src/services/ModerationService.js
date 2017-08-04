@@ -26,13 +26,13 @@ class ModerationService {
 
   async tryModLog(dbGuild, guild, action, color, reason = '', moderator = null, user = null, extraInfoType = '', extraInfo = '') {
     if (dbGuild.channels.modLog === null) {
-      return;
+      return false;
     }
 
     const channel = guild.channels.get(dbGuild.channels.modLog);
 
     if (channel === undefined) {
-      return;
+      return false;
     }
 
     const embed = new discord.RichEmbed()
@@ -60,8 +60,8 @@ class ModerationService {
 
     embed.setDescription(description);
 
-    await util.Messenger.trySendEmbed(channel, embed);
     await db.guildRepo.upsertGuild(dbGuild.guildId, { $inc: { 'misc.caseNumber': 1 } });
+    return util.Messenger.trySendEmbed(channel, embed);
   }
 }
 

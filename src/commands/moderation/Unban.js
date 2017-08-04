@@ -44,9 +44,7 @@ class Unban extends patron.Command {
     } else if (matches.length > 5) {
       return util.Messenger.replyError(msg.channel, msg.author, 'Multiple matches found, please be more specific.');
     } else if (matches.length > 1) {
-      const formattedMatches = util.StringUtil.formatUsers(matches);
-
-      return util.Messenger.replyError(msg.channel, msg.author, 'Multiple matches found: ' + formattedMatches + '.');
+      return util.Messenger.replyError(msg.channel, msg.author, 'Multiple matches found: ' + util.StringUtil.formatUsers(matches) + '.');
     }
 
     return util.Messenger.replyError(msg.channel, msg.author, 'No matches found.');

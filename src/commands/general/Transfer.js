@@ -18,7 +18,7 @@ class Transfer extends patron.Command {
           name: 'member',
           key: 'member',
           type: 'member',
-          example: 'Supa Hot Fire#1337',
+          example: '"Supa Hot Fire#1337"',
           preconditions: [NoSelf]
         }),
         new patron.Argument({
