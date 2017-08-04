@@ -22,7 +22,7 @@ class Ban extends patron.Command {
           key: 'reason',
           type: 'string',
           example: 'terrible apple',
-          default: '',
+          defaultValue: '',
           remainder: true
         })
       ]

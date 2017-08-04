@@ -20,7 +20,7 @@ class ModifyCash extends patron.Command {
           name: 'member',
           key: 'member',
           type: 'member',
-          default: patron.Default.Member,
+          defaultValue: patron.ArgumentDefault.Member,
           example: 'Supa Hot Fire#0911',
           remainder: true
         })

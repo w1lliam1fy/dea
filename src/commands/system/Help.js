@@ -15,7 +15,7 @@ class Help extends patron.Command {
           name: 'command',
           key: 'command',
           type: 'string',
-          default: '',
+          defaultValue: '',
           example: 'money'
         })
       ]

@@ -26,7 +26,7 @@ class Clear extends patron.Command {
           key: 'reason',
           type: 'string',
           example: 'one of the appls was spamming like an orange.',
-          default: '',
+          defaultValue: '',
           remainder: true
         })
       ]

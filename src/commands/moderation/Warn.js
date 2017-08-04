@@ -23,7 +23,7 @@ class Warn extends patron.Command {
           key: 'reason',
           type: 'string',
           example: 'stop jerking off in public like cmon man',
-          default: '',
+          defaultValue: '',
           remainder: true
         })
       ]

@@ -25,13 +25,13 @@ class Mute extends patron.Command {
           key: 'hours',
           type: 'float',
           example: '48',
-          default: config.muteLengthDefault
+          defaultValue: config.muteLengthDefault
         }),
         new patron.Argument({
           name: 'reason',
           key: 'reason',
           type: 'string',
-          default: '',
+          defaultValue: '',
           example: 'was spamming like a chimney',
           remainder: true
         })

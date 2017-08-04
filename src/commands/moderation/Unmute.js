@@ -21,7 +21,7 @@ class Mute extends patron.Command {
           name: 'reason',
           key: 'reason',
           type: 'string',
-          default: '',
+          defaultValue: '',
           example: 'bribed me 50k',
           remainder: true
         })

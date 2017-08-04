@@ -13,7 +13,7 @@ class ResetUser extends patron.Command {
           name: 'member',
           key: 'member',
           type: 'member',
-          default: patron.Default.Member,
+          defaultValue: patron.ArgumentDefault.Member,
           example: 'Jesus Christ#4444',
           remainder: true
         })

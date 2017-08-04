@@ -9,8 +9,8 @@ module.exports = async (client) => {
     for (const dbUser of users) {
       const dbGuild = await db.guildRepo.getGuild(dbUser.guildId);
 
-      if (!dbGuild.settings.fines) {
-        break;
+      if (dbGuild.settings.fines === false) {
+        continue;
       }
 
       const additionalOdds = dbUser.cash * config.additionalFineOdds;

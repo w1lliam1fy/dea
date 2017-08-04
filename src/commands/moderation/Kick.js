@@ -24,7 +24,7 @@ class Kick extends patron.Command {
           key: 'reason',
           type: 'string',
           example: 'bad apple',
-          default: '',
+          defaultValue: '',
           remainder: true
         })
       ]

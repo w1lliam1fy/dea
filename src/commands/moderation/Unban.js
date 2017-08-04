@@ -22,7 +22,7 @@ class Unban extends patron.Command {
           key: 'reason',
           type: 'string',
           example: 'mb he was actually a good apple',
-          default: '',
+          defaultValue: '',
           remainder: true
         })
       ]
@@ -31,7 +31,8 @@ class Unban extends patron.Command {
 
   async run(msg, args) {
     const fetchedBans = await msg.guild.fetchBans();
-    const matches = fetchedBans.filterArray(x => (x.username + '#' + x.discriminator).toLowerCase().includes(args.username));
+    const lowerInput = args.username.toLowerCase();
+    const matches = fetchedBans.filterArray(x => (x.username + '#' + x.discriminator).toLowerCase().includes(lowerInput));
 
     if (matches.length === 1) {
       const user = matches[0];
