@@ -39,10 +39,10 @@ class Eval extends patron.Command {
       }
 
       if (typeof result !== 'string') {
-        result = utility.inspect(result, { showHidden: true,  depth: 0 });
+        result = utility.inspect(result, { depth: 0 });
       }
 
-      result = result.replace(msg.client.token, ' ').replace(/\[Object\]/g, 'Object');
+      result = result.replace(msg.client.token, ' ').replace(/\[Object\]/g, 'Object').replace(/\[Array\]/g, 'Array');
 
       return util.Messenger.sendFields(msg.channel, ['Eval', '```js\n' + args.code + '```', 'Returns', '```js\n' + result + '```'], false);
     } catch (err) {
