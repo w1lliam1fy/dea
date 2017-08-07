@@ -2,22 +2,22 @@
     "docs": [
         {
             "location": "/",
-            "text": "Welcome to DEA\n\n\nAdd DEA to your Server\n\n\nOfficial Support Server\n\n\nDEA is a multi-purpose Discord Bot mainly known for it's infamous Cash & Reputation System, allowing you to compete with your friends to become the richest in the server, or the most respected.\n\n\nThis bot is also capable of being an excellent moderation bot for all needs. Multiple commands such as kick, ban, mute are available at your disposition. DEA automatically unmutes users after their mute is over, AND will prevent mute evasion (users leaving and rejoining to lose their Muted role).\n\n\nFor information on how to setup this bot in your server, click \nhere\n.\n\n\nIf you want to view all the command information, click \nhere\n.",
+            "text": "Welcome to 'The Daz Bot'\n\n\nAdd 'The Daz Bot' to your Server\n\n\nOfficial Support Server\n\n\nThis bot is fucking amazing.",
             "title": "Home"
         },
         {
-            "location": "/#welcome-to-dea",
-            "text": "Add DEA to your Server  Official Support Server  DEA is a multi-purpose Discord Bot mainly known for it's infamous Cash & Reputation System, allowing you to compete with your friends to become the richest in the server, or the most respected.  This bot is also capable of being an excellent moderation bot for all needs. Multiple commands such as kick, ban, mute are available at your disposition. DEA automatically unmutes users after their mute is over, AND will prevent mute evasion (users leaving and rejoining to lose their Muted role).  For information on how to setup this bot in your server, click  here .  If you want to view all the command information, click  here .",
-            "title": "Welcome to DEA"
+            "location": "/#welcome-to-the-dazza",
+            "text": "aye its the DAZZA BOT XDD",
+            "title": "the cum zone"
         },
         {
             "location": "/setup/",
-            "text": "Cash System Setup\n\n\nThe DEA Cash System is based around chatting. The more you chat, the more money you get, and what better way to show off how rich you are then to have a nice rank.\n\n\nYou have add rank roles with the following command: \n$addrank @Noob 500\n. This will give any user that gets $500.00 the Noob role. You can add as many ranks as you like, with zero limitations. If you wish to remove a rank, you can do so with the \n$removerank @Noob\n command.\n\n\nModeration Setup\n\n\nSimilar to the \n$addrank\n command, you may add moderator roles with the \n$addmod @Moderators 1\n. The number following the role was the permission level of that moderation role. \n\n\nThere are currently three permission levels: 1: Moderator, 2: Administrator, 3: Owner. Each permission level allows you access to a group of commands, Moderation, Administration and Owners, respectively.\n\n\nIf you want DEA to log the use of any moderation commands in a channel, use the \n$setmodlog #logs\n command.",
+            "text": "plus one meme",
             "title": "Setup"
         },
         {
             "location": "/setup/#cash-system-setup",
-            "text": "The DEA Cash System is based around chatting. The more you chat, the more money you get, and what better way to show off how rich you are then to have a nice rank.  You have add rank roles with the following command:  $addrank @Noob 500 . This will give any user that gets $500.00 the Noob role. You can add as many ranks as you like, with zero limitations. If you wish to remove a rank, you can do so with the  $removerank @Noob  command.",
+            "text": "The Cash System is based around chatting. The more you chat, the more money you get, and what better way to show off how rich you are then to have a nice rank.  You have add rank roles with the following command:  $addrank @Noob 500 . This will give any user that gets $500.00 the Noob role. You can add as many ranks as you like, with zero limitations. If you wish to remove a rank, you can do so with the  $removerank @Noob  command.",
             "title": "Cash System Setup"
         },
         {
@@ -42,7 +42,7 @@
         },
         {
             "location": "/commands/#botowners",
-            "text": "These commands may only be used by the owners of DEA.     Command  Description  Usage      Eval  Allows you to modify the cash of any member.  $eval <code>    Modifycash  Allows you to modify the cash of any member.  $modifycash <amount> [@member]",
+            "text": "These commands may only be used by the owners of meme.     Command  Description  Usage      Eval  Allows you to modify the cash of any member.  $eval <code>    Modifycash  Allows you to modify the cash of any member.  $modifycash <amount> [@member]",
             "title": "Botowners"
         },
         {
@@ -72,7 +72,7 @@
         },
         {
             "location": "/commands/#system",
-            "text": "Command  Description  Usage      Help  All command information.  $help [command]    Info  All the information about the DEA cash system.  $info    Invite  Add DEA to your server.  $invite    Statistics  Statistics about DEA.  $statistics",
+            "text": "Command  Description  Usage      Help  All command information.  $help [command]    Info  All the information about the DEA cash system.  $info    Invite  Add 'The Daz Bot' to your server.  $invite    Statistics  Statistics about 'The Daz Bot'.  $statistics",
             "title": "System"
         }
     ]
